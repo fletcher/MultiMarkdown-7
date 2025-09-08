@@ -510,7 +510,7 @@ void clean_meta_value(meta * m) {
 			case '\r':
 				*write = ' ';
 
-				while (char_is_whitespace_or_line_ending(read[1])) {
+				while ((read < stop - 1) && char_is_whitespace_or_line_ending(read[1])) {
 					read++;
 				}
 
