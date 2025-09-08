@@ -1,0 +1,40 @@
+<p>title: Citations
+latexconfig: article</p>
+
+<h1>citep</h1>
+
+<p>[#foo1]</p>
+
+<p>[#foo1][]</p>
+
+<p>[p. 123][#foo1]</p>
+
+<p>[][#foo1]</p>
+
+<p>[foo][bar][#foo1]</p>
+
+<p>[#foo1][#foo2]</p>
+
+<h1>citet</h1>
+
+<p>[#foo1;]</p>
+
+<p>[#foo1;][]</p>
+
+<p>[p. 123][#foo1;]</p>
+
+<p>[][#foo1;]</p>
+
+<p>[foo][bar][#foo1;]</p>
+
+<p>[#foo1;][#foo2;]</p>
+
+<p>[Not Cited][#foo3]</p>
+
+<p>[#missing]</p>
+
+<p>[#foo1]: John Doe. <em>A Totally Fake Book 1</em>. Vanity Press, 2006.</p>
+
+<p>[#foo2]: John Doe. <em>A Totally Fake Book 2</em>. Vanity Press, 2006.</p>
+
+<p>[#foo3]: John Doe. <em>A Totally Fake Book 3</em>. Vanity Press, 2006.</p>

@@ -1,0 +1,39 @@
+<p>title: Fuzz Testing
+latexconfig: article</p>
+
+<p>Collection of test cases identified by <a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a>.</p>
+
+<p>û~~foo~&gt;bar~~}</p>
+
+<ul>
+<li>list</li>
+<li>tems</li>
+</ul>
+
+<h2>:Escapes [escaped]</h2>
+
+<p>[&gt;MM]: MultiMarkdown</p>
+
+<p>[?terí¢ıı[?term]: A term to be defined.</p>
+
+<p><a href="#ba">foo1</a></p>
+
+<p><a href="#bar">foo2</a></p>
+
+<p>]: And aÄe footn.I^Thi1. $</p>
+
+<p>[MMD]:</p>
+
+<p>f o o f o o</p>
+
+<p>[&gt; o o]: F O O
+[o o]:BAR</p>
+
+<ul>
+<li>foo</li>
+<li>  foo</li>
+</ul>
+
+<p>(This must be at end of file without trailing newline)</p>
+
+<h1>A</h1>

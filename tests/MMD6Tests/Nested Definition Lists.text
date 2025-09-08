@@ -1,0 +1,9 @@
+title:	Nested Definition Lists
+latexconfig:	article
+
+bat
+:	*foo*
+
+	bar
+
+		*foo*

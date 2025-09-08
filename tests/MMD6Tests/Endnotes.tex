@@ -1,0 +1,58 @@
+\input{mmd6-article-leader}
+\def\mytitle{Endnotes}
+\longnewglossaryentry{*glossary*}{name=*glossary*}{This is a glossary term.}
+\longnewglossaryentry{glossary3}{name=glossary3}{This is a glossary term.
+
+\begin{quote}
+With a \emph{tail} block.
+\end{quote}}
+\input{mmd6-article-begin}
+
+\part{Reference Style}
+\label{referencestyle}
+
+foo \footnote{This is a footnote.}.
+
+foo ~\citep{cite}.
+
+foo \gls{*glossary*}.
+
+\part{Inline Style}
+\label{inlinestyle}
+
+foo \footnote{This is \emph{another} footnote.}.
+
+foo ~\citep{thisisanothercitation.}.
+
+foo \newglossaryentry{*gls*}{name=\emph{gls}, description={This is \emph{another} glossary term.}}\gls{*gls*}
+
+\part{Extended Reference Style}
+\label{extendedreferencestyle}
+
+foo \footnote{This is a footnote.
+
+\begin{quote}
+With a \emph{tail} block.
+\end{quote}}.
+
+foo ~\citep{cite3}.
+
+foo \gls{glossary3}.
+
+\begin{thebibliography}{0}
+\bibitem{cite}
+This is a citation.
+
+\bibitem{thisisanothercitation.}
+This is \emph{another} citation.
+
+\bibitem{cite3}
+This is a citation.
+
+\begin{quote}
+With a \emph{tail} block.
+\end{quote}
+
+\end{thebibliography}
+\input{mmd6-article-footer}
+\end{document}

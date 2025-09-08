@@ -1,0 +1,32 @@
+title:  Link Labels
+latexconfig:    article
+
+[foo].
+[ foo].
+[foo ].
+[ foo ].
+
+[bar].
+[ bar].
+[bar ].
+[ bar ].
+
+[baz].
+[ baz].
+[baz ].
+[ baz ].
+
+[foo bar].
+[ foo bar].
+[foo bar ].
+[ foo bar ].
+
+[foobar].
+[ foobar].
+[foobar ].
+[ foobar ].
+
+[ foo]: http://foo.com/
+[bar ]: http://bar.com/
+[ baz ]: http://baz.com/
+[foo bar]: http://foobar.com/

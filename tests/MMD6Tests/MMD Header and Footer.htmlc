@@ -1,0 +1,10 @@
+<p>title: MMD Header and Footer
+latexconfig: article
+MMD Header: {{header.txt}}
+MMD Footer: {{footer.txt}}
+HTML Header: HTML <em>header</em>.
+HTML Footer: HTML <em>footer</em>.
+LaTeX Header: \LaTeX \emph{header}
+ODF Header: ODF header.</p>
+
+<p>Main Body</p>

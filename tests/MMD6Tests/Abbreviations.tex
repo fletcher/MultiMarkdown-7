@@ -1,0 +1,108 @@
+\input{mmd6-article-leader}
+\def\mytitle{Abbreviations}
+\newacronym{A}{A}{Abbr}
+\newacronym{Ab}{Ab}{Abbr}
+\newacronym{b a r}{b a r}{B A R}
+\newacronym{b-a-r}{b-a-r}{B-A-R}
+\newacronym{b.a.r.}{b.a.r.}{B.A.R.}
+\newacronym{ba'r}{ba'r}{BA'R}
+\newacronym{bar}{bar}{BAR}
+\newacronym{f o o}{f o o}{F O O}
+\newacronym{f-o-o}{f-o-o}{F-O-O}
+\newacronym{f.o.o.}{f.o.o.}{F.O.O.}
+\newacronym{fo'o}{fo'o}{FO'O}
+\newacronym{foo}{foo}{FOO}
+\newacronym{foo bar}{foo bar}{FOO BAR}
+\input{mmd6-article-begin}
+
+\gls{foo} \gls{foo}
+
+\gls{f.o.o.} \gls{f.o.o.}
+
+f-o-o f-o-o
+
+\gls{f o o} \gls{f o o}
+
+fo'o fo'o
+
+5
+
+\gls{bar} \gls{bar}
+
+\gls{b.a.r.} \gls{b.a.r.}
+
+\gls{b-a-r} \gls{b-a-r}
+
+\gls{b a r} \gls{b a r}
+
+\gls{ba'r} \gls{ba'r}
+
+10
+
+\gls{foo bar}
+
+\gls{foo}
+\gls{bar}
+
+\gls{foo} \gls{bar}
+
+\newacronym{baz}{baz}{BAZ}\gls{baz}
+
+\newacronym{ba'z}{ba'z}{BA'Z}\gls{ba'z}
+
+\begin{quote}
+\gls{foo bar}
+\end{quote}
+
+15
+
+\begin{table}[htbp]
+\begin{minipage}{\linewidth}
+\setlength{\tymax}{0.5\linewidth}
+\centering
+\small
+\caption{\gls{foo bar}}
+\label{foobar}
+\begin{tabulary}{\textwidth}{@{}ll@{}} \toprule
+ \gls{foo} & \gls{bar} \\
+\midrule
+
+ \gls{foo} & \gls{bar} \\
+\bottomrule
+
+\end{tabulary}
+\end{minipage}
+\end{table}
+
+\part{foo bar}
+\label{foobar}
+
+\section{foo bar}
+\label{foobar}
+
+\part{foo bar}
+\label{foobar}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{http://foobar.net/}
+\caption{\gls{foo bar}}
+\end{figure}
+
+20
+
+\footnote{\gls{foo} and \gls{bar}}
+
+\footnote{foo and bar}
+
+\begin{itemize}
+\item \gls{foo}
+\item \gls{foo}
+\item \gls{foo}
+\end{itemize}
+
+\gls{Ab} \gls{A} [>a].
+
+Abc abc \gls{Ab}.
+\input{mmd6-article-footer}
+\end{document}

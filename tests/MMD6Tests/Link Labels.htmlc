@@ -1,0 +1,27 @@
+<p>title: Link Labels
+latexconfig: article</p>
+
+<p><a href="http://foo.com/">foo</a>.
+<a href="http://foo.com/"> foo</a>.
+<a href="http://foo.com/">foo </a>.
+<a href="http://foo.com/"> foo </a>.</p>
+
+<p><a href="http://bar.com/">bar</a>.
+<a href="http://bar.com/"> bar</a>.
+<a href="http://bar.com/">bar </a>.
+<a href="http://bar.com/"> bar </a>.</p>
+
+<p><a href="http://baz.com/">baz</a>.
+<a href="http://baz.com/"> baz</a>.
+<a href="http://baz.com/">baz </a>.
+<a href="http://baz.com/"> baz </a>.</p>
+
+<p><a href="http://foobar.com/">foo bar</a>.
+<a href="http://foobar.com/"> foo bar</a>.
+<a href="http://foobar.com/">foo bar </a>.
+<a href="http://foobar.com/"> foo bar </a>.</p>
+
+<p>[foobar].
+[ foobar].
+[foobar ].
+[ foobar ].</p>

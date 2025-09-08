@@ -1,0 +1,67 @@
+\input{mmd6-article-leader}
+\def\mytitle{Table of Contents}
+\input{mmd6-article-begin}
+
+\tableofcontents
+
+\setcounter{tocdepth}{0}
+\tableofcontents
+
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+foo \{\{TOC\}\}
+
+foo \{\{TOC:2\}\}
+
+foo \{\{TOC:2--3\}\}
+
+\begin{verbatim}
+{{TOC}}
+
+{{TOC:2}}
+
+{{TOC:2-3}}
+\end{verbatim}
+
+\chapter{Second Level}
+\label{secondlevel}
+
+\tableofcontents
+
+\part{First Level}
+\label{firstlevel}
+
+\chapter{Second Level b}
+\label{secondlevelb}
+
+\section{Third Level}
+\label{thirdlevel}
+
+\chapter{Second Level c}
+\label{secondlevelc}
+
+\part{First Level b}
+\label{firstlevelb}
+
+\section{Third Level b}
+\label{thirdlevelb}
+
+\chapter{Second level d}
+\label{secondleveld}
+
+\section{Third level d}
+\label{thirdleveld}
+
+\subsection{Fourth level d}
+\label{fourthleveld}
+
+\tableofcontents
+
+\part{First level}
+\label{firstlevele}
+
+\chapter{Second level}
+\label{secondlevele}
+\input{mmd6-article-footer}
+\end{document}

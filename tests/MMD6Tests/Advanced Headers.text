@@ -1,0 +1,38 @@
+title:	Advanced Headers
+latexconfig:	article
+baz:	bat
+
+# foo [bar] #
+
+# foo[bar]
+
+# foo [bar][bat]
+
+# foo [bar] [bat]
+
+# foo [bar][bat][baz]
+
+5
+
+foo [bar]
+=========
+
+# *foo* bar #
+
+*foo
+bar*
+====
+
+[bar]
+
+[foo][bar]
+
+10
+
+# [%baz] #
+
+# foo [bar] # 
+
+# foo [bar] #	
+
+# foo [bar] #    

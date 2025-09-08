@@ -1,0 +1,9 @@
+#!/bin/sh
+
+FILE=$1
+
+
+cp build/main.c src/$FILE.c
+
+perl -pi -e "s/file\.c/$FILE\.c/;" -e "s/file\.h/$FILE\.h/;" src/$FILE.c
+

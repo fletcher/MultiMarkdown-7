@@ -1,0 +1,88 @@
+title:	Abbreviations
+latexconfig:	article
+
+foo foo
+
+f.o.o. f.o.o.
+
+f-o-o f-o-o
+
+f o o f o o
+
+fo'o fo'o
+
+5
+
+[>bar] [>bar]
+
+[>b.a.r.] [>b.a.r.]
+
+[>b-a-r] [>b-a-r]
+
+[>b a r] [>b a r]
+
+[>ba'r] [>ba'r]
+
+10
+
+foo bar
+
+foo
+bar
+
+foo  bar
+
+[>(baz) BAZ]
+
+[>(ba'z) BA'Z]
+
+> foo bar
+
+15
+
+| foo | bar |
+| --- | --- |
+| foo | bar |
+[foo bar]
+
+# foo bar #
+
+### foo bar ###
+
+foo bar
+=======
+
+![foo bar](http://foobar.net/)
+
+20
+
+[^foo and bar]
+
+[^note]
+
+* foo
+* foo
+* foo
+
+Ab [>A] [>a].
+
+Abc abc Ab.
+
+[>foo]: FOO
+[>f.o.o.]: F.O.O.
+[>f-o-o]: F-O-O
+[>f o o]: F O O
+[>fo'o]: FO'O
+
+[>bar]: BAR
+[>b.a.r.]: B.A.R.
+[>b-a-r]: B-A-R
+[>b a r]: B A R
+[>ba'r]: BA'R
+
+[>foo bar]: FOO BAR
+
+[^note]: foo and bar
+
+[>A]: Abbr
+[>Ab]: Abbr

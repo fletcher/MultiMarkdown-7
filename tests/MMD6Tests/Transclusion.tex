@@ -1,0 +1,55 @@
+\input{mmd6-article-leader}
+\def\mytitle{Transclusion}
+\input{mmd6-article-begin}
+
+This text is included in \texttt{foo.txt}.
+
+This should not be transcluded to avoid an infinite loop -- \{\{foo.txt\}\}
+
+This text is included in \texttt{bar.txt}.
+
+This can be transcluded without causing an infinite loop --
+This text is included in \texttt{foo.txt}.
+
+This should not be transcluded to avoid an infinite loop -- \{\{foo.txt\}\}
+
+\begin{verbatim}
+This is a file with no metadata.
+\end{verbatim}
+
+\begin{verbatim}
+This is a file with no metadata.
+\end{verbatim}
+
+\{\{transclusion/bat.*\}\}
+
+This text is included in \texttt{transclusion/baz.txt}.
+
+This should pull in \texttt{bar.txt}, \emph{if} run from the parent directory, since it
+does \emph{not} override the \texttt{transclude base} metadata.
+
+This text is included in \texttt{bar.txt}.
+
+This can be transcluded without causing an infinite loop --
+This text is included in \texttt{foo.txt}.
+
+This should not be transcluded to avoid an infinite loop -- \{\{foo.txt\}\}
+
+\begin{verbatim}
+This is a file with no metadata.
+\end{verbatim}
+
+\begin{verbatim}
+This is a file with no metadata.
+\end{verbatim}
+
+This text is included in \texttt{transclusion/baz2.txt}.
+
+This should pull in \texttt{transclusion/bar.txt}, \emph{even if} run from the parent
+directory, since it overrides the \texttt{transclude base} metadata.
+
+This text is included in \texttt{transclusion\textbackslash{}bar.txt}.
+
+foo can no longer be found -- \{\{foo.txt\}\}
+\input{mmd6-article-footer}
+\end{document}

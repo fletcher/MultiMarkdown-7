@@ -1,0 +1,72 @@
+title:	Reference Links
+latexconfig:	article
+
+[*foo*][bar].
+
+[*foo*][BAR].
+
+[*foo*][foobar].
+
+[*foo*][foo bar].
+
+[*foo*][foo  bar].
+
+5
+
+[*foo*][long].
+
+[foo][].
+
+[foo].
+
+[[foo]][bar]
+
+[[foo]][]
+
+10
+
+[[foo][bar]][]
+
+[foo][bar]
+
+[foo] [bar]
+
+[foo]
+[bar]
+
+[Markdown]
+
+15
+
+[angle1]
+
+[angle2]
+
+[angle3]
+
+[angle4]
+
+[angle5]
+
+20
+
+[angle6]
+
+
+[foo]: http://test.0/
+[bar]:	http://test.1/file.txt
+[BAR]:      http://test.2/
+[foobar]: http://test.3/file.txt	"title"
+[foo bar]: http://test.4/
+[foo  bar]: http://test.5/	""
+[long]: http://test.6/
+"title"
+[Markdown]:	http://daringfireball.net/projects/markdown/  "Daring Fireball:
+Markdown"
+
+[angle1]: <http://test.7/>
+[angle2]:	<http://test.8/>
+[angle3]:  <http://test.9/>
+[angle4]:   <http://test.10/>
+[angle5]:    <http://test.11/>
+[angle6]:     <http://test.12/>

@@ -1,0 +1,41 @@
+<p>title: Advanced Fenced Code Blocks
+latexconfig: article</p>
+
+<p><code>foo *2*</code></p>
+
+<p><code>foo *3*</code></p>
+
+<p><code>foo *4*</code></p>
+
+<p><code>foo *5*</code></p>
+
+<p><code>foo *6*</code></p>
+
+<p>5</p>
+
+<p><code>``
+foo *3*
+``</code></p>
+
+<p><code>```
+foo *4*
+```</code></p>
+
+<p><code>````
+foo *5*
+````</code></p>
+
+<p><code>`````
+foo *6*
+`````</code></p>
+
+<p>10</p>
+
+<p><code>perl
+foo</code></p>
+
+<p><code>perl
+foo</code></p>
+
+<p><code>perl ruby
+foo</code></p>

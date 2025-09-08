@@ -1,0 +1,95 @@
+\input{mmd6-article-leader}
+\def\mytitle{CriticMarkup}
+\input{mmd6-article-begin}
+
+\underline{foo}
+
+\sout{bar}
+
+\sout{foo}\underline{bar}
+
+\cmnote{foo}
+
+\hl{bar}
+
+5
+
+foo\underline{ bar}
+
+foo\sout{ bar}
+
+foo \sout{foo}\underline{bar}
+
+foo \cmnote{bar}
+
+foo \hl{bar}
+
+10
+
+foo\underline{ \textbf{bar}}
+
+foo\sout{ \textbf{bar}}
+
+foo \sout{\textbf{bar}}\underline{\textbf{bar}}
+
+foo \cmnote{\textbf{bar}}
+
+foo \hl{\textbf{bar}}
+
+15
+
+foo \textbf{\underline{bar}}
+
+foo \textbf{\sout{bar}}
+
+foo \textbf{\sout{foo}\underline{bar}}
+
+foo \textbf{\cmnote{bar}}
+
+foo \textbf{\hl{bar}}
+
+20
+
+foo **\underline{bar**}
+
+foo **\sout{bar**}
+
+foo **\sout{foo**}\underline{bar**}
+
+foo **\cmnote{bar**}
+
+foo **\hl{bar**}
+
+25
+
+\texttt{\{++foo++\}}
+
+\texttt{\{-{}-bar-{}-\}}
+
+\texttt{\{\ensuremath{\sim}\ensuremath{\sim}foo\ensuremath{\sim}>bar\ensuremath{\sim}\ensuremath{\sim}\}}
+
+\texttt{\{>>foo<<\}}
+
+\texttt{\{==bar==\}}
+
+30
+
+$${++foo++}$$
+
+$${--bar--}$$
+
+$${~~foo~>bar~~}$$
+
+$${>>foo<<}$$
+
+$${==bar==}$$
+
+35
+
+\underline{foo\underline{ bar}}
+
+\sout{foo\sout{ bar}}
+
+\underline{foo\sout{ bar}}
+\input{mmd6-article-footer}
+\end{document}

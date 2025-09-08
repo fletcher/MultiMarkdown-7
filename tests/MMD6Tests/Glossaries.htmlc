@@ -1,0 +1,45 @@
+<p>title: Glossaries
+latexconfig: article</p>
+
+<p>foo foo</p>
+
+<p>f.o.o. f.o.o.</p>
+
+<p>f-o-o f-o-o</p>
+
+<p>f o o f o o</p>
+
+<p>fo'o fo'o</p>
+
+<p>5</p>
+
+<p><a href="BAR">?bar</a> <a href="BAR">?bar</a></p>
+
+<p><a href="B.A.R.">?b.a.r.</a> <a href="B.A.R.">?b.a.r.</a></p>
+
+<p><a href="B-A-R">?b-a-r</a> <a href="B-A-R">?b-a-r</a></p>
+
+<p>[?b a r] [?b a r]</p>
+
+<p><a href="BA'R">?ba'r</a> <a href="BA'R">?ba'r</a></p>
+
+<p>10</p>
+
+<p>foo bar</p>
+
+<p>foo
+bar</p>
+
+<p>foo bar</p>
+
+<p>[?(baz) BAZ]</p>
+
+<p>[?(ba'z) BA'Z]</p>
+
+<p>15</p>
+
+<p>[?baz]</p>
+
+<p>[?foo bar]: FOO BAR</p>
+
+<pre><code>BAR FOO</code></pre>

@@ -1,0 +1,10 @@
+<p>title: Nested Definition Lists
+latexconfig: article</p>
+
+<p>bat
+: <em>foo</em></p>
+
+<pre><code>bar
+
+	*foo*
+</code></pre>

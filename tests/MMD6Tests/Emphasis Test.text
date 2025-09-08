@@ -1,0 +1,269 @@
+title:  Emphasis Test
+latexconfig:    article
+
+# 1 #
+
+*foo*
+
+*foo**
+
+*foo***
+
+**foo*
+
+**foo**
+
+**foo***
+
+***foo*
+
+***foo**
+
+***foo***
+
+_foo_
+
+_foo__
+
+_foo___
+
+__foo_
+
+__foo__
+
+__foo___
+
+___foo_
+
+___foo__
+
+___foo___
+
+# 2 #
+
+*foo bar*
+
+*foo bar**
+
+*foo bar***
+
+**foo bar*
+
+**foo bar**
+
+**foo bar***
+
+***foo bar*
+
+***foo bar**
+
+***foo bar***
+
+_foo bar_
+
+_foo bar__
+
+_foo bar___
+
+__foo bar_
+
+__foo bar__
+
+__foo bar___
+
+___foo bar_
+
+___foo bar__
+
+___foo bar___
+
+# 3 #
+
+*foo* bar
+
+*foo** bar
+
+*foo*** bar
+
+**foo* bar
+
+**foo** bar
+
+**foo*** bar
+
+***foo* bar
+
+***foo** bar
+
+***foo*** bar
+
+_foo_ bar
+
+_foo__ bar
+
+_foo___ bar
+
+__foo_ bar
+
+__foo__ bar
+
+__foo___ bar
+
+___foo_ bar
+
+___foo__ bar
+
+___foo___ bar
+
+# 4 #
+
+foo *bar*
+
+foo *bar**
+
+foo *bar***
+
+foo **bar*
+
+foo **bar**
+
+foo **bar***
+
+foo ***bar*
+
+foo ***bar**
+
+foo ***bar***
+
+foo _bar_
+
+foo _bar__
+
+foo _bar___
+
+foo __bar_
+
+foo __bar__
+
+foo __bar___
+
+foo ___bar_
+
+foo ___bar__
+
+foo ___bar___
+
+# 5 #
+
+*foo *bar* foo*
+
+*foo **bar** foo*
+
+*foo ***bar*** foo*
+
+**foo *bar* foo**
+
+**foo **bar** foo**
+
+**foo ***bar*** foo**
+
+***foo *bar* foo***
+
+***foo **bar** foo***
+
+***foo ***bar*** foo***
+
+_foo _bar_ foo_
+
+_foo __bar__ foo_
+
+_foo ___bar___ foo_
+
+__foo _bar_ foo__
+
+__foo __bar__ foo__
+
+__foo ___bar___ foo__
+
+___foo _bar_ foo___
+
+___foo __bar__ foo___
+
+___foo ___bar___ foo___
+
+# 6 #
+
+*foo*bar
+
+*foo**bar
+
+*foo***bar
+
+**foo*bar
+
+**foo**bar
+
+**foo***bar
+
+***foo*bar
+
+***foo**bar
+
+***foo***bar
+
+_foo_bar
+
+_foo__bar
+
+_foo___bar
+
+__foo_bar
+
+__foo__bar
+
+__foo___bar
+
+___foo_bar
+
+___foo__bar
+
+___foo___bar
+
+# 7 #
+
+foo*bar*
+
+foo*bar**
+
+foo*bar***
+
+foo**bar*
+
+foo**bar**
+
+foo**bar***
+
+foo***bar*
+
+foo***bar**
+
+foo***bar***
+
+foo_bar_
+
+foo_bar__
+
+foo_bar___
+
+foo__bar_
+
+foo__bar__
+
+foo__bar___
+
+foo___bar_
+
+foo___bar__
+
+foo___bar___
+

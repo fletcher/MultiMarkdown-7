@@ -1,0 +1,5 @@
+title:	Inline Citations
+latexconfig:	article
+
+Inline. [#John Doe. *A Totally Fake Book 1*.  Vanity Press, 2006.]
+[#John Doe. *A Totally Fake Book 2*.  Vanity Press, 2006.]

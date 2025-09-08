@@ -1,0 +1,53 @@
+<p>title: Reference Links
+latexconfig: article</p>
+
+<p><a href="http://test.1/file.txt"><em>foo</em></a>.</p>
+
+<p><a href="http://test.2/"><em>foo</em></a>.</p>
+
+<p><a href="http://test.3/file.txt" title="title"><em>foo</em></a>.</p>
+
+<p><a href="http://test.4/"><em>foo</em></a>.</p>
+
+<p><a href="http://test.4/"><em>foo</em></a>.</p>
+
+<p>5</p>
+
+<p><a href="http://test.6/" title="title"><em>foo</em></a>.</p>
+
+<p><a href="http://test.0/">foo</a>.</p>
+
+<p><a href="http://test.0/">foo</a>.</p>
+
+<p><a href="http://test.1/file.txt"><a href="http://test.0/">foo</a></a></p>
+
+<p><a href="http://test.0/"><a href="http://test.0/">foo</a></a></p>
+
+<p>10</p>
+
+<p><a href="http://test.3/file.txt" title="title"><a href="http://test.1/file.txt">foo</a></a></p>
+
+<p><a href="http://test.1/file.txt">foo</a></p>
+
+<p><a href="http://test.0/">foo</a> <a href="http://test.1/file.txt">bar</a></p>
+
+<p><a href="http://test.0/">foo</a>
+<a href="http://test.1/file.txt">bar</a></p>
+
+<p>[Markdown]</p>
+
+<p>15</p>
+
+<p><a href="http://test.7/">angle1</a></p>
+
+<p><a href="http://test.8/">angle2</a></p>
+
+<p><a href="http://test.9/">angle3</a></p>
+
+<p><a href="http://test.10/">angle4</a></p>
+
+<p><a href="http://test.11/">angle5</a></p>
+
+<p>20</p>
+
+<p><a href="http://test.12/">angle6</a></p>

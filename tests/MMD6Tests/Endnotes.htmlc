@@ -1,0 +1,47 @@
+<p>title: Endnotes
+latexconfig: article</p>
+
+<h1>Reference Style</h1>
+
+<p>foo [^note].</p>
+
+<p>[^note]: This is a footnote.</p>
+
+<p>foo [#cite].</p>
+
+<p>[#cite]: This is a citation.</p>
+
+<p>foo [?<em>glossary</em>].</p>
+
+<p>[?<em>glossary</em>]: This is a glossary term.</p>
+
+<h1>Inline Style</h1>
+
+<p>foo [^This is <em>another</em> footnote.].</p>
+
+<p>foo [#This is <em>another</em> citation.].</p>
+
+<p>foo [?(<em>gls</em>) This is <em>another</em> glossary term.]</p>
+
+<h1>Extended Reference Style</h1>
+
+<p>foo [^note3].</p>
+
+<p>[^note3]: This is a footnote.</p>
+
+<pre><code>&gt; With a *tail* block.
+</code></pre>
+
+<p>foo [#cite3].</p>
+
+<p>[#cite3]: This is a citation.</p>
+
+<pre><code>&gt; With a *tail* block.
+</code></pre>
+
+<p>foo [?glossary3].</p>
+
+<p>[?glossary3]: This is a glossary term.</p>
+
+<pre><code>&gt; With a *tail* block.
+</code></pre>

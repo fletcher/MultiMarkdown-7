@@ -1,0 +1,37 @@
+/**
+
+	@My_Project_Title@ -- @My_Project_Description@
+
+	@file file.c
+
+	@brief 
+
+
+	@author	@My_Project_Author@
+	@bug	
+
+**/
+
+/*
+
+	@My_Project_License_Indented@
+
+*/
+
+
+#include <stdlib.h>
+
+#include "file.h"
+
+
+#ifdef TEST
+#include "CuTest.h"
+#endif
+
+
+#ifdef TEST
+// Remove static keyword to enable this test
+static void Test_void_function(CuTest* tc) {
+	CuAssertIntEquals(tc, 0, 0);
+}
+#endif

@@ -1,0 +1,8 @@
+title:	Automatic Links
+latexconfig:	article
+
+<http://foo.com/>
+
+<foo@bar.com>
+
+<mailto:foo@bar.com>

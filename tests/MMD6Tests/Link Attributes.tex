@@ -1,0 +1,21 @@
+\input{mmd6-article-leader}
+\def\mytitle{Link Attributes}
+\input{mmd6-article-begin}
+
+foo \includegraphics[width=40pt,height=400pt]{http://foo.bar/}
+
+foo \href{http://foo.bar/1}{link}\footnote{\href{http://foo.bar/1}{http://foo.bar/1}}
+
+foo \href{http://foo.bar/2}{link2}\footnote{\href{http://foo.bar/2}{http://foo.bar/2}}
+
+foo \href{http://foo.bar/3}{link3}\footnote{\href{http://foo.bar/3}{http://foo.bar/3}}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,height=400pt]{http://foo.bar/}
+\caption[title]{test}
+\end{figure}
+
+5
+\input{mmd6-article-footer}
+\end{document}

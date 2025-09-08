@@ -1,0 +1,51 @@
+\input{mmd6-article-leader}
+\def\mytitle{Advanced Headers}
+\def\baz{bat}
+\input{mmd6-article-begin}
+
+\part{foo}
+\label{bar}
+
+\part{foo}
+\label{bar}
+
+\part{foo bar (\autoref{bat})}
+\label{foobarbat}
+
+\part{foo bar (\autoref{bar})}
+\label{bat}
+
+\part{foo bar (\autoref{bat})}
+\label{baz}
+
+5
+
+\part{foo}
+\label{bar}
+
+\part{\emph{foo} bar}
+\label{foobar}
+
+\part{\emph{foo
+bar}}
+\label{foobar}
+
+bar (\autoref{bar})
+
+foo (\autoref{bar})
+
+10
+
+\part{bat}
+\label{baz}
+
+\part{foo}
+\label{bar}
+
+\part{foo}
+\label{bar}
+
+\part{foo}
+\label{bar}
+\input{mmd6-article-footer}
+\end{document}

@@ -1,0 +1,57 @@
+title:	Glossaries
+latexconfig:	article
+
+foo foo
+
+f.o.o. f.o.o.
+
+f-o-o f-o-o
+
+f o o f o o
+
+fo'o fo'o
+
+5
+
+[?bar] [?bar]
+
+[?b.a.r.] [?b.a.r.]
+
+[?b-a-r] [?b-a-r]
+
+[?b a r] [?b a r]
+
+[?ba'r] [?ba'r]
+
+10
+
+foo bar
+
+foo
+bar
+
+foo  bar
+
+[?(baz) BAZ]
+
+[?(ba'z) BA'Z]
+
+15
+
+[?baz]
+
+[?foo]: FOO
+[?f.o.o.]: F.O.O.
+[?f-o-o]: F-O-O
+[?f o o]: F O O
+[?fo'o]: FO'O
+
+[?bar]: BAR
+[?b.a.r.]: B.A.R.
+[?b-a-r]: B-A-R
+[?b a r]: B A R
+[?ba'r]: BA'R
+
+[?foo bar]: FOO BAR
+
+	BAR FOO

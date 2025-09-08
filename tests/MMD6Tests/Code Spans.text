@@ -1,0 +1,45 @@
+title:	Code Spans
+latexconfig:	article
+
+`foo`
+
+`` foo ` bar  ``
+
+` `` `
+
+`foo``bar`
+
+``foo`
+
+5
+
+`foo``
+
+``
+foo
+``
+
+`foo   bar
+  baz`
+
+`foo `` bar`
+
+`   foo    `
+
+10
+
+`   foo   bar   `
+
+`*foo*`
+
+`[foo]`
+
+`-<>--&\&---...`
+
+`` `foo` ``
+
+15
+
+`$foo << $bar`
+
+`#foo`

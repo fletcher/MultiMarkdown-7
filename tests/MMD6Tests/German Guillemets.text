@@ -1,0 +1,24 @@
+title:	German Guillemets
+latexconfig:	article
+language:	de
+quoteslanguage:	germanguillemets
+
+'foo'
+
+"foo"
+
+foo's
+
+foo --- bar
+
+foo -- bar
+
+5
+
+foo...
+
+[^foo]
+
+[#bar]
+
+[#bar]: foo

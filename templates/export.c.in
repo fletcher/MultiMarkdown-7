@@ -1,0 +1,846 @@
+/**
+
+	@My_Project_Title@ -- @My_Project_Description@
+
+	@file file.c
+
+	@brief 
+
+
+	@author	@My_Project_Author@
+	@bug	
+
+**/
+
+/*
+
+	@My_Project_License_Indented@
+
+*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "mmd_node.h"
+#include "text_buffer.h"
+#include "read_ctx.h"
+#include "write_ctx.h"
+#include "mmd_span_parser.h"
+#include "il8n.h"
+#include "mmd_scanner.h"
+#include "mmd_token_scanner.h"
+#include "mmd_utilities.h"
+
+#include "export_core.h"
+#include "file.h"
+
+
+#ifdef TEST
+#include "CuTest.h"
+#endif
+
+#define F(i,n) for(int i= 0;i<n;i++)
+
+static void export_FORMAT_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+static void export_FORMAT_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+
+
+static parse_rule rules[256] = {
+	[BLOCK_BLOCKQUOTE]				= { 2, "<blockquote>", 1, DESCEND_CHILD, 1, "</blockquote>" },
+	[BLOCK_CODE_INDENTED]			= { 2, "<pre><code>", 0, DESCEND_LINES_RAW, 0, "</code></pre>" },
+	[BLOCK_FIGURE]					= { 2, NULL, 0, DESCEND_CONTENT, 0, NULL },
+	[BLOCK_HR]						= { 2, "<hr />", 0 },
+	[BLOCK_HTML]					= { 2, NULL, 0, DESCEND_LINES, 0, NULL },
+	[BLOCK_LIST_BULLETED]			= { 2, "<ul>", 0, DESCEND_CHILD, 1, "</ul>" },
+	[BLOCK_LIST_BULLETED_LOOSE]		= { 2, "<ul>", 0, DESCEND_CHILD, 1, "</ul>" },
+	[BLOCK_LIST_ENUMERATED]			= { 2, "<ol>", 0, DESCEND_CHILD, 1, "</ol>" },
+	[BLOCK_LIST_ENUMERATED_LOOSE]	= { 2, "<ol>", 0, DESCEND_CHILD, 1, "</ol>" },
+	[BLOCK_LIST_ITEM]				= { 1, "<li>", 2, DESCEND_CHILD, 0, "</li>" },
+	[BLOCK_PARA]					= { 2, "<p>", 0, DESCEND_CONTENT, 0, "</p>" },
+	[BLOCK_TERM]					= { 2, "<dt>", 0, DESCEND_CONTENT, 0, "</dt>\n", 2 },
+
+	[BLOCK_TABLE_HEADER]			= { 1, "<thead>", 0, DESCEND_CHILD, 1, "</thead>" },
+	[BLOCK_TABLE_SECTION]			= { 2, "<tbody>", 0, DESCEND_CHILD, 1, "</tbody>" },
+	[LINE_TABLE]					= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>" },
+
+	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "~&gt;", 0, DESCEND_CHILD, 0, NULL },
+	[TOKEN_PAIR_CM_ADD]				= { 0, "<ins>", 0, DESCEND_CHILD, 0, "</ins>", 0, 1 },
+	[TOKEN_PAIR_CM_DEL]				= { 0, "<del>", 0, DESCEND_CHILD, 0, "</del>", 0, 1 },
+	[TOKEN_PAIR_CM_COM]				= { 0, "<span class=\"critic comment\">", 0, DESCEND_CHILD, 0, "</span>", 0, 1 },
+	[TOKEN_PAIR_CM_HI]				= { 0, "<mark>", 0, DESCEND_CHILD, 0, "</mark>", 0, 1 },
+
+	[TOKEN_PAIR_BACKTICK]			= { 0, "<code>", 0, PRINT_RAW, 0, "</code>", 0, 1 },
+	[TOKEN_PAIR_EMPH]				= { 0, "<em>", 0, DESCEND_CHILD, 0, "</em>", 0,  1},
+	[TOKEN_PAIR_MATH_A]				= { 0, "<span class=\"math\">\\(", 0, PRINT_RAW, 0, "\\)</span>", 0, 1 },
+	[TOKEN_PAIR_MATH_B]				= { 0, "<span class=\"math\">\\[", 0, PRINT_RAW, 0, "\\]</span>", 0, 1 },
+	[TOKEN_PAIR_STRONG]				= { 0, "<strong>", 0, DESCEND_CHILD, 0, "</strong>", 0,  1},
+	[TOKEN_PAIR_STAR]				= { 0, "*", 0, DESCEND_CHILD, 0, "*", 0, 1 },
+	[TOKEN_PAIR_STAR_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1 },
+	[TOKEN_PAIR_UL]					= { 0, "_", 0, DESCEND_CHILD, 0, "_", 0, 1 },
+	[TOKEN_PAIR_UL_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1 },
+	[TOKEN_PAIR_PAREN]				= { 0, "(", 0, DESCEND_CHILD, 0, NULL, 0, 0 },
+	[TOKEN_PAIR_BRACE]				= { 0, "{", 0, DESCEND_CHILD, 0, NULL, 0, 0 },
+
+	[TOKEN_ANGLE_LEFT]				= { 0, "&lt;", 0, NONE, 0, NULL },
+	[TOKEN_ANGLE_RIGHT]				= { 0, "&gt;", 0, NONE, 0, NULL },
+	[TOKEN_APOSTROPHE]				= { 0, "&#8217;", 0, NONE, 0, NULL },
+	[TOKEN_DASH_M]					= { 0, "&#8212;", 0, NONE, 0, NULL },
+	[TOKEN_DASH_N]					= { 0, "&#8211;", 0, NONE, 0, NULL },
+	[TOKEN_ELLIPSIS]				= { 0, "&#8230;", 0, NONE, 0, NULL },
+	[TOKEN_AMPERSAND]				= { 0, "&amp;", 0, NONE, 0, NULL },
+	[TOKEN_AMPERSAND_LONG]			= { 0, "&amp;", 0, NONE, 0, NULL },
+	[TOKEN_NBSP]					= { 0, "&nbsp;", 0, NONE, 0, NULL },
+	[TOKEN_QUOTE_DOUBLE]			= { 0, "&quot;", 0, NONE },
+	[TOKEN_TEXT_WHITESPACE]			= { 0, " ", 0, NONE, 0, NULL },
+
+	[TOKEN_CM_SUB_DIV]				= { 0, "~&gt;", 0, NONE, 0, NULL },
+	[TOKEN_CM_COM_OPEN]				= { 0, "{&gt;&gt;", 0, NONE, 0, NULL },
+	[TOKEN_CM_COM_CLOSE]			= { 0, "&lt;&lt;}", 0, NONE, 0, NULL },
+};
+
+
+static smart_quote single_quotes[16] = {
+	[QUOTES_ENGLISH]			= { "&#8216;", "&#8217;" },
+	[QUOTES_DUTCH]				= { "&#8216;", "&#8217;" },
+	[QUOTES_SWEDISH]			= { "&#8217;", "&#8217;" },
+	[QUOTES_FRENCH]				= { "&#39;", "&#8217;" },
+	[QUOTES_GERMAN]				= { "&#8218;", "&#8216;" },
+	[QUOTES_GERMAN_GUILLEMETS]	= { "&#8250;", "&#8249;" },
+	[QUOTES_SPANISH]			= { "&#8216;", "&#8217;" },
+};
+
+
+static smart_quote double_quotes[16] = {
+	[QUOTES_ENGLISH]			= { "&#8220;", "&#8221;" },
+	[QUOTES_DUTCH]				= { "&#8222;", "&#8221;" },
+	[QUOTES_SWEDISH]			= { "&#8221;", "&#8221;" },
+	[QUOTES_FRENCH]				= { "&#171;", "&#187;" },
+	[QUOTES_GERMAN]				= { "&#8222;", "&#8220;" },
+	[QUOTES_GERMAN_GUILLEMETS]	= { "&#187;", "&#171;" },
+	[QUOTES_SPANISH]			= { "&#171;", "&#187;" },
+};
+
+
+static smart_quote headers_compat[6] = {
+	{ "<h1>", "</h1>" },
+	{ "<h2>", "</h2>" },
+	{ "<h3>", "</h3>" },
+	{ "<h4>", "</h4>" },
+	{ "<h5>", "</h5>" },
+	{ "<h6>", "</h6>" },
+};
+
+static smart_quote headers[6] = {
+	{ "<h1 id=\"", "</h1>" },
+	{ "<h2 id=\"", "</h2>" },
+	{ "<h3 id=\"", "</h3>" },
+	{ "<h4 id=\"", "</h4>" },
+	{ "<h5 id=\"", "</h5>" },
+	{ "<h6 id=\"", "</h6>" },
+};
+
+
+/// Print each line as is
+static void export_FORMAT_line(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+	switch (n->type) {
+		case LINE_SETEXT_1:
+		case LINE_SETEXT_2:
+			break;
+
+		default:
+			if (n->next) {
+				text_buffer_append_text(out, &text[n->start], (int)n->len);
+			} else {
+				// Don't print final trailing newline
+				text_buffer_append_text(out, &text[n->start], (int)n->len - 1);
+			}
+
+			break;
+	}
+}
+
+
+static void export_FORMAT_lines(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+	while (n) {
+		export_FORMAT_line(n, text, len, out, r, w);
+
+		n = n->next;
+	}
+}
+
+
+/// Print each line as is, but only the "content" portion of each line
+static void export_FORMAT_line_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+	text += l->general.start + l->c_start;
+
+	switch (l->general.type) {
+		case LINE_SETEXT_1:
+		case LINE_SETEXT_2:
+			break;
+
+		case LINE_EMPTY:
+			text_buffer_append_c(out, '\n');
+			break;
+
+		default:
+			if (l->general.next) {
+				text_buffer_append_text(out, text, (int)l->c_len);
+			} else if (l->c_len > 1) {
+				// Don't print final trailing newline
+				text_buffer_append_text(out, text, (int)l->c_len - 1);
+			}
+
+			break;
+	}
+}
+
+
+static void export_FORMAT_lines_content(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+	while (n) {
+		export_FORMAT_line_content((mmd_line_node *) n, text, len, out, r, w);
+
+		n = n->next;
+	}
+}
+
+
+/// Each output format has certain characters that must be escaped in various ways
+static void export_FORMAT_raw_char(char c, text_buffer * out) {
+	switch (c) {
+		case '&':
+			mmd_print_const(out, "&amp;");
+			break;
+
+		case '<':
+			mmd_print_const(out, "&lt;");
+			break;
+
+		case '>':
+			mmd_print_const(out, "&gt;");
+			break;
+
+		case '"':
+			mmd_print_const(out, "&quot;");
+			break;
+
+		default:
+			text_buffer_append_c(out, c);
+			break;
+	}
+}
+
+
+static void export_FORMAT_raw_text(const char * text, size_t len, text_buffer * out) {
+	const char * stop = text + len;
+
+	while (text < stop) {
+		export_FORMAT_raw_char(*text, out);
+
+		text++;
+	}
+}
+
+
+static void export_FORMAT_line_raw_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+	text += l->general.start + l->c_start;
+
+	switch (l->general.type) {
+		case CODE_FENCE_LINE:
+			break;
+
+		case LINE_EMPTY:
+			text_buffer_append_c(out, '\n');
+			break;
+
+		default:
+			export_FORMAT_raw_text(text, l->c_len, out);
+			break;
+	}
+}
+
+
+static void export_FORMAT_lines_raw_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+	while (l) {
+		export_FORMAT_line_raw_content(l, text, len, out, r, w);
+
+		l = (mmd_line_node *) l->general.next;
+	}
+}
+
+
+/// Core function to export link_def
+static int export_FORMAT_link_def(link_def * l, const char * link_text, size_t link_text_len, mmd_node * link_text_token, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	if (l) {
+		return 0;
+	}
+
+	return 1;
+}
+
+
+static int export_link_def_image(link_def * l, const char * link_text, size_t link_text_len, mmd_node * link_text_token, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options, bool is_figure) {
+	if (!l) {
+		return 1;
+	}
+
+	return 0;
+}
+
+
+static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_text_len, mmd_node * link_text_teoken, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options, bool * first) {
+	if (a) {
+		return 0;
+	}
+
+	return 1;
+}
+
+
+static int export_FORMAT_abbreviation_word(const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options, bool * first) {
+	char * id = mmd_strndup(text, &len);
+
+	// Insert '>''
+	char buffer[len + 2];
+	memcpy(&buffer[1], id, len + 1);
+	buffer[0] = '>';
+
+	abbr_def * a = read_ctx_get_abbr(r, buffer);
+	free(id);
+
+	return export_abbr_def(a, text, len, NULL, out, r, w, options, first);
+}
+
+
+static int export_endnote_def(unsigned char type, endnote_def * e, const char * text, size_t len, mmd_node * t, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	if (e) {
+		return 0;
+	}
+
+	return 1;
+}
+
+
+static int export_FORMAT_glossary_word(const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	char * id = mmd_strndup(text, &len);
+
+	// Insert '?'
+	char buffer[len + 2];
+	memcpy(&buffer[1], id, len + 1);
+	buffer[0] = '?';
+
+	endnote_def * e = read_ctx_get_glos(r, buffer);
+	free(id);
+
+	return export_endnote_def(TOKEN_PAIR_BRACKET_GLOSSARY, e, text, len, NULL, out, r, w, options);
+}
+
+
+static format_export fe = {
+	&export_FORMAT_raw_text,
+	&export_FORMAT_tokens,
+	&export_FORMAT_link_def,
+	&export_link_def_image,
+	&export_abbr_def,
+	&export_endnote_def
+};
+
+
+static void export_FORMAT_token(mmd_node ** t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	parse_rule rule = rules[(*t)->type];
+
+	switch ((*t)->type) {
+		case TOKEN_ATX_MARKER:
+		case TOKEN_BLOCKQUOTE_MARKER:
+		case TOKEN_CITATION_MARKER:
+		case TOKEN_DEFLIST_COLON:
+		case TOKEN_GLOSSARY_MARKER:
+		case TOKEN_LIST_MARKER:
+		case TOKEN_FOOTNOTE_MARKER:
+		case OBJECT_REPLACEMENT_CHARACTER:
+		case CODE_FENCE_LINE:
+		case TOKEN_EOF:
+		case TOKEN_MANUAL_LABEL:
+		case TOKEN_TABLE_DIVIDER:
+			// Ignore these completely
+			break;
+
+		// These are custom in order to speed up simple tokens that only have a single constant value.
+		case TOKEN_APOSTROPHE:
+		case TOKEN_DASH_M:
+		case TOKEN_DASH_N:
+		case TOKEN_ELLIPSIS:
+		case TOKEN_NBSP:
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				text_buffer_append_text(out, &text[(*t)->start], (*t)->len);
+			} else {
+				text_buffer_append_text(out, rule.prefix, rule.prefix_len);
+			}
+
+			break;
+
+		case TOKEN_AMPERSAND:
+		case TOKEN_AMPERSAND_LONG:
+		case TOKEN_ANGLE_LEFT:
+		case TOKEN_ANGLE_RIGHT:
+		case TOKEN_TEXT_WHITESPACE:
+			text_buffer_append_text(out, rule.prefix, rule.prefix_len);
+			break;
+
+		case TOKEN_DASH_N_RANGE:
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				text_buffer_append_text(out, &text[(*t)->start], (*t)->len);
+			} else {
+				text_buffer_append_c(out, text[(*t)->start]);
+				mmd_print_const(out, "&#8211;");
+			}
+
+			break;
+
+		case TOKEN_ESCAPED_CHARACTER:
+			export_FORMAT_raw_char(text[(*t)->start + 1], out);
+			break;
+
+		case TOKEN_LINEBREAK:
+			if ((*t)->next) {
+				mmd_print_const(out, "<br />\n");
+				w->padding = 1;
+			}
+
+			break;
+
+		case TOKEN_NL:
+			if ((*t)->next) {
+				mmd_print_const(out, "\n");
+			}
+
+			break;
+
+		case TOKEN_TEXT_ABBREVIATION: {
+			bool first = false;
+
+			if (export_FORMAT_abbreviation_word(&text[(*t)->start], (*t)->len, out, r, w, options, &first)) {
+				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			} else {
+				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+
+				if (first) {
+					mmd_print_const(out, "</abbr>)");
+				} else {
+					mmd_print_const(out, "</abbr>");
+				}
+			}
+		}
+		break;
+
+		case TOKEN_TEXT_GLOSSARY:
+			if (export_FORMAT_glossary_word(&text[(*t)->start], (*t)->len, out, r, w, options)) {
+				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			}
+
+			break;
+
+		case TOKEN_PAIR_CM_SUB_DEL:
+			mmd_print_const(out, "<del>");
+			export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "</del>");
+
+			if ((*t)->next && (*t)->next->type == TOKEN_PAIR_CM_SUB_ADD) {
+				(*t) = (*t)->next;
+				mmd_print_const(out, "<ins>");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "</ins>");
+				(*t) = (*t)->next;
+			}
+
+			break;
+
+		case TOKEN_PAIR_QUOTE_DOUBLE:
+			text_buffer_append_text(out, double_quotes[r->quotes_language].opener, double_quotes[r->quotes_language].opener_len);
+			export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+			text_buffer_append_text(out, double_quotes[r->quotes_language].closer, double_quotes[r->quotes_language].closer_len);
+			(*t) = (*t)->next;
+			break;
+
+		case TOKEN_PAIR_QUOTE_SINGLE:
+			text_buffer_append_text(out, single_quotes[r->quotes_language].opener, single_quotes[r->quotes_language].opener_len);
+			export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+			text_buffer_append_text(out, single_quotes[r->quotes_language].closer, single_quotes[r->quotes_language].closer_len);
+			(*t) = (*t)->next;
+			break;
+
+		case TOKEN_SUPERSCRIPT:
+			if ((*t)->child) {
+				mmd_print_const(out, "<sup>");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "</sup>");
+
+				if ((*t)->next && (*t)->type == (*t)->next->type) {
+					(*t) = (*t)->next;
+				}
+			} else {
+				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			}
+
+			break;
+
+		case TOKEN_SUBSCRIPT:
+			if ((*t)->child) {
+				mmd_print_const(out, "<sub>");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "</sub>");
+
+				if ((*t)->next && (*t)->type == (*t)->next->type) {
+					(*t) = (*t)->next;
+				}
+			} else {
+				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			}
+
+			break;
+
+		case TOKEN_PAIR_BACKTICK:
+			if (!(options & MMD_OPTION_COMPATIBILITY)) {
+				if ((*t)->next && (*t)->next->next && ((*t)->next->next->type == TOKEN_PAIR_BRACE)) {
+					mmd_node * n = (*t)->next->next;
+
+					if (strncmp(&text[n->start], "{=", 2) == 0) {
+						if (raw_filter_matches_format(&text[n->start], FORMAT_HTML)) {
+							// Raw text that should be included for HTML format
+
+							if ((*t)->child) {
+								export_FORMAT_raw_text(&text[(*t)->child->start], (*t)->child->tail->start + (*t)->child->tail->len - (*t)->child->start, out);
+							}
+
+						}
+
+						(*t) = n->next;
+						break;
+					}
+				}
+			}
+
+			text_buffer_append_text(out, rule.prefix, rule.prefix_len);
+
+			if ((*t)->child) {
+				export_FORMAT_raw_text(&text[(*t)->child->start], (*t)->child->tail->start + (*t)->child->tail->len - (*t)->child->start, out);
+			}
+
+			text_buffer_append_text(out, rule.suffix, rule.suffix_len);
+
+			(*t) = (*t)->next;
+
+			break;
+
+		case TOKEN_PAIR_BRACKET_EMPTY:
+		case TOKEN_PAIR_BRACKET_NOT_CITED:
+			if (export_token_pair(text, len, t, out, r, w, false, &fe, options)) {
+				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			}
+
+			break;
+
+		case TOKEN_PAIR_BRACKET:
+		case TOKEN_PAIR_BRACKET_IMAGE:
+		case TOKEN_PAIR_BRACKET_ABBREVIATION:
+		case TOKEN_PAIR_BRACKET_CITATION:
+		case TOKEN_PAIR_BRACKET_FOOTNOTE:
+		case TOKEN_PAIR_BRACKET_GLOSSARY:
+		case TOKEN_PAIR_BRACKET_VARIABLE:
+			if (w->in_endnote && w->skip_endnote_label) {
+				// Skip label and colon
+				(*t) = (*t)->next;
+				w->skip_endnote_label = false;
+			} else {
+				if (export_token_pair(text, len, t, out, r, w, false, &fe, options)) {
+					// Plain [text] since parsing failed
+
+					switch ((*t)->type) {
+						case TOKEN_PAIR_BRACKET_ABBREVIATION:
+						case TOKEN_PAIR_BRACKET_CITATION:
+						case TOKEN_PAIR_BRACKET_FOOTNOTE:
+						case TOKEN_PAIR_BRACKET_GLOSSARY:
+						case TOKEN_PAIR_BRACKET_VARIABLE:
+							// We'll need to print this character
+							(*t)->child->type = TOKEN_TEXT;
+							break;
+
+						default:
+							break;
+					}
+
+					text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+					export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				}
+			}
+
+			break;
+
+		case TOKEN_PAIR_ANGLE:
+			if ((*t)->child && scan_url(&text[(*t)->child->start]) == (*t)->next->start - (*t)->start - (*t)->len) {
+				// This is an "automatic" link, e.g. <http://...>
+				mmd_print_const(out, "<a href=\"");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "\">");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "</a>");
+				(*t) = (*t)->next;
+			} else if ((*t)->child && scan_email(&text[(*t)->child->start]) == (*t)->next->start - (*t)->start - (*t)->len) {
+				// This is an "automatic" mailto, e.g. <mailto:...>
+				mmd_print_const(out, "<a href=\"");
+
+				if (strncmp("mailto:", &text[(*t)->child->start], 7)) {
+					mmd_print_const(out, "mailto:");
+				}
+
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "\">");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "</a>");
+				(*t) = (*t)->next;
+			} else if (scan_html(&text[(*t)->start])) {
+				text_buffer_append_text(out, &text[(*t)->start], (int)((*t)->next->start + (*t)->next->len - (*t)->start));
+				(*t) = (*t)->next;
+			} else {
+				// This is plain text that happens to be wrapped in <...>
+				// <html> is handled elsewhere
+				mmd_print_const(out, "&lt;");
+				export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+			}
+
+			break;
+
+		case TOKEN_TABLE_CELL:
+			pad(out, 1, w);
+
+			if (w->in_table_header) {
+				mmd_print_const(out, "\t<th");
+			} else {
+				mmd_print_const(out, "\t<td");
+			}
+
+			// Handle column alignment
+			switch (w->table_alignment[w->table_col_count++]) {
+				case 'r':
+				case 'R':
+					mmd_print_const(out, " style=\"text-align:right;\"");
+					break;
+
+				case 'c':
+				case 'C':
+					mmd_print_const(out, " style=\"text-align:center;\"");
+					break;
+
+				case 'l':
+				case 'L':
+					mmd_print_const(out, " style=\"text-align:left;\"");
+					break;
+			}
+
+			// Handle colspan
+			if ((*t)->next && (*t)->next->type == TOKEN_TABLE_DIVIDER) {
+				if ((*t)->next->len > 1) {
+					text_buffer_append_printf(out, " colspan=\"%d\"", (*t)->next->len);
+				}
+			}
+
+			mmd_print_const(out, ">");
+			w->padding = 0;
+
+			// Print cell contents
+			export_FORMAT_tokens((*t)->child, text, (*t)->len, out, r, w, options);
+
+			if (w->in_table_header) {
+				mmd_print_const(out, "</th>");
+			} else {
+				mmd_print_const(out, "</td>");
+			}
+
+			break;
+
+		default:
+			if (rule.prefix) {
+				text_buffer_append_text(out, rule.prefix, rule.prefix_len);
+				w->padding = rule.pre_descent_padding;
+			}
+
+			if (rule.descent & DESCEND_CHILD) {
+				if ((*t)->child) {
+					export_FORMAT_tokens((*t)->child, text, len, out, r, w, options);
+				}
+			}
+
+			if (rule.descent & DESCEND_CONTENT) {
+			}
+
+			if (rule.descent & PRINT_RAW) {
+				if ((*t)->child) {
+					export_FORMAT_raw_text(&text[(*t)->child->start], (*t)->child->tail->start + (*t)->child->tail->len - (*t)->child->start, out);
+				}
+			}
+
+			if (rule.descent == VERBATIM) {
+				// Default to printing token
+				text_buffer_append_text(out, &text[(*t)->start], (*t)->len);
+			}
+
+			if (rule.suffix) {
+				text_buffer_append_text(out, rule.suffix, rule.suffix_len);
+			}
+
+			F(i, rule.skip) {
+				(*t) = (*t)->next;
+			}
+
+			w->padding = 0;
+			break;
+	}
+}
+
+
+static void export_FORMAT_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	while (t) {
+		export_FORMAT_token(&t, text, len, out, r, w, options);
+
+		t = t->next;
+	}
+}
+
+
+static void export_FORMAT_block(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	parse_rule rule = rules[b->type];
+
+	switch (b->type) {
+		case BLOCK_DEF_ABBREVIATION:
+		case BLOCK_DEF_CITATION:
+		case BLOCK_DEF_FOOTNOTE:
+		case BLOCK_DEF_GLOSSARY:
+		case BLOCK_DEF_LINK:
+		case BLOCK_EMPTY:
+		case BLOCK_META:
+			// Ignore these completely
+			break;
+
+		case BLOCK_LIST_ITEM_TIGHT:
+			// Custom because we need to handle the first child differently
+			pad(out, 1, w);
+			mmd_print_const(out, "<li>");
+			w->padding = 2;
+			export_format_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+			w->padding = 0;
+			export_format_blocks(b->child->next, &text[b->start], b->len, out, r, w, options);
+			mmd_print_const(out, "</li>");
+			w->padding = 0;
+			break;
+
+		default:
+			pad(out, rule.padding, w);
+
+			if (rule.prefix) {
+				text_buffer_append_text(out, rule.prefix, rule.prefix_len);
+				w->padding = rule.pre_descent_padding;
+			}
+
+			switch (b->type) {
+				case LINE_TABLE:
+					w->table_col_count = 0;
+					break;
+
+				case BLOCK_FIGURE:
+					w->in_figure = true;
+					break;
+
+				case BLOCK_TABLE_HEADER:
+					w->in_table_header = true;
+					break;
+
+				case BLOCK_BLOCKQUOTE:
+				case BLOCK_LIST_BULLETED:
+				case BLOCK_LIST_BULLETED_LOOSE:
+				case BLOCK_LIST_ENUMERATED:
+				case BLOCK_LIST_ENUMERATED_LOOSE:
+					w->in_recursive = true;
+					break;
+			}
+
+			if (rule.descent & DESCEND_CHILD) {
+				export_FORMAT_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+			}
+
+			if (rule.descent & DESCEND_CONTENT) {
+				export_FORMAT_tokens(b->content, &text[b->start], b->len, out, r, w, options);
+			}
+
+			if (rule.descent & DESCEND_LINES) {
+				if (w->in_recursive) {
+					export_FORMAT_lines_content(b->child, &text[b->start], b->len, out, r, w);
+				} else {
+					export_FORMAT_lines(b->child, &text[b->start], b->len, out, r, w);
+				}
+			}
+
+			if (rule.descent & DESCEND_LINES_RAW) {
+				export_FORMAT_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+			}
+
+			if (rule.descent & PRINT_RAW) {
+
+			}
+
+			switch (b->type) {
+				case BLOCK_FIGURE:
+					w->in_figure = false;
+					break;
+
+				case BLOCK_TABLE_HEADER:
+					w->in_table_header = false;
+					break;
+
+				case BLOCK_BLOCKQUOTE:
+				case BLOCK_LIST_BULLETED:
+				case BLOCK_LIST_BULLETED_LOOSE:
+				case BLOCK_LIST_ENUMERATED:
+				case BLOCK_LIST_ENUMERATED_LOOSE:
+					w->in_recursive = false;
+					break;
+			}
+
+			pad(out, rule.pad_post_descent, w);
+
+			if (rule.suffix) {
+				text_buffer_append_text(out, rule.suffix, rule.suffix_len);
+			}
+
+			w->padding = rule.post_suffix_padding;
+			break;
+	}
+}
+
+
+static void export_FORMAT_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	while (b) {
+		if (w->skip_blocks) {
+			w->skip_blocks--;
+		} else {
+			export_FORMAT_block(b, text, len, out, r, w, options);
+		}
+
+		b = b->next;
+	}
+}
+
+
+void export_FORMAT(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options) {
+	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
+	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
+	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
+	precalculate_quotes(headers, sizeof(headers) / sizeof(headers[0]));
+	precalculate_quotes(headers_compat, sizeof(headers_compat) / sizeof(headers_compat[0]));
+
+	write_ctx * w = write_ctx_new();
+
+	export_FORMAT_blocks(b, text, len, out, r, w, options);
+
+	pad(out, 1, w);
+	write_ctx_free(w);
+}

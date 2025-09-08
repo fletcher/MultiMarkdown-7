@@ -1,0 +1,26 @@
+/**
+
+	@My_Project_Title@ -- @My_Project_Description@
+
+	@file file.h
+
+	@brief 
+
+
+	@author	@My_Project_Author@
+	@bug	
+
+**/
+
+/*
+
+	@My_Project_License_Indented@
+
+*/
+
+
+#ifndef FILE_@My_Project_Title_Caps@_H
+#define FILE_@My_Project_Title_Caps@_H
+
+
+#endif

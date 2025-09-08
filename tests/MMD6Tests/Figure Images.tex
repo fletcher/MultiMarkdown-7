@@ -1,0 +1,46 @@
+\input{mmd6-article-leader}
+\def\mytitle{Figure Images}
+\input{mmd6-article-begin}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,height=20pt]{http://foo.bar/}
+\caption[foo]{foo}
+\label{foo}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,height=20pt]{http://foo.bar/}
+\caption[foo]{\emph{bar}}
+\label{foo}
+\end{figure}
+
+\includegraphics[width=40pt,height=20pt]{http://foo.bar/} bar
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,height=20pt]{http://foo.bar/}
+\caption[foo]{\emph{foo}}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,keepaspectratio,height=0.75\textheight]{http://foo.bar/}
+\caption[foo]{\emph{foo}}
+\end{figure}
+
+5
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,keepaspectratio,height=0.75\textheight]{http://foo.bar/}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,keepaspectratio,height=0.75\textheight]{http://foo.bar/}
+\caption[empty caption with title]{}
+\end{figure}
+\input{mmd6-article-footer}
+\end{document}

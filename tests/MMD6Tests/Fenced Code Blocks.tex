@@ -1,0 +1,82 @@
+\input{mmd6-article-leader}
+\def\mytitle{Fenced Code Blocks}
+\input{mmd6-article-begin}
+
+\begin{verbatim}
+*foo*
+\end{verbatim}
+
+\begin{verbatim}
+*foo*
+
+bar
+\end{verbatim}
+
+\begin{itemize}
+\item foo
+
+\begin{verbatim}
+*foo*
+\end{verbatim}
+
+\item foo
+
+\begin{verbatim}
+*foo*
+
+bar
+\end{verbatim}
+
+\end{itemize}
+
+\begin{verbatim}
+\begin{equation}\nabla \times \mathbf{E} = - \frac{\partial \mathbf{B}}{\partial t}\end{equation}
+\end{verbatim}
+
+\begin{lstlisting}[language=tex]
+\begin{equation}\nabla \times \mathbf{E} = - \frac{\partial \mathbf{B}}{\partial t}\end{equation}
+\end{lstlisting}
+
+5
+
+\begin{verbatim}
+<p>foo</p>
+\end{verbatim}
+
+\begin{verbatim}
+foo
+
+	bar
+
+  bar
+
+    foo
+\end{verbatim}
+
+\begin{verbatim}
+* foo
++  bar
+-   baz
+*    foo
++     bar
+-      baz
+
+1.   foo
+2.    bar
+3.     baz
+\end{verbatim}
+
+\begin{verbatim}
+# foo
+##	bar
+### baz #
+####	foo	##  
+#####		bar		##	
+###### baz#
+\end{verbatim}
+
+\begin{verbatim}
+foo
+\end{verbatim}
+\input{mmd6-article-footer}
+\end{document}

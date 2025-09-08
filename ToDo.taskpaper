@@ -1,0 +1,86 @@
+Development:
+	- integration testing @done
+	- Add Hebrew integration test @done
+
+Core Features:
+	- Inline links @done
+	- Reference links @done
+	- Remove trailing header hash tags @done
+	- Images @done
+	- Intraword '*' support @done
+	- Link definition names - letters, numbers, spaces, punctuation, but case *in*sensitive @done
+
+MultiMarkdown Features:
+	- Metadata @done
+	- Footnotes @done
+	- Glossary @done
+	- Citation @done
+	- Abbreviations @done
+	- Rewrite Aho-Corasick @done
+	- Full text search implementation for abbreviations @done
+	- Full text search implementation for glossary terms @done
+	- Variables @done
+	- CriticMarkup @done
+	- Header labels @done
+	- Math @done
+	- Superscript @done
+	- Subscript @done
+	- TOC @done
+	- CriticMarkup support @done
+	- Link/Image attributes @done
+	- Header/Footer metadata @done
+	- Transclusion @done
+	- CLI for metadata extraction (limited parsing to only first block, or first blank line?) @done
+	- Citations @done
+	- Glossary @done
+	- Endnotes @done
+	- Footnotes @done
+	- BibTeX @done
+	- Cross-References @done
+	- Tables @done
+		Could write as a very short parent parsing function that only checks for metadata block type?
+	- compatibility mode fails to reject inline links with attributes
+	- Add CriticMarkup accept/reject support @done
+	- Read OPML
+	- Read ITMZ
+
+UX:
+	- Review command line actions
+	- Review command line options
+
+Performance:
+	- Use d_string (or revised version of it) for output @done
+	- Test with UTF-16 input
+	- Fix advanced emph/strong parsing and codify rules @done
+	- Refactor "next mmd_line_node" to be a + sizeof() rather than *next dereference
+	- Better to address EOF line match offsets in the re2c regex rather than checking for type == 0 for EVERY line token in the code.
+	- Can I grab ATX Header names as part of the parsing process to avoid having to go back and parse again?  Seems like this could be sped up greatly @done
+	- Remove mmd_node_free and mmd_node_tree_free() @done
+	- mmd_line_scan() is performance hit in recursive blocks (e.g. blockquotes)
+		It goes to the end of the line, which is great for typing a line and finding the end at the same time, but unnecessary in recursive line typing...
+
+Code:
+	- Remove dead code @done
+	- Look into \pN for re2c (Unicode character class with one letter name) vs \p{Greek}
+	- Add more command line options?
+		- Force snippet
+		- Force complete
+		- Disable smart quotes (or part of compatibility mode?)
+	- Fix memory leak in mmd_scan_metadata_lines() by using vector for line nodes @done
+	- Fix memory handling with recursive path variables
+	- Decide about how to handle recursive footnotes and other endnote structures. Stack like transclusion? Disallow altogether? Buyer beware?
+	- Clean up glossary code @done
+	- Clean up abbreviation code @done
+
+Export Formats:
+	- LaTeX @done
+	- Beamer/Memoir
+	- OPML
+	- ITMZ
+	- OpenDocument
+	- Word
+	- Powerpoint
+	- Pages
+	- Keynote
+	- EPUB
+	- Textbundle

@@ -1,0 +1,23 @@
+title:	Spanish
+latexconfig:	article
+language:	es
+
+'foo'
+
+"foo"
+
+foo's
+
+foo --- bar
+
+foo -- bar
+
+5
+
+foo...
+
+[^foo]
+
+[#bar]
+
+[#bar]: foo

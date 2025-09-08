@@ -1,0 +1,66 @@
+\input{mmd6-article-leader}
+\def\mytitle{Link Variations}
+\input{mmd6-article-begin}
+
+\chapter{Foo Bar}
+\label{foobar}
+
+Link to Foo Bar (\autoref{foobar}).
+
+Link to foo bar (\autoref{foobar}).
+
+Link to foobar (\autoref{foobar}).
+
+Link to Foo Bar (\autoref{foobar}).
+
+Link to  (\autoref{foobar}).
+
+5
+
+Link to Foo Bar (\autoref{foobar}).
+
+Link to foo bar (\autoref{foobar}).
+
+Link to foobar (\autoref{foobar}).
+
+Link to Foo (\autoref{foobar}).
+
+Link to Foo (\autoref{foobar}).
+
+10
+
+Link to Foo (\autoref{foobar}).
+
+\href{http://example.com/?bar=foo&foo=bar}{\& link}\footnote{\href{http://example.com/?bar=foo&foo=bar}{http://example.com/?bar=foo\&foo=bar}}
+
+\href{http://example.com/%25%20link}{`\%' Link}\footnote{\href{http://example.com/%25%20link}{http://example.com/\%25\%20link}}
+
+\href{http://example.com/#foo}{`\#' link}\footnote{\href{http://example.com/#foo}{http://example.com/\#foo}}
+
+\href{http://example.com/_foo}{\_ link}\footnote{\href{http://example.com/_foo}{http://example.com/\_foo}}
+
+15
+
+\href{http://example.com/~foo}{\ensuremath{\sim} link}\footnote{\href{http://example.com/~foo}{http://example.com/\ensuremath{\sim}foo}}
+
+Link to \href{http://Bar-Foo/}{Bar Foo}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
+
+Link to \href{http://bar-foo/}{bar foo}\footnote{\href{http://bar-foo/}{http://bar-foo/}}.
+
+Link to \href{http://barfoo/}{barfoo}\footnote{\href{http://barfoo/}{http://barfoo/}}.
+
+Link to \href{http://Bar-Foo/}{Bar Foo}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
+
+20
+
+Link to \href{http://bar-foo/}{bar foo}\footnote{\href{http://bar-foo/}{http://bar-foo/}}.
+
+Link to \href{http://barfoo/}{barfoo}\footnote{\href{http://barfoo/}{http://barfoo/}}.
+
+Link to \href{http://Bar-Foo/}{Bar}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
+
+Link to \href{http://bar-foo/}{Bar}\footnote{\href{http://bar-foo/}{http://bar-foo/}}.
+
+Link to \href{http://barfoo/}{Bar}\footnote{\href{http://barfoo/}{http://barfoo/}}.
+\input{mmd6-article-footer}
+\end{document}

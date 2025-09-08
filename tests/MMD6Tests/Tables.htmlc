@@ -1,0 +1,73 @@
+<p>title: Tables
+latexconfig: article</p>
+
+<p>| foo | bar |<br />
+-----+ | :--:+ |<br />
+| <em>foo</em> | <em>bar</em> |<br />
+| <strong>foo bar</strong> ||</p>
+
+<p>| foo1 | bar1 |
+| :---+ | ---:+ |
+<em>foo</em> | <em>bar</em> |
+| <strong>foo bar</strong> ||</p>
+
+<p>| foo2 | bar2 |
+| :---- | ----:
+<em>foo</em> | <em>bar</em> |
+| <strong>foo bar</strong> ||</p>
+
+<p>| foo3 | bar3 |<br />
+<em>foo</em> | <em>bar</em> |<br />
+| <strong>foo bar</strong> ||</p>
+
+<p>| foo4 | bar4 |<br />
+<em>foo</em> | <em>bar</em> |<br />
+| <strong>foo bar</strong> ||</p>
+
+<p>5</p>
+
+<p>| foo5 | bar5 |<br />
+| :---- | ------:<br />
+<em>foo</em> | <em>bar</em> |<br />
+| <strong>foo bar</strong> | ||</p>
+
+<p>| foo6 | bar6 |
+| :---- | ----: |
+<em>foo</em> | <em>bar</em> |
+| <strong>foo bar</strong> ||</p>
+
+<p>| foo | bar |
+--- | ---<br />
+| foo | bar |
+[<em>caption</em>][bar]</p>
+
+<p>| foo | bar |
+| --- | --- |
+| foo | bar |
+[<em>caption</em>]</p>
+
+<p>[<em>foo</em>][bar]
+| foo | bar |
+| --- | --- |
+| foo | bar |</p>
+
+<p>6</p>
+
+<p>--- | --- |
+| foo | bar |
+[<em>caption</em>][bar]</p>
+
+<ul>
+<li><p>foo</p>
+
+<p>| foo | bar |<br />
+| -----+ | :--:+ |<br />
+| <em>foo</em> | <em>bar</em> |<br />
+| <strong>foo bar</strong> ||</p></li>
+</ul>
+
+<p>| bat ||
+| foo | bar |
+| --- | --- |
+| foo | bar |
+[<strong>no trailing newline</strong>]</p>

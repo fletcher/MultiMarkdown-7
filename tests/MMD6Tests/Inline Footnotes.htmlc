@@ -1,0 +1,12 @@
+<p>title: Inline Footnotes
+latexconfig: article</p>
+
+<p>Inline.[^foo <em>bar</em>]</p>
+
+<p>Inline.[^foo <em>bar</em>
+<a href="/bar">foo</a>
+<strong>foo</strong>.]</p>
+
+<p>Inline.[^foo <em>bar</em>]</p>
+
+<p>Inline.[^foo][^foo][^bar]</p>

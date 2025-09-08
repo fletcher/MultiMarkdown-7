@@ -1,0 +1,85 @@
+title:	Smart Quotes
+latexconfig:	article
+
+'foo'
+
+"foo"
+
+"foo" 'bar'
+
+'foo' "bar"
+
+'.foo'
+
+5
+
+\"foo\".
+
+\'foo\'.
+
+`foo'
+
+``foo''
+
+\```foo'\''
+
+10
+
+"" foo ""?
+
+'' foo ''?
+
+isn't
+
+foo -- bar
+
+foo --- bar
+
+15
+
+1-2
+
+1--2
+
+1---3
+
+`--`
+
+`---`
+
+20
+
+...
+
+. . .
+
+`...`
+
+`. . .`
+
+l'année l'année
+
+25
+
+l'été l'année
+
+l'été l'été
+
+l'année l'été
+
+foo's and bar's
+
+`foo`'s and `bar`'s
+
+30
+
+foo('bar')
+
+foo("bar")
+
+foo-bar
+
+* foo-bar
+* foo-bar
+
+How wide a printer? 24"? 48"? 54"?

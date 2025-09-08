@@ -1,0 +1,76 @@
+<p>title: Abbreviations
+latexconfig: article</p>
+
+<p>foo foo</p>
+
+<p>f.o.o. f.o.o.</p>
+
+<p>f-o-o f-o-o</p>
+
+<p>f o o f o o</p>
+
+<p>fo'o fo'o</p>
+
+<p>5</p>
+
+<p><a href="BAR">&gt;bar</a> <a href="BAR">&gt;bar</a></p>
+
+<p><a href="B.A.R.">&gt;b.a.r.</a> <a href="B.A.R.">&gt;b.a.r.</a></p>
+
+<p><a href="B-A-R">&gt;b-a-r</a> <a href="B-A-R">&gt;b-a-r</a></p>
+
+<p>[&gt;b a r] [&gt;b a r]</p>
+
+<p><a href="BA'R">&gt;ba'r</a> <a href="BA'R">&gt;ba'r</a></p>
+
+<p>10</p>
+
+<p>foo bar</p>
+
+<p>foo
+bar</p>
+
+<p>foo bar</p>
+
+<p>[&gt;(baz) BAZ]</p>
+
+<p>[&gt;(ba'z) BA'Z]</p>
+
+<blockquote>
+<p>foo bar</p>
+</blockquote>
+
+<p>15</p>
+
+<p>| foo | bar |
+| --- | --- |
+| foo | bar |
+[foo bar]</p>
+
+<h1>foo bar</h1>
+
+<h3>foo bar</h3>
+
+<h1>foo bar</h1>
+
+<p><img src="http://foobar.net/" alt="foo bar" /></p>
+
+<p>20</p>
+
+<p>[^foo and bar]</p>
+
+<p>[^note]</p>
+
+<ul>
+<li>foo</li>
+<li>foo</li>
+<li>foo</li>
+</ul>
+
+<p>Ab <a href="Abbr">&gt;A</a> [&gt;a].</p>
+
+<p>Abc abc Ab.</p>
+
+<p>[&gt;foo bar]: FOO BAR</p>
+
+<p>[^note]: foo and bar</p>

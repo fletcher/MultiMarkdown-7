@@ -1,0 +1,15 @@
+#!/bin/sh
+
+FILE=$1
+
+
+cp build/export.c src/export/$FILE.c
+
+perl -pi -e "s/file\.c/$FILE\.c/;" -e "s/file\.h/$FILE\.h/;" src/export/$FILE.c
+perl -pi -e "s/_FORMAT/_$FILE/;"  src/export/$FILE.c
+
+
+cp build/export.h src/export/$FILE.h
+
+perl -pi -e "s/file\.c/$FILE\.c/;" -e "s/file\.h/$FILE\.h/;" src/export/$FILE.h
+perl -pi -e "s/_FORMAT/_$FILE/;" -e "s/FORMAT\_/\U$FILE\_/;" src/export/$FILE.h

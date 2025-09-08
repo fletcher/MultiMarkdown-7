@@ -1,0 +1,47 @@
+title:			Endnotes
+latexconfig:	article
+
+# Reference Style #
+
+foo [^note].
+
+[^note]: This is a footnote.
+
+foo [#cite].
+
+[#cite]: This is a citation.
+
+foo [?*glossary*].
+
+[?*glossary*]: This is a glossary term.
+
+
+
+# Inline Style #
+
+foo [^This is *another* footnote.].
+
+foo [#This is *another* citation.].
+
+foo [?(*gls*) This is *another* glossary term.]
+
+
+# Extended Reference Style #
+
+foo [^note3].
+
+[^note3]: This is a footnote.
+
+	> With a *tail* block.
+
+foo [#cite3].
+
+[#cite3]: This is a citation.
+
+	> With a *tail* block.
+
+foo [?glossary3].
+
+[?glossary3]: This is a glossary term.
+
+	> With a *tail* block.

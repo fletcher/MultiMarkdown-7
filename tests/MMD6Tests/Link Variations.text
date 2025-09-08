@@ -1,0 +1,67 @@
+title:	Link Variations
+latexconfig:	article
+
+## Foo Bar ##
+
+Link to [Foo Bar].
+
+Link to [foo bar].
+
+Link to [foobar].
+
+Link to [Foo Bar](#foobar).
+
+Link to [](#foobar).
+
+5
+
+Link to [Foo Bar][].
+
+Link to [foo bar][].
+
+Link to [foobar][].
+
+Link to [Foo][Foo Bar].
+
+Link to [Foo][foo bar].
+
+10
+
+Link to [Foo][foobar].
+
+[& link](http://example.com/?bar=foo&foo=bar)
+
+['%' Link](http://example.com/%25%20link)
+
+['#' link](http://example.com/#foo)
+
+[_ link](http://example.com/_foo)
+
+15
+
+[~ link](http://example.com/~foo)
+
+Link to [Bar Foo].
+
+Link to [bar foo].
+
+Link to [barfoo].
+
+Link to [Bar Foo][].
+
+20
+
+Link to [bar foo][].
+
+Link to [barfoo][].
+
+Link to [Bar][Bar Foo].
+
+Link to [Bar][bar foo].
+
+Link to [Bar][barfoo].
+
+
+[Bar Foo]: http://Bar-Foo/
+[bar foo]: http://bar-foo/
+[barfoo]: http://barfoo/

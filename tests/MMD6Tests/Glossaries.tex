@@ -1,0 +1,57 @@
+\input{mmd6-article-leader}
+\def\mytitle{Glossaries}
+\longnewglossaryentry{b a r}{name=b a r}{B A R}
+\longnewglossaryentry{b-a-r}{name=b-a-r}{B-A-R}
+\longnewglossaryentry{b.a.r.}{name=b.a.r.}{B.A.R.}
+\longnewglossaryentry{ba'r}{name=ba'r}{BA'R}
+\longnewglossaryentry{bar}{name=bar}{BAR}
+\longnewglossaryentry{f o o}{name=f o o}{F O O}
+\longnewglossaryentry{f-o-o}{name=f-o-o}{F-O-O}
+\longnewglossaryentry{f.o.o.}{name=f.o.o.}{F.O.O.}
+\longnewglossaryentry{fo'o}{name=fo'o}{FO'O}
+\longnewglossaryentry{foo}{name=foo}{FOO}
+\longnewglossaryentry{foo bar}{name=foo bar}{FOO BAR
+
+BAR FOO}
+\input{mmd6-article-begin}
+
+\gls{foo} \gls{foo}
+
+\gls{f.o.o.} \gls{f.o.o.}
+
+f-o-o f-o-o
+
+\gls{f o o} \gls{f o o}
+
+fo'o fo'o
+
+5
+
+\gls{bar} \gls{bar}
+
+\gls{b.a.r.} \gls{b.a.r.}
+
+\gls{b-a-r} \gls{b-a-r}
+
+\gls{b a r} \gls{b a r}
+
+\gls{ba'r} \gls{ba'r}
+
+10
+
+\gls{foo bar}
+
+\gls{foo}
+\gls{bar}
+
+\gls{foo} \gls{bar}
+
+\newglossaryentry{baz}{name=baz, description={BAZ}}\gls{baz}
+
+\newglossaryentry{ba'z}{name=ba'z, description={BA'Z}}\gls{ba'z}
+
+15
+
+[?baz]
+\input{mmd6-article-footer}
+\end{document}

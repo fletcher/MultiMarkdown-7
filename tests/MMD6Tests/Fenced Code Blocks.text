@@ -1,0 +1,75 @@
+title:	Fenced Code Blocks
+latexconfig:	article
+
+```
+*foo*
+```
+
+````
+*foo*
+
+bar
+````
+
+* foo
+
+	```
+	*foo*
+	```
+
+* foo
+
+	````
+	*foo*
+
+	bar
+	````
+
+```
+\begin{equation}\nabla \times \mathbf{E} = - \frac{\partial \mathbf{B}}{\partial t}\end{equation}
+```
+
+```tex
+\begin{equation}\nabla \times \mathbf{E} = - \frac{\partial \mathbf{B}}{\partial t}\end{equation}
+```
+
+5
+
+```
+<p>foo</p>
+```
+
+```
+foo
+
+	bar
+
+  bar
+
+    foo
+```
+
+```
+* foo
++  bar
+-   baz
+*    foo
++     bar
+-      baz
+
+1.   foo
+2.    bar
+3.     baz
+```
+
+```
+# foo
+##	bar
+### baz #
+####	foo	##  
+#####		bar		##	
+###### baz#
+```
+
+```
+foo

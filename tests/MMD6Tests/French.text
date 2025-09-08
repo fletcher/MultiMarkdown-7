@@ -1,0 +1,23 @@
+title:	French
+latexconfig:	article
+language:	fr
+
+'foo'
+
+"foo"
+
+foo's
+
+foo --- bar
+
+foo -- bar
+
+5
+
+foo...
+
+[^foo]
+
+[#bar]
+
+[#bar]: foo
