@@ -521,7 +521,7 @@ void clean_meta_value(meta * m) {
 					*write = '\n';
 					read++;
 
-					while (char_is_whitespace_or_line_ending(read[1])) {
+					while ((read < stop - 1) && char_is_whitespace_or_line_ending(read[1])) {
 						read++;
 					}
 				} else {
@@ -541,7 +541,7 @@ void clean_meta_value(meta * m) {
 
 	write--;
 
-	if (*write == ' ') {
+	if (write >= m->value && *write == ' ') {
 		*write = '\0';
 	} else {
 		write++;
