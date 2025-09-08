@@ -67,6 +67,8 @@ size_t scan_html(const char * text);
 size_t scan_url(const char * text);
 size_t scan_email(const char * text);
 
+size_t scan_metadata(const char * text, size_t len, meta ** m);
+
 char * copy_fence_language_specificer(const char * text);
 void scan_toc_range(const char * text, int * min, int * max);
 

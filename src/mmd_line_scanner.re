@@ -89,6 +89,11 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 
 		bullet							= [-+*];
 
+		email							= 'mailto:'? [-A-Za-z0-9+_./!%~$]+ '@' [^ \240\t\n\r\x00>]+;
+		url								= [A-Za-z\-]+ '://' [^ \240\t\n\r\x00>]+;
+
+		url_line						= (email|url) [^\n\r]* end;
+
 		meta_key						= [A-Za-z0-9] [A-Za-z0-9_ \240\t\-.]*;
 		meta_value						= [^ \t\n\r] [^\n\r]*;
 		meta_line						= meta_key s* ':' s* meta_value end;	// meta_line can't match url above
@@ -233,6 +238,7 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 		bullet s+ @t1 remainder										{ ret LINE_LIST_BULLETED; }
 		num '.' s+ @t1 remainder									{ ret LINE_LIST_ENUMERATED; }
 
+		@t1 url_line												{ ret LINE_PLAIN; }
 		@t1 meta_line												{ ret (s->allow_meta) ? LINE_META : LINE_PLAIN; }
 
 		@t1 '='{2,} end 											{ ret LINE_SETEXT_1; }

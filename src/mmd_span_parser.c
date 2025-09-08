@@ -1037,7 +1037,7 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, size_t len, read_ct
 }
 
 
-void mmd_parse_meta_block(mmd_node * b, const char * text, size_t len, read_ctx * c, size_t offset) {
+void mmd_parse_meta_block_old(mmd_node * b, const char * text, size_t len, read_ctx * c, size_t offset) {
 	c->has_meta = 1;
 
 	const char * start = text;
@@ -1156,6 +1156,26 @@ void mmd_parse_meta_block(mmd_node * b, const char * text, size_t len, read_ctx 
 		start = cur;
 		cur++;
 	}
+}
+
+
+void mmd_parse_meta_block(mmd_node * b, const char * text, size_t len, read_ctx * c, size_t offset) {
+	c->has_meta = 1;
+
+	const char * start = text;
+	const char * cur = start;
+	const char * stop = text + len;
+
+	meta * m = NULL;
+
+	do {
+		m = NULL;
+		cur += scan_metadata(cur, stop - cur, &m);
+
+		if (m) {
+			read_ctx_store_meta(c, m);
+		}
+	} while (m && cur < stop);
 }
 
 
