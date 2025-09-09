@@ -71,35 +71,6 @@ static mmd_node * recursive_blockquote_parse(mmd_node * l, mmd_node_pool * p, co
 static mmd_node * recursive_endnote_parse(endnote_def ** e, mmd_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
 static mmd_node * mask_manual_label_token(mmd_node * b, const char * text, size_t len);
 
-/// strndup not available on all platforms
-static char * my_strndup(const char * source, size_t n) {
-	if (source == NULL) {
-		return NULL;
-	}
-
-	size_t len = 0;
-	char * result;
-	const char * test = source;
-
-	// strlen is too slow if strlen(source) >> n
-	for (len = 0; len < n; ++len) {
-		if (*test == '\0') {
-			break;
-		}
-
-		test++;
-	}
-
-	result = malloc(len + 1);
-
-	if (result) {
-		memcpy(result, source, len);
-		result[len] = '\0';
-	}
-
-	return result;
-}
-
 
 static mmd_line_node * scanner_next_line(Scanner * s, uint32_t options) {
 	if (s->cur < s->stop) {

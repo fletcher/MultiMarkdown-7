@@ -52,36 +52,7 @@
 #include "mmd_token_scanner.h"
 #include "mmd_span_parser.h"
 #include "read_ctx.h"
-
-
-/// strndup not available on all platforms
-static char * my_strndup(const char * source, size_t n) {
-	if (source == NULL) {
-		return NULL;
-	}
-
-	size_t len = 0;
-	char * result;
-	const char * test = source;
-
-	// strlen is too slow if strlen(source) >> n
-	for (len = 0; len < n; ++len) {
-		if (*test == '\0') {
-			break;
-		}
-
-		test++;
-	}
-
-	result = malloc(len + 1);
-
-	if (result) {
-		memcpy(result, source, len);
-		result[len] = '\0';
-	}
-
-	return result;
-}
+#include "mmd_utilities.h"
 
 
 #define ret s->c_start = t1; return

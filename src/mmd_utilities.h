@@ -46,4 +46,7 @@ int table_has_caption(mmd_node * t);
 void custom_seed_rand(void);
 uint16_t xorshift16(uint16_t x);
 
+/// strndup not available on all platforms
+char * my_strndup(const char * source, size_t n);
+
 #endif
