@@ -544,25 +544,25 @@ endfunction(ADD_MMD_TEST)
 
 
 # MMD 6
-ADD_MMD_TEST(mmd-7 "-r" MMD6Tests parse html)
+ADD_MMD_TEST(mmd-7 "-r" MMD7Tests parse html)
 
-ADD_MMD_TEST(mmd-7-compat "-c" MMD6Tests parse htmlc)
+ADD_MMD_TEST(mmd-7-compat "-c" MMD7Tests parse htmlc)
 
 ADD_MMD_TEST(mmd-7-critic-accept "-A" CriticMarkup parse htmla)
 
 ADD_MMD_TEST(mmd-7-critic-reject "-R" CriticMarkup parse htmlr)
 
-# ADD_MMD_TEST(mmd-7-ast "-c" MMD6Tests ast ast)
+# ADD_MMD_TEST(mmd-7-ast "-c" MMD7Tests ast ast)
 
-ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD6Tests parse tex)
+ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD7Tests parse tex)
 
 # ADD_MMD_TEST(mmd-6-beamer "-t beamer" Beamer tex)
 # 
 # ADD_MMD_TEST(mmd-6-memoir "-t memoir" Memoir tex)
 # 
-# ADD_MMD_TEST(mmd-6-fodt "-t fodt" MMD6Tests fodt)
+# ADD_MMD_TEST(mmd-6-fodt "-t fodt" MMD7Tests fodt)
 # 
-# ADD_MMD_TEST(mmd-6-opml "-t opml" MMD6Tests opml)
+# ADD_MMD_TEST(mmd-6-opml "-t opml" MMD7Tests opml)
 
 # Some of these will (properly) fail.
 # But it's useful to run manually at times to verify that
@@ -571,7 +571,7 @@ ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD6Tests parse tex)
 # add_test ( mmd-6-opml-parse 
 # 		${PROJECT_SOURCE_DIR}/tests/MarkdownTest.pl
 # 		--Script="${CMAKE_CURRENT_BINARY_DIR}/multimarkdown"
-# 		--testdir=${PROJECT_SOURCE_DIR}/tests/MMD6Tests
+# 		--testdir=${PROJECT_SOURCE_DIR}/tests/MMD7Tests
 # 		"--Flags=--opml -t mmd"
 # 		--ext=text
 # 		--source_ext=opml

@@ -10,10 +10,10 @@ Periodically, and before each version bump:
 
 * Perform memory testing with valgrind
 
-		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t html  ../tests/MMD6Tests/*.text
-		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t html -c -x .htmlc ../tests/MMD6Tests/*.text
-		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t latex -c  ../tests/MMD6Tests/*.text
-		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t latex  ../tests/MMD6Tests/*.text
+		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t html  ../tests/MMD7Tests/*.text
+		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t html -c -x .htmlc ../tests/MMD7Tests/*.text
+		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t latex -c  ../tests/MMD7Tests/*.text
+		valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s  ./multimarkdown batch -r -t latex  ../tests/MMD7Tests/*.text
 
 
 * Performance testing in /dev
