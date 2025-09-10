@@ -123,7 +123,7 @@ void custom_seed_rand(void);
 enum output_format {
 	FORMAT_HTML,								//!< Plain HTML
 	FORMAT_EPUB,
-	FORMAT_LATEX,
+	FORMAT_LATEX,								//!< LaTeX to generate PDF
 	FORMAT_BEAMER,
 	FORMAT_MEMOIR,
 	FORMAT_FODT,
@@ -180,8 +180,13 @@ enum mmd_options {
 #define MMD_SMART_QUOTE_MASK 0x01e0
 #define MMD_LANGUAGE_MASK 0x1E00
 
+/// Extract Output format from options
 #define MMD_OUT_FORMAT_FROM_OPTS(x) ((x & MMD_OUT_FORMAT_MASK) >> 0)
+
+/// Extract Smart Quotes language from options
 #define MMD_SMART_QUOTE_FROM_OPTS(x) ((x & MMD_SMART_QUOTE_MASK) >> 5)
+
+/// Extract markup language from options
 #define MMD_LANGUAGE_FROM_OPTS(x) ((x & MMD_LANGUAGE_MASK) >> 9)
 
 
@@ -221,6 +226,7 @@ typedef struct mmd_line_node mmd_line_node;
 #define MMD_NODE_IS_TOKEN(x)	((((mmd_node*)x)->type & MMD_TOKEN_MASK) == 0x80)
 
 
+/// AST node types
 enum node_types {
 	// Line types (1-63)
 	LINE_ATX_1 = 1,

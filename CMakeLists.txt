@@ -68,8 +68,6 @@ set(src_files
 
 set(public_headers
 	src/libMultiMarkdown.h
-
-	src/read_ctx.h
 )
 
 set(private_headers
@@ -90,6 +88,8 @@ set(private_headers
 	src/mmd_utilities.h
 
 	src/mmd_parser_hand_2.h
+
+	src/read_ctx.h
 
 	src/export/export_core.h
 	src/export/write_ctx.h
@@ -436,6 +436,21 @@ else()
 endif()
 
 
+# ================================
+# Build Documentation with Doxygen
+# ================================
+
+
+# Generate doxygen configuration file
+# string(REPLACE ";" " " doxygen_src_files "${src_files}" )
+string(REPLACE ";" " " doxygen_header_files "${public_headers}" )
+
+configure_file (
+	"${PROJECT_SOURCE_DIR}/templates/doxygen.conf.in"
+	"${PROJECT_BINARY_DIR}/doxygen.conf"
+)
+
+
 # ==========================
 # Build Installer with CPack
 # ==========================
@@ -520,6 +535,7 @@ else()
 endif (DEFINED TEST)
 
 include(CPack)
+
 
 # =====================================
 # MultiMarkdown Integration Test Suite

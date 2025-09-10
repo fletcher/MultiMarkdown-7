@@ -4,6 +4,7 @@ DEBUG_DIR = build-debug
 TEST_DIR = build-test
 XCODE_BUILD_DIR = build-xcode
 XCODE_TEST_DIR = build-xcode-test
+DOC_DIR = build-documentation
 
 
 # The release target will perform additional optimization
@@ -52,11 +53,13 @@ test: $(TEST_DIR)
 	cd $(TEST_DIR); \
 	cmake -DTEST=1 -DCMAKE_BUILD_TYPE=Debug ..
 
+
 # Cross-compile for Windows 64 bit
 .PHONY : windows-64
 windows-64: $(WIN_BUILD_DIR)
 	cd $(WIN_BUILD_DIR); \
 	cmake -DCMAKE_TOOLCHAIN_FILE=../tools/Toolchain-MinGW-w64-64.cmake -DCMAKE_BUILD_TYPE=Release ..
+
 
 # Generate enum mapping
 .PHONY : map
@@ -64,10 +67,21 @@ map:
 	cd $(BUILD_DIR); \
 	../tools/enumsToPerl.pl ../src/libMultiMarkdown.h enumMap.txt;
 
+
 # Use astyle to format source code
 .PHONY : astyle
 astyle:
 	astyle --options=.astylerc -q --recursive "src/*.h" "src/*.c" "dev/*.c" "fuzz/*.c" --exclude=src/char.c
+
+
+# Build documentation using doxygen
+.PHONY : documentation
+documentation: $(DOC_DIR)
+	cd $(DOC_DIR); \
+	cmake -DDOCUMENTATION=1 ..; \
+	cd ..; \
+	cp override_tables.sty $(DOC_DIR); \
+	doxygen $(DOC_DIR)/doxygen.conf;
 
 
 # Generate a list of changes since last commit to 'master' branch
@@ -107,6 +121,11 @@ $(XCODE_TEST_DIR): CHANGELOG
 $(WIN_BUILD_DIR): CHANGELOG
 	-mkdir $(WIN_BUILD_DIR) 2>/dev/null
 	-cd $(WIN_BUILD_DIR); rm -rf *
+
+# Create documentation directory if it doesn't exist
+$(DOC_DIR):
+	-mkdir $(DOC_DIR) 2>/dev/null
+	-cd $(DOC_DIR); rm -rf *
 
 
 # Clean out the build directory
