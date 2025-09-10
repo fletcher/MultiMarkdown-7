@@ -22,3 +22,6 @@ In the meantime, if you're looking for something that isn't here, check the
 > MultiMarkdown Version [%version]  
 > Last Revised [%revised]
 
+
+Developers may be interested in the [MultiMarkdown API Documentation](api/index.html)
+(which still needs some fleshing out.)
