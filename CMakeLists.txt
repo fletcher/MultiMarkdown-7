@@ -22,7 +22,7 @@ set (My_Project_Revised_Date "2025-09-08")
 set (My_Project_Version_Major 7)
 set (My_Project_Version_Minor 0)
 set (My_Project_Version_Patch 0)
-set (My_Project_Version_Prerelease -alpha.0)
+set (My_Project_Version_Prerelease -alpha.1)
 
 set (My_Project_Copyright_Date "2024-2025")
 
