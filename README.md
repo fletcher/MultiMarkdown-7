@@ -4,10 +4,10 @@
 | Author:    | Fletcher T. Penney       |  
 | Date:      | 2025-09-08 |  
 | Copyright: | Copyright © 2024-2025 Fletcher T. Penney.    |  
-| Version:   | 7.0.0-alpha.0 |  
+| Version:   | 7.0.0-alpha.1 |  
 
 
-# MultiMarkdown 7.0.0-alpha.0 #
+# MultiMarkdown 7.0.0-alpha.1 #
 
 *Lightweight markup processor to produce HTML, LaTeX, and more.*
 
