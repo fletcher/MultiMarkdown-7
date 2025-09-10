@@ -1,7 +1,7 @@
 Title:	MultiMarkdown 7 User's Guide
 Author:	Fletcher T. Penney  
-Version:	7.0.0  
-Revised:	2025-09-08  
+Version:	7.0.0-alpha.1  
+Revised:	2025-09-10  
 Base Header Level:	2  
 CSS:	https://fletcher.github.io/MultiMarkdown-7/css/document.css  
 MMD Footer:	{{links.txt}}
