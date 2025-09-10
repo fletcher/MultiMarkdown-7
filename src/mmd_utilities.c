@@ -40,6 +40,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 
@@ -124,5 +125,35 @@ uint16_t xorshift16(uint16_t x) {
 	x ^= x << 8;
 
 	return x;
+}
+
+
+/// strndup not available on all platforms
+char * my_strndup(const char * source, size_t n) {
+	if (source == NULL) {
+		return NULL;
+	}
+
+	size_t len = 0;
+	char * result;
+	const char * test = source;
+
+	// strlen is too slow if strlen(source) >> n
+	for (len = 0; len < n; ++len) {
+		if (*test == '\0') {
+			break;
+		}
+
+		test++;
+	}
+
+	result = malloc(len + 1);
+
+	if (result) {
+		memcpy(result, source, len);
+		result[len] = '\0';
+	}
+
+	return result;
 }
 

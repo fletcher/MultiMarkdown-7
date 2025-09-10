@@ -171,10 +171,10 @@ int main(int argc, char * const argv[]) {
 		// Proceed
 		switch (action) {
 			case 'b': {
-				system("cat ../tests/MMD6Tests/Markdown\\ Syntax.text > bench/speed1024.md");
+				system("cat ../tests/MMD7Tests/Markdown\\ Syntax.text > bench/speed1024.md");
 
 				F(i, 1023) {
-					system("cat ../tests/MMD6Tests/Markdown\\ Syntax.text >> bench/speed1024.md");
+					system("cat ../tests/MMD7Tests/Markdown\\ Syntax.text >> bench/speed1024.md");
 				}
 
 				FILE * out;

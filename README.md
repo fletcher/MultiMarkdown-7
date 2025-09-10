@@ -1,15 +1,18 @@
-## About ##
-
 |            |                           |  
 | ---------- | ------------------------- |  
 | Title:     | libMultiMarkdown7        |  
 | Author:    | Fletcher T. Penney       |  
 | Date:      | 2025-09-08 |  
 | Copyright: | Copyright © 2024-2025 Fletcher T. Penney.    |  
-| Version:   | 7.0.0-alpha.0 |  
+| Version:   | 7.0.0-alpha.1 |  
 
 
-## MultiMarkdown 7.0.0-alpha.0 ##
+# MultiMarkdown 7.0.0-alpha.1 #
+
+*Lightweight markup processor to produce HTML, LaTeX, and more.*
+
+
+## About ##
 
 Why a new version of MultiMarkdown?  Briefly, I wanted to:
 
@@ -32,7 +35,7 @@ Why a new version of MultiMarkdown?  Briefly, I wanted to:
 	generally the syntax for MultiMarkdown 7 is the same as MultiMarkdown 6.
 
 
-## Current Status (2025-08-08) ##
+## Current Status (2025-09-10) ##
 
 *	HTML support should be complete.  I've had to update the HTML test suite
 	from v6, but all of the tests are passed.  This *should* represent
@@ -96,6 +99,68 @@ Why a new version of MultiMarkdown?  Briefly, I wanted to:
 	started by trying to match v6 in the test suite, but a few instances arose
 	where it was clear that the old "correct" could be improved upon.  More
 	testing will help find instances where I should make additional fixes.
+
+## Building ##
+
+To build MultiMarkdown, use CMake:
+
+```
+make
+cd build
+make
+```
+
+Xcode users can use:
+
+```
+make xcode
+open build-xcode/libMultiMarkdown7.xcodeproj
+```
+
+
+## Testing ##
+
+```
+make
+cd build
+make
+ctest
+```
+
+You can use `ctest -V` in order to see more information on failed tests.
+
+
+## Fuzz Testing ##
+
+```
+cd fuzz
+make
+cd build
+make
+./fuzz_mmd-7
+```
+
+This does not work on macOS.  You can use Vagrant, if installed, in order to
+perform fuzz testing on macOS.  Please ensure you know how to properly use
+Vagrant.
+
+
+```
+vagrant up
+vagrant ssh
+cd /vagrant
+cd fuzz
+make
+cd build
+make
+./fuzz_mmd-7
+```
+
+
+## Contributing ##
+
+Feature requests, bug reports, etc. can be submitted via the Github
+[repository](https://github.com/fletcher/MultiMarkdown-7).
 
 
 ## License ##
