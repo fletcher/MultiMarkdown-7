@@ -320,13 +320,15 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 	// Ensure source_path is an absolute path
 	char * absolute_source_path = NULL;
 	char * absolute_search_path = NULL;
+	char * source_copy = NULL;
 
 	if (source_path) {
 		absolute_source_path = realpath(source_path, NULL);
 
 		if (!search_path) {
 			// Use source to infer search path
-			absolute_search_path = my_strdup(dirname(absolute_source_path));
+			source_copy = realpath(source_path, NULL);
+			absolute_search_path = my_strdup(dirname(source_copy));
 		}
 	}
 
@@ -345,5 +347,6 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 
 	free(absolute_search_path);
 	free(absolute_source_path);
+	free(source_copy);
 }
 
