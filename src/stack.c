@@ -245,7 +245,7 @@ void Test_stack_push_pop(CuTest * tc) {
 
 
 /// Sort array using specified compare_function
-void stack_sort(stack * self, void * compare_function) {
+void stack_sort(stack * self, int (* compare_function)(const void *, const void *)) {
 	if (self) {
 		lock;
 

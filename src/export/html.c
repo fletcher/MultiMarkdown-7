@@ -63,108 +63,108 @@
 #define F(i,n) for(int i= 0;i<n;i++)
 
 static void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
-static void export_html_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+static void export_html_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
 
 static parse_rule rules[256] = {
-	[BLOCK_BLOCKQUOTE]				= { 2, "<blockquote>", 1, DESCEND_CHILD, 1, "</blockquote>" },
-	[BLOCK_CODE_INDENTED]			= { 2, "<pre><code>", 0, DESCEND_LINES_RAW, 0, "</code></pre>" },
-	[BLOCK_FIGURE]					= { 2, NULL, 0, DESCEND_CONTENT, 0, NULL },
-	[BLOCK_HR]						= { 2, "<hr />", 0 },
-	[BLOCK_HTML]					= { 2, NULL, 0, DESCEND_LINES, 0, NULL },
-	[BLOCK_LIST_BULLETED]			= { 2, "<ul>", 0, DESCEND_CHILD, 1, "</ul>" },
-	[BLOCK_LIST_BULLETED_LOOSE]		= { 2, "<ul>", 0, DESCEND_CHILD, 1, "</ul>" },
-	[BLOCK_LIST_ENUMERATED]			= { 2, "<ol>", 0, DESCEND_CHILD, 1, "</ol>" },
-	[BLOCK_LIST_ENUMERATED_LOOSE]	= { 2, "<ol>", 0, DESCEND_CHILD, 1, "</ol>" },
-	[BLOCK_LIST_ITEM]				= { 1, "<li>", 2, DESCEND_CHILD, 0, "</li>" },
-	[BLOCK_PARA]					= { 2, "<p>", 0, DESCEND_CONTENT, 0, "</p>" },
-	[BLOCK_TERM]					= { 2, "<dt>", 0, DESCEND_CONTENT, 0, "</dt>\n", 2 },
+	[BLOCK_BLOCKQUOTE]				= { 2, "<blockquote>", 1, DESCEND_CHILD, 1, "</blockquote>", 0, 0, 0, 0 },
+	[BLOCK_CODE_INDENTED]			= { 2, "<pre><code>", 0, DESCEND_LINES_RAW, 0, "</code></pre>", 0, 0, 0, 0 },
+	[BLOCK_FIGURE]					= { 2, NULL, 0, DESCEND_CONTENT, 0, NULL, 0, 0, 0, 0 },
+	[BLOCK_HR]						= { 2, "<hr />", 0, 0, 0, NULL, 0, 0, 0, 0 },
+	[BLOCK_HTML]					= { 2, NULL, 0, DESCEND_LINES, 0, NULL, 0, 0, 0, 0 },
+	[BLOCK_LIST_BULLETED]			= { 2, "<ul>", 0, DESCEND_CHILD, 1, "</ul>", 0, 0, 0, 0 },
+	[BLOCK_LIST_BULLETED_LOOSE]		= { 2, "<ul>", 0, DESCEND_CHILD, 1, "</ul>", 0, 0, 0, 0 },
+	[BLOCK_LIST_ENUMERATED]			= { 2, "<ol>", 0, DESCEND_CHILD, 1, "</ol>", 0, 0, 0, 0 },
+	[BLOCK_LIST_ENUMERATED_LOOSE]	= { 2, "<ol>", 0, DESCEND_CHILD, 1, "</ol>", 0, 0, 0, 0 },
+	[BLOCK_LIST_ITEM]				= { 1, "<li>", 2, DESCEND_CHILD, 0, "</li>", 0, 0, 0, 0 },
+	[BLOCK_PARA]					= { 2, "<p>", 0, DESCEND_CONTENT, 0, "</p>", 0, 0, 0, 0 },
+	[BLOCK_TERM]					= { 2, "<dt>", 0, DESCEND_CONTENT, 0, "</dt>\n", 2, 0, 0, 0 },
 
-	[BLOCK_TABLE_HEADER]			= { 1, "<thead>", 0, DESCEND_CHILD, 1, "</thead>" },
-	[BLOCK_TABLE_SECTION]			= { 2, "<tbody>", 0, DESCEND_CHILD, 1, "</tbody>" },
-	[LINE_TABLE]					= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>" },
+	[BLOCK_TABLE_HEADER]			= { 1, "<thead>", 0, DESCEND_CHILD, 1, "</thead>", 0, 0, 0, 0 },
+	[BLOCK_TABLE_SECTION]			= { 2, "<tbody>", 0, DESCEND_CHILD, 1, "</tbody>", 0, 0, 0, 0 },
+	[LINE_TABLE]					= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>", 0, 0, 0, 0 },
 
-	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "~&gt;", 0, DESCEND_CHILD, 0, NULL },
-	[TOKEN_PAIR_CM_ADD]				= { 0, "<ins>", 0, DESCEND_CHILD, 0, "</ins>", 0, 1 },
-	[TOKEN_PAIR_CM_DEL]				= { 0, "<del>", 0, DESCEND_CHILD, 0, "</del>", 0, 1 },
-	[TOKEN_PAIR_CM_COM]				= { 0, "<span class=\"critic comment\">", 0, DESCEND_CHILD, 0, "</span>", 0, 1 },
-	[TOKEN_PAIR_CM_HI]				= { 0, "<mark>", 0, DESCEND_CHILD, 0, "</mark>", 0, 1 },
+	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "~&gt;", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_PAIR_CM_ADD]				= { 0, "<ins>", 0, DESCEND_CHILD, 0, "</ins>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_CM_DEL]				= { 0, "<del>", 0, DESCEND_CHILD, 0, "</del>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_CM_COM]				= { 0, "<span class=\"critic comment\">", 0, DESCEND_CHILD, 0, "</span>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_CM_HI]				= { 0, "<mark>", 0, DESCEND_CHILD, 0, "</mark>", 0, 1, 0, 0 },
 
-	[TOKEN_PAIR_BACKTICK]			= { 0, "<code>", 0, DESCEND_RAW, 0, "</code>", 0, 1 },
-	[TOKEN_PAIR_EMPH]				= { 0, "<em>", 0, DESCEND_CHILD, 0, "</em>", 0,  1},
-	[TOKEN_PAIR_MATH_PAREN]			= { 0, "<span class=\"math\">\\(", 0, DESCEND_RAW, 0, "\\)</span>", 0, 1 },
-	[TOKEN_PAIR_MATH_BRACKET]		= { 0, "<span class=\"math\">\\[", 0, DESCEND_RAW, 0, "\\]</span>", 0, 1 },
-	[TOKEN_PAIR_MATH_DOLLAR_SINGLE]	= { 0, "<span class=\"math\">\\(", 0, DESCEND_RAW, 0, "\\)</span>", 0, 1 },
-	[TOKEN_PAIR_MATH_DOLLAR_DOUBLE]	= { 0, "<span class=\"math\">\\[", 0, DESCEND_RAW, 0, "\\]</span>", 0, 1 },
-	[TOKEN_PAIR_STRONG]				= { 0, "<strong>", 0, DESCEND_CHILD, 0, "</strong>", 0,  1},
-	[TOKEN_PAIR_STAR]				= { 0, "*", 0, DESCEND_CHILD, 0, "*", 0, 1 },
-	[TOKEN_PAIR_STAR_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1 },
-	[TOKEN_PAIR_UL]					= { 0, "_", 0, DESCEND_CHILD, 0, "_", 0, 1 },
-	[TOKEN_PAIR_UL_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1 },
-	[TOKEN_PAIR_PAREN]				= { 0, "(", 0, DESCEND_CHILD, 0, NULL, 0, 0 },
-	[TOKEN_PAIR_BRACE]				= { 0, "{", 0, DESCEND_CHILD, 0, NULL, 0, 0 },
+	[TOKEN_PAIR_BACKTICK]			= { 0, "<code>", 0, DESCEND_RAW, 0, "</code>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_EMPH]				= { 0, "<em>", 0, DESCEND_CHILD, 0, "</em>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_PAREN]			= { 0, "<span class=\"math\">\\(", 0, DESCEND_RAW, 0, "\\)</span>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_BRACKET]		= { 0, "<span class=\"math\">\\[", 0, DESCEND_RAW, 0, "\\]</span>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_DOLLAR_SINGLE]	= { 0, "<span class=\"math\">\\(", 0, DESCEND_RAW, 0, "\\)</span>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_DOLLAR_DOUBLE]	= { 0, "<span class=\"math\">\\[", 0, DESCEND_RAW, 0, "\\]</span>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_STRONG]				= { 0, "<strong>", 0, DESCEND_CHILD, 0, "</strong>", 0, 1, 0, 0 },
+	[TOKEN_PAIR_STAR]				= { 0, "*", 0, DESCEND_CHILD, 0, "*", 0, 1, 0, 0 },
+	[TOKEN_PAIR_STAR_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1, 0, 0 },
+	[TOKEN_PAIR_UL]					= { 0, "_", 0, DESCEND_CHILD, 0, "_", 0, 1, 0, 0 },
+	[TOKEN_PAIR_UL_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1, 0, 0 },
+	[TOKEN_PAIR_PAREN]				= { 0, "(", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_PAIR_BRACE]				= { 0, "{", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
 
-	[TOKEN_ANGLE_LEFT]				= { 0, "&lt;", 0, NONE, 0, NULL },
-	[TOKEN_ANGLE_RIGHT]				= { 0, "&gt;", 0, NONE, 0, NULL },
-	[TOKEN_APOSTROPHE]				= { 0, "&#8217;", 0, NONE, 0, NULL },
-	[TOKEN_DASH_M]					= { 0, "&#8212;", 0, NONE, 0, NULL },
-	[TOKEN_DASH_N]					= { 0, "&#8211;", 0, NONE, 0, NULL },
-	[TOKEN_ELLIPSIS]				= { 0, "&#8230;", 0, NONE, 0, NULL },
-	[TOKEN_AMPERSAND]				= { 0, "&amp;", 0, NONE, 0, NULL },
-	[TOKEN_AMPERSAND_LONG]			= { 0, "&amp;", 0, NONE, 0, NULL },
-	[TOKEN_NBSP]					= { 0, "&nbsp;", 0, NONE, 0, NULL },
-	[TOKEN_QUOTE_DOUBLE]			= { 0, "&quot;", 0, NONE },
-	[TOKEN_TEXT_WHITESPACE]			= { 0, " ", 0, NONE, 0, NULL },
+	[TOKEN_ANGLE_LEFT]				= { 0, "&lt;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_ANGLE_RIGHT]				= { 0, "&gt;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_APOSTROPHE]				= { 0, "&#8217;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_DASH_M]					= { 0, "&#8212;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_DASH_N]					= { 0, "&#8211;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_ELLIPSIS]				= { 0, "&#8230;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_AMPERSAND]				= { 0, "&amp;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_AMPERSAND_LONG]			= { 0, "&amp;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_NBSP]					= { 0, "&nbsp;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_QUOTE_DOUBLE]			= { 0, "&quot;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_TEXT_WHITESPACE]			= { 0, " ", 0, NONE, 0, NULL, 0, 0, 0, 0 },
 
-	[TOKEN_CM_SUB_DIV]				= { 0, "~&gt;", 0, NONE, 0, NULL },
-	[TOKEN_CM_COM_OPEN]				= { 0, "{&gt;&gt;", 0, NONE, 0, NULL },
-	[TOKEN_CM_COM_CLOSE]			= { 0, "&lt;&lt;}", 0, NONE, 0, NULL },
+	[TOKEN_CM_SUB_DIV]				= { 0, "~&gt;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_CM_COM_OPEN]				= { 0, "{&gt;&gt;", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_CM_COM_CLOSE]			= { 0, "&lt;&lt;}", 0, NONE, 0, NULL, 0, 0, 0, 0 },
 };
 
 
 static smart_quote single_quotes[16] = {
-	[QUOTES_ENGLISH]			= { "&#8216;", "&#8217;" },
-	[QUOTES_DUTCH]				= { "&#8216;", "&#8217;" },
-	[QUOTES_SWEDISH]			= { "&#8217;", "&#8217;" },
-	[QUOTES_FRENCH]				= { "&#39;", "&#8217;" },
-	[QUOTES_GERMAN]				= { "&#8218;", "&#8216;" },
-	[QUOTES_GERMAN_GUILLEMETS]	= { "&#8250;", "&#8249;" },
-	[QUOTES_SPANISH]			= { "&#8216;", "&#8217;" },
+	[QUOTES_ENGLISH]			= { "&#8216;", "&#8217;", 0, 0 },
+	[QUOTES_DUTCH]				= { "&#8216;", "&#8217;", 0, 0 },
+	[QUOTES_SWEDISH]			= { "&#8217;", "&#8217;", 0, 0 },
+	[QUOTES_FRENCH]				= { "&#39;", "&#8217;", 0, 0 },
+	[QUOTES_GERMAN]				= { "&#8218;", "&#8216;", 0, 0 },
+	[QUOTES_GERMAN_GUILLEMETS]	= { "&#8250;", "&#8249;", 0, 0 },
+	[QUOTES_SPANISH]			= { "&#8216;", "&#8217;", 0, 0 },
 };
 
 
 static smart_quote double_quotes[16] = {
-	[QUOTES_ENGLISH]			= { "&#8220;", "&#8221;" },
-	[QUOTES_DUTCH]				= { "&#8222;", "&#8221;" },
-	[QUOTES_SWEDISH]			= { "&#8221;", "&#8221;" },
-	[QUOTES_FRENCH]				= { "&#171;", "&#187;" },
-	[QUOTES_GERMAN]				= { "&#8222;", "&#8220;" },
-	[QUOTES_GERMAN_GUILLEMETS]	= { "&#187;", "&#171;" },
-	[QUOTES_SPANISH]			= { "&#171;", "&#187;" },
+	[QUOTES_ENGLISH]			= { "&#8220;", "&#8221;", 0, 0 },
+	[QUOTES_DUTCH]				= { "&#8222;", "&#8221;", 0, 0 },
+	[QUOTES_SWEDISH]			= { "&#8221;", "&#8221;", 0, 0 },
+	[QUOTES_FRENCH]				= { "&#171;", "&#187;", 0, 0 },
+	[QUOTES_GERMAN]				= { "&#8222;", "&#8220;", 0, 0 },
+	[QUOTES_GERMAN_GUILLEMETS]	= { "&#187;", "&#171;", 0, 0 },
+	[QUOTES_SPANISH]			= { "&#171;", "&#187;", 0, 0 },
 };
 
 
 static smart_quote headers_compat[6] = {
-	{ "<h1>", "</h1>" },
-	{ "<h2>", "</h2>" },
-	{ "<h3>", "</h3>" },
-	{ "<h4>", "</h4>" },
-	{ "<h5>", "</h5>" },
-	{ "<h6>", "</h6>" },
+	{ "<h1>", "</h1>", 0, 0  },
+	{ "<h2>", "</h2>", 0, 0  },
+	{ "<h3>", "</h3>", 0, 0  },
+	{ "<h4>", "</h4>", 0, 0  },
+	{ "<h5>", "</h5>", 0, 0  },
+	{ "<h6>", "</h6>", 0, 0  },
 };
 
 static smart_quote headers[6] = {
-	{ "<h1 id=\"", "</h1>" },
-	{ "<h2 id=\"", "</h2>" },
-	{ "<h3 id=\"", "</h3>" },
-	{ "<h4 id=\"", "</h4>" },
-	{ "<h5 id=\"", "</h5>" },
-	{ "<h6 id=\"", "</h6>" },
+	{ "<h1 id=\"", "</h1>", 0, 0  },
+	{ "<h2 id=\"", "</h2>", 0, 0  },
+	{ "<h3 id=\"", "</h3>", 0, 0  },
+	{ "<h4 id=\"", "</h4>", 0, 0  },
+	{ "<h5 id=\"", "</h5>", 0, 0  },
+	{ "<h6 id=\"", "</h6>", 0, 0  },
 };
 
 
 /// Print each line as is
-static void export_html_line(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_line(mmd_node * n, const char * text, text_buffer * out) {
 	switch (n->type) {
 		case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
@@ -183,9 +183,9 @@ static void export_html_line(mmd_node * n, const char * text, size_t len, text_b
 }
 
 
-static void export_html_lines(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_lines(mmd_node * n, const char * text, text_buffer * out) {
 	while (n) {
-		export_html_line(n, text, len, out, r, w);
+		export_html_line(n, text, out);
 
 		n = n->next;
 	}
@@ -193,7 +193,7 @@ static void export_html_lines(mmd_node * n, const char * text, size_t len, text_
 
 
 /// Print each line as is, but only the "content" portion of each line
-static void export_html_line_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_line_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	text += l->general.start + l->c_start;
 
 	switch (l->general.type) {
@@ -218,9 +218,9 @@ static void export_html_line_content(mmd_line_node * l, const char * text, size_
 }
 
 
-static void export_html_lines_content(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_lines_content(mmd_node * n, const char * text, text_buffer * out) {
 	while (n) {
-		export_html_line_content((mmd_line_node *) n, text, len, out, r, w);
+		export_html_line_content((mmd_line_node *) n, text, out);
 
 		n = n->next;
 	}
@@ -291,7 +291,7 @@ static void export_html_tokens_raw(mmd_node * t, const char * text, size_t len, 
 }
 
 
-static void export_html_line_raw(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_line_raw(mmd_line_node * l, const char * text, text_buffer * out) {
 	text += l->general.start;
 
 	switch (l->general.type) {
@@ -309,16 +309,16 @@ static void export_html_line_raw(mmd_line_node * l, const char * text, size_t le
 }
 
 
-static void export_html_lines_raw(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_lines_raw(mmd_line_node * l, const char * text, text_buffer * out) {
 	while (l) {
-		export_html_line_raw(l, text, len, out, r, w);
+		export_html_line_raw(l, text, out);
 
 		l = (mmd_line_node *) l->general.next;
 	}
 }
 
 
-static void export_html_line_raw_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_line_raw_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	text += l->general.start + l->c_start;
 
 	switch (l->general.type) {
@@ -336,9 +336,9 @@ static void export_html_line_raw_content(mmd_line_node * l, const char * text, s
 }
 
 
-static void export_html_lines_raw_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_lines_raw_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	while (l) {
-		export_html_line_raw_content(l, text, len, out, r, w);
+		export_html_line_raw_content(l, text, out);
 
 		l = (mmd_line_node *) l->general.next;
 	}
@@ -392,7 +392,7 @@ static void export_toc_entry(text_buffer * out, size_t * counter, int level, int
 }
 
 
-static void export_html_toc(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_html_toc(const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	size_t counter = 0;
 	int min = 0;
 	int max = 6;
@@ -557,8 +557,8 @@ static int export_html_abbreviation_word(const char * text, size_t len, text_buf
 
 static int export_endnote_def(unsigned char type, endnote_def * e, const char * text, size_t len, mmd_node * t, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	if (e) {
-		const char * title;
-		const char * class;
+		const char * title = NULL;
+		const char * class = NULL;
 		char prefix = '\0';
 
 		int idx = e->index;
@@ -570,21 +570,21 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 		switch (type) {
 			case TOKEN_PAIR_BRACKET_CITATION:
 				prefix = 'c';
-				title = il8n[2][r->language];
+				title = il8n[2][(int)r->language];
 				class = "citation";
 				s = w->used_cite_stack;
 				break;
 
 			case TOKEN_PAIR_BRACKET_FOOTNOTE:
 				prefix = 'f';
-				title = il8n[1][r->language];
+				title = il8n[1][(int)r->language];
 				class = "footnote";
 				s = w->used_note_stack;
 				break;
 
 			case TOKEN_PAIR_BRACKET_GLOSSARY:
 				prefix = 'g';
-				title = il8n[3][r->language];
+				title = il8n[3][(int)r->language];
 				class = "glossary";
 				s = w->used_glos_stack;
 				break;
@@ -805,16 +805,16 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 			break;
 
 		case TOKEN_PAIR_QUOTE_DOUBLE:
-			text_buffer_append_text(out, double_quotes[r->quotes_language].opener, double_quotes[r->quotes_language].opener_len);
+			text_buffer_append_text(out, double_quotes[(int)r->quotes_language].opener, double_quotes[(int)r->quotes_language].opener_len);
 			export_html_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, double_quotes[r->quotes_language].closer, double_quotes[r->quotes_language].closer_len);
+			text_buffer_append_text(out, double_quotes[(int)r->quotes_language].closer, double_quotes[(int)r->quotes_language].closer_len);
 			(*t) = (*t)->next;
 			break;
 
 		case TOKEN_PAIR_QUOTE_SINGLE:
-			text_buffer_append_text(out, single_quotes[r->quotes_language].opener, single_quotes[r->quotes_language].opener_len);
+			text_buffer_append_text(out, single_quotes[(int)r->quotes_language].opener, single_quotes[(int)r->quotes_language].opener_len);
 			export_html_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, single_quotes[r->quotes_language].closer, single_quotes[r->quotes_language].closer_len);
+			text_buffer_append_text(out, single_quotes[(int)r->quotes_language].closer, single_quotes[(int)r->quotes_language].closer_len);
 			(*t) = (*t)->next;
 			break;
 
@@ -885,7 +885,7 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 
 		case TOKEN_PAIR_BRACKET_EMPTY:
 		case TOKEN_PAIR_BRACKET_NOT_CITED:
-			if (export_token_pair(text, len, t, out, r, w, false, &fe, options)) {
+			if (export_token_pair(text, len, t, out, r, w, &fe, options)) {
 				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
 			}
 
@@ -903,7 +903,7 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 				(*t) = (*t)->next;
 				w->skip_endnote_label = false;
 			} else {
-				if (export_token_pair(text, len, t, out, r, w, false, &fe, options)) {
+				if (export_token_pair(text, len, t, out, r, w, &fe, options)) {
 					// Plain [text] since parsing failed
 
 					switch ((*t)->type) {
@@ -1058,7 +1058,7 @@ static void export_html_tokens(mmd_node * t, const char * text, size_t len, text
 }
 
 
-static void export_html_block(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_html_block(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	parse_rule rule = rules[b->type];
 
 	switch (b->type) {
@@ -1083,9 +1083,9 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 						w->padding = 0;
 
 						if (w->in_recursive) {
-							export_html_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+							export_html_lines_raw_content((mmd_line_node *)b->child, &text[b->start], out);
 						} else {
-							export_html_lines_raw((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+							export_html_lines_raw((mmd_line_node *)b->child, &text[b->start], out);
 						}
 
 						w->padding = 1;
@@ -1104,9 +1104,9 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 			w->padding = 0;
 
 			if (w->in_recursive) {
-				export_html_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_html_lines_raw_content((mmd_line_node *)b->child, &text[b->start], out);
 			} else {
-				export_html_lines_raw((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_html_lines_raw((mmd_line_node *)b->child, &text[b->start], out);
 			}
 
 			mmd_print_const(out, "</code></pre>");
@@ -1125,7 +1125,7 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 
 			w->padding = 2;
 
-			export_html_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+			export_html_blocks(b->child, &text[b->start], out, r, w, options);
 			pad(out, 1, w);
 
 			if (b->next && b->next->type == BLOCK_DEFLIST) {
@@ -1144,7 +1144,7 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 			w->padding = 2;
 
 			if (b->child->next) {
-				export_html_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+				export_html_blocks(b->child, &text[b->start], out, r, w, options);
 			} else {
 				export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
 			}
@@ -1232,7 +1232,7 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 			w->padding = 2;
 			export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
 			w->padding = 0;
-			export_html_blocks(b->child->next, &text[b->start], b->len, out, r, w, options);
+			export_html_blocks(b->child->next, &text[b->start], out, r, w, options);
 			mmd_print_const(out, "</li>");
 			w->padding = 0;
 			break;
@@ -1314,7 +1314,7 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 			w->padding = 2;
 
 			// Export table rows
-			export_html_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+			export_html_blocks(b->child, &text[b->start], out, r, w, options);
 			pad(out, 1, w);
 			mmd_print_const(out, "</table>");
 			w->padding = 0;
@@ -1345,7 +1345,7 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 			pad(out, 2, w);
 			mmd_print_const(out, "<div class=\"TOC\">\n");
 
-			export_html_toc(b, &text[b->start], out, r, w, options);
+			export_html_toc(&text[b->start], out, r, w, options);
 
 			mmd_print_const(out, "</div>");
 			w->padding = 0;
@@ -1382,7 +1382,7 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 			}
 
 			if (rule.descent & DESCEND_CHILD) {
-				export_html_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+				export_html_blocks(b->child, &text[b->start], out, r, w, options);
 			}
 
 			if (rule.descent & DESCEND_CONTENT) {
@@ -1391,14 +1391,14 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 
 			if (rule.descent & DESCEND_LINES) {
 				if (w->in_recursive) {
-					export_html_lines_content(b->child, &text[b->start], b->len, out, r, w);
+					export_html_lines_content(b->child, &text[b->start], out);
 				} else {
-					export_html_lines(b->child, &text[b->start], b->len, out, r, w);
+					export_html_lines(b->child, &text[b->start], out);
 				}
 			}
 
 			if (rule.descent & DESCEND_LINES_RAW) {
-				export_html_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_html_lines_raw_content((mmd_line_node *)b->child, &text[b->start], out);
 			}
 
 			if (rule.descent & DESCEND_RAW) {
@@ -1435,12 +1435,12 @@ static void export_html_block(mmd_node * b, const char * text, size_t len, text_
 }
 
 
-static void export_html_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_html_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	while (b) {
 		if (w->skip_blocks) {
 			w->skip_blocks--;
 		} else {
-			export_html_block(b, text, len, out, r, w, options);
+			export_html_block(b, text, out, r, w, options);
 		}
 
 		b = b->next;
@@ -1591,13 +1591,13 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w) {
 }
 
 
-static void export_html_endnote_section(const char * text, size_t len, text_buffer * out, stack * s, const char * class, const char * reverseclass, char prefix, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_html_endnote_section(text_buffer * out, stack * s, const char * class, const char * reverseclass, char prefix, read_ctx * r, write_ctx * w, uint32_t options) {
 	if (s->size) {
 		pad(out, 2, w);
 		text_buffer_append_printf(out, "<div class=\"%s\">\n<hr />\n<ol>\n", class);
 		w->padding = 1;
 
-		F(i, s->size) {
+		F(i, (int)s->size) {
 			endnote_def * e = stack_peek_index(s, i);
 
 			pad(out, 2, w);
@@ -1621,9 +1621,9 @@ static void export_html_endnote_section(const char * text, size_t len, text_buff
 				w->endnote_return = calloc(1, sizeof(char) * 512);
 
 				if (prefix == 'f' && (options & MMD_OPTION_RANDOM_NOTE_ID)) {
-					snprintf(w->endnote_return, 512 - 1, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, xorshift16(w->random_footnote_seed + e->index), il8n[0][r->language], reverseclass);
+					snprintf(w->endnote_return, 512 - 1, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, xorshift16(w->random_footnote_seed + e->index), il8n[0][(int)r->language], reverseclass);
 				} else {
-					snprintf(w->endnote_return, 512 - 1, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, e->index, il8n[0][r->language], reverseclass);
+					snprintf(w->endnote_return, 512 - 1, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, e->index, il8n[0][(int)r->language], reverseclass);
 				}
 
 				w->endnote_return_para_counter = 0;
@@ -1638,16 +1638,16 @@ static void export_html_endnote_section(const char * text, size_t len, text_buff
 					walker = walker->next;
 				}
 
-				export_html_blocks(e->content_node, e->text, e->len, out, r, w, options);
+				export_html_blocks(e->content_node, e->text, out, r, w, options);
 				free(w->endnote_return);
 			} else {
 				mmd_print_const(out, "<p>");
 				export_html_tokens(e->content_node, e->text, e->len, out, r, w, options);
 
 				if (prefix == 'f' && (options & MMD_OPTION_RANDOM_NOTE_ID)) {
-					text_buffer_append_printf(out, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, xorshift16(w->random_footnote_seed + e->index), il8n[0][r->language], reverseclass);
+					text_buffer_append_printf(out, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, xorshift16(w->random_footnote_seed + e->index), il8n[0][(int)r->language], reverseclass);
 				} else {
-					text_buffer_append_printf(out, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, e->index, il8n[0][r->language], reverseclass);
+					text_buffer_append_printf(out, " <a href=\"#%cnref:%d\" title=\"%s\" class=\"%s\">&#160;&#8617;&#xfe0e;</a>", prefix, e->index, il8n[0][(int)r->language], reverseclass);
 				}
 
 				mmd_print_const(out, "</p>");
@@ -1669,14 +1669,14 @@ static void export_html_endnote_section(const char * text, size_t len, text_buff
 }
 
 
-static void export_html_endnotes(const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
-	export_html_endnote_section(text, len, out, w->used_note_stack, "footnotes", "reversefootnote", 'f', r, w, options);
-	export_html_endnote_section(text, len, out, w->used_glos_stack, "glossary", "reverseglossary", 'g', r, w, options);
-	export_html_endnote_section(text, len, out, w->used_cite_stack, "citations", "reversecitation", 'c', r, w, options);
+static void export_html_endnotes(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+	export_html_endnote_section(out, w->used_note_stack, "footnotes", "reversefootnote", 'f', r, w, options);
+	export_html_endnote_section(out, w->used_glos_stack, "glossary", "reverseglossary", 'g', r, w, options);
+	export_html_endnote_section(out, w->used_cite_stack, "citations", "reversecitation", 'c', r, w, options);
 }
 
 
-static void export_html_footer(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_html_footer(text_buffer * out, read_ctx * r, write_ctx * w) {
 	pad(out, 1, w);
 
 	// Iterate over metadata keys
@@ -1692,7 +1692,7 @@ static void export_html_footer(text_buffer * out, read_ctx * r, write_ctx * w, u
 }
 
 
-void export_html(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
 	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
 	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
 	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
@@ -1705,12 +1705,12 @@ void export_html(mmd_node * b, const char * text, size_t len, text_buffer * out,
 		export_html_header(out, r, w);
 	}
 
-	export_html_blocks(b, text, len, out, r, w, options);
+	export_html_blocks(b, text, out, r, w, options);
 
-	export_html_endnotes(text, len, out, r, w, options);
+	export_html_endnotes(out, r, w, options);
 
 	if (r->write_complete || (r->has_meta && !r->write_snippet)) {
-		export_html_footer(out, r, w, options);
+		export_html_footer(out, r, w);
 	}
 
 	pad(out, 1, w);

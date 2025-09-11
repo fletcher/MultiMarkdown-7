@@ -47,7 +47,6 @@
 #include "read_ctx.h"
 #include "write_ctx.h"
 #include "mmd_span_parser.h"
-#include "il8n.h"
 #include "mmd_scanner.h"
 #include "mmd_token_scanner.h"
 #include "mmd_utilities.h"
@@ -63,104 +62,104 @@
 #define F(i,n) for(int i= 0;i<n;i++)
 
 static void export_latex_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
-static void export_latex_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+static void export_latex_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
 
 static parse_rule rules[256] = {
-	[BLOCK_BLOCKQUOTE]				= { 2, "\\begin{quote}", 1, DESCEND_CHILD, 1, "\\end{quote}" },
-	[BLOCK_CODE_INDENTED]			= { 2, "\\begin{verbatim}\n", 0, DESCEND_LINES_VERBATIM, 0, "\\end{verbatim}" },
-	[BLOCK_FIGURE]					= { 2, NULL, 0, DESCEND_CONTENT, 0, NULL },
-	[BLOCK_HR]						= { 2, "\\begin{center}\\rule{3in}{0.4pt}\\end{center}", 0 },
-	[BLOCK_HTML]					= { 0, NULL, 0, NONE, 0, NULL },
-	[BLOCK_LIST_BULLETED]			= { 2, "\\begin{itemize}", 0, DESCEND_CHILD, 1, "\\end{itemize}" },
-	[BLOCK_LIST_BULLETED_LOOSE]		= { 2, "\\begin{itemize}", 0, DESCEND_CHILD, 1, "\\end{itemize}" },
-	[BLOCK_LIST_ENUMERATED]			= { 2, "\\begin{enumerate}", 0, DESCEND_CHILD, 1, "\\end{enumerate}" },
-	[BLOCK_LIST_ENUMERATED_LOOSE]	= { 2, "\\begin{enumerate}", 0, DESCEND_CHILD, 1, "\\end{enumerate}" },
-	[BLOCK_LIST_ITEM]				= { 1, "\\item ", 2, DESCEND_CHILD, 0, "" },
-	[BLOCK_PARA]					= { 2, "", 0, DESCEND_CONTENT, 0, "" },
-	[BLOCK_TERM]					= { 2, "\\item[", 0, DESCEND_CONTENT, 0, "]\n", 2 },
+	[BLOCK_BLOCKQUOTE]				= { 2, "\\begin{quote}", 1, DESCEND_CHILD, 1, "\\end{quote}", 0, 0, 0, 0 },
+	[BLOCK_CODE_INDENTED]			= { 2, "\\begin{verbatim}\n", 0, DESCEND_LINES_VERBATIM, 0, "\\end{verbatim}", 0, 0, 0, 0 },
+	[BLOCK_FIGURE]					= { 2, NULL, 0, DESCEND_CONTENT, 0, NULL, 0, 0, 0, 0 },
+	[BLOCK_HR]						= { 2, "\\begin{center}\\rule{3in}{0.4pt}\\end{center}", 0, 0, 0, NULL, 0, 0, 0, 0 },
+	[BLOCK_HTML]					= { 0, NULL, 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[BLOCK_LIST_BULLETED]			= { 2, "\\begin{itemize}", 0, DESCEND_CHILD, 1, "\\end{itemize}", 0, 0, 0, 0 },
+	[BLOCK_LIST_BULLETED_LOOSE]		= { 2, "\\begin{itemize}", 0, DESCEND_CHILD, 1, "\\end{itemize}", 0, 0, 0, 0 },
+	[BLOCK_LIST_ENUMERATED]			= { 2, "\\begin{enumerate}", 0, DESCEND_CHILD, 1, "\\end{enumerate}", 0, 0, 0, 0 },
+	[BLOCK_LIST_ENUMERATED_LOOSE]	= { 2, "\\begin{enumerate}", 0, DESCEND_CHILD, 1, "\\end{enumerate}", 0, 0, 0, 0 },
+	[BLOCK_LIST_ITEM]				= { 1, "\\item ", 2, DESCEND_CHILD, 0, "", 0, 0, 0, 0 },
+	[BLOCK_PARA]					= { 2, "", 0, DESCEND_CONTENT, 0, "", 0, 0, 0, 0 },
+	[BLOCK_TERM]					= { 2, "\\item[", 0, DESCEND_CONTENT, 0, "]\n", 2, 0, 0, 0 },
 
-	[BLOCK_TABLE_HEADER]			= { 1, "\\begin{tabulary}{\\textwidth}", 0, DESCEND_CHILD, 1, "\\midrule" },
-	[BLOCK_TABLE_SECTION]			= { 1, "", 0, DESCEND_CHILD, 1, "\\bottomrule" },
-	[LINE_TABLE]					= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\" },
-	[LINE_TABLE_SEPARATOR]			= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\" },
+	[BLOCK_TABLE_HEADER]			= { 1, "\\begin{tabulary}{\\textwidth}", 0, DESCEND_CHILD, 1, "\\midrule", 0, 0, 0, 0 },
+	[BLOCK_TABLE_SECTION]			= { 1, "", 0, DESCEND_CHILD, 1, "\\bottomrule", 0, 0, 0, 0 },
+	[LINE_TABLE]					= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\", 0, 0, 0, 0 },
+	[LINE_TABLE_SEPARATOR]			= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\", 0, 0, 0, 0 },
 
-	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "\\ensuremath{\\sim}>", 0, DESCEND_CHILD, 0, NULL },
-	[TOKEN_PAIR_CM_ADD]				= { 0, "\\underline{", 0, DESCEND_CHILD, 0, "}", 0, 1 },
-	[TOKEN_PAIR_CM_DEL]				= { 0, "\\sout{", 0, DESCEND_CHILD, 0, "}", 0, 1 },
-	[TOKEN_PAIR_CM_COM]				= { 0, "\\cmnote{", 0, DESCEND_CHILD, 0, "}", 0, 1 },
-	[TOKEN_PAIR_CM_HI]				= { 0, "\\hl{", 0, DESCEND_CHILD, 0, "}", 0, 1 },
+	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "\\ensuremath{\\sim}>", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_PAIR_CM_ADD]				= { 0, "\\underline{", 0, DESCEND_CHILD, 0, "}", 0, 1, 0, 0 },
+	[TOKEN_PAIR_CM_DEL]				= { 0, "\\sout{", 0, DESCEND_CHILD, 0, "}", 0, 1, 0, 0 },
+	[TOKEN_PAIR_CM_COM]				= { 0, "\\cmnote{", 0, DESCEND_CHILD, 0, "}", 0, 1, 0, 0 },
+	[TOKEN_PAIR_CM_HI]				= { 0, "\\hl{", 0, DESCEND_CHILD, 0, "}", 0, 1, 0, 0 },
 
-	[TOKEN_PAIR_BACKTICK]			= { 0, "\\texttt{", 0, DESCEND_RAW, 0, "}", 0, 1 },
-	[TOKEN_PAIR_EMPH]				= { 0, "\\emph{", 0, DESCEND_CHILD, 0, "}", 0,  1},
-	[TOKEN_PAIR_MATH_PAREN]			= { 0, "\\(", 0, DESCEND_VERBATIM, 0, "\\)", 0, 1 },
-	[TOKEN_PAIR_MATH_BRACKET]		= { 0, "\\[", 0, DESCEND_VERBATIM, 0, "\\]", 0, 1 },
-	[TOKEN_PAIR_MATH_DOLLAR_SINGLE]	= { 0, "$", 0, DESCEND_VERBATIM, 0, "$", 0, 1 },
-	[TOKEN_PAIR_MATH_DOLLAR_DOUBLE]	= { 0, "$$", 0, DESCEND_VERBATIM, 0, "$$", 0, 1 },
-	[TOKEN_PAIR_STRONG]				= { 0, "\\textbf{", 0, DESCEND_CHILD, 0, "}", 0,  1},
-	[TOKEN_PAIR_STAR]				= { 0, "*", 0, DESCEND_CHILD, 0, "*", 0, 1 },
-	[TOKEN_PAIR_STAR_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1 },
-	[TOKEN_PAIR_UL]					= { 0, "_", 0, DESCEND_CHILD, 0, "_", 0, 1 },
-	[TOKEN_PAIR_UL_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1 },
-	[TOKEN_PAIR_PAREN]				= { 0, "(", 0, DESCEND_CHILD, 0, NULL, 0, 0 },
-	[TOKEN_PAIR_BRACE]				= { 0, "\\{", 0, DESCEND_CHILD, 0, NULL, 0, 0 },
+	[TOKEN_PAIR_BACKTICK]			= { 0, "\\texttt{", 0, DESCEND_RAW, 0, "}", 0, 1, 0, 0 },
+	[TOKEN_PAIR_EMPH]				= { 0, "\\emph{", 0, DESCEND_CHILD, 0, "}", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_PAREN]			= { 0, "\\(", 0, DESCEND_VERBATIM, 0, "\\)", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_BRACKET]		= { 0, "\\[", 0, DESCEND_VERBATIM, 0, "\\]", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_DOLLAR_SINGLE]	= { 0, "$", 0, DESCEND_VERBATIM, 0, "$", 0, 1, 0, 0 },
+	[TOKEN_PAIR_MATH_DOLLAR_DOUBLE]	= { 0, "$$", 0, DESCEND_VERBATIM, 0, "$$", 0, 1, 0, 0 },
+	[TOKEN_PAIR_STRONG]				= { 0, "\\textbf{", 0, DESCEND_CHILD, 0, "}", 0, 1, 0, 0 },
+	[TOKEN_PAIR_STAR]				= { 0, "*", 0, DESCEND_CHILD, 0, "*", 0, 1, 0, 0 },
+	[TOKEN_PAIR_STAR_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1, 0, 0 },
+	[TOKEN_PAIR_UL]					= { 0, "_", 0, DESCEND_CHILD, 0, "_", 0, 1, 0, 0 },
+	[TOKEN_PAIR_UL_USED]			= { 0, NULL, 0, DESCEND_CHILD, 0, NULL, 0, 1, 0, 0 },
+	[TOKEN_PAIR_PAREN]				= { 0, "(", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_PAIR_BRACE]				= { 0, "\\{", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
 
-	[TOKEN_ANGLE_LEFT]				= { 0, "<", 0, NONE, 0, NULL },
-	[TOKEN_ANGLE_RIGHT]				= { 0, ">", 0, NONE, 0, NULL },
-	[TOKEN_APOSTROPHE]				= { 0, "'", 0, NONE, 0, NULL },
-	[TOKEN_BRACE_LEFT]				= { 0, "\\{", 0, NONE, 0, NULL },
-	[TOKEN_BRACE_RIGHT]				= { 0, "\\}", 0, NONE, 0, NULL },
-	[TOKEN_DASH_M]					= { 0, "---", 0, NONE, 0, NULL },
-	[TOKEN_DASH_N]					= { 0, "--", 0, NONE, 0, NULL },
-	[TOKEN_ELLIPSIS]				= { 0, "{\\ldots}", 0, NONE, 0, NULL },
-	[TOKEN_AMPERSAND]				= { 0, "\\&", 0, NONE, 0, NULL },
-	[TOKEN_AMPERSAND_LONG]			= { 0, "\\&", 0, NONE, 0, NULL },
-	[TOKEN_NBSP]					= { 0, "~", 0, NONE, 0, NULL },
-	[TOKEN_QUOTE_DOUBLE]			= { 0, "''", 0, NONE },
-	[TOKEN_TEXT_WHITESPACE]			= { 0, " ", 0, NONE, 0, NULL },
-	[TOKEN_UL]						= { 0, "\\_", 0, NONE, 0, NULL },
+	[TOKEN_ANGLE_LEFT]				= { 0, "<", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_ANGLE_RIGHT]				= { 0, ">", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_APOSTROPHE]				= { 0, "'", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_BRACE_LEFT]				= { 0, "\\{", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_BRACE_RIGHT]				= { 0, "\\}", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_DASH_M]					= { 0, "---", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_DASH_N]					= { 0, "--", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_ELLIPSIS]				= { 0, "{\\ldots}", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_AMPERSAND]				= { 0, "\\&", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_AMPERSAND_LONG]			= { 0, "\\&", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_NBSP]					= { 0, "~", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_QUOTE_DOUBLE]			= { 0, "''", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_TEXT_WHITESPACE]			= { 0, " ", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_UL]						= { 0, "\\_", 0, NONE, 0, NULL, 0, 0, 0, 0 },
 
-	[TOKEN_CM_COM_OPEN]				= { 0, "\\{>>", 0, NONE, 0, NULL },
-	[TOKEN_CM_COM_CLOSE]			= { 0, "\\ensuremath{\\sim}\\ensuremath{\\sim}\\}", 0, NONE, 0, NULL },
-	[TOKEN_CM_SUB_DIV]				= { 0, "\\ensuremath{\\sim}>", 0, NONE, 0, NULL },
-	[TOKEN_CM_SUB_CLOSE]			= { 0, "\\ensuremath{\\sim}\\ensuremath{\\sim}\\}", 0, NONE, 0, NULL },
+	[TOKEN_CM_COM_OPEN]				= { 0, "\\{>>", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_CM_COM_CLOSE]			= { 0, "\\ensuremath{\\sim}\\ensuremath{\\sim}\\}", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_CM_SUB_DIV]				= { 0, "\\ensuremath{\\sim}>", 0, NONE, 0, NULL, 0, 0, 0, 0 },
+	[TOKEN_CM_SUB_CLOSE]			= { 0, "\\ensuremath{\\sim}\\ensuremath{\\sim}\\}", 0, NONE, 0, NULL, 0, 0, 0, 0 },
 };
 
 
 static smart_quote single_quotes[16] = {
-	[QUOTES_ENGLISH]			= { "`", "'" },
-	[QUOTES_DUTCH]				= { "`", "'" },
-	[QUOTES_SWEDISH]			= { "'", "'" },
-	[QUOTES_FRENCH]				= { "'", "'" },
-	[QUOTES_GERMAN]				= { "‚", "`" },
-	[QUOTES_GERMAN_GUILLEMETS]	= { "›", "‹" },
-	[QUOTES_SPANISH]			= { "`", "'" },
+	[QUOTES_ENGLISH]			= { "`", "'", 0, 0 },
+	[QUOTES_DUTCH]				= { "`", "'", 0, 0 },
+	[QUOTES_SWEDISH]			= { "'", "'", 0, 0 },
+	[QUOTES_FRENCH]				= { "'", "'", 0, 0 },
+	[QUOTES_GERMAN]				= { "‚", "`", 0, 0 },
+	[QUOTES_GERMAN_GUILLEMETS]	= { "›", "‹", 0, 0 },
+	[QUOTES_SPANISH]			= { "`", "'", 0, 0 },
 };
 
 
 static smart_quote double_quotes[16] = {
-	[QUOTES_ENGLISH]			= { "``", "''" },
-	[QUOTES_DUTCH]				= { "„", "''" },
-	[QUOTES_SWEDISH]			= { "''", "''" },
-	[QUOTES_FRENCH]				= { "«", "»" },
-	[QUOTES_GERMAN]				= { "„", "``" },
-	[QUOTES_GERMAN_GUILLEMETS]	= { "»", "«" },
-	[QUOTES_SPANISH]			= { "«", "»" },
+	[QUOTES_ENGLISH]			= { "``", "''", 0, 0 },
+	[QUOTES_DUTCH]				= { "„", "''", 0, 0 },
+	[QUOTES_SWEDISH]			= { "''", "''", 0, 0 },
+	[QUOTES_FRENCH]				= { "«", "»", 0, 0 },
+	[QUOTES_GERMAN]				= { "„", "``", 0, 0 },
+	[QUOTES_GERMAN_GUILLEMETS]	= { "»", "«", 0, 0 },
+	[QUOTES_SPANISH]			= { "«", "»", 0, 0 },
 };
 
 
 static smart_quote headers[6] = {
-	{ "\\part{", "}" },
-	{ "\\chapter{", "}" },
-	{ "\\section{", "}" },
-	{ "\\subsection{", "}" },
-	{ "\\subsubsection{", "}" },
-	{ "\\paragraph{", "}" },
+	{ "\\part{", "}", 0, 0 },
+	{ "\\chapter{", "}", 0, 0 },
+	{ "\\section{", "}", 0, 0 },
+	{ "\\subsection{", "}", 0, 0 },
+	{ "\\subsubsection{", "}", 0, 0 },
+	{ "\\paragraph{", "}", 0, 0 },
 };
 
 
 /// Print each line as is
-static void export_latex_line(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_line(mmd_node * n, const char * text, text_buffer * out) {
 	switch (n->type) {
 		case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
@@ -179,9 +178,9 @@ static void export_latex_line(mmd_node * n, const char * text, size_t len, text_
 }
 
 
-static void export_latex_lines(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_lines(mmd_node * n, const char * text, text_buffer * out) {
 	while (n) {
-		export_latex_line(n, text, len, out, r, w);
+		export_latex_line(n, text, out);
 
 		n = n->next;
 	}
@@ -189,7 +188,7 @@ static void export_latex_lines(mmd_node * n, const char * text, size_t len, text
 
 
 /// Print each line as is, but only the "content" portion of each line
-static void export_latex_line_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_line_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	text += l->general.start + l->c_start;
 
 	switch (l->general.type) {
@@ -214,9 +213,9 @@ static void export_latex_line_content(mmd_line_node * l, const char * text, size
 }
 
 
-static void export_latex_lines_content(mmd_node * n, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_lines_content(mmd_node * n, const char * text, text_buffer * out) {
 	while (n) {
-		export_latex_line_content((mmd_line_node *) n, text, len, out, r, w);
+		export_latex_line_content((mmd_line_node *) n, text, out);
 
 		n = n->next;
 	}
@@ -287,34 +286,7 @@ static void export_latex_raw_text(const char * text, size_t len, text_buffer * o
 }
 
 
-static void export_latex_line_raw(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
-	text += l->general.start;
-
-	switch (l->general.type) {
-		case CODE_FENCE_LINE:
-			break;
-
-		case LINE_EMPTY:
-			text_buffer_append_c(out, '\n');
-			break;
-
-		default:
-			export_latex_raw_text(text, l->general.len, out);
-			break;
-	}
-}
-
-
-static void export_latex_lines_raw(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
-	while (l) {
-		export_latex_line_raw(l, text, len, out, r, w);
-
-		l = (mmd_line_node *) l->general.next;
-	}
-}
-
-
-static void export_latex_line_raw_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_line_raw_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	text += l->general.start + l->c_start;
 
 	switch (l->general.type) {
@@ -332,16 +304,16 @@ static void export_latex_line_raw_content(mmd_line_node * l, const char * text, 
 }
 
 
-static void export_latex_lines_raw_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_lines_raw_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	while (l) {
-		export_latex_line_raw_content(l, text, len, out, r, w);
+		export_latex_line_raw_content(l, text, out);
 
 		l = (mmd_line_node *) l->general.next;
 	}
 }
 
 
-static void export_latex_line_verbatim_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_line_verbatim_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	// text += l->general.start + l->c_start;
 	text += l->general.start;
 
@@ -368,9 +340,9 @@ static void export_latex_line_verbatim_content(mmd_line_node * l, const char * t
 }
 
 
-static void export_latex_lines_verbatim_content(mmd_line_node * l, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_lines_verbatim_content(mmd_line_node * l, const char * text, text_buffer * out) {
 	while (l) {
-		export_latex_line_verbatim_content(l, text, len, out, r, w);
+		export_latex_line_verbatim_content(l, text, out);
 
 		l = (mmd_line_node *) l->general.next;
 	}
@@ -517,6 +489,8 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 }
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_text_len, mmd_node * key_token, mmd_node * expansion_token, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options, bool * first) {
 	if (a) {
 		if (*first) {
@@ -550,6 +524,7 @@ static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_tex
 
 	return 1;
 }
+#pragma GCC diagnostic pop
 
 
 static int export_latex_abbreviation_word(const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options, bool * first) {
@@ -625,7 +600,7 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 					mmd_print_const(out, "{");
 
 					if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
-						export_latex_blocks(e->content_node, e->text, e->len, out, r, w, options);
+						export_latex_blocks(e->content_node, e->text, out, r, w, options);
 					} else {
 						export_latex_tokens(e->content_node, e->text, e->len, out, r, w, options);
 					}
@@ -660,7 +635,7 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 				}
 
 				if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
-					export_latex_blocks(e->content_node, e->text, e->len, out, r, w, options);
+					export_latex_blocks(e->content_node, e->text, out, r, w, options);
 				} else {
 					export_latex_tokens(e->content_node, e->text, e->len, out, r, w, options);
 				}
@@ -701,7 +676,7 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 					}
 
 					if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
-						export_latex_blocks(e->content_node, e->text, e->len, out, r, w, options);
+						export_latex_blocks(e->content_node, e->text, out, r, w, options);
 					} else {
 						export_latex_tokens(e->content_node, e->text, e->len, out, r, w, options);
 						w->padding = 0;
@@ -882,7 +857,7 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 			break;
 
 		case TOKEN_PIPE:
-			F(i, (*t)->len) {
+			F(i, (int)(*t)->len) {
 				mmd_print_const(out, "\\textbar{}");
 			}
 			break;
@@ -936,7 +911,7 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 			break;
 
 		case TOKEN_HASH:
-			F(i, (*t)->len) {
+			F(i, (int)(*t)->len) {
 				mmd_print_const(out, "\\#");
 			}
 			break;
@@ -997,16 +972,16 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 			break;
 
 		case TOKEN_PAIR_QUOTE_DOUBLE:
-			text_buffer_append_text(out, double_quotes[r->quotes_language].opener, double_quotes[r->quotes_language].opener_len);
+			text_buffer_append_text(out, double_quotes[(int)(int)r->quotes_language].opener, double_quotes[(int)(int)r->quotes_language].opener_len);
 			export_latex_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, double_quotes[r->quotes_language].closer, double_quotes[r->quotes_language].closer_len);
+			text_buffer_append_text(out, double_quotes[(int)(int)r->quotes_language].closer, double_quotes[(int)(int)r->quotes_language].closer_len);
 			(*t) = (*t)->next;
 			break;
 
 		case TOKEN_PAIR_QUOTE_SINGLE:
-			text_buffer_append_text(out, single_quotes[r->quotes_language].opener, single_quotes[r->quotes_language].opener_len);
+			text_buffer_append_text(out, single_quotes[(int)(int)r->quotes_language].opener, single_quotes[(int)(int)r->quotes_language].opener_len);
 			export_latex_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, single_quotes[r->quotes_language].closer, single_quotes[r->quotes_language].closer_len);
+			text_buffer_append_text(out, single_quotes[(int)(int)r->quotes_language].closer, single_quotes[(int)(int)r->quotes_language].closer_len);
 			(*t) = (*t)->next;
 			break;
 
@@ -1037,7 +1012,7 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 					(*t) = (*t)->next;
 				}
 			} else {
-				F(i, (*t)->len) {
+				F(i, (int)(*t)->len) {
 					mmd_print_const(out, "\\ensuremath{\\sim}");
 				}
 			}
@@ -1081,7 +1056,7 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 
 		case TOKEN_PAIR_BRACKET_EMPTY:
 		case TOKEN_PAIR_BRACKET_NOT_CITED:
-			if (export_token_pair(text, len, t, out, r, w, false, &fe, options)) {
+			if (export_token_pair(text, len, t, out, r, w, &fe, options)) {
 				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
 			}
 
@@ -1099,7 +1074,7 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 				(*t) = (*t)->next;
 				w->skip_endnote_label = false;
 			} else {
-				if (export_token_pair(text, len, t, out, r, w, false, &fe, options)) {
+				if (export_token_pair(text, len, t, out, r, w, &fe, options)) {
 					// Plain [text] since parsing failed
 					text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
 
@@ -1274,8 +1249,7 @@ static void export_latex_tokens(mmd_node * t, const char * text, size_t len, tex
 }
 
 
-static void export_latex_toc(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
-	size_t counter = 0;
+static void export_latex_toc(const char * text, text_buffer * out) {
 	int min = 0;
 	int max = 6;
 
@@ -1289,7 +1263,7 @@ static void export_latex_toc(mmd_node * b, const char * text, text_buffer * out,
 }
 
 
-static void export_latex_block(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_latex_block(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	parse_rule rule = rules[b->type];
 
 	switch (b->type) {
@@ -1314,9 +1288,9 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 						w->padding = 0;
 
 						if (w->in_recursive) {
-							export_latex_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+							export_latex_lines_raw_content((mmd_line_node *)b->child, &text[b->start], out);
 						} else {
-							export_latex_lines_verbatim_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+							export_latex_lines_verbatim_content((mmd_line_node *)b->child, &text[b->start], out);
 						}
 
 						w->padding = 1;
@@ -1335,9 +1309,9 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 			w->padding = 1;
 
 			if (w->in_recursive) {
-				export_latex_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_latex_lines_raw_content((mmd_line_node *)b->child, &text[b->start], out);
 			} else {
-				export_latex_lines_verbatim_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_latex_lines_verbatim_content((mmd_line_node *)b->child, &text[b->start], out);
 			}
 
 			if (lang) {
@@ -1360,7 +1334,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 
 			w->padding = 2;
 
-			export_latex_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+			export_latex_blocks(b->child, &text[b->start], out, r, w, options);
 			pad(out, 1, w);
 
 			if (b->next && b->next->type == BLOCK_DEFLIST) {
@@ -1377,7 +1351,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 			pad(out, 2, w);
 
 			if (b->child->next) {
-				export_latex_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+				export_latex_blocks(b->child, &text[b->start], out, r, w, options);
 			} else {
 				export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
 			}
@@ -1464,7 +1438,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 			w->padding = 2;
 			export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
 			w->padding = 0;
-			export_latex_blocks(b->child->next, &text[b->start], b->len, out, r, w, options);
+			export_latex_blocks(b->child->next, &text[b->start], out, r, w, options);
 			w->padding = 0;
 			break;
 
@@ -1478,7 +1452,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 		case BLOCK_TOC:
 			pad(out, 2, w);
 
-			export_latex_toc(b, &text[b->start], out, r, w, options);
+			export_latex_toc(&text[b->start], out);
 
 			w->padding = 0;
 			break;
@@ -1513,7 +1487,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 			w->padding = 2;
 
 			// Export table rows
-			export_latex_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+			export_latex_blocks(b->child, &text[b->start], out, r, w, options);
 			pad(out, 1, w);
 
 			mmd_print_const(out, "\n\\end{tabulary}\n\\end{minipage}");
@@ -1560,7 +1534,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 			w->padding = 2;
 
 			w->in_table_header = true;
-			export_latex_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+			export_latex_blocks(b->child, &text[b->start], out, r, w, options);
 			w->in_table_header = false;
 
 			pad(out, rule.pad_post_descent, w);
@@ -1607,7 +1581,7 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 			}
 
 			if (rule.descent & DESCEND_CHILD) {
-				export_latex_blocks(b->child, &text[b->start], b->len, out, r, w, options);
+				export_latex_blocks(b->child, &text[b->start], out, r, w, options);
 			}
 
 			if (rule.descent & DESCEND_CONTENT) {
@@ -1616,18 +1590,18 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 
 			if (rule.descent & DESCEND_LINES) {
 				if (w->in_recursive) {
-					export_latex_lines_content(b->child, &text[b->start], b->len, out, r, w);
+					export_latex_lines_content(b->child, &text[b->start], out);
 				} else {
-					export_latex_lines(b->child, &text[b->start], b->len, out, r, w);
+					export_latex_lines(b->child, &text[b->start], out);
 				}
 			}
 
 			if (rule.descent & DESCEND_LINES_RAW) {
-				export_latex_lines_raw_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_latex_lines_raw_content((mmd_line_node *)b->child, &text[b->start], out);
 			}
 
 			if (rule.descent & DESCEND_LINES_VERBATIM) {
-				export_latex_lines_verbatim_content((mmd_line_node *)b->child, &text[b->start], b->len, out, r, w);
+				export_latex_lines_verbatim_content((mmd_line_node *)b->child, &text[b->start], out);
 			}
 
 			if (rule.descent & DESCEND_RAW) {
@@ -1664,12 +1638,12 @@ static void export_latex_block(mmd_node * b, const char * text, size_t len, text
 }
 
 
-static void export_latex_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_latex_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	while (b) {
 		if (w->skip_blocks) {
 			w->skip_blocks--;
 		} else {
-			export_latex_block(b, text, len, out, r, w, options);
+			export_latex_block(b, text, out, r, w, options);
 		}
 
 		b = b->next;
@@ -1714,7 +1688,7 @@ static void export_latex_glossary(text_buffer * out, read_ctx * r, write_ctx * w
 		}
 
 		if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
-			export_latex_blocks(e->content_node, e->text, e->len, out, r, w, options);
+			export_latex_blocks(e->content_node, e->text, out, r, w, options);
 		} else {
 			export_latex_tokens(e->content_node, e->text, e->len, out, r, w, options);
 			w->padding = 0;
@@ -1904,7 +1878,7 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 }
 
 
-static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w) {
 	pad(out, 1, w);
 
 	meta * m = read_ctx_get_meta(r, "latexfooter");
@@ -1933,11 +1907,11 @@ static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx
 		w->padding = 2;
 		w->in_endnote = 1;
 
-		F(i, w->used_cite_stack->size) {
+		F(i, (int)w->used_cite_stack->size) {
 			endnote_def * e = stack_peek_index(w->used_cite_stack, i);
 
 			if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
-				export_latex_blocks(e->content_node, e->text, e->len, out, r, w, options);
+				export_latex_blocks(e->content_node, e->text, out, r, w, options);
 			} else {
 				char * id = html_id_from_text(&e->key[1], strlen(e->key) - 1, false);
 				pad(out, 2, w);
@@ -1957,7 +1931,7 @@ static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx
 }
 
 
-void export_latex(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
 	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
 	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
 	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
@@ -1969,7 +1943,7 @@ void export_latex(mmd_node * b, const char * text, size_t len, text_buffer * out
 		export_latex_header(out, r, w, options);
 	}
 
-	export_latex_blocks(b, text, len, out, r, w, options);
+	export_latex_blocks(b, text, out, r, w, options);
 
 	if (!read_ctx_get_meta(r, "bibtex")) {
 		// Include custom bibliography if we are not using BibTeX
@@ -1977,7 +1951,7 @@ void export_latex(mmd_node * b, const char * text, size_t len, text_buffer * out
 	}
 
 	if (r->write_complete || (r->has_meta && !r->write_snippet)) {
-		export_latex_footer(out, r, w, options);
+		export_latex_footer(out, r, w);
 	}
 
 	pad(out, 1, w);

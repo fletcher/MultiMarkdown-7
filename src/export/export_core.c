@@ -393,7 +393,7 @@ static int export_split_link(const char * text, size_t len, mmd_node ** t, text_
 }
 
 
-static int export_implicit_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool is_figure, format_export * fe, uint32_t options) {
+static int export_implicit_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// ![...] text and id are the same
 
 	if ((*t)->child) {
@@ -417,7 +417,7 @@ static int export_implicit_image(const char * text, size_t len, mmd_node ** t, t
 }
 
 
-static int export_inline_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool is_figure, format_export * fe, uint32_t options) {
+static int export_inline_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 
 	// ![...](...)
 	link_def * l = extract_inline_link(text, len, t, options);
@@ -435,7 +435,7 @@ static int export_inline_image(const char * text, size_t len, mmd_node ** t, tex
 }
 
 
-static int export_split_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool is_figure, format_export * fe, uint32_t options) {
+static int export_split_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// ![...][...]
 	mmd_node * id_node;
 
@@ -805,7 +805,7 @@ static int export_implicit_glossary(const char * text, size_t len, mmd_node ** t
 	return 1;
 }
 
-static int export_implicit_variable(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
+static int export_implicit_variable(const char * text, mmd_node ** t, text_buffer * out, read_ctx * r, format_export * fe) {
 	char * label = html_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 	meta * m = read_ctx_get_meta(r, label);
 	free(label);
@@ -823,7 +823,7 @@ static int export_implicit_variable(const char * text, size_t len, mmd_node ** t
 
 
 /// Interpret meaning of a [...] based on next token and content (e.g. link, image, abbreviation, citation, footnote, glossary, variable)
-int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool is_figure, format_export * fe, uint32_t options) {
+int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	unsigned char next_type = 0;
 	mmd_node * next_node = (*t)->next;
 
@@ -933,17 +933,17 @@ int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer 
 			switch (next_type) {
 				case TOKEN_PAIR_PAREN:
 					// ![...](...) Inline image
-					return export_inline_image(text, len, t, out, r, w, w->in_figure, fe, options);
+					return export_inline_image(text, len, t, out, r, w, fe, options);
 					break;
 
 				case TOKEN_PAIR_BRACKET:
 					// ![...][...] Reference image
-					return export_split_image(text, len, t, out, r, w, w->in_figure, fe, options);
+					return export_split_image(text, len, t, out, r, w, fe, options);
 					break;
 
 				case TOKEN_PAIR_BRACKET_EMPTY:
 					// ![...][] Skip empty bracket pair
-					result = export_implicit_image(text, len, t, out, r, w, w->in_figure, fe, options);
+					result = export_implicit_image(text, len, t, out, r, w, fe, options);
 
 					if (!result) {
 						(*t) = (*t)->next;
@@ -954,7 +954,7 @@ int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer 
 
 				default:
 					// Ignore whatever is next and treat as Implicit image
-					return export_implicit_image(text, len, t, out, r, w, w->in_figure, fe, options);
+					return export_implicit_image(text, len, t, out, r, w, fe, options);
 					break;
 			}
 
@@ -1088,7 +1088,7 @@ int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer 
 
 				case TOKEN_PAIR_BRACKET_EMPTY:
 					// [#...][] Skip empty bracket pair
-					result = export_implicit_variable(text, len, t, out, r, w, fe, options);
+					result = export_implicit_variable(text, t, out, r, fe);
 
 					if (!result) {
 						(*t) = (*t)->next;
@@ -1099,7 +1099,7 @@ int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer 
 
 				default:
 					// Ignore whatever is next and treat as Implicit variable
-					return export_implicit_variable(text, len, t, out, r, w, fe, options);
+					return export_implicit_variable(text, t, out, r, fe);
 					break;
 			}
 

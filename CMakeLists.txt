@@ -217,6 +217,14 @@ set_target_properties("${My_Project_Title_Clean}"
 	XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
 )
 
+# Warn for everything and treat as errors
+if(MSVC)
+  target_compile_options("${My_Project_Title_Clean}" PRIVATE /W4 /WX)
+else()
+  target_compile_options("${My_Project_Title_Clean}" PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-implicit-fallthrough)
+endif()
+
+
 # Link to other libraries
 target_link_libraries("${My_Project_Title}"
 	${libraries_to_link}

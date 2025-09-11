@@ -104,6 +104,6 @@ stack_data_type stack_peek_index(
 
 
 /// Sort stack based on sort_function
-void stack_sort(stack * s, void * compare_function);
+void stack_sort(stack * self, int (* compare_function)(const void *, const void *));
 
 #endif

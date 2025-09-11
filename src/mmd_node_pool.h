@@ -54,7 +54,10 @@ struct mmd_node_pool {
 	void *				next;
 	void *				end;
 
+#if defined(__WIN32)
+#else
 	pthread_mutex_t		mutex;
+#endif
 };
 
 

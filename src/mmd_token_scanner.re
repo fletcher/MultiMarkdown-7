@@ -54,6 +54,13 @@
 #include "read_ctx.h"
 #include "mmd_utilities.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#if !defined(__has_warning) || __has_warning("-Wmaybe-uninitialized")
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #define ret s->c_start = t1; return
 
@@ -605,3 +612,5 @@ void scan_toc_range(const char * text, int * min, int * max) {
 	*										{ return; }
 */
 }
+
+#pragma GCC diagnostic pop

@@ -105,7 +105,7 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 void url_encode_text(const char * text, size_t len, text_buffer * out);
 
 /// Interpret meaning of a [...] based on next token and content (e.g. link, image, abbreviation, citation, footnote, glossary, variable)
-int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool is_figure, format_export * fe, uint32_t options);
+int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options);
 
 int raw_level_for_header(mmd_node * n);
 

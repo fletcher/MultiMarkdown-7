@@ -234,10 +234,11 @@ static size_t trie_search(ac * a, const char * query) {
 }
 
 
+#ifdef TEST
 static unsigned char trie_search_match_type(ac * a, const char * query) {
 	size_t s = trie_search(a, query);
 
-	if (s == -1) {
+	if (s == (size_t) -1) {
 		return -1;
 	}
 
@@ -245,7 +246,6 @@ static unsigned char trie_search_match_type(ac * a, const char * query) {
 }
 
 
-#ifdef TEST
 void Test_trie_search(CuTest * tc) {
 	ac * a = ac_new(0);
 
@@ -292,7 +292,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 				while ((suffix[0] != '\0') && (n->ac_fail == 0)) {
 					n->ac_fail = trie_search(a, suffix);
 
-					if (n->ac_fail == -1) {
+					if (n->ac_fail == (size_t) -1) {
 						n->ac_fail = 0;
 					}
 
@@ -315,7 +315,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 			while ((suffix[0] != '\0') && (n->ac_fail == 0)) {
 				n->ac_fail = trie_search(a, suffix);
 
-				if (n->ac_fail == -1) {
+				if (n->ac_fail == (size_t) -1) {
 					n->ac_fail = 0;
 				}
 
@@ -346,7 +346,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 void ac_prepare(ac * a, int options) {
 	if (a) {
 		// Clear old pointers
-		F(i, a->size) {
+		F(i, (int) a->size) {
 			a->node[i].ac_fail = 0;
 		}
 
@@ -406,15 +406,6 @@ void match_free(match * m) {
 		next = m->next;
 		free(m);
 		m = next;
-	}
-}
-
-
-static void match_set_buffer(match * m, const char * text, text_buffer * buffer) {
-	while (m) {
-		text_buffer_append_printf(buffer, "%.*s\n", (int)m->len, &text[m->start]);
-
-		m = m->next;
 	}
 }
 
@@ -605,7 +596,7 @@ static void trie_node_to_graphviz(ac * a, size_t s, FILE * out) {
 void ac_to_graphviz(ac * a, FILE * out) {
 	fprintf(out, "digraph dfa {\n");
 
-	F(i, a->size) {
+	F(i, (int) a->size) {
 		trie_node_to_graphviz(a, i, out);
 	}
 

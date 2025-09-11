@@ -535,7 +535,7 @@ static mmd_node * block_blockquote(mmd_node ** l, mmd_node_pool * p, const char 
 
 
 static mmd_node * block_code_fenced(mmd_node ** l, mmd_node_pool * p) {
-	int level;
+	int level = 0;
 
 	switch ((*l)->type) {
 		case LINE_FENCE_BACKTICK_3:
@@ -574,7 +574,7 @@ static mmd_node * block_code_fenced(mmd_node ** l, mmd_node_pool * p) {
 }
 
 
-static mmd_node * block_code_indented(mmd_node ** l, mmd_node_pool * p, const char * text, size_t len) {
+static mmd_node * block_code_indented(mmd_node ** l, mmd_node_pool * p, const char * text) {
 	mmd_node * b = mmd_node_new_parent(p, NULL, BLOCK_CODE_INDENTED);
 	b->start = (*l)->start;
 
@@ -612,7 +612,7 @@ static mmd_node * block_code_indented(mmd_node ** l, mmd_node_pool * p, const ch
 }
 
 
-static mmd_node * block_definition(mmd_node ** l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options) {
+static mmd_node * block_definition(mmd_node ** l, mmd_node_pool * p, const char * text, read_ctx * c, uint32_t options) {
 	mmd_node * b = mmd_node_feed_new_parent(l, BLOCK_DEFINITION, p);
 
 	while (accept_tail_line(l)) {
@@ -715,7 +715,7 @@ static mmd_node * block_list_enumerated(mmd_node ** l, mmd_node_pool * p, const 
 }
 
 
-static mmd_node * block_meta(mmd_node ** l, mmd_node_pool * p, read_ctx * c) {
+static mmd_node * block_meta(mmd_node ** l, mmd_node_pool * p) {
 	mmd_node * b = mmd_node_feed_new_parent(l, BLOCK_META, p);
 
 	while ((*l) && (*l)->type != LINE_EMPTY) {
@@ -726,7 +726,7 @@ static mmd_node * block_meta(mmd_node ** l, mmd_node_pool * p, read_ctx * c) {
 }
 
 
-static mmd_node * block_meta_yaml(mmd_node ** l, mmd_node_pool * p, read_ctx * c) {
+static mmd_node * block_meta_yaml(mmd_node ** l, mmd_node_pool * p) {
 	mmd_node * b = mmd_node_feed_new_parent(l, BLOCK_META, p);
 
 	while ((*l) && (((*l)->type != LINE_EMPTY) && ((*l)->type != LINE_SETEXT_2))) {
@@ -751,7 +751,7 @@ static void block_promote_lines(mmd_node * b, unsigned char type, mmd_node_pool 
 }
 
 
-static mmd_node * block_para(mmd_node ** l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options) {
+static mmd_node * block_para(mmd_node ** l, mmd_node_pool * p, const char * text, read_ctx * c, uint32_t options) {
 	mmd_node * b = mmd_node_feed_new_parent(l, BLOCK_PARA, p);
 
 	while (accept_para_line(l)) {
@@ -769,7 +769,7 @@ static mmd_node * block_para(mmd_node ** l, mmd_node_pool * p, const char * text
 
 				// Addend definitions
 				while ((*l) && (*l)->type == LINE_DEFINITION) {
-					mmd_node_append_child(b, block_definition(l, p, text, len, c, options));
+					mmd_node_append_child(b, block_definition(l, p, text, c, options));
 				}
 			}
 
@@ -789,7 +789,7 @@ static mmd_node * block_para(mmd_node ** l, mmd_node_pool * p, const char * text
 
 
 static mmd_node * block_reference_def_a(mmd_node ** l, mmd_node_pool * p, uint32_t options) {
-	mmd_node * b;
+	mmd_node * b = NULL;
 
 	switch ((*l)->type) {
 		case LINE_DEF_ABBREVIATION:
@@ -815,7 +815,7 @@ static mmd_node * block_reference_def_a(mmd_node ** l, mmd_node_pool * p, uint32
 
 
 static mmd_node * block_endnote_definition(mmd_node ** l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options) {
-	mmd_node * b;
+	mmd_node * b = NULL;
 
 	switch ((*l)->type) {
 		case LINE_DEF_CITATION:
@@ -987,7 +987,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 		case LINE_ATX_6:
 			b = block_atx(l, p);
 
-			mmd_parse_tokens_block(b, &text[b->start], b->len, c, p, options);
+			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 
 			if (!(options & MMD_OPTION_COMPATIBILITY)) {
 				if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
@@ -1030,7 +1030,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 		case LINE_DEF_FOOTNOTE:
 		case LINE_DEF_GLOSSARY:
 			if (c->is_endnote) {
-				b = block_para(l, p, text, len, c, options);
+				b = block_para(l, p, text, c, options);
 			} else {
 				b = block_endnote_definition(l, p, text, len, c, options);
 			}
@@ -1052,8 +1052,8 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 
 		case LINE_YAML:
 			if (c->allow_meta) {
-				b = block_meta_yaml(l, p, c);
-				mmd_parse_meta_block(b, &text[b->start + b->child->len], b->len - b->child->len, c, b->start);
+				b = block_meta_yaml(l, p);
+				mmd_parse_meta_block(&text[b->start + b->child->len], b->len - b->child->len, c);
 
 				// Add trailing YAML line (if present) *after* we parse the metadata block
 				if ((*l) && ((*l)->type == LINE_SETEXT_2)) {
@@ -1068,7 +1068,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 		case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			b = block_hr(l, p);
-			mmd_parse_tokens_block(b, &text[b->start], b->len, c, p, options);
+			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 			break;
 
 		case LINE_HTML_BLOCK:
@@ -1078,7 +1078,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 
 		case LINE_INDENTED_SPACE:
 		case LINE_INDENTED_TAB:
-			b = block_code_indented(l, p, text, len);
+			b = block_code_indented(l, p, text);
 			break;
 
 		case LINE_START_COMMENT:
@@ -1101,12 +1101,12 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 				b = block_table(l, p);
 
 				if (b->type == BLOCK_TABLE) {
-					mmd_parse_tokens_table(b, &text[b->start], b->len, c, p, options);
+					mmd_parse_tokens_table(b, &text[b->start], c, p, options);
 				} else {
-					mmd_parse_tokens_block(b, &text[b->start], b->len, c, p, options);
+					mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 				}
 			} else {
-				b = block_para(l, p, text, len, c, options);
+				b = block_para(l, p, text, c, options);
 			}
 
 			break;
@@ -1117,21 +1117,21 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 
 		case LINE_META:
 			if (c->allow_meta) {
-				b = block_meta(l, p, c);
-				mmd_parse_meta_block(b, &text[b->start], b->len, c, b->start);
+				b = block_meta(l, p);
+				mmd_parse_meta_block(&text[b->start], b->len, c);
 				return b;
 			}
 
 		default:
-			b = block_para(l, p, text, len, c, options);
+			b = block_para(l, p, text, c, options);
 
 			switch (b->type) {
 				case BLOCK_DEFLIST:
-					mmd_parse_tokens_deflist(b, &text[b->start], b->len, c, p, options);
+					mmd_parse_tokens_deflist(b, &text[b->start], c, p, options);
 					break;
 
 				default:
-					mmd_parse_tokens_block(b, &text[b->start], b->len, c, p, options);
+					mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 					break;
 			}
 
@@ -1142,7 +1142,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 }
 
 
-static void block_check(mmd_node * b, mmd_node * last, const char * text, size_t len, read_ctx * c, uint32_t options) {
+static void block_check(mmd_node * b, mmd_node * last, const char * text, read_ctx * c, uint32_t options) {
 	if (b) {
 		switch (b->type) {
 			case BLOCK_PARA: {
@@ -1220,13 +1220,13 @@ static mmd_node * blocks(mmd_node ** l, mmd_node_pool * p, const char * text, si
 	b = block(l, p, text, len, c, options);
 
 	// Check for special cases
-	block_check(b, NULL, text, len, c, options);
+	block_check(b, NULL, text, c, options);
 
 	last = b;
 
 	while (last && last->next) {
 		// Check for special cases
-		block_check(last->next, last, text, len, c, options);
+		block_check(last->next, last, text, c, options);
 
 		last = last->next;
 	}
@@ -1237,7 +1237,7 @@ static mmd_node * blocks(mmd_node ** l, mmd_node_pool * p, const char * text, si
 		last->next = n;
 
 		// Check for special cases
-		block_check(n, last, text, len, c, options);
+		block_check(n, last, text, c, options);
 
 		last = n;
 
@@ -1302,7 +1302,7 @@ static mmd_node * block_only(mmd_node ** l, mmd_node_pool * p, const char * text
 
 		case LINE_YAML:
 			if (c->allow_meta) {
-				b = block_meta(l, p, c);
+				b = block_meta(l, p);
 				return b;
 			}
 
@@ -1319,7 +1319,7 @@ static mmd_node * block_only(mmd_node ** l, mmd_node_pool * p, const char * text
 
 		case LINE_INDENTED_SPACE:
 		case LINE_INDENTED_TAB:
-			b = block_code_indented(l, p, text, len);
+			b = block_code_indented(l, p, text);
 			break;
 
 		case LINE_START_COMMENT:
@@ -1341,7 +1341,7 @@ static mmd_node * block_only(mmd_node ** l, mmd_node_pool * p, const char * text
 			if (!(options & MMD_OPTION_COMPATIBILITY)) {
 				b = block_table(l, p);
 			} else {
-				b = block_para(l, p, text, len, c, options);
+				b = block_para(l, p, text, c, options);
 			}
 
 			break;
@@ -1352,12 +1352,12 @@ static mmd_node * block_only(mmd_node ** l, mmd_node_pool * p, const char * text
 
 		case LINE_META:
 			if (c->allow_meta) {
-				b = block_meta(l, p, c);
+				b = block_meta(l, p);
 				return b;
 			}
 
 		default:
-			b = block_para(l, p, text, len, c, options);
+			b = block_para(l, p, text, c, options);
 			break;
 	}
 
@@ -1371,13 +1371,13 @@ static mmd_node * blocks_only(mmd_node ** l, mmd_node_pool * p, const char * tex
 	b = block_only(l, p, text, len, c, options);
 
 	// Check for special cases
-	block_check(b, NULL, text, len, c, options);
+	block_check(b, NULL, text, c, options);
 
 	last = b;
 
 	while (last && last->next) {
 		// Check for special cases
-		block_check(last->next, last, text, len, c, options);
+		block_check(last->next, last, text, c, options);
 
 		last = last->next;
 	}
@@ -1388,7 +1388,7 @@ static mmd_node * blocks_only(mmd_node ** l, mmd_node_pool * p, const char * tex
 		last->next = n;
 
 		// Check for special cases
-		block_check(n, last, text, len, c, options);
+		block_check(n, last, text, c, options);
 
 		last = n;
 
@@ -1401,11 +1401,9 @@ static mmd_node * blocks_only(mmd_node ** l, mmd_node_pool * p, const char * tex
 }
 
 
-static void search_text(mmd_node * n, const char * text, size_t len, ac * a, read_ctx * c, mmd_node_pool * p) {
+static void search_text(mmd_node * n, const char * text, ac * a, mmd_node_pool * p) {
 	match * m = ac_search(a, AC_LEFTMOST | AC_LONGEST, (const unsigned char *) text, n->start, n->len);
 	match * walker = m;
-	size_t offset = n->start;
-	mmd_node * start = n;
 
 	while (walker) {
 		// Ensure we matched a full word
@@ -1430,8 +1428,6 @@ static void search_text(mmd_node * n, const char * text, size_t len, ac * a, rea
 			}
 
 			n = n->next;
-
-			offset += walker->start + walker->len;
 		}
 
 		walker = walker->next;
@@ -1442,12 +1438,12 @@ static void search_text(mmd_node * n, const char * text, size_t len, ac * a, rea
 
 
 /// Recursive descent search
-static void recursive_search(mmd_node * n, const char * text, size_t len, ac * a, read_ctx * c, mmd_node_pool * p) {
+static void recursive_search(mmd_node * n, const char * text, ac * a, read_ctx * c, mmd_node_pool * p) {
 	while (n) {
 		switch (n->type) {
 			case TOKEN_TEXT:
 				// Search these node types
-				search_text(n, text, n->len, a, c, p);
+				search_text(n, text, a, p);
 				break;
 
 			case BLOCK_BLOCKQUOTE:
@@ -1473,9 +1469,9 @@ static void recursive_search(mmd_node * n, const char * text, size_t len, ac * a
 
 				// Descend into the children of these block types
 				if (MMD_NODE_IS_BLOCK(n)) {
-					recursive_search(n->child, &text[n->start], n->len, a, c, p);
+					recursive_search(n->child, &text[n->start], a, c, p);
 				} else {
-					recursive_search(n->child, text, n->len, a, c, p);
+					recursive_search(n->child, text, a, c, p);
 				}
 
 				break;
@@ -1484,7 +1480,7 @@ static void recursive_search(mmd_node * n, const char * text, size_t len, ac * a
 			case LINE_TABLE:
 			case BLOCK_FIGURE:
 				// Descend into the content of these block types
-				recursive_search(n->content, &text[n->start], n->len, a, c, p);
+				recursive_search(n->content, &text[n->start], a, c, p);
 				break;
 
 			case BLOCK_EMPTY:
@@ -1505,7 +1501,7 @@ static void recursive_search(mmd_node * n, const char * text, size_t len, ac * a
 
 
 /// Locate abbreviations and glossary terms and flag them
-static void global_search(mmd_node * d, const char * text, size_t len, read_ctx * c, mmd_node_pool * p) {
+static void global_search(mmd_node * d, const char * text, read_ctx * c, mmd_node_pool * p) {
 	// Only search if we have something to look for
 	if (!c->abbr_def_hash && !c->glos_def_hash) {
 		return;
@@ -1534,7 +1530,7 @@ static void global_search(mmd_node * d, const char * text, size_t len, read_ctx 
 	// ac_to_graphviz(act, stderr);
 
 	// mmd_node_tree_describe(d, stderr, text, 0);
-	recursive_search(d, text, len, act, c, p);
+	recursive_search(d, text, act, c, p);
 	// mmd_node_tree_describe(d, stderr, text, 0);
 
 	ac_free(act);
@@ -1542,7 +1538,7 @@ static void global_search(mmd_node * d, const char * text, size_t len, read_ctx 
 
 
 static mmd_node * doc(mmd_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options) {
-	mmd_node * doc, * n, * last;
+	mmd_node * doc;
 
 	// YAML Metadata?
 	if (l && l->type == LINE_SETEXT_2) {
@@ -1557,7 +1553,7 @@ static mmd_node * doc(mmd_node * l, mmd_node_pool * p, const char * text, size_t
 
 	// Now that we have parsed the document, we need to process for abbreviations and glossary terms
 	if (!(options & MMD_OPTION_COMPATIBILITY)) {
-		global_search(doc, text, len, c, p);
+		global_search(doc, text, c, p);
 	}
 
 	return doc;
@@ -1750,10 +1746,10 @@ void mmd_scan_lines_vector(const char * text, size_t len, vector_line_node * v, 
 mmd_node * mmd_parse_text(const char * text, size_t len, vector_line_node * vl, mmd_node_pool * p, read_ctx * r, uint32_t options) {
 	mmd_scan_lines_vector(text, len, vl, options);
 
-	F(i, vl->size) {
+	F(i, (int)vl->size) {
 		vl->element[i].general.tail = (mmd_node *) &vl->element[i];
 
-		if (i + 1 < vl->size) {
+		if (i + 1 < (int)vl->size) {
 			vl->element[i].general.next = (mmd_node *) &vl->element[i + 1];
 		}
 	}
@@ -1791,10 +1787,10 @@ mmd_node * mmd_parse_metadata(const char * text, size_t len, vector_line_node * 
 		return NULL;
 	}
 
-	F(i, vl->size) {
+	F(i, (int)vl->size) {
 		vl->element[i].general.tail = (mmd_node *) &vl->element[i];
 
-		if (i + 1 < vl->size) {
+		if (i + 1 < (int)vl->size) {
 			vl->element[i].general.next = (mmd_node *) &vl->element[i + 1];
 		}
 	}
@@ -1808,8 +1804,8 @@ mmd_node * mmd_parse_metadata(const char * text, size_t len, vector_line_node * 
 			l->general.type = LINE_YAML;
 
 		case LINE_YAML:
-			m = block_meta_yaml((mmd_node **) &l, p, r);
-			mmd_parse_meta_block(m, &text[m->start + m->child->len], m->len - m->child->len, r, m->start);
+			m = block_meta_yaml((mmd_node **) &l, p);
+			mmd_parse_meta_block(&text[m->start + m->child->len], m->len - m->child->len, r);
 
 			{
 				mmd_node * ll = (mmd_node *) l;
@@ -1824,8 +1820,8 @@ mmd_node * mmd_parse_metadata(const char * text, size_t len, vector_line_node * 
 			break;
 
 		case LINE_META:
-			m = block_meta((mmd_node **) &l, p, r);
-			mmd_parse_meta_block(m, &text[m->start], m->len, r, m->start);
+			m = block_meta((mmd_node **) &l, p);
+			mmd_parse_meta_block(&text[m->start], m->len, r);
 			break;
 
 		default:

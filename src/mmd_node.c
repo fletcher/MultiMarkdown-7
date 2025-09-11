@@ -102,7 +102,6 @@ mmd_line_node * mmd_line_node_new(unsigned char type, size_t start, size_t len, 
 		n->c_len = c_len;
 
 		if (
-			(c_start < 0) ||
 			(c_start > len) ||
 			(c_len > len)
 		) {
@@ -112,49 +111,6 @@ mmd_line_node * mmd_line_node_new(unsigned char type, size_t start, size_t len, 
 
 	return n;
 }
-
-
-// XOR version of djb2 algorithm
-// https://stackoverflow.com/questions/9616296/whats-the-best-hash-for-utf-8-strings
-// Modified to hash a specified number of bytes
-static uint32_t djb2(const unsigned char * data, int n) {
-	uint32_t hash = 5381;
-	int c;
-
-	while (n) {
-		c = *data++;
-		hash = ((hash << 5) + hash) ^ c;
-		n--;
-	}
-
-	return hash;
-}
-
-
-#ifdef TEST
-#include <time.h>
-// Remove static keyword to enable this test
-
-// Starting with a random int for the hash, hashing 100,000 times
-// results in two unique series of hashes, with no duplicates.
-// (At least the couple of times I tried it.)
-// Even when we are simply "adding" 0 or 1 at each of those steps.
-static void Test_djb2(CuTest * tc) {
-	uint32_t hash = 5381;
-
-	srand(time(NULL));
-
-	hash = ((hash << 5) + hash) ^ rand();
-
-	fprintf(stdout, "%u\n", hash);
-
-	F(i, 100000) {
-		hash = ((hash << 5) + hash) ^ 1;
-		fprintf(stdout, "%u\n", hash);
-	}
-}
-
-#endif
 
 
 /// XOR version of djb2 algorithm

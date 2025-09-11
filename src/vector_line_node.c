@@ -171,9 +171,9 @@ void vector_line_node_describe(vector_line_node * self, FILE * stream) {
 	if (self) {
 		lock;
 
-		F(i, self->size) {
+		F(i, (int)self->size) {
 			fprintf(stream, "line #%d (%d) => %zu:%zu; next => %zu", i, self->element[i].general.type, self->element[i].general.start, self->element[i].general.len,
-					((void *) self->element[i].general.next - (void *)self->element) / sizeof(mmd_line_node));
+					((char *) self->element[i].general.next - (char *) self->element) / sizeof(mmd_line_node));
 		}
 	}
 }

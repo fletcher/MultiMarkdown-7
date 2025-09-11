@@ -616,7 +616,7 @@ static int token_can_open(mmd_node * n, const char * text, PairRule pairings[]) 
 }
 
 
-static int token_opens(mmd_node * n, mmd_node * prev, PairRule pairings[], const char * text, stack * s, unsigned int openers[255]) {
+static int token_opens(mmd_node * n, PairRule pairings[], const char * text, stack * s, unsigned int openers[255]) {
 	if (!token_can_open(n, text, pairings)) {
 		return 0;
 	}
@@ -759,7 +759,7 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 					}
 
 					if (!token_closes(p, n, prev, pairings, text, s, stack_start, openers, options)) {
-						token_opens(n, prev, pairings, text, s, openers);
+						token_opens(n, pairings, text, s, openers);
 					}
 				}
 
@@ -819,7 +819,7 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 
 					while ((*test != '\0') && !(char_is_whitespace_or_line_ending(*test))) {
 						if (*test == text[n->start]) {
-							token_opens(n, prev, pairings, text, s, openers);
+							token_opens(n, pairings, text, s, openers);
 							break;
 						}
 
@@ -902,7 +902,7 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 				}
 
 				if (!token_closes(p, n, prev, pairings, text, s, stack_start, openers, options)) {
-					token_opens(n, prev, pairings, text, s, openers);
+					token_opens(n, pairings, text, s, openers);
 				}
 
 				break;
@@ -918,10 +918,10 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 				if (((temp = stack_peek(s)) && temp->type == n->type) && (temp->start + temp->len == n->start)) {
 					// Preceding character was same as this character, and is an opener.
 					// So this is also an opener.
-					token_opens(n, prev, pairings, text, s, openers);
+					token_opens(n, pairings, text, s, openers);
 				} else if (!(opener = token_closes(p, n, prev, pairings, text, s, stack_start, openers, options))) {
 					// If we can't close, then open
-					token_opens(n, prev, pairings, text, s, openers);
+					token_opens(n, pairings, text, s, openers);
 				} else {
 					// This was closing token -- assign strong/emph?
 					if (n->next && n->next->type == n->type) {
@@ -985,13 +985,13 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 }
 
 
-void mmd_parse_tokens_block(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options) {
+void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_node_pool * p, uint32_t options) {
 	if (b && b->child && MMD_NODE_IS_BLOCK(b->child)) {
 		// This is a parent block, so parse tokens in child nodes
 		b = b->child;
 
 		while (b) {
-			mmd_parse_tokens_block(b, &text[b->start], b->len, c, p, options);
+			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 
 			b = b->next;
 		}
@@ -1037,7 +1037,7 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, size_t len, read_ct
 }
 
 
-void mmd_parse_meta_block(mmd_node * b, const char * text, size_t len, read_ctx * c, size_t offset) {
+void mmd_parse_meta_block(const char * text, size_t len, read_ctx * c) {
 	c->has_meta = 1;
 
 	const char * start = text;
@@ -1059,7 +1059,7 @@ void mmd_parse_meta_block(mmd_node * b, const char * text, size_t len, read_ctx 
 
 // BLOCK_DEFLIST consists of one or more BLOCK_TERM and one or more BLOCK_DEFINITION
 // BLOCK_TERM consists of multiple lines, each of which is actually a TERM
-void mmd_parse_tokens_deflist(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options) {
+void mmd_parse_tokens_deflist(mmd_node * b, const char * text, read_ctx * c, mmd_node_pool * p, uint32_t options) {
 	mmd_node * child = b->child;
 
 	while (child) {
@@ -1068,7 +1068,7 @@ void mmd_parse_tokens_deflist(mmd_node * b, const char * text, size_t len, read_
 			c->is_definition = 1;
 		}
 
-		mmd_parse_tokens_block(child, &text[child->start], child->len, c, p, options);
+		mmd_parse_tokens_block(child, &text[child->start], c, p, options);
 
 		c->is_definition = 0;
 
@@ -1135,13 +1135,13 @@ static void analyze_table_row_chain(mmd_node * n, mmd_node_pool * p) {
 
 
 /// Find each line within the table block, and parse for cells and cell contents
-void mmd_parse_tokens_table(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options) {
+void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_node_pool * p, uint32_t options) {
 	if (b && b->child && MMD_NODE_IS_BLOCK(b->child)) {
 		// This is a parent block, so parse tokens in child nodes
 		b = b->child;
 
 		while (b) {
-			mmd_parse_tokens_table(b, text, b->len, c, p, options);
+			mmd_parse_tokens_table(b, text, c, p, options);
 
 			b = b->next;
 		}
@@ -1188,7 +1188,7 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, size_t len, read_ct
 
 
 endnote_def * mmd_parse_tokens_endnote(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options) {
-	mmd_parse_tokens_block(b, text, len, c, p, options);
+	mmd_parse_tokens_block(b, text, c, p, options);
 
 	endnote_def * e = calloc(1, sizeof(endnote_def));
 
@@ -1464,13 +1464,10 @@ char * definition_name_from_text(const char * text, size_t len) {
 		stop = bracket_close;
 	}
 
-	const char * next = text + 1;
-
 	while (text < stop) {
 		text_buffer_append_c(label, tolower(*text));
 
 		text++;
-		next++;
 	}
 
 	char * result = label->text;

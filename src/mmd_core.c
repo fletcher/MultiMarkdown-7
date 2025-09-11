@@ -244,11 +244,11 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 	// Export AST to specified format
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 		case FORMAT_HTML:
-			export_html(n, source_buffer->text, source_buffer->len, out_buffer, c, options);
+			export_html(n, source_buffer->text, out_buffer, c, options);
 			break;
 
 		case FORMAT_LATEX:
-			export_latex(n, source_buffer->text, source_buffer->len, out_buffer, c, options);
+			export_latex(n, source_buffer->text, out_buffer, c, options);
 			break;
 
 		default:
@@ -499,7 +499,7 @@ read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options) {
 	mmd_node_pool * vn = mmd_node_pool_new(0);
 	read_ctx * r = read_ctx_new(options);
 
-	mmd_node * n = mmd_parse_metadata(buffer->text, buffer->len, vl, vn, r, options);
+	mmd_parse_metadata(buffer->text, buffer->len, vl, vn, r, options);
 
 #if defined(__WIN32)
 #else

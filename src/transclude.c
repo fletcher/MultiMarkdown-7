@@ -269,7 +269,7 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 		}
 
 		// Prevent infinite loops
-		F(i, parsed->size) {
+		F(i, (int)parsed->size) {
 			char * t = stack_peek_index(parsed, i);
 
 			if (t && strcmp(clean_path, t) == 0) {
