@@ -41,7 +41,7 @@
 
 // Support pthread recursive lock on Linux -- might need to be tweaked for other OS's
 #if defined(__APPLE__)
-#elif defined(__WIN32)
+#elif (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#define _GNU_SOURCE
 #endif
@@ -49,7 +49,7 @@
 
 #include <stdlib.h>
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -57,7 +57,7 @@
 
 
 // Multithreading safety (disabled for performance and should not be necessary)
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#define lock	// pthread_mutex_lock(&self->mutex)
 	#define unlock	// pthread_mutex_unlock(&self->mutex)
 #else
@@ -105,7 +105,8 @@ mmd_node_pool * mmd_node_pool_new(int startingCapacity) {
 
 		p->slab_capacity = startingCapacity;
 
-#if defined(__APPLE__) || defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#elif defined(__APPLE__)
 		p->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #else
 		p->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -147,8 +148,8 @@ void mmd_node_pool_free(mmd_node_pool * self) {
 
 		stack_free(self->slabs);
 
-#if defined(__WIN32)
-		CloseHandle(&self->mutex);
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		// CloseHandle(&self->mutex);
 #else
 		pthread_mutex_destroy(&self->mutex);
 #endif

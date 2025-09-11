@@ -41,6 +41,7 @@
 
 // Support pthread recursive lock on Linux -- might need to be tweaked for other OS's
 #if defined(__APPLE__)
+#elif (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#define _GNU_SOURCE
 #endif
@@ -50,7 +51,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -77,7 +78,8 @@ vector_line_node * vector_line_node_new(int startingCapacity) {
 			startingCapacity = kVectorStartingCapacity;
 		}
 
-#if defined(__APPLE__) || defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#elif defined(__APPLE__)
 		v->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #else
 		v->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -104,8 +106,8 @@ void vector_line_node_free(vector_line_node * self) {
 
 		free(self->element);
 
-#if defined(__WIN32)
-		CloseHandle(&self->mutex);
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		// CloseHandle(&self->mutex);
 #else
 		pthread_mutex_destroy(&self->mutex);
 #endif

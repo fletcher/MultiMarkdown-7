@@ -44,6 +44,7 @@
 
 // Support pthread recursive lock on Linux -- might need to be tweaked for other OS's
 #if defined(__APPLE__)
+#elif (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#define _GNU_SOURCE
 #endif
@@ -52,7 +53,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -79,7 +80,8 @@ stack * stack_new(int startingSize) {
 			startingSize = kStackStartingSize;
 		}
 
-#if defined(__APPLE__) || defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#elif defined(__APPLE__)
 		s->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #else
 		s->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -107,12 +109,11 @@ void stack_free(stack * self) {
 
 		free(self->element);
 
-#if defined(__WIN32)
-		CloseHandle(&self->mutex);
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		// CloseHandle(&self->mutex);
 #else
 		pthread_mutex_destroy(&self->mutex);
 #endif
-
 		unlock;
 
 		free(self);
