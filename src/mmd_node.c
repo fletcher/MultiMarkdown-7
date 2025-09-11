@@ -430,9 +430,9 @@ void mmd_node_print(mmd_node * n, FILE * stream, unsigned short depth, const cha
 		}
 
 		if (text == NULL) {
-			fprintf(stream, "* (%d) %lu:%lu\n", n->type, n->start, n->len);
+			fprintf(stream, "* (%d) %zu:%zu\n", n->type, n->start, n->len);
 		} else {
-			fprintf(stream, "* (%d) %lu:%lu\t'%.*s'\n", n->type, n->start, n->len, (int)n->len, &text[n->start + offset]);
+			fprintf(stream, "* (%d) %zu:%zu\t'%.*s'\n", n->type, n->start, n->len, (int)n->len, &text[n->start + offset]);
 			//fprintf(stream, "%.*s", (int)n->len, &text[n->start]);
 		}
 
@@ -485,7 +485,7 @@ void mmd_node_print_hash(mmd_node * n, FILE * stream, unsigned short depth) {
 			fprintf(stream, "\t");
 		}
 
-		fprintf(stream, "* (%d) %lu:%lu - %u\n", n->type, n->start, n->len, n->hash);
+		fprintf(stream, "* (%d) %zu:%zu - %u\n", n->type, n->start, n->len, n->hash);
 		// fprintf(stream, "* (%d) %u\n", n->type, n->hash);
 
 		if (n->child != NULL) {

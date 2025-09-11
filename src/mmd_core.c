@@ -406,7 +406,7 @@ void mmd_ast_str_len(const char * text, size_t in_len, FILE * out, uint32_t opti
 
 
 void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options) {
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	// Track time
 	struct timespec start, mid, end;
