@@ -124,7 +124,7 @@ void vector_line_node_add(vector_line_node * self, mmd_line_node l) {
 		lock;
 
 		if (self->size == self->capacity) {
-			vector_line_node * new = realloc(self->element, self->capacity * kGrowthMultiplier * sizeof(vector_line_node));
+			void * new = realloc(self->element, self->capacity * kGrowthMultiplier * sizeof(mmd_line_node));
 
 			if (new) {
 				self->element = new;
