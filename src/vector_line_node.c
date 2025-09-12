@@ -60,7 +60,7 @@
 #include "vector_line_node.h"
 
 
-#define kVectorStartingCapacity 128
+#define kVectorStartingCapacity 4
 #define kGrowthMultiplier 2
 
 // Multithreading safety (disabled for performance and should not be necessary)
@@ -124,8 +124,16 @@ void vector_line_node_add(vector_line_node * self, mmd_line_node l) {
 		lock;
 
 		if (self->size == self->capacity) {
-			self->capacity *= kGrowthMultiplier;
-			self->element = realloc(self->element, self->capacity * sizeof(vector_line_node));
+			vector_line_node * new = realloc(self->element, self->capacity * kGrowthMultiplier * sizeof(vector_line_node));
+
+			if (new) {
+				self->element = new;
+				self->capacity *= kGrowthMultiplier;
+			} else {
+				fprintf(stderr, "Reallocation error\n");
+				unlock;
+				return;
+			}
 		}
 
 		self->element[self->size++] = l;
