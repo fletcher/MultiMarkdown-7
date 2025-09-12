@@ -221,7 +221,7 @@ set_target_properties("${My_Project_Title_Clean}"
 if(MSVC)
   # target_compile_options("${My_Project_Title_Clean}" PRIVATE /W4 /WX)
 else()
-  target_compile_options("${My_Project_Title_Clean}" PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-implicit-fallthrough)
+  target_compile_options("${My_Project_Title_Clean}" PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-implicit-fallthrough -Wno-unknown-warning-option)
 endif()
 
 
