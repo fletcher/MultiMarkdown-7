@@ -43,7 +43,11 @@
 #define MMD_NODE_POOL_LIBMULTIMARKDOWN7_H
 
 
-#include <pthread.h>
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	#include <pthread.h>
+#endif
+
 
 #include "libMultiMarkdown.h"
 #include "stack.h"
@@ -54,7 +58,10 @@ struct mmd_node_pool {
 	void *				next;
 	void *				end;
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 	pthread_mutex_t		mutex;
+#endif
 };
 
 

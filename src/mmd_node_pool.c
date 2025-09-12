@@ -41,6 +41,7 @@
 
 // Support pthread recursive lock on Linux -- might need to be tweaked for other OS's
 #if defined(__APPLE__)
+#elif (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#define _GNU_SOURCE
 #endif
@@ -48,7 +49,7 @@
 
 #include <stdlib.h>
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -56,8 +57,13 @@
 
 
 // Multithreading safety (disabled for performance and should not be necessary)
-#define lock	// pthread_mutex_lock(&self->mutex)
-#define unlock	// pthread_mutex_unlock(&self->mutex)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	#define lock	// pthread_mutex_lock(&self->mutex)
+	#define unlock	// pthread_mutex_unlock(&self->mutex)
+#else
+	#define lock	// pthread_mutex_lock(&self->mutex)
+	#define unlock	// pthread_mutex_unlock(&self->mutex)
+#endif
 
 
 // TODO: This number has not been tuned
@@ -78,7 +84,7 @@ static void mmd_node_pool_add_slab(mmd_node_pool * self) {
 			self->next = slab;
 
 			// Adjust out of space marker
-			self->end = slab + (self->slab_capacity * sizeof(mmd_node));
+			self->end = (char *)slab + (self->slab_capacity * sizeof(mmd_node));
 
 			// Increase capacity for next allocation
 			self->slab_capacity *= kGrowthMultiplier;
@@ -99,7 +105,8 @@ mmd_node_pool * mmd_node_pool_new(int startingCapacity) {
 
 		p->slab_capacity = startingCapacity;
 
-#if defined(__APPLE__) || defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#elif defined(__APPLE__)
 		p->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #else
 		p->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -141,8 +148,8 @@ void mmd_node_pool_free(mmd_node_pool * self) {
 
 		stack_free(self->slabs);
 
-#if defined(__WIN32)
-		CloseHandle(&self->mutex);
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		// CloseHandle(&self->mutex);
 #else
 		pthread_mutex_destroy(&self->mutex);
 #endif
@@ -166,7 +173,7 @@ mmd_node * mmd_node_pool_allocate(mmd_node_pool * self) {
 
 		if (self->next < self->end) {
 			n = self->next;
-			self->next += sizeof(mmd_node);
+			self->next = (char *)self->next + sizeof(mmd_node);
 		}
 
 		unlock;

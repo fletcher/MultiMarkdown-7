@@ -55,6 +55,14 @@
 #include "read_ctx.h"
 #include "mmd_utilities.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
 #define ret s->c_start = t1; return
 
@@ -11777,3 +11785,5 @@ yy452:
 	}
 
 }
+
+#pragma GCC diagnostic pop

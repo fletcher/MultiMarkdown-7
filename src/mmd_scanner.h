@@ -53,7 +53,7 @@ struct Scanner {
 	const char *	cur;		//!< Character currently being matched
 	const char *	ptr;		//!< Used for backtracking by re2c
 	const char *	ctx;
-	int				curType;	//!< Type of current token
+	unsigned char	curType;	//!< Type of current token
 	int				depth;
 
 	int				allow_meta;	//!< Is metadata allowed here?

@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -77,17 +77,20 @@
 
 
 // https://stackoverflow.com/questions/64893834/measuring-elapsed-time-using-clock-gettimeclock-monotonic
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 static int64_t difftimespec_us(const struct timespec after, const struct timespec before) {
 	return ((int64_t)after.tv_sec - (int64_t)before.tv_sec) * (int64_t)1000000
 		   + ((int64_t)after.tv_nsec - (int64_t)before.tv_nsec) / 1000;
 }
+#endif
 
 
 /// Open file for reading regardless of OS
 static FILE * flex_fopen(const char * fname) {
 	FILE * in = NULL;
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
 	wchar_t wstr[wchars_num];
 	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
@@ -244,11 +247,11 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 	// Export AST to specified format
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 		case FORMAT_HTML:
-			export_html(n, source_buffer->text, source_buffer->len, out_buffer, c, options);
+			export_html(n, source_buffer->text, out_buffer, c, options);
 			break;
 
 		case FORMAT_LATEX:
-			export_latex(n, source_buffer->text, source_buffer->len, out_buffer, c, options);
+			export_latex(n, source_buffer->text, out_buffer, c, options);
 			break;
 
 		default:
@@ -265,11 +268,11 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 /// All roads lead to Rome....
 void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 	// Track time
 	struct timespec start, end;
 
-#if defined(__WIN32)
-#else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 #endif
 
@@ -287,14 +290,17 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 	mmd_node_pool_free(vn);
 	read_ctx_free(c);
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 #endif
 
 	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 		int64_t diff_full = difftimespec_us(end, start);
 		fprintf(stderr, "%.6f seconds.\n", ((double)diff_full / (double)1000000));
+#endif
 	}
 }
 
@@ -400,11 +406,11 @@ void mmd_ast_str_len(const char * text, size_t in_len, FILE * out, uint32_t opti
 
 
 void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 	// Track time
 	struct timespec start, mid, end;
 
-#if defined(__WIN32)
-#else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 #endif
 
@@ -414,7 +420,7 @@ void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options) {
 
 	mmd_node * n = mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
 #endif
@@ -425,17 +431,20 @@ void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options) {
 	mmd_node_pool_free(vn);
 	read_ctx_free(c);
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 #endif
 
 	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 		int64_t diff_mid = difftimespec_us(mid, start);
 		fprintf(stderr, "%.6f seconds to parse.\n", ((double)diff_mid / (double)1000000));
 
 		int64_t diff_full = difftimespec_us(end, start);
 		fprintf(stderr, "%.6f seconds in total.\n", ((double)diff_full / (double)1000000));
+#endif
 	}
 }
 
@@ -487,11 +496,11 @@ read_ctx * mmd_metadata_str_len(const char * text, size_t in_len, uint32_t optio
 
 
 read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 	// Track time
 	struct timespec start, mid, end;
 
-#if defined(__WIN32)
-#else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 #endif
 
@@ -499,9 +508,9 @@ read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options) {
 	mmd_node_pool * vn = mmd_node_pool_new(0);
 	read_ctx * r = read_ctx_new(options);
 
-	mmd_node * n = mmd_parse_metadata(buffer->text, buffer->len, vl, vn, r, options);
+	mmd_parse_metadata(buffer->text, buffer->len, vl, vn, r, options);
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
 #endif
@@ -509,17 +518,20 @@ read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options) {
 	vector_line_node_free(vl);
 	mmd_node_pool_free(vn);
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 #endif
 
 	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 		int64_t diff_mid = difftimespec_us(mid, start);
 		fprintf(stderr, "%.6f seconds to parse.\n", ((double)diff_mid / (double)1000000));
 
 		int64_t diff_full = difftimespec_us(end, start);
 		fprintf(stderr, "%.6f seconds in total.\n", ((double)diff_full / (double)1000000));
+#endif
 	}
 
 	return r;

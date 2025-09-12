@@ -98,12 +98,12 @@ char * html_id_from_text(const char * text, size_t len, bool require_odd_count);
 char * md_id_from_text(const char * text, size_t len, bool require_odd_count);
 char * definition_name_from_text(const char * text, size_t len);
 
-void mmd_parse_tokens_block(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options);
-void mmd_parse_tokens_deflist(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options);
-void mmd_parse_tokens_table(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options);
+void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_node_pool * p, uint32_t options);
+void mmd_parse_tokens_deflist(mmd_node * b, const char * text, read_ctx * c, mmd_node_pool * p, uint32_t options);
+void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_node_pool * p, uint32_t options);
 
 endnote_def * mmd_parse_tokens_endnote(mmd_node * b, const char * text, size_t len, read_ctx * c, mmd_node_pool * p, uint32_t options);
-void mmd_parse_meta_block(mmd_node * b, const char * text, size_t len, read_ctx * c, size_t offset);
+void mmd_parse_meta_block(const char * text, size_t len, read_ctx * c);
 
 void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], const char * text, read_ctx * c, uint32_t options);
 

@@ -150,7 +150,7 @@ int vasprintf(char ** strp, const char * fmt, va_list ap) {
 	va_list ap2;
 	va_copy(ap2, ap);
 
-#if (defined(__WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	char * tmp = NULL;
 	int size = vsnprintf(tmp, 0, fmt, ap2);
 #else
@@ -233,7 +233,7 @@ void text_buffer_append_text(text_buffer * b, const char * text, size_t len) {
 	if (b && text && len) {
 		text_buffer_ensure_capacity(b, b->len + len);
 
-		memcpy((void *)b->text + b->len, text, len);
+		memcpy((void *)(b->text + b->len), text, len);
 		b->len += len;
 		b->text[b->len] = '\0';
 	}
@@ -258,11 +258,13 @@ void text_buffer_append_printf(text_buffer * b, const char * format, ...) {
 		va_start(args, format);
 
 		char * formatted_string = NULL;
-		vasprintf(&formatted_string, format, args);
+		int valid = vasprintf(&formatted_string, format, args);
 
-		if (formatted_string) {
-			text_buffer_append_text(b, formatted_string, strlen(formatted_string));
-			free(formatted_string);
+		if ((valid > 0)) {
+			if (formatted_string) {
+				text_buffer_append_text(b, formatted_string, strlen(formatted_string));
+				free(formatted_string);
+			}
 		}
 
 		va_end(args);
@@ -276,10 +278,10 @@ void text_buffer_replace_range(text_buffer * b, size_t pos, size_t len, const ch
 		text_buffer_ensure_capacity(b, b->len + replacement_len - len);
 
 		// Shift "tail" portion of existing string after the excised portion
-		memmove((void *)b->text + pos + replacement_len, b->text + pos + len, b->len - pos - len);
+		memmove((void *)(b->text + pos + replacement_len), b->text + pos + len, b->len - pos - len);
 
 		// Insert new string at designated position
-		memcpy((void *)b->text + pos, replacement, replacement_len);
+		memcpy((void *)(b->text + pos), replacement, replacement_len);
 
 		// Adjust b->len
 		b->len += replacement_len - len;
@@ -301,7 +303,7 @@ void text_buffer_prepend_text(text_buffer * b, const char * text, size_t text_le
 void text_buffer_delete_range(text_buffer * b, size_t pos, size_t len) {
 	if (b && len) {
 		// Shift "tail" portion of existing string
-		memmove((void *)b->text + pos, b->text + pos + len, b->len - pos - len);
+		memmove((void *)(b->text + pos), b->text + pos + len, b->len - pos - len);
 
 		// Adjust b->len
 		b->len -= len;

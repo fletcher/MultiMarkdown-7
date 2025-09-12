@@ -42,6 +42,6 @@
 #ifndef HTML_LIBMULTIMARKDOWN7_H
 #define HTML_LIBMULTIMARKDOWN7_H
 
-void export_html(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options);
+void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options);
 
 #endif

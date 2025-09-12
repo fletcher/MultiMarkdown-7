@@ -46,7 +46,11 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <pthread.h>
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	#include <pthread.h>
+#endif
+
 #include <stdlib.h>
 
 /// type for stored data
@@ -57,7 +61,12 @@ typedef void * stack_data_type;
 struct stack {
 	size_t				size;		//!< Number of objects currently in stack
 	size_t				capacity;	//!< Total current capacity for stack
-	pthread_mutex_t		mutex;		//!< Mutex for thread-locking
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	pthread_mutex_t		mutex;
+#endif
+
 	stack_data_type *	element;	//!< Array of pointers to objects in stack
 };
 
@@ -104,6 +113,6 @@ stack_data_type stack_peek_index(
 
 
 /// Sort stack based on sort_function
-void stack_sort(stack * s, void * compare_function);
+void stack_sort(stack * self, int (* compare_function)(const void *, const void *));
 
 #endif

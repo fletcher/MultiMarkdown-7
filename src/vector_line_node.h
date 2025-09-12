@@ -43,13 +43,21 @@
 #define VECTOR_LINE_NODE_LIBMULTIMARKDOWN7_H
 
 
-#include <pthread.h>
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	#include <pthread.h>
+#endif
 
 
 typedef struct {
 	size_t				size;
 	size_t				capacity;
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
 	pthread_mutex_t		mutex;
+#endif
+
 	mmd_line_node *		element;
 } vector_line_node;
 

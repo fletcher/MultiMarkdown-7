@@ -41,6 +41,7 @@
 
 // Support pthread recursive lock on Linux -- might need to be tweaked for other OS's
 #if defined(__APPLE__)
+#elif (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#define _GNU_SOURCE
 #endif
@@ -50,7 +51,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -59,7 +60,7 @@
 #include "vector_line_node.h"
 
 
-#define kVectorStartingCapacity 128
+#define kVectorStartingCapacity 4
 #define kGrowthMultiplier 2
 
 // Multithreading safety (disabled for performance and should not be necessary)
@@ -77,13 +78,14 @@ vector_line_node * vector_line_node_new(int startingCapacity) {
 			startingCapacity = kVectorStartingCapacity;
 		}
 
-#if defined(__APPLE__) || defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#elif defined(__APPLE__)
 		v->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 #else
 		v->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 #endif
 
-		v->element = calloc(startingCapacity, sizeof(vector_line_node));
+		v->element = calloc(startingCapacity, sizeof(mmd_line_node));
 
 		if (!v->element) {
 			free(v);
@@ -104,8 +106,8 @@ void vector_line_node_free(vector_line_node * self) {
 
 		free(self->element);
 
-#if defined(__WIN32)
-		CloseHandle(&self->mutex);
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		// CloseHandle(&self->mutex);
 #else
 		pthread_mutex_destroy(&self->mutex);
 #endif
@@ -122,8 +124,16 @@ void vector_line_node_add(vector_line_node * self, mmd_line_node l) {
 		lock;
 
 		if (self->size == self->capacity) {
-			self->capacity *= kGrowthMultiplier;
-			self->element = realloc(self->element, self->capacity * sizeof(vector_line_node));
+			void * new = realloc(self->element, self->capacity * kGrowthMultiplier * sizeof(mmd_line_node));
+
+			if (new) {
+				self->element = new;
+				self->capacity *= kGrowthMultiplier;
+			} else {
+				fprintf(stderr, "Reallocation error\n");
+				unlock;
+				return;
+			}
 		}
 
 		self->element[self->size++] = l;
@@ -171,9 +181,9 @@ void vector_line_node_describe(vector_line_node * self, FILE * stream) {
 	if (self) {
 		lock;
 
-		F(i, self->size) {
+		F(i, (int)self->size) {
 			fprintf(stream, "line #%d (%d) => %zu:%zu; next => %zu", i, self->element[i].general.type, self->element[i].general.start, self->element[i].general.len,
-					((void *) self->element[i].general.next - (void *)self->element) / sizeof(mmd_line_node));
+					((char *) self->element[i].general.next - (char *) self->element) / sizeof(mmd_line_node));
 		}
 	}
 }

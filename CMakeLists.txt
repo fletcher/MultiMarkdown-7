@@ -18,11 +18,11 @@ cmake_minimum_required(VERSION 3.28)
 set (My_Project_Title "libMultiMarkdown7")
 set (My_Project_Description "Lightweight markup processor to produce HTML, LaTeX, and more.")
 set (My_Project_Author "Fletcher T. Penney")
-set (My_Project_Revised_Date "2025-09-08")
+set (My_Project_Revised_Date "2025-09-11")
 set (My_Project_Version_Major 7)
 set (My_Project_Version_Minor 0)
 set (My_Project_Version_Patch 0)
-set (My_Project_Version_Prerelease -alpha.1)
+set (My_Project_Version_Prerelease -alpha.2)
 
 set (My_Project_Copyright_Date "2024-2025")
 
@@ -216,6 +216,14 @@ set_target_properties("${My_Project_Title_Clean}"
 	XCODE_ATTRIBUTE_SUPPORTED_PLATFORMS "iphoneos iphonesimulator macosx"
 	XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
 )
+
+# Warn for everything and treat as errors
+if(MSVC)
+  # target_compile_options("${My_Project_Title_Clean}" PRIVATE /W4 /WX)
+else()
+  target_compile_options("${My_Project_Title_Clean}" PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-implicit-fallthrough -Wno-unknown-warning-option)
+endif()
+
 
 # Link to other libraries
 target_link_libraries("${My_Project_Title}"

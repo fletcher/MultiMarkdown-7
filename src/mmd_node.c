@@ -102,7 +102,6 @@ mmd_line_node * mmd_line_node_new(unsigned char type, size_t start, size_t len, 
 		n->c_len = c_len;
 
 		if (
-			(c_start < 0) ||
 			(c_start > len) ||
 			(c_len > len)
 		) {
@@ -112,49 +111,6 @@ mmd_line_node * mmd_line_node_new(unsigned char type, size_t start, size_t len, 
 
 	return n;
 }
-
-
-// XOR version of djb2 algorithm
-// https://stackoverflow.com/questions/9616296/whats-the-best-hash-for-utf-8-strings
-// Modified to hash a specified number of bytes
-static uint32_t djb2(const unsigned char * data, int n) {
-	uint32_t hash = 5381;
-	int c;
-
-	while (n) {
-		c = *data++;
-		hash = ((hash << 5) + hash) ^ c;
-		n--;
-	}
-
-	return hash;
-}
-
-
-#ifdef TEST
-#include <time.h>
-// Remove static keyword to enable this test
-
-// Starting with a random int for the hash, hashing 100,000 times
-// results in two unique series of hashes, with no duplicates.
-// (At least the couple of times I tried it.)
-// Even when we are simply "adding" 0 or 1 at each of those steps.
-static void Test_djb2(CuTest * tc) {
-	uint32_t hash = 5381;
-
-	srand(time(NULL));
-
-	hash = ((hash << 5) + hash) ^ rand();
-
-	fprintf(stdout, "%u\n", hash);
-
-	F(i, 100000) {
-		hash = ((hash << 5) + hash) ^ 1;
-		fprintf(stdout, "%u\n", hash);
-	}
-}
-
-#endif
 
 
 /// XOR version of djb2 algorithm
@@ -474,9 +430,9 @@ void mmd_node_print(mmd_node * n, FILE * stream, unsigned short depth, const cha
 		}
 
 		if (text == NULL) {
-			fprintf(stream, "* (%d) %lu:%lu\n", n->type, n->start, n->len);
+			fprintf(stream, "* (%d) %zu:%zu\n", n->type, n->start, n->len);
 		} else {
-			fprintf(stream, "* (%d) %lu:%lu\t'%.*s'\n", n->type, n->start, n->len, (int)n->len, &text[n->start + offset]);
+			fprintf(stream, "* (%d) %zu:%zu\t'%.*s'\n", n->type, n->start, n->len, (int)n->len, &text[n->start + offset]);
 			//fprintf(stream, "%.*s", (int)n->len, &text[n->start]);
 		}
 
@@ -529,7 +485,7 @@ void mmd_node_print_hash(mmd_node * n, FILE * stream, unsigned short depth) {
 			fprintf(stream, "\t");
 		}
 
-		fprintf(stream, "* (%d) %lu:%lu - %u\n", n->type, n->start, n->len, n->hash);
+		fprintf(stream, "* (%d) %zu:%zu - %u\n", n->type, n->start, n->len, n->hash);
 		// fprintf(stream, "* (%d) %u\n", n->type, n->hash);
 
 		if (n->child != NULL) {
