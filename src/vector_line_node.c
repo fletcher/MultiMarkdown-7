@@ -85,7 +85,7 @@ vector_line_node * vector_line_node_new(int startingCapacity) {
 		v->mutex = (pthread_mutex_t) PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 #endif
 
-		v->element = calloc(startingCapacity, sizeof(vector_line_node));
+		v->element = calloc(startingCapacity, sizeof(mmd_line_node));
 
 		if (!v->element) {
 			free(v);

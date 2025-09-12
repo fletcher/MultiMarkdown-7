@@ -60,7 +60,7 @@ typedef struct {
 
 	const char *	prefix;
 	int 			pre_descent_padding;
-	char			descent;
+	int				descent;
 	int 			pad_post_descent;
 	const char *	suffix;
 	int				post_suffix_padding;
