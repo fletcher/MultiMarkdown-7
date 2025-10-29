@@ -457,7 +457,7 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 
 			o->next = n;
 
-			if (o != prev) {
+			if ((o != prev) && prev) {
 				prev->next = NULL;
 			}
 
@@ -1033,7 +1033,9 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_n
 	analyze_token_chain(p, chain, pairings3, text, c, options);
 	analyze_token_chain(p, chain, pairings4, text, c, options);
 
-	b->content = chain;
+	if (b) {
+		b->content = chain;
+	}
 }
 
 
@@ -1087,12 +1089,12 @@ static void analyze_table_row_chain(mmd_node * n, mmd_node_pool * p) {
 	// Determine starting token of first cell
 	if (walker) {
 		if (walker->type == TOKEN_TEXT_WHITESPACE) {
-			while (walker->type == TOKEN_TEXT_WHITESPACE) {
+			while (walker && walker->type == TOKEN_TEXT_WHITESPACE) {
 				walker = walker->next;
 			}
 		}
 
-		if (walker->type == TOKEN_PIPE) {
+		if (walker && walker->type == TOKEN_PIPE) {
 			walker->type = TOKEN_TABLE_DIVIDER;
 			first = walker->next;
 		} else {
@@ -1100,7 +1102,9 @@ static void analyze_table_row_chain(mmd_node * n, mmd_node_pool * p) {
 			last = first;
 		}
 
-		walker = walker->next;
+		if (walker) {
+			walker = walker->next;
+		}
 	}
 
 	while (walker) {

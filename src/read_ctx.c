@@ -299,9 +299,13 @@ abbr_def * read_ctx_get_abbr(read_ctx * c, char * key) {
 
 
 link_def * read_ctx_get_link(read_ctx * c, char * key) {
+	if (key == NULL) {
+		return NULL;
+	}
+
 	link_def * l = NULL;
 
-	if (c && key && c->link_def_hash) {
+	if (c && c->link_def_hash) {
 		HASH_FIND_STR(c->link_def_hash, key, l);
 	}
 
@@ -482,9 +486,13 @@ int read_ctx_store_note(read_ctx * c, endnote_def * e) {
 
 
 endnote_def * read_ctx_get_cite(read_ctx * c, char * key) {
+	if (key == NULL) {
+		return NULL;
+	}
+
 	endnote_def * e = NULL;
 
-	if (c && key && c->cite_def_hash) {
+	if (c && c->cite_def_hash) {
 		HASH_FIND_STR(c->cite_def_hash, key, e);
 
 		if (e) {

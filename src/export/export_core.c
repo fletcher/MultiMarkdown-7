@@ -170,8 +170,6 @@ void url_encode_text(const char * text, size_t len, text_buffer * out) {
 
 
 link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uint32_t options) {
-	link_def * l = calloc(1, sizeof(link_def));
-
 	mmd_node * link_text = (*t)->child;
 	mmd_node * link_url;
 
@@ -185,6 +183,12 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 			link_url = link_url->next;
 		}
 	}
+
+	if ((link_url == NULL) || (link_url->next == NULL)) {
+		return NULL;
+	}
+
+	link_def * l = calloc(1, sizeof(link_def));
 
 	// Skip '('
 	const char * cur = &text[link_url->start + 1];
@@ -311,7 +315,7 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 static int export_implicit_link(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [...] text and id are the same
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		// size_t id_len = (*t)->next->start - (*t)->child->start;
 		// char * id = mmd_strndup(&text[(*t)->child->start], &id_len);
@@ -373,7 +377,7 @@ static int export_split_link(const char * text, size_t len, mmd_node ** t, text_
 		id_node = (*t)->next->next;
 	}
 
-	if (id_node->child) {
+	if (id_node->child && id_node->next) {
 		char * id = md_id_from_text(&text[id_node->child->start], id_node->next->start - id_node->child->start, true);
 		link_def * l = read_ctx_get_link(r, id);
 		free(id);
@@ -396,7 +400,7 @@ static int export_split_link(const char * text, size_t len, mmd_node ** t, text_
 static int export_implicit_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// ![...] text and id are the same
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		//char * def_name = definition_name_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start);
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		link_def * l = read_ctx_get_link(r, id);
@@ -468,7 +472,7 @@ static int export_split_image(const char * text, size_t len, mmd_node ** t, text
 static int export_implicit_abbreviation(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [>...] or [>(...) ...]
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		abbr_def * a = read_ctx_get_abbr(r, id);
 
@@ -569,7 +573,7 @@ static int export_implicit_abbreviation(const char * text, size_t len, mmd_node 
 static int export_implicit_citation(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool not_cited, format_export * fe, uint32_t options) {
 	// [#...] - No locator
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		endnote_def * e = read_ctx_get_cite(r, id);
 
@@ -698,7 +702,7 @@ static int export_split_citation(const char * text, size_t len, mmd_node ** t, t
 static int export_implicit_footnote(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [^...]
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		endnote_def * e = read_ctx_get_note(r, id);
 
@@ -739,7 +743,7 @@ static int export_implicit_footnote(const char * text, size_t len, mmd_node ** t
 static int export_implicit_glossary(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [?...]
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		endnote_def * e = read_ctx_get_glos(r, id);
 
@@ -806,16 +810,18 @@ static int export_implicit_glossary(const char * text, size_t len, mmd_node ** t
 }
 
 static int export_implicit_variable(const char * text, mmd_node ** t, text_buffer * out, read_ctx * r, format_export * fe) {
-	char * label = html_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
-	meta * m = read_ctx_get_meta(r, label);
-	free(label);
+	if ((*t)->child && (*t)->next) {
+		char * label = html_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
+		meta * m = read_ctx_get_meta(r, label);
+		free(label);
 
-	if (m) {
-		// Metadata
-		fe->export_raw_text(m->value, m->value_len, out);
-		(*t) = (*t)->next;
+		if (m) {
+			// Metadata
+			fe->export_raw_text(m->value, m->value_len, out);
+			(*t) = (*t)->next;
 
-		return 0;
+			return 0;
+		}
 	}
 
 	return 1;

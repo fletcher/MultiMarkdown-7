@@ -544,8 +544,6 @@ static int export_latex_abbreviation_word(const char * text, size_t len, text_bu
 
 static int export_endnote_def(unsigned char type, endnote_def * e, const char * text, size_t len, mmd_node * t, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	if (e) {
-		int idx = e->index;
-
 		stack * s = NULL;
 
 		switch (type) {
@@ -570,8 +568,7 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 			stack_push(s, e);
 
 			// Update index
-			idx = (int) s->size;
-			e->index = idx;
+			e->index = (int) s->size;
 		}
 
 		switch (type) {
@@ -694,7 +691,7 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 				mmd_print_const(out, "\\gls{");
 
 				if (t) {
-					if (t->type == TOKEN_PAIR_PAREN) {
+					if ((t->type == TOKEN_PAIR_PAREN) && t->next) {
 						export_latex_raw_text(&text[t->child->start], t->next->start - t->child->start, out);
 					} else if ((t->type == TOKEN_GLOSSARY_MARKER) && t->next) {
 						export_latex_raw_text(&text[t->next->start], t->tail->start + t->tail->len - t->next->start, out);

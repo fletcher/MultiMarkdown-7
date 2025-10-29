@@ -408,7 +408,8 @@ int main(int argc, char * const argv[]) {
 						}
 					}
 				} else {
-					char * wd = getcwd(NULL, 0);
+					char buf[1024] = {0};
+					char * wd = getcwd(buf, 1024);
 
 					if (MMD_OUT_FORMAT_FROM_OPTS(options) ==  FORMAT_AST) {
 						mmd_ast_file(stdin, stdout, options);
