@@ -134,6 +134,7 @@ enum output_format {
 	FORMAT_ITMZ,
 	FORMAT_MMD,									//!< Raw MultiMarkdown source text
 	FORMAT_HTML_WITH_ASSETS,
+	FORMAT_AST,
 };
 
 

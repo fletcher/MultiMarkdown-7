@@ -1,0 +1,41 @@
+=====>
+* (91) 0:233	'title:	MMD Header and Footer
+latexconfig:	article
+MMD Header:	{{header.txt}}
+MMD Footer:	{{footer.txt}}
+HTML Header: HTML <em>header</em>.
+HTML Footer: HTML <em>footer</em>.
+LaTeX Header: \LaTeX \emph{header}
+ODF Header: ODF header.
+'
+	* (33) 0:29	'title:	MMD Header and Footer
+'
+	* (33) 29:21	'latexconfig:	article
+'
+	* (33) 50:27	'MMD Header:	{{header.txt}}
+'
+	* (33) 77:27	'MMD Footer:	{{footer.txt}}
+'
+	* (33) 104:35	'HTML Header: HTML <em>header</em>.
+'
+	* (33) 139:35	'HTML Footer: HTML <em>footer</em>.
+'
+	* (33) 174:35	'LaTeX Header: \LaTeX \emph{header}
+'
+	* (33) 209:24	'ODF Header: ODF header.
+'
+* (74) 233:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 235:10	'Main Body
+'
+	* (34) 0:10	'Main Body
+'
+	* (131) 0:9	'Main Body'
+	* (129) 9:1	'
+'
+<=====

@@ -94,6 +94,7 @@ static format formats[] = {
 	[FORMAT_ITMZ] = { "itmz", ".itmz" },
 	[FORMAT_MMD] = { "mmd", ".mmdtext" },
 	[FORMAT_HTML_WITH_ASSETS] = { "html?", ".html?" },
+	[FORMAT_AST] = { "ast", ".ast" },
 };
 
 
@@ -378,7 +379,12 @@ int main(int argc, char * const argv[]) {
 						FILE * out = fopen(new_file, "w");
 
 						if (out) {
-							mmd_process_filename(argv[optind], out, options, NULL);
+							if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_AST) {
+								mmd_ast_filename(argv[optind], out, options);
+							} else {
+								mmd_process_filename(argv[optind], out, options, NULL);
+							}
+
 							fclose(out);
 						}
 
@@ -395,11 +401,21 @@ int main(int argc, char * const argv[]) {
 				// Parse the specified document(s) or input on stdin and export on stdout
 				if (optind + offset < argc) {
 					for (optind += offset; optind < argc; optind++) {
-						mmd_process_filename(argv[optind], stdout, options, NULL);
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) ==  FORMAT_AST) {
+							mmd_ast_filename(argv[optind], stdout, options);
+						} else {
+							mmd_process_filename(argv[optind], stdout, options, NULL);
+						}
 					}
 				} else {
 					char * wd = getcwd(NULL, 0);
-					mmd_process_file(stdin, stdout, options, wd, NULL);
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) ==  FORMAT_AST) {
+						mmd_ast_file(stdin, stdout, options);
+					} else {
+						mmd_process_file(stdin, stdout, options, wd, NULL);
+					}
+
 					free(wd);
 				}
 
