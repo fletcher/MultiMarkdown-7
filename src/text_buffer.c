@@ -69,8 +69,8 @@ static void Test_void_function(CuTest * tc) {
 
 /// Read from file stream into a buffer
 text_buffer * buffer_file(FILE * in, size_t capacity) {
-	if (!capacity) {
-		capacity = kBUFFERSIZE * 8;
+	if (capacity < kBUFFERSIZE + 1) {
+		capacity = kBUFFERSIZE * 4;
 	}
 
 	size_t bytes, size = 0;
@@ -80,14 +80,16 @@ text_buffer * buffer_file(FILE * in, size_t capacity) {
 	while ((bytes = fread(&text[size], 1, kBUFFERSIZE, in)) > 0) {
 		size += bytes;
 
-		if (size + kBUFFERSIZE + 1 > capacity) {
-			text = realloc(text, capacity * 2);
+		while (size + kBUFFERSIZE + 1 > capacity) {
+			char * new = realloc(text, capacity * 2);
 
-			if (text == NULL) {
+			if (new == NULL) {
 				// Reallocation failed
+				free(text);
 				return NULL;
 			}
 
+			text = new;
 			capacity *= 2;
 		}
 	}
