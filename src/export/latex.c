@@ -696,7 +696,7 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 				if (t) {
 					if (t->type == TOKEN_PAIR_PAREN) {
 						export_latex_raw_text(&text[t->child->start], t->next->start - t->child->start, out);
-					} else if (t->type == TOKEN_GLOSSARY_MARKER) {
+					} else if ((t->type == TOKEN_GLOSSARY_MARKER) && t->next) {
 						export_latex_raw_text(&text[t->next->start], t->tail->start + t->tail->len - t->next->start, out);
 					} else {
 						export_latex_raw_text(&text[t->start], t->tail->start + t->tail->len - t->start, out);
