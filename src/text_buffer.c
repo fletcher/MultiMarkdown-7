@@ -148,7 +148,7 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 // Some operating systems do not supply vasprintf() -- standardize on this
 // replacement from:
 //		https://github.com/esp8266/Arduino/issues/1954
-int vasprintf(char ** strp, const char * fmt, va_list ap) {
+static int my_vasprintf(char ** strp, const char * fmt, va_list ap) {
 	va_list ap2;
 	va_copy(ap2, ap);
 
@@ -260,7 +260,7 @@ void text_buffer_append_printf(text_buffer * b, const char * format, ...) {
 		va_start(args, format);
 
 		char * formatted_string = NULL;
-		int valid = vasprintf(&formatted_string, format, args);
+		int valid = my_vasprintf(&formatted_string, format, args);
 
 		if ((valid > 0)) {
 			if (formatted_string) {
