@@ -806,11 +806,11 @@ static mmd_node * block_reference_def_a(mmd_node ** l, mmd_node_pool * p, uint32
 			break;
 	}
 
-    if (b) {
-        while (accept_chunk_line(l)) {
-            *l = mmd_node_feed_chain(b, *l);
-        }
-    }
+	if (b) {
+		while (accept_chunk_line(l)) {
+			*l = mmd_node_feed_chain(b, *l);
+		}
+	}
 
 	return b;
 }
