@@ -457,7 +457,7 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 
 			o->next = n;
 
-			if ((o != prev) && prev) {
+			if (prev && o != prev) {
 				prev->next = NULL;
 			}
 
