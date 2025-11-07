@@ -169,7 +169,7 @@ get_directory_property(hasParent PARENT_DIRECTORY)
 if (hasParent)
 else()
 	# If building the framework independently, we can set a deployment target
-	# set (CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+	set (CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
 endif()
 
 
@@ -579,6 +579,10 @@ ADD_MMD_TEST(mmd-7-critic-reject "-R" CriticMarkup parse htmlr)
 ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD7Tests parse tex)
 
 ADD_MMD_TEST(mmd-7-ast "-t ast -r" MMD7Tests parse ast)
+
+# ADD_MMD_TEST(mmd-7-pathologic "-r" Pathologic parse html)
+
+# ADD_MMD_TEST(mmd-7-pathologic-latex "-t latex -r" Pathologic parse tex)
 
 # ADD_MMD_TEST(mmd-6-beamer "-t beamer" Beamer tex)
 # 
