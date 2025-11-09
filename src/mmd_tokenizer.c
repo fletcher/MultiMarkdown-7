@@ -157,7 +157,7 @@ static mmd_node * mmd_tokenizer_next_token(mmd_tokenizer * z, mmd_node_pool * p,
 
 		mmd_node * t = NULL;
 
-		if (s->c_start == start) {
+		if ((s->c_start == start) && (s->cur > s->start)) {
 			// Single token
 			if (s->curType == TOKEN_EOF) {
 				return NULL;
