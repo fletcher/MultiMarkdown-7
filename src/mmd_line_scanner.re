@@ -278,36 +278,36 @@ void make_list_items_loose(mmd_node * n) {
 /// Convert to loose list if appropriate
 void flag_list_loose(mmd_node * n) {
 	if (n) {
-		mmd_node * w = n->child;
+		mmd_node * item = n->child;
 
-		while (w) {
-			mmd_node * ww = w->child;
-
-			while (ww && (w->next || ww->next)) {
-				if (
-					(ww->type == LINE_EMPTY) ||
-					(ww->type == BLOCK_EMPTY)
-				) {
-					if (w->next == NULL) {
-						if (ww->next && ww->next->type != LINE_EMPTY) {
-							n->type++;
-							make_list_items_loose(n);
-							return;
-						}
-					} else {
-						n->type++;
-						make_list_items_loose(n);
-						return;
-					}
-				}
-
-				ww = ww->next;
+		while (item && item->next) {
+			if (item->type == BLOCK_EMPTY) {
+				n->type++;
+				make_list_items_loose(n);
+				return;
 			}
 
-			w = w->next;
+			mmd_node * content = item->child;
+
+			while (content && content->next) {
+				if (
+					(content->type == LINE_EMPTY) ||
+					(content->type == BLOCK_EMPTY)
+				) {
+					n->type++;
+					make_list_items_loose(n);
+					return;
+				}
+
+				content = content->next;
+			}
+
+			item = item->next;
 		}
 	}
 }
+
+
 
 
 void extract_trailing_empty_lines(mmd_node_pool * p, mmd_node *n) {
