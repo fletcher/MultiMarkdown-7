@@ -818,34 +818,34 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 			(*t) = (*t)->next;
 			break;
 
-		case TOKEN_SUPERSCRIPT:
-			if ((*t)->child) {
-				mmd_print_const(out, "<sup>");
-				export_html_tokens((*t)->child, text, len, out, r, w, options);
-				mmd_print_const(out, "</sup>");
+		case TOKEN_PAIR_SUPERSCRIPT:
+			mmd_print_const(out, "<sup>");
+			export_html_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "</sup>");
 
-				if ((*t)->next && (*t)->type == (*t)->next->type) {
-					(*t) = (*t)->next;
-				}
-			} else {
-				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			if ((*t)->next && (*t)->next->type == TOKEN_SUPERSCRIPT) {
+				(*t) = (*t)->next;
+			}
+
+			break;
+
+		case TOKEN_SUPERSCRIPT:
+			text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			break;
+
+		case TOKEN_PAIR_SUBSCRIPT:
+			mmd_print_const(out, "<sub>");
+			export_html_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "</sub>");
+
+			if ((*t)->next && (*t)->next->type == TOKEN_SUBSCRIPT) {
+				(*t) = (*t)->next;
 			}
 
 			break;
 
 		case TOKEN_SUBSCRIPT:
-			if ((*t)->child) {
-				mmd_print_const(out, "<sub>");
-				export_html_tokens((*t)->child, text, len, out, r, w, options);
-				mmd_print_const(out, "</sub>");
-
-				if ((*t)->next && (*t)->type == (*t)->next->type) {
-					(*t) = (*t)->next;
-				}
-			} else {
-				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
-			}
-
+			text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
 			break;
 
 		case TOKEN_PAIR_BACKTICK:

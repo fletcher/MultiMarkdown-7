@@ -419,6 +419,9 @@ enum node_types {
 	TOKEN_SUPERSCRIPT,
 	TOKEN_SUBSCRIPT,
 
+	TOKEN_PAIR_SUPERSCRIPT,
+	TOKEN_PAIR_SUBSCRIPT,
+
 	TOKEN_MATH_PAREN_OPEN,
 	TOKEN_MATH_PAREN_CLOSE,
 	TOKEN_MATH_BRACKET_OPEN,
@@ -436,8 +439,10 @@ enum node_types {
 
 	TOKEN_MANUAL_LABEL,
 
-	OBJECT_REPLACEMENT_CHARACTER,
+	OBJECT_REPLACEMENT_CHARACTER,   // This must be the last type
 };
 
+
+void read_ctx_dump_headers(read_ctx * c);
 
 #endif

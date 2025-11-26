@@ -118,9 +118,9 @@ static language languages[] = {
 #define kMETAKEYSIZE 1024
 
 int main(int argc, char * const argv[]) {
-	if (OBJECT_REPLACEMENT_CHARACTER > 253) {
+	if (OBJECT_REPLACEMENT_CHARACTER > 250) {
 		// Adding too many token types...
-		fprintf(stderr, "CAUTION: OBJECT_REPLACEMENT_CHARACTER nearing 255!!\n");
+		fprintf(stderr, "CAUTION: OBJECT_REPLACEMENT_CHARACTER nearing 255!! => %d\n", OBJECT_REPLACEMENT_CHARACTER);
 		exit(1);
 	}
 

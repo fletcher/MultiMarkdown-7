@@ -93,8 +93,8 @@ static PairRule pairings4[OBJECT_REPLACEMENT_CHARACTER] = {
 	[TOKEN_STAR] = 			{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_SKIP_IDENTICAL_TOKENS | PAIR_LIMIT_MULTIPLE_3,	TOKEN_STAR,	TOKEN_PAIR_STAR	},
 	[TOKEN_UL] = 			{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_SKIP_IDENTICAL_TOKENS | PAIR_NO_MATCH_INTRAWORD,	TOKEN_UL,	TOKEN_PAIR_UL	},
 
-	[TOKEN_SUPERSCRIPT] =	{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT, TOKEN_SUPERSCRIPT, TOKEN_SUPERSCRIPT },
-	[TOKEN_SUBSCRIPT] =		{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT, TOKEN_SUBSCRIPT, TOKEN_SUBSCRIPT },
+	[TOKEN_SUPERSCRIPT] =	{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_NON_CONSECUTIVE, TOKEN_SUPERSCRIPT, TOKEN_PAIR_SUPERSCRIPT },
+	[TOKEN_SUBSCRIPT] =		{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_NON_CONSECUTIVE, TOKEN_SUBSCRIPT, TOKEN_PAIR_SUBSCRIPT },
 };
 
 
@@ -361,11 +361,16 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 		}
 	}
 
+	int non_consecutive = (pairings[n->type].conditions & PAIR_NON_CONSECUTIVE);
+
 	// Find opener and pair off
 	while (s->size > stack_start && (o = stack_pop(s))) {
 		openers[o->type]--;
 
-		if ((o->type == target_type) && (!match_len || o->len == n->len) && (!limit_multiple_3 || delimiter_valid_multiple_3(text, o, n, pairings))) {
+		if ((o->type == target_type) && (!match_len || o->len == n->len) &&
+				(!limit_multiple_3 || delimiter_valid_multiple_3(text, o, n, pairings)) &&
+				(!non_consecutive || o->next != n)
+		   ) {
 			// We have the match
 			if (o->next != n) {
 				o->child = o->next;
@@ -837,6 +842,7 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 						if (test - &text[n->start] > 1) {
 							offset = test - text;
 							n->child = mmd_node_new(p, TOKEN_TEXT, n->start + 1, test - &text[n->start + 1]);
+							n->type = (n->type == TOKEN_SUPERSCRIPT) ? TOKEN_PAIR_SUPERSCRIPT : TOKEN_PAIR_SUBSCRIPT;
 
 							mmd_node * temp = n->next;
 

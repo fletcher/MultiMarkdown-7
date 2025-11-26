@@ -982,38 +982,38 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 			(*t) = (*t)->next;
 			break;
 
-		case TOKEN_SUPERSCRIPT:
-			if ((*t)->child) {
-				mmd_print_const(out, "\\textsuperscript{");
-				export_latex_tokens((*t)->child, text, len, out, r, w, options);
-				mmd_print_const(out, "}");
+		case TOKEN_PAIR_SUPERSCRIPT:
+			mmd_print_const(out, "\\textsuperscript{");
+			export_latex_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "}");
 
-				if ((*t)->next && (*t)->type == (*t)->next->type) {
-					(*t) = (*t)->next;
-				}
-			} else {
-				mmd_print_const(out, "\\");
-				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
-				mmd_print_const(out, "{}");
+			if ((*t)->next && (*t)->next->type == TOKEN_SUPERSCRIPT) {
+				(*t) = (*t)->next;
+			}
+
+			break;
+
+		case TOKEN_SUPERSCRIPT:
+			mmd_print_const(out, "\\");
+			text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			mmd_print_const(out, "{}");
+			break;
+
+		case TOKEN_PAIR_SUBSCRIPT:
+			mmd_print_const(out, "\\textsubscript{");
+			export_latex_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "}");
+
+			if ((*t)->next && (*t)->next->type == TOKEN_SUBSCRIPT) {
+				(*t) = (*t)->next;
 			}
 
 			break;
 
 		case TOKEN_SUBSCRIPT:
-			if ((*t)->child) {
-				mmd_print_const(out, "\\textsubscript{");
-				export_latex_tokens((*t)->child, text, len, out, r, w, options);
-				mmd_print_const(out, "}");
-
-				if ((*t)->next && (*t)->type == (*t)->next->type) {
-					(*t) = (*t)->next;
-				}
-			} else {
-				F(i, (int)(*t)->len) {
-					mmd_print_const(out, "\\ensuremath{\\sim}");
-				}
+			F(i, (int)(*t)->len) {
+				mmd_print_const(out, "\\ensuremath{\\sim}");
 			}
-
 			break;
 
 		case TOKEN_PAIR_BACKTICK:
