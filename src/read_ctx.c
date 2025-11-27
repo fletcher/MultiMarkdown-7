@@ -54,7 +54,9 @@ read_ctx * read_ctx_new(uint32_t options) {
 	read_ctx * c = calloc(1, sizeof(read_ctx));
 
 	if (c) {
-		c->allow_meta = !(options & MMD_OPTION_COMPATIBILITY);
+		c->allow_meta = !((options & MMD_OPTION_COMPATIBILITY) == MMD_OPTION_COMPATIBILITY);
+		c->write_snippet = ((options & MMD_OPTION_SNIPPET) == MMD_OPTION_SNIPPET);
+		c->write_complete = ((options & MMD_OPTION_COMPLETE) == MMD_OPTION_COMPLETE);
 
 		c->token_pair_stack = stack_new(32);
 
