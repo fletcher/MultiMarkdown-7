@@ -64,8 +64,8 @@ Code:
 	- Remove dead code @done
 	- Look into \pN for re2c (Unicode character class with one letter name) vs \p{Greek}
 	- Add more command line options?
-		- Force snippet
-		- Force complete
+		- Force snippet @done
+		- Force complete @done
 		- Disable smart quotes (or part of compatibility mode?)
 	- Fix memory leak in mmd_scan_metadata_lines() by using vector for line nodes @done
 	- Fix memory handling with recursive path variables
