@@ -58,6 +58,9 @@ latexconfig:	article
 
 6
 
+foo `a|b`
+bar
+
   --- | --- |
 | foo | bar |
 [*caption*][bar]

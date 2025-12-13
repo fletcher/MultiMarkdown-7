@@ -931,6 +931,10 @@ static mmd_node * block_table(mmd_node ** l, mmd_node_pool * p) {
 	} else {
 		b->type = BLOCK_PARA;
 
+		while (accept_para_line(l)) {
+			*l = mmd_node_feed_chain(b, *l);
+		}
+
 		return b;
 	}
 
