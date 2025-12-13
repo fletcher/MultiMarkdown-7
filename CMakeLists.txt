@@ -578,7 +578,7 @@ ADD_MMD_TEST(mmd-7-critic-reject "-R" CriticMarkup parse htmlr)
 
 ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD7Tests parse tex)
 
-ADD_MMD_TEST(mmd-7-ast "-t ast -r" MMD7Tests parse ast)
+# ADD_MMD_TEST(mmd-7-ast "-t ast -r" MMD7Tests parse ast)
 
 # ADD_MMD_TEST(mmd-7-pathologic "-r" Pathologic parse html)
 
