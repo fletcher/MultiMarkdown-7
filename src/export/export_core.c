@@ -194,8 +194,8 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 	const char * cur = &text[link_url->start + 1];
 	const char * stop = &text[link_url->next->start];
 
-	// Skip leading whitespace
-	while (cur < stop && char_is_whitespace(*cur)) {
+	// Skip leading whitespace and line endings
+	while (cur < stop && char_is_whitespace_or_line_ending(*cur)) {
 		cur++;
 	}
 
