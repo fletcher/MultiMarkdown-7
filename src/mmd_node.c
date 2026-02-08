@@ -203,8 +203,6 @@ uint32_t mmd_hash_node_tree(mmd_node * n) {
 
 
 void mmd_node_free(mmd_node * n) {
-	return;
-
 	if (n) {
 		mmd_node_tree_free(n->child);
 		mmd_node_tree_free(n->content);

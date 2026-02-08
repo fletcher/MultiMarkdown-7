@@ -482,7 +482,12 @@ static int block_append_tail(mmd_node ** l, mmd_node * b, mmd_node_pool * p) {
 
 				if (accept_indented_line(l)) {
 					mmd_node_graft(cache, b);
-					// Not needed with mmd_node_pool -- free(cache);
+
+					if (p == NULL) {
+						// Not needed with mmd_node_pool
+						free(cache);
+					}
+
 					has_blank_lines = 1;
 				} else {
 					b->next = cache;
@@ -497,7 +502,11 @@ static int block_append_tail(mmd_node ** l, mmd_node * b, mmd_node_pool * p) {
 			case LINE_INDENTED_TAB: {
 				mmd_node * cache = block_general(l, p);
 				mmd_node_graft(cache, b);
-				// Not needed with mmd_node_pool -- free(cache);
+
+				if (p == NULL) {
+					// Not needed with mmd_node_pool
+					free(cache);
+				}
 			}
 			break;
 
@@ -597,7 +606,11 @@ static mmd_node * block_code_indented(mmd_node ** l, mmd_node_pool * p, const ch
 
 					if (accept_indented_line(l)) {
 						mmd_node_graft(cache, b);
-						// Not needed with mmd_node_pool -- free(cache);
+
+						if (p == NULL) {
+							// Not needed with mmd_node_pool
+							free(cache);
+						}
 					} else {
 						b->next = cache;
 						return b;
@@ -956,7 +969,11 @@ static mmd_node * block_table(mmd_node ** l, mmd_node_pool * p) {
 					return b;
 				} else {
 					mmd_node_graft(cache, b);
-					// Not needed with mmd_node_pool -- free(cache);
+
+					if (p == NULL) {
+						// Not needed with mmd_node_pool
+						free(cache);
+					}
 				}
 			}
 		}

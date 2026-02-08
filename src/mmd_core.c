@@ -263,6 +263,11 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 		fprintf(stderr, "text_buffer %zu/%zu used\n", out_buffer->len, out_buffer->capacity);
 		fprintf(stderr, "text_buffer resized %zu times\n", (out_buffer->capacity) / (source_buffer->len * 2));
 	}
+
+	if (vn == NULL) {
+		// Free nodes if we don't use a node_pool
+		mmd_node_tree_free(n);
+	}
 }
 
 
