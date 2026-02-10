@@ -167,7 +167,7 @@ Feature requests, bug reports, etc. can be submitted via the Github
 
 	MIT License
 	
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
