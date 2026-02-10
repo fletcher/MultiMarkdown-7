@@ -516,8 +516,8 @@ void mmd_hash_buffer(text_buffer * buffer, FILE * out, uint32_t options) {
 	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
 #endif
 
-	fprintf(out, "Tree hash: %u\n", hash);
 	mmd_node_tree_describe_hash(n, out);
+	fprintf(out, "Tree hash: %u\n", hash);
 
 	vector_line_node_free(vl);
 	mmd_node_pool_free(vn);
