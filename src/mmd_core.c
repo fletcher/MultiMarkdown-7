@@ -454,6 +454,93 @@ void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options) {
 }
 
 
+/// Process MultiMarkdown text into AST with hash values and output it to
+/// specified file stream
+void mmd_hash_filename(const char * fname, FILE * out, uint32_t options) {
+	FILE * in = flex_fopen(fname);
+
+	if (in) {
+		mmd_hash_file(in, out, options);
+		fclose(in);
+	}
+}
+
+
+void mmd_hash_file(FILE * in, FILE * out, uint32_t options) {
+	text_buffer * buffer = buffer_file(in, kDEFAULTCAPACITY);
+
+	mmd_hash_buffer(buffer, out, options);
+
+	text_buffer_free(buffer, 1);
+}
+
+
+void mmd_hash_str(const char * text, FILE * out, uint32_t options) {
+	size_t len = strlen(text);
+
+	mmd_hash_str_len(text, len, out, options);
+}
+
+
+void mmd_hash_str_len(const char * text, size_t in_len, FILE * out, uint32_t options) {
+	// Since we are not modifying text, we can just use it directly inside the text_buffer
+	text_buffer * buffer = malloc(sizeof(text_buffer));
+	buffer->text = (char *) text;
+	buffer->len = in_len;
+	buffer->capacity = buffer->len;
+
+	mmd_hash_buffer(buffer, out, options);
+
+	free(buffer);
+}
+
+
+void mmd_hash_buffer(text_buffer * buffer, FILE * out, uint32_t options) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	// Track time
+	struct timespec start, mid, end;
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+#endif
+
+	vector_line_node * vl = vector_line_node_new(0);
+	mmd_node_pool * vn = mmd_node_pool_new(0);
+	read_ctx * c = read_ctx_new(options);
+
+	mmd_node * n = mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
+	uint32_t hash = mmd_hash_node_tree(n);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
+#endif
+
+	fprintf(out, "Tree hash: %u\n", hash);
+	mmd_node_tree_describe_hash(n, out);
+
+	vector_line_node_free(vl);
+	mmd_node_pool_free(vn);
+	read_ctx_free(c);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+#endif
+
+	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+		int64_t diff_mid = difftimespec_us(mid, start);
+		fprintf(stderr, "%.6f seconds to parse.\n", ((double)diff_mid / (double)1000000));
+
+		int64_t diff_full = difftimespec_us(end, start);
+		fprintf(stderr, "%.6f seconds in total.\n", ((double)diff_full / (double)1000000));
+#endif
+	}
+}
+
+
 read_ctx * mmd_metadata_filename(const char * fname, uint32_t options) {
 	FILE * in = flex_fopen(fname);
 

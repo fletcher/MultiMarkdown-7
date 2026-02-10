@@ -47,6 +47,7 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, uint32_t options, const char * search_path, const char * source_path);
 mmd_node * mmd_parse_buffer(text_buffer * buffer, read_ctx * c, uint32_t options);
 void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options);
+void mmd_hash_buffer(text_buffer * buffer, FILE *out, uint32_t options);
 read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options);
 
 

@@ -337,27 +337,11 @@ int main(int argc, char * const argv[]) {
 				mmd_node * n;
 
 				if (optind + offset < argc) {
-					read_ctx * c = read_ctx_new(options);
-
 					for (optind += offset; optind < argc; optind++) {
-						n = mmd_parse_filename(argv[optind], c, options);
-						uint32_t hash = mmd_hash_node_tree(n);
-						fprintf(stdout, "Tree hash: %u\n", hash);
-						mmd_node_tree_describe_hash(n, stdout);
-						mmd_node_tree_free(n);
-						read_ctx_reset(c, options);
+						mmd_hash_filename(argv[optind], stdout, options);
 					}
-
-					read_ctx_free(c);
 				} else {
-					read_ctx * c = read_ctx_new(options);
-
-					n = mmd_parse_file(stdin, c, options);
-					uint32_t hash = mmd_hash_node_tree(n);
-					fprintf(stdout, "Tree hash: %u\n", hash);
-					mmd_node_tree_describe_hash(n, stdout);
-					mmd_node_tree_free(n);
-					read_ctx_free(c);
+					mmd_hash_file(stdin, stdout, options);
 				}
 			}
 

@@ -2,12 +2,12 @@
 | ---------- | ------------------------- |  
 | Title:     | libMultiMarkdown7        |  
 | Author:    | Fletcher T. Penney       |  
-| Date:      | 2025-09-11 |  
-| Copyright: | Copyright © 2024-2025 Fletcher T. Penney.    |  
-| Version:   | 7.0.0-alpha.2 |  
+| Date:      | 2026-02-10 |  
+| Copyright: | Copyright © 2024-2026 Fletcher T. Penney.    |  
+| Version:   | 7.0.0-beta.1 |  
 
 
-# MultiMarkdown 7.0.0-alpha.2 #
+# MultiMarkdown 7.0.0-beta.1 #
 
 *Lightweight markup processor to produce HTML, LaTeX, and more.*
 
