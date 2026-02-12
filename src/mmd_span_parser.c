@@ -1207,7 +1207,8 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_n
 			l = next;
 
 			if (l && l->type == LINE_EMPTY) {
-				mmd_node_chain_append(rows, l);
+				// NOTE: This empty line node will "disappear".  It won't leak since it is still freed by the line vector
+				// mmd_node_chain_append(rows, l);
 				next = l->next;
 				l->next = NULL;
 				l = next;

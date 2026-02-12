@@ -37,3 +37,7 @@ Periodically, and before each version bump:
 		cd build
 		make
 		./fuzz_mmd-7
+
+	Can also fuzz test over test suite to catch leaks and errors:
+
+		./fuzz_mmd-7 ../../tests/MMD7Tests/*.text

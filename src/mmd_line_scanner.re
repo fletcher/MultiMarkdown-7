@@ -53,7 +53,7 @@
 
 #define ret if (t1) { s->c_start = t1; } else { s->c_start = s->start; } s->c_end = NULL; return
 #define ret2 if (t1) { s->c_start = t1; } else { s->c_start = s->start; } s->c_end = t2; return
-#define retc if (options & MMD_OPTION_COMPATIBILITY) { s->c_start = s->start; return LINE_PLAIN; }
+#define retc if (options & MMD_OPTION_COMPATIBILITY) { s->c_start = s->start; s->c_end = NULL; return LINE_PLAIN; }
 
 /// Scan text for MultiMarkdown line types
 int mmd_line_scan(Scanner * s, uint32_t options) {

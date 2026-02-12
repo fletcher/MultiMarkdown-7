@@ -210,6 +210,9 @@ void mmd_node_free(mmd_node * n) {
 				case BLOCK_BLOCKQUOTE:
 				case BLOCK_DEFINITION:
 				case BLOCK_DEFLIST:
+				case BLOCK_DEF_CITATION:
+				case BLOCK_DEF_FOOTNOTE:
+				case BLOCK_DEF_GLOSSARY:
 				case BLOCK_LIST_BULLETED:
 				case BLOCK_LIST_BULLETED_LOOSE:
 				case BLOCK_LIST_ENUMERATED:
