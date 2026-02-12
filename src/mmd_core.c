@@ -137,29 +137,29 @@ mmd_node * mmd_parse_str(const char * text, read_ctx * c, uint32_t options) {
 
 
 mmd_node * mmd_parse_str_len(const char * text, size_t in_len, read_ctx * c, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	mmd_node * n = mmd_parse_buffer(buffer, c, options);
 
-	// Don't free buffer->text, just the "wrapper"
-	free(buffer);
+	text_buffer_free(buffer, 1);
 
 	return n;
 }
 
 
 mmd_node * mmd_parse_buffer(text_buffer * buffer, read_ctx * c, uint32_t options) {
-	// TODO: How do we free these?  Pass it upstream from here?
 	vector_line_node * vl = vector_line_node_new(0);
 
 	// mmd_node_pool * vn = mmd_node_pool_new(0);
 	mmd_node_pool * vn = NULL;
 
-	return mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
+	mmd_node * n = mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
+
+	vector_line_node_free(vl);
+
+	return n;
 }
 
 
@@ -398,15 +398,13 @@ void mmd_ast_str(const char * text, FILE * out, uint32_t options) {
 
 
 void mmd_ast_str_len(const char * text, size_t in_len, FILE * out, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	mmd_ast_buffer(buffer, out, options);
 
-	free(buffer);
+	text_buffer_free(buffer, 1);
 }
 
 
@@ -483,15 +481,13 @@ void mmd_hash_str(const char * text, FILE * out, uint32_t options) {
 
 
 void mmd_hash_str_len(const char * text, size_t in_len, FILE * out, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	mmd_hash_buffer(buffer, out, options);
 
-	free(buffer);
+	text_buffer_free(buffer, 1);
 }
 
 
@@ -573,15 +569,13 @@ read_ctx * mmd_metadata_str(const char * text, uint32_t options) {
 
 
 read_ctx * mmd_metadata_str_len(const char * text, size_t in_len, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	read_ctx * r = mmd_metadata_buffer(buffer, options);
 
-	free(buffer);
+	text_buffer_free(buffer, 1);
 
 	return r;
 }

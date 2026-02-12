@@ -204,15 +204,41 @@ uint32_t mmd_hash_node_tree(mmd_node * n) {
 
 void mmd_node_free(mmd_node * n) {
 	if (n) {
-		mmd_node_tree_free(n->child);
+		// Don't free vector line nodes
+		if (MMD_NODE_IS_BLOCK(n)) {
+			switch (n->type) {
+				case BLOCK_BLOCKQUOTE:
+				case BLOCK_DEFINITION:
+				case BLOCK_DEFLIST:
+				case BLOCK_LIST_BULLETED:
+				case BLOCK_LIST_BULLETED_LOOSE:
+				case BLOCK_LIST_ENUMERATED:
+				case BLOCK_LIST_ENUMERATED_LOOSE:
+				case BLOCK_LIST_ITEM:
+				case BLOCK_LIST_ITEM_TIGHT:
+				case BLOCK_TABLE:
+				case BLOCK_TABLE_HEADER:
+				case BLOCK_TABLE_SECTION:
+					mmd_node_tree_free(n->child);
+					break;
+
+				default:
+					break;
+			}
+		} else {
+			mmd_node_tree_free(n->child);
+		}
+
 		mmd_node_tree_free(n->content);
 
-		if (MMD_NODE_IS_LINE(n)) {
-			n->child = NULL;
-			n->content = NULL;
-		} else {
-			free(n);
-		}
+		free(n);
+
+		// if (MMD_NODE_IS_LINE(n)) {
+		// 	n->child = NULL;
+		// 	n->content = NULL;
+		// } else {
+		// 	free(n);
+		// }
 	}
 }
 
@@ -221,21 +247,6 @@ void mmd_node_tree_free(mmd_node * n) {
 	mmd_node * w;
 
 	while (n) {
-		// This is not entirely accurate -- lose content within certain line types
-		// But does dramatically improve performance
-		if (MMD_NODE_IS_LINE(n)) {
-			switch (n->type) {
-				case LINE_TABLE:
-				case LINE_TABLE_SEPARATOR:
-				case LINE_EMPTY:
-					break;
-
-				default:
-					return;
-					break;
-			}
-		}
-
 		w = n->next;
 
 		mmd_node_free(n);
@@ -418,40 +429,40 @@ void mmd_node_prune_graft(mmd_node_pool * p, mmd_node * first, mmd_node * last, 
 }
 
 
-void mmd_node_tree_print(mmd_node * n, FILE * stream, unsigned short depth, const char * text, size_t offset);
+void mmd_node_tree_print(mmd_node * n, FILE * stream, char marker, unsigned short depth, const char * text, size_t offset);
 
 
-void mmd_node_print(mmd_node * n, FILE * stream, unsigned short depth, const char * text, size_t offset) {
+void mmd_node_print(mmd_node * n, FILE * stream, char marker, unsigned short depth, const char * text, size_t offset) {
 	if (n != NULL) {
 		for (int i = 0; i < depth; ++i) {
 			fprintf(stream, "\t");
 		}
 
 		if (text == NULL) {
-			fprintf(stream, "* (%d) %zu:%zu\n", n->type, n->start, n->len);
+			fprintf(stream, "%c (%d) %zu:%zu\n", marker, n->type, n->start, n->len);
 		} else {
-			fprintf(stream, "* (%d) %zu:%zu\t'%.*s'\n", n->type, n->start, n->len, (int)n->len, &text[n->start + offset]);
+			fprintf(stream, "%c (%d) %zu:%zu\t'%.*s'\n", marker, n->type, n->start, n->len, (int)n->len, &text[n->start + offset]);
 			//fprintf(stream, "%.*s", (int)n->len, &text[n->start]);
 		}
 
 		if (n->child != NULL) {
 			if (MMD_NODE_IS_BLOCK(n)) {
-				mmd_node_tree_print(n->child, stream, depth + 1, text, offset + n->start);
+				mmd_node_tree_print(n->child, stream, '*', depth + 1, text, offset + n->start);
 			} else {
-				mmd_node_tree_print(n->child, stream, depth + 1, text, offset);
+				mmd_node_tree_print(n->child, stream, '+', depth + 1, text, offset);
 			}
 		}
 
 		if (n->content != NULL) {
-			mmd_node_tree_print(n->content, stream, depth + 1, text, offset + n->start);
+			mmd_node_tree_print(n->content, stream, '-', depth + 1, text, offset + n->start);
 		}
 	}
 }
 
 
-void mmd_node_tree_print(mmd_node * n, FILE * stream, unsigned short depth, const char * text, size_t offset) {
+void mmd_node_tree_print(mmd_node * n, FILE * stream, char marker, unsigned short depth, const char * text, size_t offset) {
 	while (n != NULL) {
-		mmd_node_print(n, stream, depth, text, offset);
+		mmd_node_print(n, stream, marker, depth, text, offset);
 
 		n = n->next;
 	}
@@ -459,7 +470,7 @@ void mmd_node_tree_print(mmd_node * n, FILE * stream, unsigned short depth, cons
 
 
 void mmd_node_describe(mmd_node * n, FILE * stream, const char * text, size_t offset) {
-	mmd_node_print(n, stream, 0, text, offset);
+	mmd_node_print(n, stream, '*', 0, text, offset);
 
 //	if (n->content) {
 //		mmd_node_tree_print(n->content, stream, 0, text, offset);
@@ -469,7 +480,7 @@ void mmd_node_describe(mmd_node * n, FILE * stream, const char * text, size_t of
 
 void mmd_node_tree_describe(mmd_node * n, FILE * stream, const char * text, size_t offset) {
 	fprintf(stream, "=====>\n");
-	mmd_node_tree_print(n, stream, 0, text, offset);
+	mmd_node_tree_print(n, stream, '*', 0, text, offset);
 	fprintf(stream, "<=====\n");
 }
 

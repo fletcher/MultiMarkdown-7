@@ -26,11 +26,29 @@ int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size) {
 	// Actually -- don't do this. If it needs to be done, do it in MMD.
 	// But ideally it should not need to be done.
 
-	if (0) {
+	if (1) {
 		// Test each set of options by writing straight to /dev/null
 		F(i, sizeof(options) / sizeof(options[0])) {
 			FILE *out = fopen("/dev/null", "w");
 			mmd_process_str_len((const char *) data, size, out, options[i], NULL, NULL);
+			fclose(out);
+		}
+	}
+
+	if (1) {
+		// Test each set of options by writing straight to /dev/null
+		F(i, sizeof(options) / sizeof(options[0])) {
+			FILE *out = fopen("/dev/null", "w");
+			mmd_ast_str_len((const char *) data, size, out, options[i]);
+			fclose(out);
+		}
+	}
+
+	if (1) {
+		// Test each set of options by writing straight to /dev/null
+		F(i, sizeof(options) / sizeof(options[0])) {
+			FILE *out = fopen("/dev/null", "w");
+			mmd_hash_str_len((const char *) data, size, out, options[i]);
 			fclose(out);
 		}
 	}
@@ -46,15 +64,13 @@ int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size) {
 		}
 	}
 
-	if (0) {
-		// Need to figure out best strategy for memory management of nodes/vector/pool
-		// when calling this function.
-		// Otherwise this immediately registers a leak
-		// Though, I'm not sure there is really much point
-		read_ctx * r = read_ctx_new(0);
-		mmd_node * n = mmd_parse_str_len((const char *) data, size, r, 0);
-		read_ctx_free(r);
-		mmd_node_tree_free(n);
+	if (1) {
+		F(i, sizeof(options) / sizeof(options[0])) {
+			read_ctx * r = read_ctx_new(options[i]);
+			mmd_node * n = mmd_parse_str_len((const char *) data, size, r, options[i]);
+			read_ctx_free(r);
+			mmd_node_tree_free(n);
+		}
 	}
 
 	return 0;

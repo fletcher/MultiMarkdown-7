@@ -81,7 +81,8 @@ static parse_rule rules[256] = {
 
 	[BLOCK_TABLE_HEADER]			= { 1, "\\begin{tabulary}{\\textwidth}", 0, DESCEND_CHILD, 1, "\\midrule", 0, 0, 0, 0 },
 	[BLOCK_TABLE_SECTION]			= { 1, "", 0, DESCEND_CHILD, 1, "\\bottomrule", 0, 0, 0, 0 },
-	[LINE_TABLE]					= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\", 0, 0, 0, 0 },
+	[BLOCK_TABLE_ROW]				= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\", 0, 0, 0, 0 },
+	[BLOCK_TABLE_SEPARATOR]			= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\", 0, 0, 0, 0 },
 	[LINE_TABLE_SEPARATOR]			= { 1, "", 1, DESCEND_CONTENT, 0, "\\\\", 0, 0, 0, 0 },
 
 	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "\\ensuremath{\\sim}>", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
@@ -1541,7 +1542,7 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 			w->padding = rule.post_suffix_padding;
 			break;
 
-		case LINE_TABLE_SEPARATOR:
+		case BLOCK_TABLE_SEPARATOR:
 			if (w->in_table_header) {
 				break;
 			}
@@ -1555,7 +1556,7 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 			}
 
 			switch (b->type) {
-				case LINE_TABLE:
+				case BLOCK_TABLE_ROW:
 					w->table_cell_count = 0;
 					break;
 

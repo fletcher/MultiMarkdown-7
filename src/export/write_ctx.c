@@ -108,7 +108,7 @@ void write_ctx_get_table_alignments(write_ctx * c, mmd_node * t, const char * te
 	}
 
 	// Find separator line
-	while (walker && walker->type != LINE_TABLE_SEPARATOR) {
+	while (walker && walker->type != BLOCK_TABLE_SEPARATOR) {
 		walker = walker->next;
 	}
 

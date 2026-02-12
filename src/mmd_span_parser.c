@@ -1164,12 +1164,19 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_n
 		text = &text[b->start];
 
 		// Iterate through each line in the table
-		b = b->child;
+		mmd_node * l = b->child;
 
-		while (b) {
-			mmd_tokenizer * z = mmd_tokenizer_new(&text[b->start], b, c, p, options);
+		// Lines will be attached to row blocks, not the parent blocks
+		b->child = NULL;
+
+		mmd_node * rows = NULL;
+
+		while (l) {
+			mmd_tokenizer * z = mmd_tokenizer_new(&text[l->start], l, c, p, options);
 			mmd_node * chain = mmd_tokenizer_accept_token(z, p, options);
 			mmd_node * t = chain;
+			mmd_node * next = l->next;
+			l->next = NULL;
 
 			while (t) {
 				t->next = mmd_tokenizer_accept_token(z, p, options);
@@ -1182,15 +1189,32 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_n
 			analyze_table_row_chain(chain, p);
 
 			// Do standard span
-			analyze_token_chain(p, chain, pairings1, &text[b->start], c, options);
-			// analyze_token_chain(chain, pairings2, &text[b->start], c, options);
-			analyze_token_chain(p, chain, pairings3, &text[b->start], c, options);
-			analyze_token_chain(p, chain, pairings4, &text[b->start], c, options);
+			analyze_token_chain(p, chain, pairings1, &text[l->start], c, options);
+			// analyze_token_chain(chain, pairings2, &text[l->start], c, options);
+			analyze_token_chain(p, chain, pairings3, &text[l->start], c, options);
+			analyze_token_chain(p, chain, pairings4, &text[l->start], c, options);
 
-			b->content = chain;
+			mmd_node * row = mmd_node_new_parent(p, l, (l->type == LINE_TABLE_SEPARATOR) ? BLOCK_TABLE_SEPARATOR : BLOCK_TABLE_ROW);
+			//row->start = l->start;
+			row->content = chain;
 
-			b = b->next;
+			if (rows) {
+				mmd_node_chain_append(rows, row);
+			} else {
+				rows = row;
+			}
+
+			l = next;
+
+			if (l && l->type == LINE_EMPTY) {
+				mmd_node_chain_append(rows, l);
+				next = l->next;
+				l->next = NULL;
+				l = next;
+			}
 		}
+
+		b->child = rows;
 
 		return;
 	}

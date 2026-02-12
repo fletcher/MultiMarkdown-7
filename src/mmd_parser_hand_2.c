@@ -1500,7 +1500,7 @@ static void recursive_search(mmd_node * n, const char * text, ac * a, read_ctx *
 				break;
 
 			case BLOCK_PARA:
-			case LINE_TABLE:
+			case BLOCK_TABLE_ROW:
 			case BLOCK_FIGURE:
 				// Descend into the content of these block types
 				recursive_search(n->content, &text[n->start], a, c, p);

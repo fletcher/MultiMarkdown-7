@@ -82,7 +82,7 @@ static parse_rule rules[256] = {
 
 	[BLOCK_TABLE_HEADER]			= { 1, "<thead>", 0, DESCEND_CHILD, 1, "</thead>", 0, 0, 0, 0 },
 	[BLOCK_TABLE_SECTION]			= { 2, "<tbody>", 0, DESCEND_CHILD, 1, "</tbody>", 0, 0, 0, 0 },
-	[LINE_TABLE]					= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>", 0, 0, 0, 0 },
+	[BLOCK_TABLE_ROW]				= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>", 0, 0, 0, 0 },
 
 	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "~&gt;", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
 	[TOKEN_PAIR_CM_ADD]				= { 0, "<ins>", 0, DESCEND_CHILD, 0, "</ins>", 0, 1, 0, 0 },
@@ -1326,7 +1326,7 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 
 			break;
 
-		case LINE_TABLE_SEPARATOR:
+		case BLOCK_TABLE_SEPARATOR:
 			if (!w->in_table_header) {
 				pad(out, 1, w);
 				mmd_print_const(out, "<tr>\n");
@@ -1360,7 +1360,7 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 			}
 
 			switch (b->type) {
-				case LINE_TABLE:
+				case BLOCK_TABLE_ROW:
 					w->table_col_count = 0;
 					break;
 
