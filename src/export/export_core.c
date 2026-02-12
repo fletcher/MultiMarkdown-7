@@ -533,7 +533,7 @@ static int export_implicit_abbreviation(const char * text, size_t len, mmd_node 
 				temp = temp->next->next;
 
 				// Trim leading whitespace
-				while (char_is_whitespace(text[temp->start]) && temp->len) {
+				while (temp && char_is_whitespace(text[temp->start]) && temp->len) {
 					temp->start++;
 					temp->len--;
 				}
