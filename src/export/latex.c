@@ -532,12 +532,13 @@ static int export_latex_abbreviation_word(const char * text, size_t len, text_bu
 	char * id = mmd_strndup(text, &len);
 
 	// Insert '>''
-	char buffer[len + 2];
+	char * buffer = malloc(sizeof(char) * (len + 2));
 	memcpy(&buffer[1], id, len + 1);
 	buffer[0] = '>';
 
 	abbr_def * a = read_ctx_get_abbr(r, buffer);
 	free(id);
+	free(buffer);
 
 	return export_abbr_def(a, text, len, NULL, NULL, out, r, w, options, first);
 }
@@ -719,12 +720,13 @@ static int export_latex_glossary_word(const char * text, size_t len, text_buffer
 	char * id = mmd_strndup(text, &len);
 
 	// Insert '?'
-	char buffer[len + 2];
+	char * buffer = malloc(sizeof(char) * (len + 2));
 	memcpy(&buffer[1], id, len + 1);
 	buffer[0] = '?';
 
 	endnote_def * e = read_ctx_get_glos(r, buffer);
 	free(id);
+	free(buffer);
 
 	return export_endnote_def(TOKEN_PAIR_BRACKET_GLOSSARY, e, text, len, NULL, out, r, w, options);
 }

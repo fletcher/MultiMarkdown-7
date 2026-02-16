@@ -74,7 +74,7 @@ char * realpath(const char * path, char * resolved_path) {
 
 	if (resolved_path == NULL) {
 		// realpath allocates appropiate bytes if resolved_path is null. This is to mimic realpath behavior
-		dwBufSize = PATH_MAX; // Use windows PATH_MAX constant, because we are in Windows context now.
+		dwBufSize = MAX_PATH; // Use windows MAX_PATH constant, because we are in Windows context now.
 		buffer = (char *)malloc(dwBufSize);
 
 		if (buffer == NULL) {
