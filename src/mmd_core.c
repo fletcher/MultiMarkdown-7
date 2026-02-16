@@ -93,10 +93,12 @@ static FILE * flex_fopen(const char * fname) {
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
-	wchar_t wstr[wchars_num];
+	wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
 	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
 
 	in = _wfopen(wstr, L"rb");
+
+	free(wstr);
 #else
 	in = fopen(fname, "r");
 #endif
