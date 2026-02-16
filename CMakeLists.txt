@@ -396,9 +396,16 @@ else()
 	#	add_test( memory_test ${MEMORYCHECK_COMMAND} ${MEMORYCHECK_COMMAND_OPTIONS} ${PROJECT_BINARY_DIR}/run_tests)
 
 	else()
-		add_executable(multimarkdown
-			src/main.c
-		)
+		if (WIN32)
+			add_executable(multimarkdown
+				src/main.c
+				src/getopt.c # from https://github.com/alex85k/wingetopt
+			)
+		else()
+			add_executable(multimarkdown
+				src/main.c
+			)
+		endif()
 
 		target_link_libraries(multimarkdown PRIVATE "${My_Project_Title}")
 

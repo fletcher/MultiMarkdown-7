@@ -42,7 +42,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+
+#if (defined(_WIN32) || defined(__WIN32__))
+	#include "getopt.h"
+#else
+	#include <unistd.h>
+#endif
 
 #include "libMultiMarkdown.h"
 #include "read_ctx.h"
