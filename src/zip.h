@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file html.h
+	@file zip.h
 
 	@brief
 
@@ -39,11 +39,12 @@
 */
 
 
-#ifndef HTML_LIBMULTIMARKDOWN7_H
-#define HTML_LIBMULTIMARKDOWN7_H
+#ifndef ZIP_LIBMULTIMARKDOWN7_H
+#define ZIP_LIBMULTIMARKDOWN7_H
 
-void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options);
+#include "miniz.h"
 
-void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+/// Create a new zip archive
+mz_bool zip_new_archive(mz_zip_archive * pZip);
 
 #endif

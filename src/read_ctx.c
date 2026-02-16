@@ -555,6 +555,13 @@ int read_ctx_get_header_level(read_ctx * c, int format) {
 	}
 
 	switch (format) {
+		case FORMAT_EPUB:
+			if (c->epub_header_level) {
+				r = c->epub_header_level - 1;
+			}
+
+			break;
+
 		case FORMAT_HTML:
 			if (c->html_header_level) {
 				r = c->html_header_level - 1;

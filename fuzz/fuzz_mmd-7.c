@@ -14,9 +14,15 @@ uint32_t options[] = {
 	FORMAT_LATEX | MMD_OPTION_COMPATIBILITY,
 	FORMAT_MMD,
 	FORMAT_MMD | MMD_OPTION_COMPATIBILITY
+//	FORMAT_EPUB,
+//	FORMAT_EPUB | MMD_OPTION_COMPATIBILITY,
 };
 
 #define F(i,n) for(int i= 0;i<n;i++)
+
+
+// NOTES:
+//	Test EPUB format is *slow* by comparison, so it is generally disabled.
 
 
 int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size) {

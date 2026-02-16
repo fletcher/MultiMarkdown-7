@@ -64,6 +64,7 @@
 #include "write_ctx.h"
 
 #include "export_core.h"
+#include "epub.h"
 #include "html.h"
 #include "latex.h"
 
@@ -182,7 +183,7 @@ void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * sear
 
 	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
 
-	fprintf(out, "%.*s", (int)out_buffer->len, out_buffer->text);
+	fwrite(out_buffer->text, out_buffer->len, 1, out);
 
 	text_buffer_free(source_buffer, 1);
 	text_buffer_free(out_buffer, 1);
@@ -204,7 +205,7 @@ void mmd_process_str_len(const char * text, size_t len, FILE * out, uint32_t opt
 
 	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
 
-	fprintf(out, "%.*s", (int)out_buffer->len, out_buffer->text);
+	fwrite(out_buffer->text, out_buffer->len, 1, out);
 
 	text_buffer_free(source_buffer, 1);
 	text_buffer_free(out_buffer, 1);
@@ -246,6 +247,10 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 	// Export AST to specified format
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_EPUB:
+			export_epub(n, source_buffer->text, out_buffer, c, options);
+			break;
+
 		case FORMAT_HTML:
 			export_html(n, source_buffer->text, out_buffer, c, options);
 			break;

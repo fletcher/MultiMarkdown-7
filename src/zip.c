@@ -2,9 +2,9 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file html.h
+	@file zip.c
 
-	@brief
+	@brief Wrapper for miniz with a couple of common routines
 
 
 	@author	Fletcher T. Penney
@@ -39,11 +39,33 @@
 */
 
 
-#ifndef HTML_LIBMULTIMARKDOWN7_H
-#define HTML_LIBMULTIMARKDOWN7_H
+#include <stdlib.h>
 
-void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options);
+#include "zip.h"
 
-void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
+// Windows deprecated mkdir()
+// Fix per internet searches and modified by @f8ttyc8t (<https://github.com/f8ttyc8t>)
+#if (defined(_WIN32) || defined(__WIN32__))
+	// Let compiler know where to find _mkdir()
+	#include  <direct.h>
+	#define mkdir(A, B) _mkdir(A)
 #endif
+
+
+
+/// Create a new zip archive
+mz_bool zip_new_archive(mz_zip_archive * pZip) {
+	memset(pZip, 0, sizeof(mz_zip_archive));
+
+	mz_bool status;
+
+	status = mz_zip_writer_init_heap(pZip, 0, 0);
+
+	if (!status) {
+		fprintf(stderr, "mz_zip_writer_init_heap() failed.\n");
+	}
+
+	return status;
+}
+

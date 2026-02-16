@@ -62,7 +62,6 @@
 
 #define F(i,n) for(int i= 0;i<n;i++)
 
-static void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 static void export_html_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
 
@@ -1049,7 +1048,7 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 }
 
 
-static void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	while (t) {
 		export_html_token(&t, text, len, out, r, w, options);
 

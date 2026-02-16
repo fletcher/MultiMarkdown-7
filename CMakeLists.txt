@@ -58,12 +58,16 @@ set(src_files
 	src/export/export_core.c
 	src/export/write_ctx.c
 
+	src/export/epub.c
 	src/export/html.c
 	src/export/latex.c
 
 	src/aho-corasick.c
 
 	src/vector_line_node.c
+
+	src/zip.c
+	src/miniz.c
 )
 
 set(public_headers
@@ -94,12 +98,16 @@ set(private_headers
 	src/export/export_core.h
 	src/export/write_ctx.h
 
+	src/export/epub.h
 	src/export/html.h
 	src/export/latex.h
 
 	src/aho-corasick.h
 
 	src/vector_line_node.h
+
+	src/zip.h
+	src/miniz.h
 	
 	version.h
 )

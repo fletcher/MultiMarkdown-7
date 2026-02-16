@@ -1,0 +1,443 @@
+/**
+
+	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
+
+	@file epub.c
+
+	@brief
+
+
+	@author	Fletcher T. Penney
+	@bug
+
+**/
+
+/*
+
+	MIT License
+
+	Copyright (c) 2024-2026 Fletcher T. Penney
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
+*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <limits.h>
+
+
+#include "mmd_node.h"
+#include "text_buffer.h"
+#include "read_ctx.h"
+#include "write_ctx.h"
+#include "mmd_span_parser.h"
+#include "il8n.h"
+#include "mmd_scanner.h"
+#include "mmd_token_scanner.h"
+#include "mmd_utilities.h"
+
+#include "export_core.h"
+#include "epub.h"
+#include "html.h"
+#include "zip.h"
+
+
+#ifdef TEST
+	#include "CuTest.h"
+#endif
+
+
+/// strdup() not available on all platforms
+static char * my_strdup(const char * source) {
+	if (source == NULL) {
+		return NULL;
+	}
+
+	char * result = malloc(strlen(source) + 1);
+
+	if (result) {
+		strcpy(result, source);
+	}
+
+	return result;
+}
+
+
+static char * uuid_string_from_bits(unsigned char * raw) {
+	char * result = malloc(37);
+
+	snprintf(result, 37, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+			 raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
+			 raw[8], raw[9], raw[10], raw[11], raw[12], raw[13], raw[14], raw[15] );
+
+	return result;
+}
+
+
+#define SETBIT(a, n) (a[n/CHAR_BIT] |= (1<<(n % CHAR_BIT)))
+#define CLEARBIT(a, n) (a[n/CHAR_BIT] &= ~(1<<(n % CHAR_BIT)))
+
+
+static char * uuid_new(void) {
+	unsigned char raw[16];
+
+	// Get 128 bits of random goodness
+	for (int i = 0; i < 16; ++i) {
+		raw[i] = rand() % 256;
+	}
+
+//	Need to set certain bits for v4 compliance
+	CLEARBIT(raw, 52);
+	CLEARBIT(raw, 53);
+	SETBIT(raw, 54);
+	CLEARBIT(raw, 55);
+	CLEARBIT(raw, 70);
+	SETBIT(raw, 71);
+
+	return uuid_string_from_bits(raw);
+}
+
+
+static char * epub_mimetype(void) {
+	return my_strdup("application/epub+zip");
+}
+
+
+static char * epub_container(void) {
+	return my_strdup("<?xml version=\"1.0\"?>\n" \
+					 "<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n" \
+					 "<rootfiles>\n" \
+					 "<rootfile full-path=\"OEBPS/main.opf\" media-type=\"application/oebps-package+xml\" />\n" \
+					 "</rootfiles>\n" \
+					 "</container>\n");
+}
+
+
+static char * epub_package(read_ctx * r) {
+	text_buffer * buffer = text_buffer_new(0);
+	meta * m;
+
+	// Package and Metadata
+
+	text_buffer_append_printf(buffer,
+							  "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n" \
+							  "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"pub-id\">\n" \
+							  "<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
+							 );
+
+	// Identifier
+	m = read_ctx_get_meta(r, "uuid");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<dc:identifier id=\"pub-id\">urn:uuid:%s</dc:identifier>\n", m->value);
+	} else {
+		char * uuid = uuid_new();
+		text_buffer_append_printf(buffer, "<dc:identifier id=\"pub-id\">urn:uuid:%s</dc:identifier>\n", uuid);
+		free(uuid);
+	}
+
+
+	// Title
+	m = read_ctx_get_meta(r, "title");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<dc:title>%s</dc:title>\n", m->value);
+	} else {
+		text_buffer_append_printf(buffer, "<dc:title>Untitled</dc:title>\n");
+	}
+
+
+	// Author
+	m = read_ctx_get_meta(r, "author");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<dc:creator>%s</dc:creator>\n", m->value);
+	}
+
+
+	// Language
+	m = read_ctx_get_meta(r, "language");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<dc:language>%s</dc:language>\n", m->value);
+	} else {
+		switch (r->language) {
+			case LANGUAGE_EN:
+				text_buffer_append_printf(buffer, "<dc:language>en</dc:language>\n");
+				break;
+
+			case LANGUAGE_ES:
+				text_buffer_append_printf(buffer, "<dc:language>es</dc:language>\n");
+				break;
+
+			case LANGUAGE_DE:
+				text_buffer_append_printf(buffer, "<dc:language>de</dc:language>\n");
+				break;
+
+			case LANGUAGE_FR:
+				text_buffer_append_printf(buffer, "<dc:language>fr</dc:language>\n");
+				break;
+
+			case LANGUAGE_NL:
+				text_buffer_append_printf(buffer, "<dc:language>nl</dc:language>\n");
+				break;
+
+			case LANGUAGE_SV:
+				text_buffer_append_printf(buffer, "<dc:language>sv</dc:language>\n");
+				break;
+
+			case LANGUAGE_HE:
+				text_buffer_append_printf(buffer, "<dc:language>he</dc:language>\n");
+				break;
+
+			default:
+				text_buffer_append_printf(buffer, "<dc:language>en</dc:language>\n");
+				break;
+		}
+	}
+
+
+	// Date
+	m = read_ctx_get_meta(r, "date");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<meta property=\"dcterms:modified\">%s</meta>\n", m->value);
+	} else {
+		time_t t = time(NULL);
+		struct tm * today = localtime(&t);
+
+		text_buffer_append_printf(buffer, "<meta property=\"dcterms:modified\">%d-%02d-%02d</meta>\n", today->tm_year + 1900, today->tm_mon + 1, today->tm_mday);
+	}
+
+
+	text_buffer_append_printf(buffer, "</metadata>\n");
+
+
+	// Manifest, Spine, closure
+	text_buffer_append_printf(buffer,
+							  "<manifest>\n" \
+							  "<item id=\"nav\" href=\"nav.xhtml\" properties=\"nav\" media-type=\"application/xhtml+xml\"/>\n" \
+							  "<item id=\"main\" href=\"main.xhtml\" media-type=\"application/xhtml+xml\"/>\n" \
+							  "</manifest>\n" \
+							  "<spine>\n" \
+							  "<itemref idref=\"main\"/>\n" \
+							  "</spine>\n" \
+							  "</package>\n"
+							 );
+
+
+	char * result = buffer->text;
+	text_buffer_free(buffer, 0);
+	return result;
+}
+
+
+static void export_toc_entry(text_buffer * out, size_t * counter, int level, int min, int max, read_ctx * r, write_ctx * w, uint32_t options) {
+	header * h, * next;
+	int h_level, next_level;
+
+	mmd_print_const(out, "\n<ol>\n");
+
+	while (*counter < r->header_stack->size) {
+		h = stack_peek_index(r->header_stack, *counter);
+		h_level = raw_level_for_header(h->node);
+
+		if (h_level < min || h_level > max) {
+			// Ignore this header
+		} else {
+			if (h_level >= level) {
+				// This header is a direct descendant of the parent
+				text_buffer_append_printf(out, "<li><a href=\"main.xhtml#%s\">", h->key);
+				export_html_tokens(h->node->content, h->text, h->text_len, out, r, w, options);
+				text_buffer_trim_trailing_whitespace(out);
+				mmd_print_const(out, "</a>");
+
+				if (*counter < r->header_stack->size - 1) {
+					next = stack_peek_index(r->header_stack, *counter + 1);
+					next_level = raw_level_for_header(next->node);
+
+					if (next_level > h_level) {
+						// This entry has children
+						(*counter)++;
+						export_toc_entry(out, counter, h_level + 1, min, max, r, w, options);
+					}
+				}
+
+				mmd_print_const(out, "</li>\n");
+			} else if (h_level < level) {
+				// Decrement counter and exit this level
+				(*counter)--;
+				break;
+			}
+		}
+
+		// Increment counter
+		(*counter)++;
+	}
+
+	mmd_print_const(out, "</ol>\n");
+}
+
+
+static char * epub_nav(read_ctx * r, write_ctx * w, uint32_t options) {
+	text_buffer * buffer = text_buffer_new(0);
+	meta * m;
+
+	text_buffer_append_printf(buffer, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">\n");
+
+	// Title
+	m = read_ctx_get_meta(r, "title");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<head>\n<title>%s</title>\n</head>\n", m->value);
+	} else {
+		text_buffer_append_printf(buffer, "<head>\n<title>Untitled</title>\n</head>\n");
+	}
+
+
+	// TOC
+	text_buffer_append_printf(buffer,
+							  "<body>\n<nav epub:type=\"toc\">\n" \
+							  "<h2>Table of Contents</h2>\n"
+							 );
+
+
+	size_t counter = 0;
+	export_toc_entry(buffer, &counter, 0, 0, 6, r, w, options);
+
+	text_buffer_append_printf(buffer, "</nav>\n</body>\n</html>\n");
+
+	char * result = buffer->text;
+	text_buffer_free(buffer, 0);
+	return result;
+}
+
+
+void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
+	char * data;
+	size_t len;
+
+
+	// Force complete document
+	char old_complete = r->write_complete;
+	r->write_complete = 1;
+
+	// HTML exporting does the majority of the work
+	export_html(b, text, out, r, options);
+
+	// Insert xml declaration header
+	data = my_strdup("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	text_buffer_prepend_text(out, data, strlen(data));
+	free(data);
+
+
+	// Restore prior state
+	r->write_complete = old_complete;
+
+
+	// Create zip archive
+	mz_bool status;
+	mz_zip_archive zip;
+	status = zip_new_archive(&zip);
+
+
+	// Add mimetype
+	data = epub_mimetype();
+	len = strlen(data);
+
+	if (!mz_zip_writer_add_mem(&zip, "mimetype", data, len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding mimetype to zip archive.\n");
+	}
+
+	free(data);
+
+
+	// Create directories
+	if (!mz_zip_writer_add_mem(&zip, "OEBPS/", NULL, 0, MZ_NO_COMPRESSION)) {
+		fprintf(stderr, "Error adding OEBPS directory to zip archive.\n");
+	}
+
+	if (!mz_zip_writer_add_mem(&zip, "META-INF/", NULL, 0, MZ_NO_COMPRESSION)) {
+		fprintf(stderr, "Error adding META-INF directory to zip archive.\n");
+	}
+
+
+	// Add container
+	data = epub_container();
+	len = strlen(data);
+
+	if (!mz_zip_writer_add_mem(&zip, "META-INF/container.xml", data, len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding container.xml to zip archive.\n");
+	}
+
+	free(data);
+
+
+	// Add package
+	data = epub_package(r);
+	len = strlen(data);
+
+	if (!mz_zip_writer_add_mem(&zip, "OEBPS/main.opf", data, len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding main.opf to zip archive.\n");
+	}
+
+	free(data);
+
+
+	// Add navigation
+	write_ctx * w = write_ctx_new();
+	data = epub_nav(r, w, options);
+	len = strlen(data);
+
+	if (!mz_zip_writer_add_mem(&zip, "OEBPS/nav.xhtml", data, len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding nav.xhtml to zip archive.\n");
+	}
+
+	free(data);
+	write_ctx_free(w);
+
+
+	// Add main content
+	if (!mz_zip_writer_add_mem(&zip, "OEBPS/main.xhtml", out->text, out->len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding main content to zip archive.\n");
+	}
+
+
+	// Add assets
+	// TODO: Add assets
+
+	// Finalize zip archive and insert in out text_buffer
+	free(out->text);
+	out->text = NULL;
+	status = mz_zip_writer_finalize_heap_archive(&zip, (void **) & (out->text), (size_t *) & (out->len));
+
+	if (!status) {
+		fprintf(stderr, "Error finalizing zip archive.\n");
+		free(out->text);
+		out->text = malloc(out->capacity + 1);
+		out->len = 0;
+	} else {
+		out->capacity = out->len;
+	}
+
+	mz_zip_writer_end(&zip);
+}
