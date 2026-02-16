@@ -351,9 +351,11 @@ void ac_prepare(ac * a, int options) {
 		}
 
 		// Create a buffer
-		char buffer[a->capacity + 1];
+		char * buffer = malloc(sizeof(char) * (a->capacity + 1));
 
 		trie_node_prepare(a, options, 0, buffer, 0, buffer);
+
+		free(buffer);
 	}
 }
 
