@@ -39,7 +39,11 @@
 */
 
 
-#include <libgen.h>
+#if (defined(_WIN32) || defined(__WIN32__))
+#else
+	#include <libgen.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +97,17 @@ char * realpath(const char * path, char * resolved_path) {
 	}
 
 	return buffer;
+}
+
+
+// We also need a version of dirname()
+// Fletcher T. Penney
+char * win_dirname(const char * path) {
+	char * dir = malloc(sizeof(char) * _MAX_DIR);
+
+	_splitpath_s(path, NULL, 0, dir, _MAX_DIR, NULL, 0, NULL, 0);
+
+	return dir;
 }
 
 #endif
@@ -197,7 +212,13 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 				search_path = m->value;
 			} else {
 				// Path is relative to the document
+#if (defined(_WIN32) || defined(__WIN32__))
+				char * dir = win_dirname(source_path);
+				search_path = concatenate_paths(dir, m->value);
+				free(dir);
+#else
 				search_path = concatenate_paths(dirname((char *)source_path), m->value);
+#endif
 				free_search = 1;
 			}
 		}
@@ -328,7 +349,12 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 		if (!search_path) {
 			// Use source to infer search path
 			source_copy = realpath(source_path, NULL);
+
+#if (defined(_WIN32) || defined(__WIN32__))
+			absolute_search_path = win_dirname(source_copy);
+#else
 			absolute_search_path = my_strdup(dirname(source_copy));
+#endif
 		}
 	}
 
