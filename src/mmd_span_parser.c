@@ -1366,13 +1366,16 @@ char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 				break;
 
 			case ']':
-				if (bracket_close == bracket_open - 1) {
-					count++;
-				} else {
-					count = 1;
+				if (bracket_open != NULL) {
+					if (bracket_close == bracket_open - 1) {
+						count++;
+					} else {
+						count = 1;
+					}
+
+					bracket_close = cur;
 				}
 
-				bracket_close = cur;
 				break;
 		}
 
