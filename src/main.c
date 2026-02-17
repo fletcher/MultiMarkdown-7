@@ -52,6 +52,7 @@
 #include "libMultiMarkdown.h"
 #include "read_ctx.h"
 #include "version.h"
+#include "zip.h"
 
 
 #define F(i,n) for(int i= 0;i<n;i++)
@@ -376,12 +377,20 @@ int main(int argc, char * const argv[]) {
 							new_file = filename_with_extension(argv[optind], formats[MMD_OUT_FORMAT_FROM_OPTS(options)].file_extension);
 						}
 
-						FILE * out = fopen(new_file, "w");
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTBUNDLE) {
+							size_t len;
+							char * data = mmd_process_filename_to_str(argv[optind], &len, options, NULL);
 
-						if (out) {
-							mmd_process_filename(argv[optind], out, options, NULL);
+							zip_binary_extract_to_path(data, len, new_file);
+							free(data);
+						} else {
+							FILE * out = fopen(new_file, "w");
 
-							fclose(out);
+							if (out) {
+								mmd_process_filename(argv[optind], out, options, NULL);
+
+								fclose(out);
+							}
 						}
 
 						free(new_file);

@@ -46,5 +46,7 @@
 
 /// Create a new zip archive
 mz_bool zip_new_archive(mz_zip_archive * pZip);
+mz_bool zip_extract_to_path(mz_zip_archive * pZip, const char * path);
+mz_bool zip_binary_extract_to_path(const char * data, size_t len, const char * path);
 
 #endif

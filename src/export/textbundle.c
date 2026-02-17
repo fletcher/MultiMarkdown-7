@@ -214,6 +214,12 @@ void export_textbundle(mmd_node * b, text_buffer * source, text_buffer * out, re
 	mz_bool status = zip_new_archive(&zip);
 
 
+	// Create directories
+	if (!mz_zip_writer_add_mem(&zip, "assets/", NULL, 0, MZ_NO_COMPRESSION)) {
+		fprintf(stderr, "Error adding assets directory to zip archive.\n");
+	}
+
+
 	// Add assets
 	char * absolute_search_path;
 
@@ -247,11 +253,6 @@ void export_textbundle(mmd_node * b, text_buffer * source, text_buffer * out, re
 	len = strlen(data);
 	status = mz_zip_writer_add_mem(&zip, "info.json", data, len, MZ_BEST_COMPRESSION);
 	free(data);
-
-	// Create directories
-	if (!mz_zip_writer_add_mem(&zip, "assets/", NULL, 0, MZ_NO_COMPRESSION)) {
-		fprintf(stderr, "Error adding assets directory to zip archive.\n");
-	}
 
 
 	// Add main content
