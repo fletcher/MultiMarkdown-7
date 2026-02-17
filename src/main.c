@@ -92,13 +92,14 @@ static format formats[] = {
 	[FORMAT_MEMOIR] = { "memoir", ".tex" },
 	[FORMAT_FODT] = { "fodt", ".fodt" },
 	[FORMAT_ODT] = { "odt", ".odt" },
-	[FORMAT_TEXTBUNDLE] = { "bundle", ".textbundle" },
-	[FORMAT_TEXTBUNDLE_COMPRESSED] = { "bundlezip", ".textpack" },
+	[FORMAT_TEXTBUNDLE] = { "textbundle", ".textbundle" },
+	[FORMAT_TEXTPACK] = { "textpack", ".textpack" },
 	[FORMAT_OPML] = { "opml", ".opml" },
 	[FORMAT_ITMZ] = { "itmz", ".itmz" },
 	[FORMAT_MMD] = { "mmd", ".mmdtext" },
 	[FORMAT_HTML_WITH_ASSETS] = { "html?", ".html?" },
 	[FORMAT_AST] = { "ast", ".ast" },
+	[FORMAT_HASH] = { "hash", ".hash" },
 };
 
 
@@ -297,14 +298,18 @@ int main(int argc, char * const argv[]) {
 			fprintf(stdout, "%s\n", LIBMULTIMARKDOWN7_VERSION);
 		} else if (strcmp(argv[1], "parse") == 0) {
 			action = 'p';
+		} else if (strcmp(argv[1], "batch") == 0) {
+			action = 'b';
 		} else if (strcmp(argv[1], "meta") == 0) {
 			action = 'm';
 		} else if (strcmp(argv[1], "ast") == 0) {
-			action = 'a';
-		} else if (strcmp(argv[1], "batch") == 0) {
-			action = 'b';
+			action = 'p';
+			options &= (~MMD_OUT_FORMAT_MASK);
+			options |= FORMAT_AST;
 		} else if (strcmp(argv[1], "hash") == 0) {
-			action = 'h';
+			action = 'p';
+			options &= (~MMD_OUT_FORMAT_MASK);
+			options |= FORMAT_HASH;
 		} else {
 			fprintf(stderr, "%s: action not recognized -- %s\n", argv[0], argv[1]);
 			err = 1;
@@ -343,6 +348,7 @@ int main(int argc, char * const argv[]) {
 		// Proceed
 		switch (action) {
 			case 'h': {
+				// Deprecated
 				// Parse the specified document(s) or input on stdin and export the AST with hash values
 				mmd_node * n;
 
@@ -373,11 +379,7 @@ int main(int argc, char * const argv[]) {
 						FILE * out = fopen(new_file, "w");
 
 						if (out) {
-							if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_AST) {
-								mmd_ast_filename(argv[optind], out, options);
-							} else {
-								mmd_process_filename(argv[optind], out, options, NULL);
-							}
+							mmd_process_filename(argv[optind], out, options, NULL);
 
 							fclose(out);
 						}
@@ -395,21 +397,13 @@ int main(int argc, char * const argv[]) {
 				// Parse the specified document(s) or input on stdin and export on stdout
 				if (optind + offset < argc) {
 					for (optind += offset; optind < argc; optind++) {
-						if (MMD_OUT_FORMAT_FROM_OPTS(options) ==  FORMAT_AST) {
-							mmd_ast_filename(argv[optind], stdout, options);
-						} else {
-							mmd_process_filename(argv[optind], stdout, options, NULL);
-						}
+						mmd_process_filename(argv[optind], stdout, options, NULL);
 					}
 				} else {
 					char buf[1024] = {0};
 					char * wd = getcwd(buf, 1024);
 
-					if (MMD_OUT_FORMAT_FROM_OPTS(options) ==  FORMAT_AST) {
-						mmd_ast_file(stdin, stdout, options);
-					} else {
-						mmd_process_file(stdin, stdout, options, wd, NULL);
-					}
+					mmd_process_file(stdin, stdout, options, wd, NULL);
 
 					free(wd);
 				}
@@ -462,6 +456,7 @@ int main(int argc, char * const argv[]) {
 
 			case 'a':
 
+				// Deprecated
 				// Output the AST for the specified document(s) or input on stdin
 				if (optind + offset < argc) {
 					for (optind += offset; optind < argc; optind++) {

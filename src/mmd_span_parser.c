@@ -1051,14 +1051,17 @@ void mmd_parse_meta_block(const char * text, size_t len, read_ctx * c) {
 	const char * start = text;
 	const char * cur = start;
 	const char * stop = text + len;
+	const char * temp;
 
 	meta * m = NULL;
 
 	do {
 		m = NULL;
+		temp = cur;
 		cur += scan_metadata(cur, stop - cur, &m);
 
 		if (m) {
+			m->value_start += temp - start;
 			read_ctx_store_meta(c, m);
 		}
 	} while (m && cur < stop);

@@ -60,11 +60,6 @@
 #endif
 
 
-#ifdef TEST
-	#include "CuTest.h"
-#endif
-
-
 static char * epub_mimetype(void) {
 	return my_strdup("application/epub+zip");
 }
@@ -323,9 +318,8 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 
 	// Create zip archive
-	mz_bool status;
 	mz_zip_archive zip;
-	status = zip_new_archive(&zip);
+	mz_bool status = zip_new_archive(&zip);
 
 
 	// Add mimetype
@@ -399,7 +393,7 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	absolute_search_path = my_strdup(dirname((char *)source_path));
 #endif
 
-	if (!archive_assets(&zip, r, "OEBPS/assets/", absolute_search_path, options)) {
+	if (!archive_assets_to_zip(&zip, r, "OEBPS/assets/", absolute_search_path, options)) {
 		fprintf(stderr, "Error adding assets to zip archive\n");
 	}
 

@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file assets.h
+	@file textbundle.h
 
 	@brief
 
@@ -39,15 +39,9 @@
 */
 
 
-#ifndef ASSETS_LIBMULTIMARKDOWN7_H
-#define ASSETS_LIBMULTIMARKDOWN7_H
+#ifndef TEXTBUNDLE_LIBMULTIMARKDOWN7_H
+#define TEXTBUNDLE_LIBMULTIMARKDOWN7_H
 
-#include "read_ctx.h"
-#include "zip.h"
-
-/// Add assets to zip archive
-mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination, const char * fname, const char * directory);
-mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options);
-
+void export_textbundle(mmd_node * b, text_buffer * source, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path);
 
 #endif

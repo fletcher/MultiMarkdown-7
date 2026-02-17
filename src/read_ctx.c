@@ -613,6 +613,7 @@ static asset * asset_new(char * url, size_t url_len, enum media_type type) {
 	if (a) {
 		a->url = my_strndup(url, url_len);
 		a->uuid = uuid_new();
+		a->stored = 0;
 		a->type = type;
 	}
 

@@ -59,9 +59,11 @@ set(src_files
 	src/export/export_core.c
 	src/export/write_ctx.c
 
+	src/export/ast.c
 	src/export/epub.c
 	src/export/html.c
 	src/export/latex.c
+	src/export/textbundle.c
 
 	src/aho-corasick.c
 
@@ -100,9 +102,11 @@ set(private_headers
 	src/export/export_core.h
 	src/export/write_ctx.h
 
+	src/export/ast.h
 	src/export/epub.h
 	src/export/html.h
 	src/export/latex.h
+	src/export/textbundle.h
 
 	src/aho-corasick.h
 
@@ -278,7 +282,7 @@ endif()
 find_package(CURL)
 if (CURL_FOUND)
 	add_definitions(-DUSE_CURL)
-	target_link_libraries(libMultiMarkdown7 curl)
+	target_link_libraries(libMultiMarkdown7 CURL::libcurl)
 endif()
 
 # ======================

@@ -65,9 +65,11 @@
 #include "write_ctx.h"
 
 #include "export_core.h"
+#include "ast.h"
 #include "epub.h"
 #include "html.h"
 #include "latex.h"
+#include "textbundle.h"
 
 
 #ifdef TEST
@@ -230,9 +232,20 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 	// Export AST to specified format
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_AST:
+			export_ast(n, source_buffer->text, out_buffer);
+			break;
+
 		case FORMAT_EPUB:
 			export_epub(n, source_buffer->text, out_buffer, c, options, source_path);
 			break;
+
+		case FORMAT_HASH: {
+			uint32_t hash = mmd_hash_node_tree(n);
+			export_hash(n, out_buffer);
+			text_buffer_append_printf(out_buffer, "Tree hash: %u\n", hash);
+		}
+		break;
 
 		case FORMAT_HTML:
 			export_html(n, source_buffer->text, out_buffer, c, options);
@@ -240,6 +253,11 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 		case FORMAT_LATEX:
 			export_latex(n, source_buffer->text, out_buffer, c, options);
+			break;
+
+		case FORMAT_TEXTBUNDLE:
+		case FORMAT_TEXTPACK:
+			export_textbundle(n, source_buffer, out_buffer, c, options, source_path);
 			break;
 
 		default:

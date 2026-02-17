@@ -139,7 +139,7 @@ mz_bool archive_asset_with_curl(mz_zip_archive * pZip, const char * destination,
 
 
 /// Add assets to zip archive via downloading
-mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options) {
+mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options) {
 	mz_bool status = 1;
 
 	if (pZip && r && destination) {
@@ -155,16 +155,22 @@ mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destina
 						if (!archive_asset_from_file(pZip, target, a->url, directory)) {
 							fprintf(stderr, "Failed to download '%s'. Not available locally.\n", a->url);
 							status = 0;
+						} else {
+							a->stored = 1;
 						}
 					} else {
 						fprintf(stderr, "Failed to download '%s'. No local directory specified.\n", a->url);
 						status = 0;
 					}
+				} else {
+					a->stored = 1;
 				}
 			} else {
 				if (!archive_asset_from_file(pZip, target, a->url, directory)) {
 					fprintf(stderr, "Unable to archive asset '%s' from local directory.\n", a->url);
 					status = 0;
+				} else {
+					a->stored = 1;
 				}
 			}
 
@@ -179,7 +185,7 @@ mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destina
 #else
 
 /// Add assets to zip archive from a local directory (curl is not available)
-mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options) {
+mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options) {
 	mz_bool status = 0;
 
 	if (pZip && r && destination && directory) {
@@ -192,10 +198,17 @@ mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destina
 			if (!archive_asset_from_file(pZip, target, a->url, directory)) {
 				fprintf(stderr, "Unable to archive asset '%s'\n", a->url);
 				status = 0;
+			} else {
+				a->stored = 1;
 			}
 
 			free(target);
 		}
+	}
+
+	// Silence unused parameter warning
+	if (options == 0) {
+		options = 0;
 	}
 
 	return status;

@@ -562,6 +562,7 @@ size_t scan_metadata(const char * text, size_t len, meta ** m) {
 
 		(*m)->value = my_strndup(t3, t4 - t3);
 		(*m)->value_len = t4 - t3;
+		(*m)->value_start = t3 - start;
 
 		clean_meta_value(*m);
 

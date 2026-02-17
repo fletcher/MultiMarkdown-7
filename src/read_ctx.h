@@ -64,6 +64,7 @@ typedef struct {
 	char 		*		key;
 
 	char 		*		value;
+	size_t				value_start;
 	size_t				value_len;
 
 	UT_hash_handle		hh;
@@ -142,6 +143,7 @@ enum media_type {
 struct asset {
 	char *					url;
 	char *					uuid;
+	char 					stored;
 	enum media_type 		type;
 	struct UT_hash_handle	hh;
 };
