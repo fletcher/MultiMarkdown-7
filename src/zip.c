@@ -107,10 +107,15 @@ mz_bool zip_extract_to_path(mz_zip_archive * pZip, const char * path) {
 	if (dir) {
 		// Change working directory
 		char cwd[4097];
-		getcwd(cwd, sizeof(cwd));
+
+		if (getcwd(cwd, sizeof(cwd))) {
+
+		}
 
 		// Move into desired path
-		chdir(path);
+		if (chdir(path)) {
+
+		}
 
 		int file_count = mz_zip_reader_get_num_files(pZip);
 
@@ -129,7 +134,9 @@ mz_bool zip_extract_to_path(mz_zip_archive * pZip, const char * path) {
 			}
 		}
 
-		chdir(cwd);
+		if (chdir(cwd)) {
+
+		}
 	}
 
 	return status;
