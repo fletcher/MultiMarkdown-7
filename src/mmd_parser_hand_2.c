@@ -1640,12 +1640,28 @@ static mmd_node * recursive_blockquote_parse(mmd_node * l, mmd_node_pool * p, co
 	while (w) {
 		// Skip blockquote marker if present and reassign line type
 		if (w->type == LINE_BLOCKQUOTE) {
-			s = mmd_scanner(&text[w->start + line->c_start], line->c_len);
-			w->type = mmd_line_scan(&s, options);
+			const char * content = &text[w->start + line->c_start];
 
-			if (w->type) {
-				((mmd_line_node *)w)->c_start = (s.c_start - text) - w->start;
-				((mmd_line_node *)w)->c_len = s.cur - s.c_start;
+			if (!strncmp(content, ">", 1)) {
+				line->c_start += 1;
+				line->c_len -= 1;
+			} else if (!strncmp(content, " >", 2)) {
+				line->c_start += 2;
+				line->c_len -= 2;
+			} else if (!strncmp(content, "  >", 3)) {
+				line->c_start += 3;
+				line->c_len -= 3;
+			} else if (!strncmp(content, "   >", 4)) {
+				line->c_start += 4;
+				line->c_len -= 4 ;
+			} else {
+				s = mmd_scanner(&text[w->start + line->c_start], line->c_len);
+				w->type = mmd_line_scan(&s, options);
+
+				if (w->type) {
+					((mmd_line_node *)w)->c_start = (s.c_start - text) - w->start;
+					((mmd_line_node *)w)->c_len = s.cur - s.c_start;
+				}
 			}
 		}
 
