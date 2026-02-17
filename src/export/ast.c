@@ -47,7 +47,6 @@
 #include "read_ctx.h"
 #include "write_ctx.h"
 #include "mmd_span_parser.h"
-#include "il8n.h"
 #include "mmd_scanner.h"
 #include "mmd_token_scanner.h"
 #include "mmd_utilities.h"
