@@ -279,6 +279,7 @@ endif()
 
 
 # Is libcurl available?
+# Note -- linking to libcurl seems to impart a small performance hit, even if it is not used?
 find_package(CURL)
 if (CURL_FOUND)
 	add_definitions(-DUSE_CURL)

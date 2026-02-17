@@ -98,10 +98,6 @@ static void update_figure(mmd_node * b, text_buffer * source, read_ctx * r, long
 
 	while (content) {
 		if (content->type == TOKEN_PAIR_PAREN) {
-			int pos = (int) (b->start + *offset + content->start);
-			int len = (int) (content->next->start - content->start);
-			fprintf(stderr, "figure URL '%.*s'\n", len, &source->text[pos]);
-
 			char * url = &source->text[b->start + *offset + content->start + 1];
 
 			while (char_is_whitespace(*url)) {
