@@ -46,7 +46,19 @@ int table_has_caption(mmd_node * t);
 void custom_seed_rand(void);
 uint16_t xorshift16(uint16_t x);
 
+
+/// strdup() not available on all platforms
+char * my_strdup(const char * source);
+
+
 /// strndup not available on all platforms
 char * my_strndup(const char * source, size_t n);
+
+
+char * uuid_string_from_bits(unsigned char * raw);
+char * uuid_new(void);
+
+/// Open file for reading regardless of OS
+FILE * flex_fopen(const char * fname);
 
 #endif

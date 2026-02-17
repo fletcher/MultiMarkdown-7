@@ -441,7 +441,19 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 	}
 
 	mmd_print_const(out, "<img src=\"");
-	url_encode_text(l->url, l->url_len, out);
+
+	if (r->store_assets) {
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len);
+
+		if (a) {
+			mmd_print_const(out, "assets/");
+			text_buffer_append_text(out, a->uuid, 36);
+		} else {
+			url_encode_text(l->url, l->url_len, out);
+		}
+	} else {
+		url_encode_text(l->url, l->url_len, out);
+	}
 
 	if (link_text_token) {
 		mmd_print_const(out, "\" alt=\"");
@@ -1480,17 +1492,19 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w) {
 			case 'c':
 				if (strcmp(m->key, "css") == 0) {
 					mmd_print_const(out, "\t<link type=\"text/css\" rel=\"stylesheet\" href=\"");
-					url_encode_text(m->value, m->value_len, out);
 
-					// if (scratch->store_assets) {
-					// 	store_asset(scratch, m->value);
-					// 	asset * a = extract_asset(scratch, m->value);
+					if (r->store_assets) {
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len);
 
-					// 	mmd_print_string_html(out, "assets/", false, false);
-					// 	mmd_print_string_html(out, a->asset_path, false, false);
-					// } else {
-					// 	mmd_print_string_html(out, m->value, false, false);
-					// }
+						if (a) {
+							mmd_print_const(out, "assets/");
+							text_buffer_append_text(out, a->uuid, 36);
+						} else {
+							url_encode_text(m->value, m->value_len, out);
+						}
+					} else {
+						url_encode_text(m->value, m->value_len, out);
+					}
 
 					mmd_print_const(out, "\"/>\n");
 					continue;

@@ -129,6 +129,16 @@ void endnote_def_free(endnote_def * e) {
 }
 
 
+static void asset_free(asset * a) {
+	if (a) {
+		free(a->url);
+		free(a->uuid);
+
+		free(a);
+	}
+}
+
+
 void read_ctx_reset(read_ctx * c, uint32_t options) {
 	if (c) {
 		c->allow_meta = !(options & MMD_OPTION_COMPATIBILITY);
@@ -175,6 +185,13 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 		HASH_ITER(hh, c->note_def_hash, e, e_tmp) {
 			HASH_DEL(c->note_def_hash, e);
 			endnote_def_free(e);
+		}
+
+		asset * s, * s_tmp;
+
+		HASH_ITER(hh, c->asset_hash, s, s_tmp) {
+			HASH_DEL(c->asset_hash, s);
+			asset_free(s);
 		}
 	}
 }
@@ -578,4 +595,57 @@ int read_ctx_get_header_level(read_ctx * c, int format) {
 	}
 
 	return r;
+}
+
+
+asset * read_ctx_get_asset(read_ctx * c, char * url) {
+	asset * a = NULL;
+
+	HASH_FIND_STR(c->asset_hash, url, a);
+
+	return a;
+}
+
+
+static asset * asset_new(char * url, size_t url_len, enum media_type type) {
+	asset * a = malloc(sizeof(asset));
+
+	if (a) {
+		a->url = my_strndup(url, url_len);
+		a->uuid = uuid_new();
+		a->type = type;
+	}
+
+	return a;
+}
+
+
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len) {
+	if (c && url && url_len) {
+		asset * a = read_ctx_get_asset(c, url);
+
+		if (!a) {
+			// Asset not found - create new one
+			enum media_type type = 0;
+
+			char * extension = &url[url_len - 1];
+
+			while (extension > url && extension[0] != '.') {
+				extension--;
+			}
+
+			if (!strncmp(extension, ".css", 4)) {
+				type = textCSS;
+			} else if (!strncmp(extension, ".png", 4)) {
+				type = imagePNG;
+			}
+
+			a = asset_new(url, url_len, type);
+			HASH_ADD_KEYPTR(hh, c->asset_hash, a->url, url_len, a);
+		}
+
+		return a;
+	} else {
+		return NULL;
+	}
 }

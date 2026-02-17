@@ -55,6 +55,7 @@
 #include "read_ctx.h"
 #include "transclude.h"
 #include "stack.h"
+#include "mmd_utilities.h"
 
 
 #ifdef TEST
@@ -113,22 +114,6 @@ char * win_dirname(const char * path) {
 #endif
 
 
-/// strdup() not available on all platforms
-static char * my_strdup(const char * source) {
-	if (source == NULL) {
-		return NULL;
-	}
-
-	char * result = malloc(strlen(source) + 1);
-
-	if (result) {
-		strcpy(result, source);
-	}
-
-	return result;
-}
-
-
 /// Prepend `mmdheader` and append `mmdfooter` metadata to document content for processing
 void mmd_add_mmd_header_footer(text_buffer * buffer, uint32_t options) {
 	read_ctx * r = mmd_metadata_buffer(buffer, options);
@@ -173,7 +158,7 @@ int is_separator(char c) {
 #endif
 
 
-char * concatenate_paths(const char * dir, const char * path) {
+char * concatenate_paths(const char * dir, const char * path, int resolve) {
 	int len = (int) (strlen(dir) + 1 + strlen(path) + 1);
 
 	char * temp = malloc(sizeof(char) * len);
@@ -184,9 +169,13 @@ char * concatenate_paths(const char * dir, const char * path) {
 		snprintf(temp, len, "%s%c%s", dir, separator_char, path);
 	}
 
-	char * r = realpath(temp, NULL);
-	free(temp);
-	return r;
+	if (resolve) {
+		char * r = realpath(temp, NULL);
+		free(temp);
+		return r;
+	} else {
+		return temp;
+	}
 }
 
 
@@ -214,10 +203,10 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 				// Path is relative to the document
 #if (defined(_WIN32) || defined(__WIN32__))
 				char * dir = win_dirname(source_path);
-				search_path = concatenate_paths(dir, m->value);
+				search_path = concatenate_paths(dir, m->value, true);
 				free(dir);
 #else
-				search_path = concatenate_paths(dirname((char *)source_path), m->value);
+				search_path = concatenate_paths(dirname((char *)source_path), m->value, true);
 #endif
 				free_search = 1;
 			}

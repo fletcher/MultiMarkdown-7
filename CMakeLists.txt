@@ -55,6 +55,7 @@ set(src_files
 
 	src/read_ctx.c
 
+	src/export/assets.c
 	src/export/export_core.c
 	src/export/write_ctx.c
 
@@ -95,6 +96,7 @@ set(private_headers
 
 	src/read_ctx.h
 
+	src/export/assets.h
 	src/export/export_core.h
 	src/export/write_ctx.h
 

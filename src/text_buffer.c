@@ -95,10 +95,13 @@ text_buffer * buffer_file(FILE * in, size_t capacity) {
 	}
 
 	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = text;
-	buffer->len = size;
-	buffer->capacity = capacity;
-	buffer->text[size] = '\0';
+
+	if (buffer) {
+		buffer->text = text;
+		buffer->len = size;
+		buffer->capacity = capacity;
+		buffer->text[size] = '\0';
+	}
 
 	return buffer;
 }

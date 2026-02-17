@@ -42,6 +42,6 @@
 #ifndef EPUB_LIBMULTIMARKDOWN7_H
 #define EPUB_LIBMULTIMARKDOWN7_H
 
-void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options);
+void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path);
 
 #endif

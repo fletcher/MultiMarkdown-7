@@ -42,9 +42,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <limits.h>
-
-
 #include "mmd_node.h"
 #include "text_buffer.h"
 #include "read_ctx.h"
@@ -52,65 +49,20 @@
 #include "mmd_utilities.h"
 
 #include "export_core.h"
+#include "assets.h"
 #include "epub.h"
 #include "html.h"
 #include "zip.h"
+
+#if (defined(_WIN32) || defined(__WIN32__))
+#else
+	#include <libgen.h>
+#endif
 
 
 #ifdef TEST
 	#include "CuTest.h"
 #endif
-
-
-/// strdup() not available on all platforms
-static char * my_strdup(const char * source) {
-	if (source == NULL) {
-		return NULL;
-	}
-
-	char * result = malloc(strlen(source) + 1);
-
-	if (result) {
-		strcpy(result, source);
-	}
-
-	return result;
-}
-
-
-static char * uuid_string_from_bits(unsigned char * raw) {
-	char * result = malloc(37);
-
-	snprintf(result, 37, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-			 raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
-			 raw[8], raw[9], raw[10], raw[11], raw[12], raw[13], raw[14], raw[15] );
-
-	return result;
-}
-
-
-#define SETBIT(a, n) (a[n/CHAR_BIT] |= (1<<(n % CHAR_BIT)))
-#define CLEARBIT(a, n) (a[n/CHAR_BIT] &= ~(1<<(n % CHAR_BIT)))
-
-
-static char * uuid_new(void) {
-	unsigned char raw[16];
-
-	// Get 128 bits of random goodness
-	for (int i = 0; i < 16; ++i) {
-		raw[i] = rand() % 256;
-	}
-
-//	Need to set certain bits for v4 compliance
-	CLEARBIT(raw, 52);
-	CLEARBIT(raw, 53);
-	SETBIT(raw, 54);
-	CLEARBIT(raw, 55);
-	CLEARBIT(raw, 70);
-	SETBIT(raw, 71);
-
-	return uuid_string_from_bits(raw);
-}
 
 
 static char * epub_mimetype(void) {
@@ -126,6 +78,12 @@ static char * epub_container(void) {
 					 "</rootfiles>\n" \
 					 "</container>\n");
 }
+
+
+static char * media_type_string[] = {
+	[textCSS] = "text/css",
+	[imagePNG] = "image/png",
+};
 
 
 static char * epub_package(read_ctx * r) {
@@ -232,7 +190,17 @@ static char * epub_package(read_ctx * r) {
 	text_buffer_append_printf(buffer,
 							  "<manifest>\n" \
 							  "<item id=\"nav\" href=\"nav.xhtml\" properties=\"nav\" media-type=\"application/xhtml+xml\"/>\n" \
-							  "<item id=\"main\" href=\"main.xhtml\" media-type=\"application/xhtml+xml\"/>\n" \
+							  "<item id=\"main\" href=\"main.xhtml\" media-type=\"application/xhtml+xml\"/>\n"
+							 );
+
+	asset * a, * a_tmp;
+
+	HASH_ITER(hh, r->asset_hash, a, a_tmp) {
+		text_buffer_append_printf(buffer, "<item id=\"%s\" href=\"assets/%s\" media-type=\"%s\"/>\n", a->uuid, a->uuid, media_type_string[a->type]);
+	}
+
+
+	text_buffer_append_printf(buffer,
 							  "</manifest>\n" \
 							  "<spine>\n" \
 							  "<itemref idref=\"main\"/>\n" \
@@ -328,7 +296,7 @@ static char * epub_nav(read_ctx * r, write_ctx * w, uint32_t options) {
 }
 
 
-void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path) {
 	char * data;
 	size_t len;
 
@@ -336,6 +304,9 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	// Force complete document
 	char old_complete = r->write_complete;
 	r->write_complete = 1;
+
+	// Store assets
+	r->store_assets = 1;
 
 	// HTML exporting does the majority of the work
 	export_html(b, text, out, r, options);
@@ -419,7 +390,20 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 
 	// Add assets
-	// TODO: Add assets
+	char * absolute_search_path;
+
+#if (defined(_WIN32) || defined(__WIN32__))
+	absolute_search_path = win_dirname(source_path);
+#else
+	absolute_search_path = my_strdup(dirname((char *)source_path));
+#endif
+
+	if (!archive_assets(&zip, r, "OEBPS/assets/", absolute_search_path)) {
+		fprintf(stderr, "Error adding assets to zip archive\n");
+	}
+
+	free(absolute_search_path);
+
 
 	// Finalize zip archive and insert in out text_buffer
 	free(out->text);

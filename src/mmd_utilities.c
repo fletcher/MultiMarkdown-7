@@ -39,6 +39,7 @@
 */
 
 
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -128,6 +129,22 @@ uint16_t xorshift16(uint16_t x) {
 }
 
 
+/// strdup() not available on all platforms
+char * my_strdup(const char * source) {
+	if (source == NULL) {
+		return NULL;
+	}
+
+	char * result = malloc(strlen(source) + 1);
+
+	if (result) {
+		strcpy(result, source);
+	}
+
+	return result;
+}
+
+
 /// strndup not available on all platforms
 char * my_strndup(const char * source, size_t n) {
 	if (source == NULL) {
@@ -157,3 +174,57 @@ char * my_strndup(const char * source, size_t n) {
 	return result;
 }
 
+
+char * uuid_string_from_bits(unsigned char * raw) {
+	char * result = malloc(37);
+
+	snprintf(result, 37, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+			 raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
+			 raw[8], raw[9], raw[10], raw[11], raw[12], raw[13], raw[14], raw[15] );
+
+	return result;
+}
+
+
+#define SETBIT(a, n) (a[n/CHAR_BIT] |= (1<<(n % CHAR_BIT)))
+#define CLEARBIT(a, n) (a[n/CHAR_BIT] &= ~(1<<(n % CHAR_BIT)))
+
+
+char * uuid_new(void) {
+	unsigned char raw[16];
+
+	// Get 128 bits of random goodness
+	for (int i = 0; i < 16; ++i) {
+		raw[i] = rand() % 256;
+	}
+
+//	Need to set certain bits for v4 compliance
+	CLEARBIT(raw, 52);
+	CLEARBIT(raw, 53);
+	SETBIT(raw, 54);
+	CLEARBIT(raw, 55);
+	CLEARBIT(raw, 70);
+	SETBIT(raw, 71);
+
+	return uuid_string_from_bits(raw);
+}
+
+
+/// Open file for reading regardless of OS
+FILE * flex_fopen(const char * fname) {
+	FILE * in = NULL;
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
+	wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
+	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
+
+	in = _wfopen(wstr, L"rb");
+
+	free(wstr);
+#else
+	in = fopen(fname, "r");
+#endif
+
+	return in;
+}

@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file transclude.h
+	@file assets.h
 
 	@brief
 
@@ -39,13 +39,15 @@
 */
 
 
-#ifndef TRANSCLUDE_LIBMULTIMARKDOWN7_H
-#define TRANSCLUDE_LIBMULTIMARKDOWN7_H
+#ifndef ASSETS_LIBMULTIMARKDOWN7_H
+#define ASSETS_LIBMULTIMARKDOWN7_H
 
-void mmd_add_mmd_header_footer(text_buffer * buffer, uint32_t options);
+#include "read_ctx.h"
+#include "zip.h"
 
-void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path);
+/// Add assets to zip archive
+mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination, const char * fname, const char * directory);
+mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory);
 
-char * concatenate_paths(const char * dir, const char * path, int resolve);
 
 #endif

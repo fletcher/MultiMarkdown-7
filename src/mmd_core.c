@@ -54,6 +54,7 @@
 #include "mmd_scanner.h"
 #include "mmd_node.h"
 #include "mmd_line_scanner.h"
+#include "mmd_utilities.h"
 
 #include "criticmarkup.h"
 #include "transclude.h"
@@ -85,26 +86,6 @@ static int64_t difftimespec_us(const struct timespec after, const struct timespe
 		   + ((int64_t)after.tv_nsec - (int64_t)before.tv_nsec) / 1000;
 }
 #endif
-
-
-/// Open file for reading regardless of OS
-static FILE * flex_fopen(const char * fname) {
-	FILE * in = NULL;
-
-#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
-	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
-	wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
-	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
-
-	in = _wfopen(wstr, L"rb");
-
-	free(wstr);
-#else
-	in = fopen(fname, "r");
-#endif
-
-	return in;
-}
 
 
 /// Parse MultiMarkdown text into AST
@@ -250,7 +231,7 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 	// Export AST to specified format
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 		case FORMAT_EPUB:
-			export_epub(n, source_buffer->text, out_buffer, c, options);
+			export_epub(n, source_buffer->text, out_buffer, c, options, source_path);
 			break;
 
 		case FORMAT_HTML:

@@ -131,6 +131,23 @@ typedef struct {
 } endnote_def;
 
 
+enum media_type {
+	textCSS,
+	imagePNG,
+};
+
+
+/// Assets (e.g. files that should be stored in zipfile formats -- images, CSS)
+struct asset {
+	char *					url;
+	char *					uuid;
+	enum media_type 		type;
+	struct UT_hash_handle	hh;
+};
+
+typedef struct asset asset;
+
+
 /// Structured information from parsing process
 struct read_ctx {
 	char				allow_meta;
@@ -172,6 +189,9 @@ struct read_ctx {
 	int					cite_used;
 	int					glos_used;
 	int					note_used;
+
+	bool				store_assets;
+	asset *				asset_hash;
 };
 
 
@@ -208,5 +228,8 @@ void meta_free(meta * m);
 void link_def_free(link_def * l);
 void abbr_def_free(abbr_def * a);
 void endnote_def_free(endnote_def * e);
+
+asset * read_ctx_get_asset(read_ctx * c, char * url);
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len);
 
 #endif
