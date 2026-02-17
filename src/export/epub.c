@@ -83,6 +83,7 @@ static char * epub_container(void) {
 static char * media_type_string[] = {
 	[textCSS] = "text/css",
 	[imagePNG] = "image/png",
+	[imageJPEG] = "image/jpeg",
 };
 
 
@@ -306,7 +307,7 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	r->write_complete = 1;
 
 	// Store assets
-	r->store_assets = 1;
+	options |= MMD_OPTION_STORE_ASSETS;
 
 	// HTML exporting does the majority of the work
 	export_html(b, text, out, r, options);
@@ -398,7 +399,7 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	absolute_search_path = my_strdup(dirname((char *)source_path));
 #endif
 
-	if (!archive_assets(&zip, r, "OEBPS/assets/", absolute_search_path)) {
+	if (!archive_assets(&zip, r, "OEBPS/assets/", absolute_search_path, options)) {
 		fprintf(stderr, "Error adding assets to zip archive\n");
 	}
 

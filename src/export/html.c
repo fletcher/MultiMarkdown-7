@@ -442,7 +442,7 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 
 	mmd_print_const(out, "<img src=\"");
 
-	if (r->store_assets) {
+	if (options & MMD_OPTION_STORE_ASSETS) {
 		asset * a = read_ctx_store_asset(r, l->url, l->url_len);
 
 		if (a) {
@@ -1461,7 +1461,7 @@ static void export_html_blocks(mmd_node * b, const char * text, text_buffer * ou
 }
 
 
-static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	meta * m;
 
 	mmd_print_const(out, "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\"");
@@ -1493,7 +1493,7 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w) {
 				if (strcmp(m->key, "css") == 0) {
 					mmd_print_const(out, "\t<link type=\"text/css\" rel=\"stylesheet\" href=\"");
 
-					if (r->store_assets) {
+					if (options & MMD_OPTION_STORE_ASSETS) {
 						asset * a = read_ctx_store_asset(r, m->value, m->value_len);
 
 						if (a) {
@@ -1717,7 +1717,7 @@ void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	write_ctx * w = write_ctx_new();
 
 	if (r->write_complete || (r->has_meta && !r->write_snippet)) {
-		export_html_header(out, r, w);
+		export_html_header(out, r, w, options);
 	}
 
 	export_html_blocks(b, text, out, r, w, options);

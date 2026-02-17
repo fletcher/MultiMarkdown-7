@@ -47,7 +47,7 @@
 
 /// Add assets to zip archive
 mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination, const char * fname, const char * directory);
-mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory);
+mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options);
 
 
 #endif

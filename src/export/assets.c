@@ -48,6 +48,27 @@
 #include "mmd_utilities.h"
 
 
+#ifdef __APPLE__
+	#include "TargetConditionals.h"
+	#if TARGET_IPHONE_SIMULATOR
+		// iOS Simulator
+		#undef USE_CURL
+	#elif TARGET_OS_IPHONE
+		// iOS device
+		#undef USE_CURL
+	#elif TARGET_OS_MAC
+		// Other kinds of Mac OS
+	#else
+		#error "Unknown Apple platform"
+	#endif
+#endif
+
+#ifdef USE_CURL
+	#include <curl/curl.h>
+#endif
+
+
+/// Archive the file at specified fname and directory
 mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination, const char * fname, const char * directory) {
 	mz_bool status = 0;
 
@@ -71,11 +92,94 @@ mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination,
 
 #ifdef USE_CURL
 
+// Use dynamic buffer for downloading files in memory
+// Based on https://curl.haxx.se/libcurl/c/getinmemory.html
+
+static size_t write_memory(void * contents, size_t size, size_t nmemb, void * userp) {
+	text_buffer * buffer = (text_buffer *) userp;
+	size_t startlen = buffer->len;
+
+	text_buffer_append_text(buffer, contents, (size * nmemb));
+
+	return buffer->len - startlen;
+}
+
+
+/// Add assets to zip archive using curl
+mz_bool archive_asset_with_curl(mz_zip_archive * pZip, const char * destination, const char * url) {
+	mz_bool status = 0;
+
+	if (pZip && destination && url) {
+		curl_global_init(CURL_GLOBAL_ALL);
+		CURL * curl = curl_easy_init();
+
+		text_buffer * buffer = text_buffer_new(0);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) buffer);
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		CURLcode res = curl_easy_perform(curl);
+
+		if (res == CURLE_OK) {
+			// We got it
+			status = mz_zip_writer_add_mem(pZip, destination, buffer->text, buffer->len, MZ_BEST_COMPRESSION);
+
+			if (!status) {
+				fprintf(stderr, "Failed to archive downloaded file.\n");
+			}
+		}
+
+		text_buffer_free(buffer, 1);
+	}
+
+	return status;
+}
+
+
+/// Add assets to zip archive via downloading
+mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options) {
+	mz_bool status = 1;
+
+	if (pZip && r && destination) {
+		asset * a, * a_tmp;
+
+		HASH_ITER(hh, r->asset_hash, a, a_tmp) {
+			char * target = concatenate_paths(destination, a->uuid, false);
+
+			if (options & MMD_OPTION_DOWNLOAD_ASSETS) {
+				if (!archive_asset_with_curl(pZip, target, a->url)) {
+					// Unable to get via curl -- attempt locally
+					if (directory) {
+						if (!archive_asset_from_file(pZip, target, a->url, directory)) {
+							fprintf(stderr, "Failed to download '%s'. Not available locally.\n", a->url);
+							status = 0;
+						}
+					} else {
+						fprintf(stderr, "Failed to download '%s'. No local directory specified.\n", a->url);
+						status = 0;
+					}
+				}
+			} else {
+				if (!archive_asset_from_file(pZip, target, a->url, directory)) {
+					fprintf(stderr, "Unable to archive asset '%s' from local directory.\n", a->url);
+					status = 0;
+				}
+			}
+
+			free(target);
+		}
+	}
+
+	return status;
+}
+
 
 #else
 
-/// Add assets to zip archive from a local directory
-mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory) {
+/// Add assets to zip archive from a local directory (curl is not available)
+mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destination, const char * directory, uint32_t options) {
 	mz_bool status = 0;
 
 	if (pZip && r && destination && directory) {
@@ -83,10 +187,10 @@ mz_bool archive_assets(mz_zip_archive * pZip, read_ctx * r, const char * destina
 		status = 1;
 
 		HASH_ITER(hh, r->asset_hash, a, a_tmp) {
-			fprintf(stderr, "Store asset %s => %s\n", a->uuid, a->url);
 			char * target = concatenate_paths(destination, a->uuid, false);
 
 			if (!archive_asset_from_file(pZip, target, a->url, directory)) {
+				fprintf(stderr, "Unable to archive asset '%s'\n", a->url);
 				status = 0;
 			}
 

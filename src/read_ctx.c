@@ -638,6 +638,8 @@ asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len) {
 				type = textCSS;
 			} else if (!strncmp(extension, ".png", 4)) {
 				type = imagePNG;
+			} else if (!strncmp(extension, ".jpg", 4)) {
+				type = imageJPEG;
 			}
 
 			a = asset_new(url, url_len, type);

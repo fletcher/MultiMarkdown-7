@@ -274,6 +274,13 @@ else()
 endif()
 
 
+# Is libcurl available?
+find_package(CURL)
+if (CURL_FOUND)
+	add_definitions(-DUSE_CURL)
+	target_link_libraries(libMultiMarkdown7 curl)
+endif()
+
 # ======================
 # Process Template Files
 # ======================

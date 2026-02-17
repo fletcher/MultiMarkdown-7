@@ -134,6 +134,7 @@ typedef struct {
 enum media_type {
 	textCSS,
 	imagePNG,
+	imageJPEG,
 };
 
 
@@ -190,7 +191,6 @@ struct read_ctx {
 	int					glos_used;
 	int					note_used;
 
-	bool				store_assets;
 	asset *				asset_hash;
 };
 
