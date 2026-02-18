@@ -49,6 +49,7 @@
 #include "mmd_utilities.h"
 
 #include "export_core.h"
+#include "dc.h"
 #include "assets.h"
 #include "epub.h"
 #include "html.h"
@@ -98,10 +99,10 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "uuid");
 
 	if (m) {
-		text_buffer_append_printf(buffer, "<dc:identifier id=\"pub-id\">urn:uuid:%s</dc:identifier>\n", m->value);
+		dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id");
 	} else {
 		char * uuid = uuid_new();
-		text_buffer_append_printf(buffer, "<dc:identifier id=\"pub-id\">urn:uuid:%s</dc:identifier>\n", uuid);
+		dc_write_term(buffer, DC_IDENTIFIER, uuid, NULL);
 		free(uuid);
 	}
 
@@ -110,9 +111,9 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "title");
 
 	if (m) {
-		text_buffer_append_printf(buffer, "<dc:title>%s</dc:title>\n", m->value);
+		dc_write_term(buffer, DC_TITLE, m->value, NULL);
 	} else {
-		text_buffer_append_printf(buffer, "<dc:title>Untitled</dc:title>\n");
+		dc_write_term(buffer, DC_TITLE, "Untitled", NULL);
 	}
 
 
@@ -120,7 +121,7 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "author");
 
 	if (m) {
-		text_buffer_append_printf(buffer, "<dc:creator>%s</dc:creator>\n", m->value);
+		dc_write_term(buffer, DC_CREATOR, m->value, NULL);
 	}
 
 
@@ -128,41 +129,9 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "language");
 
 	if (m) {
-		text_buffer_append_printf(buffer, "<dc:language>%s</dc:language>\n", m->value);
+		dc_write_term(buffer, DC_LANGUAGE, m->value, NULL);
 	} else {
-		switch (r->language) {
-			case LANGUAGE_EN:
-				text_buffer_append_printf(buffer, "<dc:language>en</dc:language>\n");
-				break;
-
-			case LANGUAGE_ES:
-				text_buffer_append_printf(buffer, "<dc:language>es</dc:language>\n");
-				break;
-
-			case LANGUAGE_DE:
-				text_buffer_append_printf(buffer, "<dc:language>de</dc:language>\n");
-				break;
-
-			case LANGUAGE_FR:
-				text_buffer_append_printf(buffer, "<dc:language>fr</dc:language>\n");
-				break;
-
-			case LANGUAGE_NL:
-				text_buffer_append_printf(buffer, "<dc:language>nl</dc:language>\n");
-				break;
-
-			case LANGUAGE_SV:
-				text_buffer_append_printf(buffer, "<dc:language>sv</dc:language>\n");
-				break;
-
-			case LANGUAGE_HE:
-				text_buffer_append_printf(buffer, "<dc:language>he</dc:language>\n");
-				break;
-
-			default:
-				text_buffer_append_printf(buffer, "<dc:language>en</dc:language>\n");
-				break;
-		}
+		dc_write_language(buffer, r->language);
 	}
 
 

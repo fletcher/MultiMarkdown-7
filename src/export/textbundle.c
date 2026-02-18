@@ -53,7 +53,7 @@
 
 #include "export_core.h"
 #include "assets.h"
-#include "epub.h"
+#include "textbundle.h"
 #include "html.h"
 #include "zip.h"
 

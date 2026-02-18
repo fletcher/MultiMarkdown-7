@@ -145,6 +145,7 @@ enum output_format {
 	FORMAT_HTML_WITH_ASSETS,
 	FORMAT_AST,
 	FORMAT_HASH,
+	FORMAT_DOCX,
 };
 
 
