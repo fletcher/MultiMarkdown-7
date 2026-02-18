@@ -1007,19 +1007,36 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 		case LINE_ATX_3:
 		case LINE_ATX_4:
 		case LINE_ATX_5:
-		case LINE_ATX_6:
+		case LINE_ATX_6: {
+			mmd_line_node * line = (mmd_line_node *) *l;
+
 			b = block_atx(l, p);
 
 			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 
 			if (!(options & MMD_OPTION_COMPATIBILITY)) {
+				size_t c_len = line->c_len;
+
+				while (c_len && char_is_whitespace_or_line_ending(text[b->start + line->c_start + c_len - 1])) {
+					c_len--;
+				}
+
+				// These next two passes are because lines with '#' inside the line catch the first trailing '#' as part of the content
+				while (c_len && text[b->start + line->c_start + c_len - 1] == '#') {
+					c_len--;
+				}
+
+				while (c_len && char_is_whitespace_or_line_ending(text[b->start + line->c_start + c_len - 1])) {
+					c_len--;
+				}
+
 				if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
 					// Use normal id
 					if (b->content->next) {
 						char * key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
-						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 
 						free(key);
 					}
@@ -1029,11 +1046,12 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 					snprintf(key, 6, "%d", xorshift16(c->random_header_seed + c->header_stack->size));
 
 					read_ctx_store_internal_link_key(c, key, strlen(key));
-					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 				}
 			}
+		}
 
-			break;
+		break;
 
 		case LINE_BLOCKQUOTE:
 			b = block_blockquote(l, p, text, len, c, options);
@@ -1213,12 +1231,18 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 			case BLOCK_SETEXT_1:
 			case BLOCK_SETEXT_2:
 				if (!(options & MMD_OPTION_COMPATIBILITY)) {
+					size_t c_len = b->child->tail->start;
+
+					while (c_len && char_is_whitespace_or_line_ending(text[b->start + c_len - 1])) {
+						c_len--;
+					}
+
 					if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
 						// Use normal id
 						char * key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
-						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 
 						free(key);
 					} else {
@@ -1227,7 +1251,7 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						snprintf(key, 6, "%d", xorshift16(c->random_header_seed + c->header_stack->size));
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
-						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 					}
 				}
 

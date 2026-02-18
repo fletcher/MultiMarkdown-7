@@ -2,9 +2,9 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file dc.c
+	@file opml.h
 
-	@brief Dublin Core Metadata shortcuts
+	@brief
 
 
 	@author	Fletcher T. Penney
@@ -39,40 +39,9 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef OPML_LIBMULTIMARKDOWN7_H
+#define OPML_LIBMULTIMARKDOWN7_H
 
-#include "dc.h"
+void export_opml(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options);
 
-
-static char * dc_term[] = {
-	[DC_CREATOR]		= "creator",
-	[DC_IDENTIFIER]		= "identifier",
-	[DC_LANGUAGE]		= "language",
-	[DC_TITLE]			= "title",
-};
-
-
-void dc_write_term(text_buffer * out, enum dc_metadata term, const char * value, const char * id) {
-	if (id) {
-		text_buffer_append_printf(out, "<dc:%s id=\"%s\">%s</dc:%s>\n", dc_term[term], id, value, dc_term[term]);
-	} else {
-		text_buffer_append_printf(out, "<dc:%s>%s</dc:%s>\n", dc_term[term], value, dc_term[term]);
-	}
-}
-
-
-static char * language_code[] = {
-	[LANGUAGE_EN] = "en",
-	[LANGUAGE_ES] = "es",
-	[LANGUAGE_DE] = "de",
-	[LANGUAGE_FR] = "fr",
-	[LANGUAGE_NL] = "nl",
-	[LANGUAGE_SV] = "sv",
-	[LANGUAGE_HE] = "he",
-};
-
-void dc_write_language(text_buffer * out, enum language lang) {
-	dc_write_term(out, DC_LANGUAGE, language_code[lang], NULL);
-}
-
+#endif

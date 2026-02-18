@@ -56,6 +56,9 @@ typedef struct {
 
 	const char *		text;
 	size_t				text_len;
+
+	size_t				c_start;
+	size_t				c_len;
 } header;
 
 
@@ -204,7 +207,7 @@ void read_ctx_free(read_ctx * c);
 
 void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count);
 void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len);
-void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len);
+void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len, size_t c_start, size_t c_len);
 
 void read_ctx_store_abbr(read_ctx * c, abbr_def * l);
 void read_ctx_store_link(read_ctx * c, link_def * l);

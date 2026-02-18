@@ -101,6 +101,7 @@ static format formats[] = {
 	[FORMAT_HTML_WITH_ASSETS] = { "html?", ".html?" },
 	[FORMAT_AST] = { "ast", ".ast" },
 	[FORMAT_HASH] = { "hash", ".hash" },
+	[FORMAT_DOCX] = { "docx", ".docx" },
 };
 
 

@@ -69,6 +69,7 @@
 #include "epub.h"
 #include "html.h"
 #include "latex.h"
+#include "opml.h"
 #include "textbundle.h"
 
 
@@ -253,6 +254,10 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 		case FORMAT_LATEX:
 			export_latex(n, source_buffer->text, out_buffer, c, options);
+			break;
+
+		case FORMAT_OPML:
+			export_opml(n, source_buffer->text, source_buffer->len, out_buffer, c, options);
 			break;
 
 		case FORMAT_TEXTBUNDLE:

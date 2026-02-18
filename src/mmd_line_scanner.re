@@ -157,6 +157,13 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 		'#'{5} s+ @t1 w	[^#\r\n]* @t2 end 							{ ret2 LINE_ATX_5; }
 		'#'{6} s+ @t1 w	[^#\r\n]* @t2 end 							{ ret2 LINE_ATX_6; }
 
+		'#'{1} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_1; }
+		'#'{2} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_2; }
+		'#'{3} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_3; }
+		'#'{4} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_4; }
+		'#'{5} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_5; }
+		'#'{6} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_6; }
+
 		'#'{1} s+ @t1 w	[^\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_1; }
 		'#'{2} s+ @t1 w	[^\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_2; }
 		'#'{3} s+ @t1 w	[^\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_3; }

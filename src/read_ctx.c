@@ -292,7 +292,7 @@ void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key
 }
 
 
-void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len) {
+void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len, size_t c_start, size_t c_len) {
 	if (c && text && n && key && len && key_len) {
 		header * h = calloc(1, sizeof(header));
 
@@ -300,6 +300,8 @@ void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node
 		h->node = n;
 		h->text = text;
 		h->text_len = len;
+		h->c_start = c_start;
+		h->c_len = c_len;
 
 		stack_push(c->header_stack, h);
 	}

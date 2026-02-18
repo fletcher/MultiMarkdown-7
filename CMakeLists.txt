@@ -64,6 +64,7 @@ set(src_files
 	src/export/epub.c
 	src/export/html.c
 	src/export/latex.c
+	src/export/opml.c
 	src/export/textbundle.c
 
 	src/aho-corasick.c
@@ -108,6 +109,7 @@ set(private_headers
 	src/export/epub.h
 	src/export/html.h
 	src/export/latex.h
+	src/export/opml.h
 	src/export/textbundle.h
 
 	src/aho-corasick.h
@@ -608,6 +610,8 @@ ADD_MMD_TEST(mmd-7-critic-accept "-A" CriticMarkup parse htmla)
 ADD_MMD_TEST(mmd-7-critic-reject "-R" CriticMarkup parse htmlr)
 
 ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD7Tests parse tex)
+
+ADD_MMD_TEST(mmd-7-opml "-t opml -r" MMD7Tests parse opml)
 
 # ADD_MMD_TEST(mmd-7-ast "-t ast -r" MMD7Tests parse ast)
 

@@ -27,7 +27,6 @@
 #include "read_ctx.h"
 #include "write_ctx.h"
 #include "mmd_span_parser.h"
-#include "il8n.h"
 #include "mmd_scanner.h"
 #include "mmd_token_scanner.h"
 #include "mmd_utilities.h"
@@ -43,7 +42,7 @@
 #define F(i,n) for(int i= 0;i<n;i++)
 
 static void export_FORMAT_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
-static void export_FORMAT_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+static void export_FORMAT_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
 
 static parse_rule rules[256] = {
@@ -710,7 +709,7 @@ static void export_FORMAT_tokens(mmd_node * t, const char * text, size_t len, te
 }
 
 
-static void export_FORMAT_block(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_FORMAT_block(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	parse_rule rule = rules[b->type];
 
 	switch (b->type) {
@@ -820,7 +819,7 @@ static void export_FORMAT_block(mmd_node * b, const char * text, size_t len, tex
 }
 
 
-static void export_FORMAT_blocks(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+static void export_FORMAT_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	while (b) {
 		if (w->skip_blocks) {
 			w->skip_blocks--;
@@ -833,7 +832,7 @@ static void export_FORMAT_blocks(mmd_node * b, const char * text, size_t len, te
 }
 
 
-void export_FORMAT(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_FORMAT(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
 	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
 	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
 	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
