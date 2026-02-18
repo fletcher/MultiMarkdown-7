@@ -1160,7 +1160,6 @@ int raw_filter_matches_format(const char * pattern, int format) {
 	} else {
 		switch (format) {
 			case FORMAT_HTML:
-			case FORMAT_HTML_WITH_ASSETS:
 				if (strncmp("{=html}", pattern, 6) == 0) {
 					return 1;
 				}

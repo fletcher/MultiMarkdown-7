@@ -250,7 +250,6 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 
 			switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 				case FORMAT_HTML:
-				case FORMAT_HTML_WITH_ASSETS:
 				case FORMAT_EPUB:
 					strcat(file_path, ".html");
 					break;

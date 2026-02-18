@@ -98,7 +98,6 @@ static format formats[] = {
 	[FORMAT_OPML] = { "opml", ".opml" },
 	[FORMAT_ITMZ] = { "itmz", ".itmz" },
 	[FORMAT_MMD] = { "mmd", ".mmdtext" },
-	[FORMAT_HTML_WITH_ASSETS] = { "html?", ".html?" },
 	[FORMAT_AST] = { "ast", ".ast" },
 	[FORMAT_HASH] = { "hash", ".hash" },
 	[FORMAT_DOCX] = { "docx", ".docx" },

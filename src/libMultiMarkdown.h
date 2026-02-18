@@ -131,21 +131,21 @@ void custom_seed_rand(void);
 
 enum output_format {
 	FORMAT_HTML,								//!< Plain HTML
+	FORMAT_AST,
 	FORMAT_EPUB,
+	FORMAT_HASH,
+	FORMAT_ITMZ,
 	FORMAT_LATEX,								//!< LaTeX to generate PDF
+	FORMAT_MMD,									//!< Raw MultiMarkdown source text
+	FORMAT_OPML,
+	FORMAT_TEXTBUNDLE,
+	FORMAT_TEXTPACK,
+
+	FORMAT_DOCX,
 	FORMAT_BEAMER,
 	FORMAT_MEMOIR,
 	FORMAT_FODT,
 	FORMAT_ODT,
-	FORMAT_TEXTBUNDLE,
-	FORMAT_TEXTPACK,
-	FORMAT_OPML,
-	FORMAT_ITMZ,
-	FORMAT_MMD,									//!< Raw MultiMarkdown source text
-	FORMAT_HTML_WITH_ASSETS,
-	FORMAT_AST,
-	FORMAT_HASH,
-	FORMAT_DOCX,
 };
 
 
