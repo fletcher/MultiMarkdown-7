@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file itmz.h
+	@file outline.h
 
 	@brief
 
@@ -39,9 +39,9 @@
 */
 
 
-#ifndef ITMZ_LIBMULTIMARKDOWN7_H
-#define ITMZ_LIBMULTIMARKDOWN7_H
+#ifndef OUTLINE_LIBMULTIMARKDOWN7_H
+#define OUTLINE_LIBMULTIMARKDOWN7_H
 
-void export_itmz(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options);
+void export_outline(mmd_node * b, const char * text, size_t len, text_buffer * out, read_ctx * r, uint32_t options, enum output_format format);
 
 #endif
