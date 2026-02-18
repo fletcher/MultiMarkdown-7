@@ -115,16 +115,14 @@ static void export_opml_header(text_buffer * out, read_ctx * r) {
 	meta * m = read_ctx_get_meta(r, "title");
 
 	if (m) {
-		// mmd_print_const(out, "\t<head><title>");
-		mmd_print_const(out, "<head><title>");
+		mmd_print_const(out, "\t<head><title>");
 
 		export_opml_raw_text(m->value, m->value_len, out);
 
 		mmd_print_const(out, "</title></head>\n");
 	}
 
-	// mmd_print_const(out, "\t<body>\n");
-	mmd_print_const(out, "<body>\n");
+	mmd_print_const(out, "\t<body>\n");
 }
 
 
@@ -178,13 +176,11 @@ static void export_opml_preamble(text_buffer * out, mmd_node * b, const char * t
 			pre_len -= b->start;
 		}
 
-		// mmd_print_const(out, "\t\t<outline text=\"&gt;&gt;Preamble&lt;&lt;\" _note=\"");
-		mmd_print_const(out, "<outline text=\"&gt;&gt;Preamble&lt;&lt;\" _note=\"");
+		mmd_print_const(out, "\t\t<outline text=\"&gt;&gt;Preamble&lt;&lt;\" _note=\"");
 
 		export_opml_raw_text(&text[pre_start], pre_len, out);
 
-		// mmd_print_const(out, "\"/>\n");
-		mmd_print_const(out, "\"></outline>\n");
+		mmd_print_const(out, "\"/>\n");
 	}
 }
 
@@ -193,27 +189,23 @@ static void export_opml_metadata(text_buffer * out, read_ctx * r) {
 	meta * m, * m_tmp;
 
 	if (r->meta_hash) {
-		// mmd_print_const(out, "\t\t<outline text=\"&gt;&gt;Metadata&lt;&lt;\">\n");
-		mmd_print_const(out, "<outline text=\"&gt;&gt;Metadata&lt;&lt;\">\n");
+		mmd_print_const(out, "\t\t<outline text=\"&gt;&gt;Metadata&lt;&lt;\">\n");
 
 		HASH_ITER(hh, r->meta_hash, m, m_tmp) {
-			// mmd_print_const(out, "\t\t\t<outline text=\"");
-			mmd_print_const(out, "<outline text=\"");
+			mmd_print_const(out, "\t\t\t<outline text=\"");
 			export_opml_raw_text(m->key, strlen(m->key), out);
 			mmd_print_const(out, "\" _note=\"");
 			export_opml_raw_text(m->value, m->value_len, out);
 			mmd_print_const(out, "\"/>\n");
 		}
 
-		// mmd_print_const(out, "\t\t</outline>\n");
-		mmd_print_const(out, "</outline>\n");
+		mmd_print_const(out, "\t\t</outline>\n");
 	}
 }
 
 
 static void export_opml_footer(text_buffer * out) {
-	// mmd_print_const(out, "\t</body>\n</opml>\n");
-	mmd_print_const(out, "</body>\n</opml>\n");
+	mmd_print_const(out, "\t</body>\n</opml>\n");
 }
 
 
@@ -233,7 +225,7 @@ static void export_opml_outline(text_buffer * out, const char * text, size_t len
 		if (h_level >= level) {
 			// This header is a direct descendant of the parent
 			F(i, (depth + 2)) {
-				// text_buffer_append_c(out, '\t');
+				text_buffer_append_c(out, '\t');
 			}
 
 			mmd_print_const(out, "<outline text=\"");
@@ -257,20 +249,18 @@ loop:
 
 				if (next_level > h_level) {
 					// This entry has children
-					// mmd_print_const(out, "\">\n");
-					mmd_print_const(out, "\">");
+					mmd_print_const(out, "\">\n");
 
 					(*counter)++;
 					export_opml_outline(out, text, len, counter, h_level + 1, depth + 1, r, w, options);
 
 					F(i, (depth + 2)) {
-						// text_buffer_append_c(out, '\t');
+						text_buffer_append_c(out, '\t');
 					}
 					mmd_print_const(out, "</outline>\n");
 				} else {
 					// This entry has no children
-					// mmd_print_const(out, "\"/>\n");
-					mmd_print_const(out, "\"></outline>\n");
+					mmd_print_const(out, "\"/>\n");
 				}
 			} else {
 				// This is the last entry in the document
@@ -279,8 +269,7 @@ loop:
 				mmd_print_const(out, "\" _note=\"");
 				export_opml_raw_text(&h->text[h->text_len], &text[len] - h->text - h->text_len, out);
 
-				// mmd_print_const(out, "\"/>\n");
-				mmd_print_const(out, "\"></outline>\n");
+				mmd_print_const(out, "\"/>\n");
 			}
 		} else if (h_level < level) {
 			// Decrement counter and exit this level
