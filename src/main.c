@@ -342,7 +342,7 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\t-s\t\tLog some processing time statistics\n");
 		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
 		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
-		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd]\n");
+		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd|latex|docx|epub|itmz|opml|textbundle|textpack|ast|hash]\n");
 
 		fprintf(stderr, "\nuthash -- Copyright (c) 2003-2022, Troy D. Hanson  https://troydhanson.github.io/uthash/  All rights reserved.\n\n");
 	} else {
