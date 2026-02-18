@@ -274,7 +274,6 @@ loop:
 		} else if (h_level < level) {
 			// Decrement counter and exit this level
 			(*counter)--;
-			//mmd_print_const(out, "</outline>\n");
 			break;
 		}
 
