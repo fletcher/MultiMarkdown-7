@@ -63,6 +63,7 @@ set(src_files
 	src/export/ast.c
 	src/export/epub.c
 	src/export/html.c
+	src/export/itmz.c
 	src/export/latex.c
 	src/export/opml.c
 	src/export/textbundle.c
@@ -108,6 +109,7 @@ set(private_headers
 	src/export/ast.h
 	src/export/epub.h
 	src/export/html.h
+	src/export/itmz.h
 	src/export/latex.h
 	src/export/opml.h
 	src/export/textbundle.h

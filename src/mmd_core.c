@@ -68,6 +68,7 @@
 #include "ast.h"
 #include "epub.h"
 #include "html.h"
+#include "itmz.h"
 #include "latex.h"
 #include "opml.h"
 #include "textbundle.h"
@@ -250,6 +251,10 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 		case FORMAT_HTML:
 			export_html(n, source_buffer->text, out_buffer, c, options);
+			break;
+
+		case FORMAT_ITMZ:
+			export_itmz(n, source_buffer->text, source_buffer->len, out_buffer, c, options);
 			break;
 
 		case FORMAT_LATEX:
