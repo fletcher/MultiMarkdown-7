@@ -70,7 +70,7 @@ mz_bool zip_new_archive(mz_zip_archive * pZip) {
 
 	mz_bool status;
 
-	status = mz_zip_writer_init_heap(pZip, 0, 0);
+	status = mz_zip_writer_init_heap(pZip, 0, sizeof(mz_zip_archive));
 
 	if (!status) {
 		fprintf(stderr, "mz_zip_writer_init_heap() failed.\n");

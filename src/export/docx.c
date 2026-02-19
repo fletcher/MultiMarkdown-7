@@ -251,16 +251,16 @@ void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 
 	// Create zip archive
-	mz_zip_archive zip;
-	mz_bool status = zip_new_archive(&zip);
+	mz_zip_archive * zip = malloc(sizeof(mz_zip_archive));
+	mz_bool status = zip_new_archive(zip);
 
 
 	// Create directories
-	if (!mz_zip_writer_add_mem(&zip, "_rels/", NULL, 0, MZ_NO_COMPRESSION)) {
+	if (!mz_zip_writer_add_mem(zip, "_rels/", NULL, 0, MZ_NO_COMPRESSION)) {
 		fprintf(stderr, "Error adding _rels directory to zip archive.\n");
 	}
 
-	if (!mz_zip_writer_add_mem(&zip, "word/", NULL, 0, MZ_NO_COMPRESSION)) {
+	if (!mz_zip_writer_add_mem(zip, "word/", NULL, 0, MZ_NO_COMPRESSION)) {
 		fprintf(stderr, "Error adding _rels directory to zip archive.\n");
 	}
 
@@ -269,7 +269,7 @@ void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	data = relationships();
 	len = strlen(data);
 
-	if (!mz_zip_writer_add_mem(&zip, "_rels/.rels", data, len, MZ_BEST_COMPRESSION)) {
+	if (!mz_zip_writer_add_mem(zip, "_rels/.rels", data, len, MZ_BEST_COMPRESSION)) {
 		fprintf(stderr, "Error adding relationships to zip archive.\n");
 	}
 
@@ -280,7 +280,7 @@ void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	data = content_types();
 	len = strlen(data);
 
-	if (!mz_zip_writer_add_mem(&zip, "[Content_Types].xml", data, len, MZ_BEST_COMPRESSION)) {
+	if (!mz_zip_writer_add_mem(zip, "[Content_Types].xml", data, len, MZ_BEST_COMPRESSION)) {
 		fprintf(stderr, "Error adding content types to zip archive.\n");
 	}
 
@@ -288,14 +288,14 @@ void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 
 	// Add main content
-	if (!mz_zip_writer_add_mem(&zip, "word/document.xml", out->text, out->len, MZ_BEST_COMPRESSION)) {
+	if (!mz_zip_writer_add_mem(zip, "word/document.xml", out->text, out->len, MZ_BEST_COMPRESSION)) {
 		fprintf(stderr, "Error adding main content to zip archive.\n");
 	}
 
 	// Finalize zip archive and insert in out text_buffer
 	free(out->text);
 	out->text = NULL;
-	status = mz_zip_writer_finalize_heap_archive(&zip, (void **) & (out->text), (size_t *) & (out->len));
+	status = mz_zip_writer_finalize_heap_archive(zip, (void **) & (out->text), (size_t *) & (out->len));
 
 	if (!status) {
 		fprintf(stderr, "Error finalizing zip archive.\n");
@@ -306,5 +306,6 @@ void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 		out->capacity = out->len;
 	}
 
-	mz_zip_writer_end(&zip);
+	mz_zip_writer_end(zip);
+	free(zip);
 }
