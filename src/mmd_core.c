@@ -66,6 +66,7 @@
 
 #include "export_core.h"
 #include "ast.h"
+#include "docx.h"
 #include "epub.h"
 #include "html.h"
 #include "latex.h"
@@ -235,6 +236,10 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 		case FORMAT_AST:
 			export_ast(n, source_buffer->text, out_buffer);
+			break;
+
+		case FORMAT_DOCX:
+			export_docx(n, source_buffer, out_buffer, c, options, source_path);
 			break;
 
 		case FORMAT_EPUB:

@@ -61,6 +61,7 @@ set(src_files
 	src/export/write_ctx.c
 
 	src/export/ast.c
+	src/export/docx.c
 	src/export/epub.c
 	src/export/html.c
 	src/export/latex.c
@@ -106,6 +107,7 @@ set(private_headers
 	src/export/write_ctx.h
 
 	src/export/ast.h
+	src/export/docx.h
 	src/export/epub.h
 	src/export/html.h
 	src/export/latex.h

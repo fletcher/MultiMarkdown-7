@@ -1,0 +1,182 @@
+/**
+
+	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
+
+	@file docx.c
+
+	@brief
+
+
+	@author	Fletcher T. Penney
+	@bug
+
+**/
+
+/*
+
+	MIT License
+
+	Copyright (c) 2024-2026 Fletcher T. Penney
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
+*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "mmd_node.h"
+#include "text_buffer.h"
+#include "read_ctx.h"
+#include "write_ctx.h"
+#include "mmd_utilities.h"
+#include "mmd_scanner.h"
+#include "mmd_token_scanner.h"
+#include "char.h"
+
+#include "export_core.h"
+#include "assets.h"
+#include "docx.h"
+#include "html.h"
+#include "zip.h"
+
+#if (defined(_WIN32) || defined(__WIN32__))
+#else
+	#include <libgen.h>
+#endif
+
+
+static char * relationships(void) {
+	return my_strdup("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" \
+					 "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\n" \
+					 "  <Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"word/document.xml\"/>\n" \
+					 "</Relationships>\n"
+					);
+}
+
+
+static char * content_types(void) {
+	return my_strdup("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" \
+					 "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">\n" \
+					 "  <Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>\n" \
+					 "  <Default Extension=\"xml\" ContentType=\"application/xml\"/>\n" \
+					 "  <Override PartName=\"/word/document.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\"/>\n" \
+					 "</Types>\n"
+					);
+}
+
+
+static void export_docx_header(text_buffer * out) {
+	mmd_print_const(out, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
+
+	mmd_print_const(out,
+					"<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" \
+					"  <w:body>\n" \
+					"    <w:p>\n" \
+					"      <w:r>\n" \
+					"        <w:t>This is a paragraph.</w:t>\n" \
+					"      </w:r>\n" \
+					"    </w:p>\n" \
+					"  </w:body>\n" \
+					"</w:document>\n" \
+				   );
+}
+
+void export_docx(mmd_node * b, text_buffer * source, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path) {
+	char * data;
+	size_t len;
+
+	if (b && source && out && r && options && source_path) {
+
+	}
+
+	// Process AST and create base file
+	write_ctx * w = write_ctx_new();
+
+	export_docx_header(out);
+
+	// export_docx_blocks()
+
+	// export_docx_endnotes()
+
+	// export_docx_footer()
+
+	pad(out, 1, w);
+	write_ctx_free(w);
+
+
+	// Create zip archive
+	mz_zip_archive zip;
+	mz_bool status = zip_new_archive(&zip);
+
+
+	// Create directories
+	if (!mz_zip_writer_add_mem(&zip, "_rels/", NULL, 0, MZ_NO_COMPRESSION)) {
+		fprintf(stderr, "Error adding _rels directory to zip archive.\n");
+	}
+
+	if (!mz_zip_writer_add_mem(&zip, "word/", NULL, 0, MZ_NO_COMPRESSION)) {
+		fprintf(stderr, "Error adding _rels directory to zip archive.\n");
+	}
+
+
+	// Create relationships
+	data = relationships();
+	len = strlen(data);
+
+	if (!mz_zip_writer_add_mem(&zip, "_rels/.rels", data, len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding relationships to zip archive.\n");
+	}
+
+	free(data);
+
+
+	// Create content types
+	data = content_types();
+	len = strlen(data);
+
+	if (!mz_zip_writer_add_mem(&zip, "[Content_Types].xml", data, len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding content types to zip archive.\n");
+	}
+
+	free(data);
+
+
+	// Add main content
+	if (!mz_zip_writer_add_mem(&zip, "word/document.xml", out->text, out->len, MZ_BEST_COMPRESSION)) {
+		fprintf(stderr, "Error adding main content to zip archive.\n");
+	}
+
+	// Finalize zip archive and insert in out text_buffer
+	free(out->text);
+	out->text = NULL;
+	status = mz_zip_writer_finalize_heap_archive(&zip, (void **) & (out->text), (size_t *) & (out->len));
+
+	if (!status) {
+		fprintf(stderr, "Error finalizing zip archive.\n");
+		free(out->text);
+		out->text = malloc(out->capacity + 1);
+		out->len = 0;
+	} else {
+		out->capacity = out->len;
+	}
+
+	mz_zip_writer_end(&zip);
+}
