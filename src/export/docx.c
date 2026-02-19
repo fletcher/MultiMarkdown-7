@@ -240,13 +240,6 @@ void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 	export_docx_header(out);
 
-	// mmd_print_const(out,"    <w:p>\n" \
-	// 				"      <w:r>\n" \
-	// 				"        <w:t>This is a paragraph.</w:t>\n" \
-	// 				"      </w:r>\n" \
-	// 				"    </w:p>\n" \
-	// 			   );
-
 	export_docx_blocks(b, text, out, r, w, options);
 
 	// export_docx_endnotes()
