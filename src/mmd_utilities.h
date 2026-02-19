@@ -61,4 +61,7 @@ char * uuid_new(void);
 /// Open file for reading regardless of OS
 FILE * flex_fopen(const char * fname);
 
+/// Cross-platform dirname()
+char * mmd_dirname(const char * path);
+
 #endif

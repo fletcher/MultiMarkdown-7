@@ -44,6 +44,12 @@
 #include <string.h>
 #include <time.h>
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	#include <windows.h>
+#else
+	#include <libgen.h>
+#endif
+
 
 #include "libMultiMarkdown.h"
 
@@ -228,3 +234,19 @@ FILE * flex_fopen(const char * fname) {
 
 	return in;
 }
+
+
+/// Cross-platform dirname()
+char * mmd_dirname(const char * path) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	char * dir = malloc(sizeof(char) * _MAX_DIR);
+
+	_splitpath_s(path, NULL, 0 dir, _MAX_DIR, NULL, 0, NULL, 0);
+
+	return dir;
+#else
+	char * dir = my_strdup(dirname((char *) path));
+	return dir;
+#endif
+}
+

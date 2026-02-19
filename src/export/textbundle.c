@@ -57,7 +57,7 @@
 #include "html.h"
 #include "zip.h"
 
-#if (defined(_WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#include <libgen.h>
 #endif
@@ -221,13 +221,7 @@ void export_textbundle(mmd_node * b, text_buffer * source, text_buffer * out, re
 
 
 	// Add assets
-	char * absolute_search_path;
-
-#if (defined(_WIN32) || defined(__WIN32__))
-	absolute_search_path = win_dirname(source_path);
-#else
-	absolute_search_path = my_strdup(dirname((char *)source_path));
-#endif
+	char * absolute_search_path = mmd_dirname(source_path);
 
 	if (!archive_assets_to_zip(&zip, r, "assets/", absolute_search_path, options)) {
 		fprintf(stderr, "Error adding assets to zip archive\n");

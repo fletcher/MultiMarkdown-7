@@ -354,13 +354,7 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 
 	// Add assets
-	char * absolute_search_path;
-
-#if (defined(_WIN32) || defined(__WIN32__))
-	absolute_search_path = win_dirname(source_path);
-#else
-	absolute_search_path = my_strdup(dirname((char *)source_path));
-#endif
+	char * absolute_search_path = mmd_dirname(source_path);
 
 	if (!archive_assets_to_zip(&zip, r, "OEBPS/assets/", absolute_search_path, options)) {
 		fprintf(stderr, "Error adding assets to zip archive\n");

@@ -57,7 +57,7 @@
 #include "html.h"
 #include "zip.h"
 
-#if (defined(_WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	#include <libgen.h>
 #endif

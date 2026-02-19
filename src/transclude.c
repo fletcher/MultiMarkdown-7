@@ -39,11 +39,6 @@
 */
 
 
-#if (defined(_WIN32) || defined(__WIN32__))
-#else
-	#include <libgen.h>
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,7 +63,7 @@
 
 // Windows does not know realpath(), so we need a "windows port"
 // Fix by @f8ttyc8t (<https://github.com/f8ttyc8t>)
-#if (defined(_WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 // Let compiler know where to find GetFullPathName()
 #include <windows.h>
 
@@ -98,17 +93,6 @@ char * realpath(const char * path, char * resolved_path) {
 	}
 
 	return buffer;
-}
-
-
-// We also need a version of dirname()
-// Fletcher T. Penney
-char * win_dirname(const char * path) {
-	char * dir = malloc(sizeof(char) * _MAX_DIR);
-
-	_splitpath_s(path, NULL, 0, dir, _MAX_DIR, NULL, 0, NULL, 0);
-
-	return dir;
 }
 
 #endif
@@ -143,7 +127,7 @@ void mmd_add_mmd_header_footer(text_buffer * buffer, uint32_t options) {
 /// Windows can use either `\` or `/` as a separator -- thanks to t-beckmann on github
 ///	for suggesting a fix for this.
 int is_separator(char c) {
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	return c == '\\' || c == '/';
 #else
 	return c == '/';
@@ -151,7 +135,7 @@ int is_separator(char c) {
 }
 
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#define separator_char '\\'
 #else
 	#define separator_char '/'
@@ -201,13 +185,9 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 				search_path = m->value;
 			} else {
 				// Path is relative to the document
-#if (defined(_WIN32) || defined(__WIN32__))
-				char * dir = win_dirname(source_path);
+				char * dir = mmd_dirname(source_path);
 				search_path = concatenate_paths(dir, m->value, true);
 				free(dir);
-#else
-				search_path = concatenate_paths(dirname((char *)source_path), m->value, true);
-#endif
 				free_search = 1;
 			}
 		}
@@ -338,11 +318,7 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 			// Use source to infer search path
 			source_copy = realpath(source_path, NULL);
 
-#if (defined(_WIN32) || defined(__WIN32__))
-			absolute_search_path = win_dirname(source_copy);
-#else
-			absolute_search_path = my_strdup(dirname(source_copy));
-#endif
+			absolute_search_path = mmd_dirname(source_copy);
 		}
 	}
 

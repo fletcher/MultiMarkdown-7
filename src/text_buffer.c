@@ -46,7 +46,7 @@
 
 #include "text_buffer.h"
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -110,7 +110,7 @@ text_buffer * buffer_file(FILE * in, size_t capacity) {
 text_buffer * buffer_filename(const char * fname, size_t capacity) {
 	text_buffer * r = NULL;
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
 	wchar_t wstr[wchars_num];
 	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
