@@ -42,6 +42,6 @@
 #ifndef DOCX_LIBMULTIMARKDOWN7_H
 #define DOCX_LIBMULTIMARKDOWN7_H
 
-void export_docx(mmd_node * b, text_buffer * source, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path);
+void export_docx(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path);
 
 #endif
