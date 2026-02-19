@@ -410,7 +410,11 @@ int main(int argc, char * const argv[]) {
 					}
 				} else {
 					char buf[1024] = {0};
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+					char * wd = _getcwd(NULL, 0);
+#else
 					char * wd = getcwd(buf, 1024);
+#endif
 
 					mmd_process_file(stdin, stdout, options, wd, NULL);
 

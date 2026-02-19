@@ -241,7 +241,7 @@ char * mmd_dirname(const char * path) {
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	char * dir = malloc(sizeof(char) * _MAX_DIR);
 
-	_splitpath_s(path, NULL, 0 dir, _MAX_DIR, NULL, 0, NULL, 0);
+	_splitpath_s(path, NULL, 0, dir, _MAX_DIR, NULL, 0, NULL, 0);
 
 	return dir;
 #else

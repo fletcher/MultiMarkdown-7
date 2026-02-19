@@ -39,17 +39,22 @@
 */
 
 
-#include <dirent.h>
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	#include <windows.h>
+#else
+	#include <dirent.h>
+	#include <unistd.h>
+#endif
+
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include "zip.h"
 
 
 // Windows deprecated mkdir()
 // Fix per internet searches and modified by @f8ttyc8t (<https://github.com/f8ttyc8t>)
-#if (defined(_WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	// Let compiler know where to find _mkdir()
 	#include  <direct.h>
 	#define mkdir(A, B) _mkdir(A)
@@ -57,16 +62,6 @@
 
 
 #define F(i,n) for(int i= 0;i<n;i++)
-
-
-// Windows deprecated mkdir()
-// Fix per internet searches and modified by @f8ttyc8t (<https://github.com/f8ttyc8t>)
-#if (defined(_WIN32) || defined(__WIN32__))
-	// Let compiler know where to find _mkdir()
-	#include  <direct.h>
-	#define mkdir(A, B) _mkdir(A)
-#endif
-
 
 
 /// Create a new zip archive
@@ -85,26 +80,45 @@ mz_bool zip_new_archive(mz_zip_archive * pZip) {
 }
 
 
+static int directory_exists(const char * path) {
+	struct stat status;
+
+	if (stat(path, &status) == 0 && (status.st_mode & S_IFDIR)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+
+static int file_exists(const char * path) {
+	struct stat status;
+
+	if (stat(path, &status) == 0 && !(status.st_mode & S_IFDIR)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+
 mz_bool zip_extract_to_path(mz_zip_archive * pZip, const char * path) {
 	mz_bool status = 1;
 
-	DIR * dir = opendir(path);
 
-	if (!dir) {
+	if (directory_exists(path)) {
 		// path is not an existing directory
 
-		if (access(path, F_OK) == 0) {
+		if (file_exists(path)) {
 			fprintf(stderr, "'%s' is an existing file, not a directory.\n", path);
 			return 0;
 		} else {
 			// Path doesn't exist, create directory
 			mkdir(path, 0755);
 		}
-
-		dir = opendir(path);
 	}
 
-	if (dir) {
+	if (directory_exists(path)) {
 		// Change working directory
 		char cwd[4097];
 

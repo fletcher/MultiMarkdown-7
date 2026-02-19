@@ -112,7 +112,7 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
-	wchar_t wstr[wchars_num];
+	wchar_t * wstr = malloc(sizeof(wchar_t) * wchars_num);
 	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
 
 	FILE * in = _wfopen(wstr, L"rb");
@@ -122,6 +122,7 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 		fclose(in);
 	}
 
+	free(wstr);
 #else
 	FILE * in = fopen(fname, "r");
 
