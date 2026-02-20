@@ -43,7 +43,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if (defined(_WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	#include <io.h>
+	#include <fcntl.h>
 	#include "getopt.h"
 #else
 	#include <unistd.h>
@@ -318,6 +320,24 @@ int main(int argc, char * const argv[]) {
 	}
 
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+
+	// Windows sucks
+	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_EPUB:
+		case FORMAT_ITMZ:
+		case FORMAT_TEXTPACK:
+		case FORMAT_DOCX:
+			_setmode(_fileno(stdout), _O_BINARY);
+			break;
+
+		default:
+			break;
+	}
+
+#endif
+
+
 	if (err) {
 		// Error
 		fprintf(stderr, "\nMultiMarkdown %s -- %s\n\n", LIBMULTIMARKDOWN7_VERSION, LIBMULTIMARKDOWN7_COPYRIGHT);
@@ -384,7 +404,25 @@ int main(int argc, char * const argv[]) {
 							zip_binary_extract_to_path(data, len, new_file);
 							free(data);
 						} else {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+
+							// Windows sucks
+							switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+								case FORMAT_EPUB:
+								case FORMAT_ITMZ:
+								case FORMAT_TEXTPACK:
+								case FORMAT_DOCX:
+									FILE * out = fopen(new_file, "wb");
+									break;
+
+								default:
+									FILE * out = fopen(new_file, "w");
+									break;
+							}
+
+#else
 							FILE * out = fopen(new_file, "w");
+#endif
 
 							if (out) {
 								mmd_process_filename(argv[optind], out, options, NULL);

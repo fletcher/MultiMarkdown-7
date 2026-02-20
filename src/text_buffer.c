@@ -213,7 +213,7 @@ void text_buffer_free(text_buffer * b, int free_text) {
 
 static void text_buffer_ensure_capacity(text_buffer * b, size_t new_capacity) {
 	if (b) {
-		if (b->capacity > new_capacity) {
+		if (b->capacity > new_capacity + 1) {
 			return;
 		}
 
