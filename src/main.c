@@ -407,16 +407,18 @@ int main(int argc, char * const argv[]) {
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 
 							// Windows sucks
+							FILE * out;
+
 							switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 								case FORMAT_EPUB:
 								case FORMAT_ITMZ:
 								case FORMAT_TEXTPACK:
 								case FORMAT_DOCX:
-									FILE * out = fopen(new_file, "wb");
+									out = fopen(new_file, "wb");
 									break;
 
 								default:
-									FILE * out = fopen(new_file, "w");
+									out = fopen(new_file, "w");
 									break;
 							}
 
