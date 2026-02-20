@@ -106,7 +106,7 @@ mz_bool zip_extract_to_path(mz_zip_archive * pZip, const char * path) {
 	mz_bool status = 1;
 
 
-	if (directory_exists(path)) {
+	if (!directory_exists(path)) {
 		// path is not an existing directory
 
 		if (file_exists(path)) {

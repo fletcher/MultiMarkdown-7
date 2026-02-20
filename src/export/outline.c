@@ -94,7 +94,10 @@ static void export_outline_raw_text(const char * text, size_t len, text_buffer *
 				break;
 
 			case '\r':
-				mmd_print_const(out, "&#13;");
+				if (text[1] != '\n') {
+					mmd_print_const(out, "&#13;");
+				}
+
 				break;
 
 			case '\t':

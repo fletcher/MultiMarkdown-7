@@ -245,6 +245,9 @@ static void export_html_raw_char(char c, text_buffer * out) {
 			mmd_print_const(out, "&quot;");
 			break;
 
+		case '\r':
+			break;
+
 		default:
 			text_buffer_append_c(out, c);
 			break;

@@ -277,6 +277,9 @@ static void export_latex_raw_text(const char * text, size_t len, text_buffer * o
 				mmd_print_const(out, "\\^{}");
 				break;
 
+			case '\r':
+				break;
+
 			default:
 				text_buffer_append_c(out, *text);
 				break;
@@ -331,11 +334,13 @@ static void export_latex_line_verbatim_content(mmd_line_node * l, const char * t
 		case LINE_INDENTED_TAB:
 		case LINE_INDENTED_SPACE:
 			text_buffer_append_text(out, &text[l->c_start], l->c_len);
+			text_buffer_fix_trailing_newline(out);
 			break;
 
 		default:
 			// text_buffer_append_text(out, text, l->c_len);
 			text_buffer_append_text(out, text, l->general.len);
+			text_buffer_fix_trailing_newline(out);
 			break;
 	}
 }

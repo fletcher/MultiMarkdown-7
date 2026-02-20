@@ -357,3 +357,16 @@ void text_buffer_trim_trailing_whitespace(text_buffer * b) {
 	}
 }
 
+
+/// Convert trailing CRLF to LF
+void text_buffer_fix_trailing_newline(text_buffer * b) {
+	if (b) {
+		if (b->len > 1) {
+			if (b->text[b->len - 2] == '\r' && b->text[b->len - 1] == '\n') {
+				b->len -= 1;
+				b->text[b->len] = '\0';
+				b->text[b->len - 1] = '\n';
+			}
+		}
+	}
+}
