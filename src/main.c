@@ -125,6 +125,33 @@ static language languages[] = {
 
 #define kMETAKEYSIZE 1024
 
+FILE * flex_out_open(const char * path, uint32_t options) {
+	FILE * out;
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+
+	// Windows sucks
+	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_EPUB:
+		case FORMAT_ITMZ:
+		case FORMAT_TEXTPACK:
+		case FORMAT_DOCX:
+			out = fopen(path, "wb");
+			break;
+
+		default:
+			out = fopen(path, "w");
+			break;
+	}
+
+#else
+	out = fopen(path, "w");
+#endif
+
+	return out;
+}
+
+
 int main(int argc, char * const argv[]) {
 	if (OBJECT_REPLACEMENT_CHARACTER > 250) {
 		// Adding too many token types...
@@ -142,6 +169,7 @@ int main(int argc, char * const argv[]) {
 
 	char extension[64] = {0};
 	char source_path[1025] = {0};
+	char out_path[1025] = {0};
 
 	// Set offset to 1 if we want an "action" immediately following the program when called
 	// e.g.  ./foo bar -x -y -z
@@ -157,7 +185,7 @@ int main(int argc, char * const argv[]) {
 	custom_seed_rand();
 
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:p:rst:vyzARx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -188,6 +216,11 @@ int main(int argc, char * const argv[]) {
 					}
 				}
 
+				break;
+
+			case 'o':
+				// Specify output path
+				strncpy(out_path, optarg, 1024);
 				break;
 
 			case 'p':
@@ -373,6 +406,7 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\t-R\t\tReject all CriticMarkup changes\n");
 		fprintf(stderr, "\t-b\t\tLimit parsing to block level only\n");
 		fprintf(stderr, "\t-s\t\tLog some processing time statistics\n");
+		fprintf(stderr, "\t-o OUT_FILE\tSpecify output file (e.g. when parsing from stdin\n");
 		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
 		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
 		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd|latex|docx|epub|itmz|opml|textbundle|textpack|ast|hash]\n");
@@ -417,27 +451,7 @@ int main(int argc, char * const argv[]) {
 							zip_binary_extract_to_path(data, len, new_file);
 							free(data);
 						} else {
-#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
-
-							// Windows sucks
-							FILE * out;
-
-							switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
-								case FORMAT_EPUB:
-								case FORMAT_ITMZ:
-								case FORMAT_TEXTPACK:
-								case FORMAT_DOCX:
-									out = fopen(new_file, "wb");
-									break;
-
-								default:
-									out = fopen(new_file, "w");
-									break;
-							}
-
-#else
-							FILE * out = fopen(new_file, "w");
-#endif
+							FILE * out = flex_out_open(new_file, options);
 
 							if (out) {
 								mmd_process_filename(argv[optind], out, options, NULL);
@@ -468,11 +482,20 @@ int main(int argc, char * const argv[]) {
 #else
 					char * wd = getcwd(buf, 1024);
 #endif
+					FILE * out = stdout;
+
+					if (out_path[0] != '\0') {
+						out = flex_out_open(out_path, options);
+
+						if (out == NULL) {
+							out = stdout;
+						}
+					}
 
 					if (source_path[0] == '\0') {
-						mmd_process_file(stdin, stdout, options, wd, NULL);
+						mmd_process_file(stdin, out, options, wd, NULL);
 					} else {
-						mmd_process_file(stdin, stdout, options, source_path, source_path);
+						mmd_process_file(stdin, out, options, source_path, source_path);
 					}
 				}
 
