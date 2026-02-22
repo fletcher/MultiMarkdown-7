@@ -42,6 +42,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <time.h>
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
@@ -238,6 +239,14 @@ FILE * flex_fopen(const char * fname) {
 
 /// Cross-platform dirname()
 char * mmd_dirname(const char * path) {
+	struct stat status;
+
+	// We already have a directory
+	if (stat(path, &status) == 0 && (status.st_mode & S_IFDIR)) {
+		return my_strdup(path);
+	}
+
+
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	char * dir = malloc(sizeof(char) * _MAX_DIR);
 

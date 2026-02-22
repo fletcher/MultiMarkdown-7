@@ -141,6 +141,7 @@ int main(int argc, char * const argv[]) {
 	uint32_t options = MMD_OPTION_MMD_HEADER;
 
 	char extension[64] = {0};
+	char source_path[1025] = {0};
 
 	// Set offset to 1 if we want an "action" immediately following the program when called
 	// e.g.  ./foo bar -x -y -z
@@ -156,7 +157,7 @@ int main(int argc, char * const argv[]) {
 	custom_seed_rand();
 
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:rst:vyzARx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:p:rst:vyzARx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -187,6 +188,11 @@ int main(int argc, char * const argv[]) {
 					}
 				}
 
+				break;
+
+			case 'p':
+				// Path for transclusion or embedding when using stdin
+				strncpy(source_path, optarg, 1024);
 				break;
 
 			case 'b':
@@ -267,7 +273,7 @@ int main(int argc, char * const argv[]) {
 				break;
 
 			case 'e':
-				// Metadata key to exxtract
+				// Metadata key to extract
 				strncpy(meta_key, optarg, kMETAKEYSIZE - 1);
 				break;
 
@@ -359,6 +365,7 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\nOptions:\n");
 		fprintf(stderr, "\t-h, --help\tShow this help\n");
 		fprintf(stderr, "\t-c\t\tMarkdown compatibility mode\n");
+		fprintf(stderr, "\t-p PATH\tSpecify a working directory when parsing from stdin (e.g. for transclusion or embedding assets\n");
 		fprintf(stderr, "\t-D\t\tDownload assets from the internet (images, CSS) for inclusion in package formats\n");
 		fprintf(stderr, "\t-E\t\tEmbed assets in non-package formats (e.g. embed images directly in HTML)\n");
 		fprintf(stderr, "\t-r\t\tEnable file transclusion (\"recursive\")\n");
@@ -462,9 +469,11 @@ int main(int argc, char * const argv[]) {
 					char * wd = getcwd(buf, 1024);
 #endif
 
-					mmd_process_file(stdin, stdout, options, wd, NULL);
-
-					free(wd);
+					if (source_path[0] == '\0') {
+						mmd_process_file(stdin, stdout, options, wd, NULL);
+					} else {
+						mmd_process_file(stdin, stdout, options, source_path, source_path);
+					}
 				}
 
 				break;
