@@ -148,6 +148,8 @@ struct asset {
 	char *					uuid;
 	char 					stored;
 	enum media_type 		type;
+	void *					data;
+	size_t					len;
 	struct UT_hash_handle	hh;
 };
 
@@ -235,6 +237,6 @@ void abbr_def_free(abbr_def * a);
 void endnote_def_free(endnote_def * e);
 
 asset * read_ctx_get_asset(read_ctx * c, char * url);
-asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len);
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path);
 
 #endif

@@ -274,7 +274,7 @@ void export_epub(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	options |= MMD_OPTION_STORE_ASSETS;
 
 	// HTML exporting does the majority of the work
-	export_html(b, text, out, r, options);
+	export_html(b, text, out, r, options, source_path);
 
 	// Insert xml declaration header
 	data = my_strdup("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

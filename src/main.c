@@ -156,7 +156,7 @@ int main(int argc, char * const argv[]) {
 	custom_seed_rand();
 
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":cdhbe:l:rst:vyzARx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:rst:vyzARx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -199,9 +199,14 @@ int main(int argc, char * const argv[]) {
 				options |= MMD_OPTION_COMPATIBILITY;
 				break;
 
-			case 'd':
+			case 'D':
 				// Download assets using curl
 				options |= MMD_OPTION_DOWNLOAD_ASSETS;
+				break;
+
+			case 'E':
+				// Embed assets into file itself (e.g. HTML)
+				options |= MMD_OPTION_EMBED_ASSETS;
 				break;
 
 			case 'r':
@@ -354,7 +359,8 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\nOptions:\n");
 		fprintf(stderr, "\t-h, --help\tShow this help\n");
 		fprintf(stderr, "\t-c\t\tMarkdown compatibility mode\n");
-		fprintf(stderr, "\t-d\t\tDownload assets (images, CSS) for inclusion in package formats\n");
+		fprintf(stderr, "\t-D\t\tDownload assets from the internet (images, CSS) for inclusion in package formats\n");
+		fprintf(stderr, "\t-E\t\tEmbed assets in non-package formats (e.g. embed images directly in HTML)\n");
 		fprintf(stderr, "\t-r\t\tEnable file transclusion (\"recursive\")\n");
 		fprintf(stderr, "\t-A\t\tAccept all CriticMarkup changes\n");
 		fprintf(stderr, "\t-R\t\tReject all CriticMarkup changes\n");

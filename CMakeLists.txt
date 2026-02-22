@@ -43,6 +43,7 @@ set(src_files
 	src/criticmarkup.c
 	src/transclude.c
 
+	src/base64.c
 	src/char.c
 	src/stack.c
 	src/text_buffer.c
@@ -89,6 +90,7 @@ set(private_headers
 	src/criticmarkup.h
 	src/transclude.h
 
+	src/base64.h
 	src/char.h
 	src/stack.h
 	src/text_buffer.h

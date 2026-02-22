@@ -186,8 +186,9 @@ enum mmd_options {
 	MMD_OPTION_CRITIC_REJECT	= 1 << 21,		//!< Reject all proposed changes
 	MMD_OPTION_COMPLETE			= 1 << 22,		//!< Force creation of complete document
 	MMD_OPTION_SNIPPET			= 1 << 23,		//!< Force creation of snippet instead of complete document
-	MMD_OPTION_STORE_ASSETS		= 1 << 24,		//!< Store assets (images, CSS) within archive file formats
-	MMD_OPTION_DOWNLOAD_ASSETS	= 1 << 25,		//!< Attempt to download assets from the internet for storage
+	MMD_OPTION_EMBED_ASSETS		= 1 << 24,		//!< Embed assets (imagees, CSS) within the output file itself (eg. HTML)
+	MMD_OPTION_STORE_ASSETS		= 1 << 25,		//!< Store assets (images, CSS) within archive file formats
+	MMD_OPTION_DOWNLOAD_ASSETS	= 1 << 26,		//!< Attempt to download assets from the internet for storage
 };
 
 

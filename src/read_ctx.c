@@ -49,6 +49,8 @@
 #include "mmd_utilities.h"
 #include "stack.h"
 
+#include "assets.h"
+
 
 read_ctx * read_ctx_new(uint32_t options) {
 	read_ctx * c = calloc(1, sizeof(read_ctx));
@@ -133,6 +135,7 @@ static void asset_free(asset * a) {
 	if (a) {
 		free(a->url);
 		free(a->uuid);
+		free(a->data);
 
 		free(a);
 	}
@@ -617,13 +620,15 @@ static asset * asset_new(char * url, size_t url_len, enum media_type type) {
 		a->uuid = uuid_new();
 		a->stored = 0;
 		a->type = type;
+		a->data = NULL;
+		a->len = 0;
 	}
 
 	return a;
 }
 
 
-asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len) {
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path) {
 	if (c && url && url_len) {
 		asset * a = read_ctx_get_asset(c, url);
 
@@ -647,6 +652,11 @@ asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len) {
 
 			a = asset_new(url, url_len, type);
 			HASH_ADD_KEYPTR(hh, c->asset_hash, a->url, url_len, a);
+
+			if (options & (MMD_OPTION_EMBED_ASSETS | MMD_OPTION_STORE_ASSETS | MMD_OPTION_DOWNLOAD_ASSETS)) {
+				asset_store_data(a, options, source_path);
+			}
+
 		}
 
 		return a;

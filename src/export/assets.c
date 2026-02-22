@@ -77,16 +77,48 @@ mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination,
 
 		FILE * in = flex_fopen(path);
 
+		free(path);
+
 		if (in) {
 			text_buffer * buffer = buffer_file(in, 8192);
 
 			status = mz_zip_writer_add_mem(pZip, destination, buffer->text, buffer->len, MZ_BEST_COMPRESSION);
 
 			text_buffer_free(buffer, true);
+
+			fclose(in);
 		}
 	}
 
 	return status;
+}
+
+
+int asset_load_local(asset * a, const char * source_path) {
+	if (a && source_path) {
+		char * path = concatenate_paths(source_path, a->url, true);
+
+		FILE * in = flex_fopen(path);
+
+		free(path);
+
+		if (in) {
+			text_buffer * buffer = buffer_file(in, 8192);
+
+			if (buffer) {
+				a->data = buffer->text;
+				a->len = buffer->len;
+				text_buffer_free(buffer, 0);
+				a->stored = 1;
+			}
+
+			fclose(in);
+		}
+
+		return a->stored;
+	}
+
+	return 0;
 }
 
 
@@ -102,6 +134,38 @@ static size_t write_memory(void * contents, size_t size, size_t nmemb, void * us
 	text_buffer_append_text(buffer, contents, (size * nmemb));
 
 	return buffer->len - startlen;
+}
+
+
+/// Store asset data using curl
+int asset_load_with_curl(asset * a) {
+	if (a && a->data == NULL) {
+		curl_global_init(CURL_GLOBAL_ALL);
+		CURL * curl = curl_easy_init();
+
+		text_buffer * buffer = text_buffer_new(0);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) buffer);
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+		curl_easy_setopt(curl, CURLOPT_URL, a->url);
+		CURLcode res = curl_easy_perform(curl);
+
+		if (res == CURLE_OK) {
+			// We got it
+			a->data = buffer->text;
+			a->len = buffer->len;
+			text_buffer_free(buffer, 0);
+			a->stored = 1;
+
+			return 1;
+		} else {
+			text_buffer_free(buffer, 1);
+		}
+	}
+
+	return 0;
 }
 
 
@@ -216,3 +280,25 @@ mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * 
 
 #endif
 
+
+/// Store asset data
+void asset_store_data(asset * a, uint32_t options, const char * source_path) {
+	if (a->stored) {
+		// Already done
+		return;
+	}
+
+	// Use libcurl to download from internet?
+	if (options & MMD_OPTION_DOWNLOAD_ASSETS) {
+#ifdef USE_CURL
+
+		if (asset_load_with_curl(a)) {
+			return;
+		}
+
+#endif
+	}
+
+	// Look for local file
+	asset_load_local(a, source_path);
+}

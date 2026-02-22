@@ -254,7 +254,7 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 		break;
 
 		case FORMAT_HTML:
-			export_html(n, source_buffer->text, out_buffer, c, options);
+			export_html(n, source_buffer->text, out_buffer, c, options, source_path);
 			break;
 
 		case FORMAT_ITMZ:

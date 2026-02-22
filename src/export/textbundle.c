@@ -206,7 +206,7 @@ void export_textbundle(mmd_node * b, text_buffer * source, text_buffer * out, re
 	options |= MMD_OPTION_STORE_ASSETS;
 
 	// HTML exporting does the majority of the work
-	export_html(b, source->text, out, r, options);
+	export_html(b, source->text, out, r, options, source_path);
 
 
 	// Create zip archive

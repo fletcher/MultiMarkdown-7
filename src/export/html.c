@@ -55,6 +55,13 @@
 #include "export_core.h"
 #include "html.h"
 
+#include "base64.h"
+
+// #include <threads.h> // The header <threads.h> defines thread_local as a synonym for _Thread_local
+//thread_local const char * g_search_path = NULL;
+
+__thread char * g_search_path = NULL;
+
 
 #ifdef TEST
 	#include "CuTest.h"
@@ -63,6 +70,13 @@
 #define F(i,n) for(int i= 0;i<n;i++)
 
 static void export_html_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+
+
+static char * media_type_string[] = {
+	[textCSS] = "text/css",
+	[imagePNG] = "image/png",
+	[imageJPEG] = "image/jpeg",
+};
 
 
 static parse_rule rules[256] = {
@@ -445,8 +459,22 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 
 	mmd_print_const(out, "<img src=\"");
 
-	if (options & MMD_OPTION_STORE_ASSETS) {
-		asset * a = read_ctx_store_asset(r, l->url, l->url_len);
+	if (options & MMD_OPTION_EMBED_ASSETS) {
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path);
+
+		if (a && a->len > 0) {
+			// Embed image binary data directly (Base64 encoded)
+			text_buffer_append_printf(out, "data:%s;base64,", media_type_string[a->type]);
+			unsigned int b64_len = BASE64_ENCODE_OUT_SIZE(a->len);
+			char * b64 = malloc(b64_len);
+			b64_len = base64_encode(a->data, (int)a->len, b64);
+			text_buffer_append_text(out, b64, b64_len);
+			free(b64);
+		} else {
+			url_encode_text(l->url, l->url_len, out);
+		}
+	} else if (options & MMD_OPTION_STORE_ASSETS) {
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path);
 
 		if (a) {
 			mmd_print_const(out, "assets/");
@@ -1494,10 +1522,21 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 
 			case 'c':
 				if (strcmp(m->key, "css") == 0) {
+					if (options & MMD_OPTION_EMBED_ASSETS) {
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path);
+
+						if (a && a->len) {
+							mmd_print_const(out, "\t<style>\n");
+							text_buffer_append_text(out, a->data, a->len);
+							mmd_print_const(out, "\t</style>\n");
+							continue;
+						}
+					}
+
 					mmd_print_const(out, "\t<link type=\"text/css\" rel=\"stylesheet\" href=\"");
 
 					if (options & MMD_OPTION_STORE_ASSETS) {
-						asset * a = read_ctx_store_asset(r, m->value, m->value_len);
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path);
 
 						if (a) {
 							mmd_print_const(out, "assets/");
@@ -1510,6 +1549,7 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 					}
 
 					mmd_print_const(out, "\"/>\n");
+
 					continue;
 				}
 
@@ -1710,7 +1750,10 @@ static void export_html_footer(text_buffer * out, read_ctx * r, write_ctx * w) {
 }
 
 
-void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path) {
+	// Store thread local copy of search path
+	g_search_path = mmd_dirname(source_path);
+
 	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
 	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
 	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
@@ -1733,4 +1776,7 @@ void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 	pad(out, 1, w);
 	write_ctx_free(w);
+
+	free(g_search_path);
+	g_search_path = NULL;
 }
