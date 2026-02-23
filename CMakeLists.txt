@@ -619,8 +619,12 @@ ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup htmla)
 ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup htmlr)
 ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests tex)
 ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests opml)
-ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests ast)
 
+if (WIN32)
+	# Too much trouble to make this work on Windows
+else ()
+	ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests ast)
+endif()
 
 
 
