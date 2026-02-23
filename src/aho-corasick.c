@@ -298,7 +298,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 
 					if (n->ac_fail == s) {
 						// Something went wrong
-						fprintf(stderr, "Recursive trie fallback detected at state %lu('%c') - suffix:'%s'!\n", s, n->c, suffix);
+						fprintf(stderr, "Recursive trie fallback detected at state %zu('%c') - suffix:'%s'!\n", s, n->c, suffix);
 						n->ac_fail = 0;
 					}
 
@@ -321,7 +321,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 
 				if (n->ac_fail == s) {
 					// Something went wrong
-					fprintf(stderr, "Recursive trie fallback detected at state %lu('%c') - suffix:'%s'!\n", s, n->c, suffix);
+					fprintf(stderr, "Recursive trie fallback detected at state %zu('%c') - suffix:'%s'!\n", s, n->c, suffix);
 					n->ac_fail = 0;
 				}
 
@@ -579,17 +579,17 @@ static void trie_node_to_graphviz(ac * a, size_t s, FILE * out) {
 
 	if (n->type) {
 		// This is a matching node
-		fprintf(out, "\"%lu\" [shape=doublecircle]\n", s);
+		fprintf(out, "\"%zu\" [shape=doublecircle]\n", s);
 	}
 
 	F(i, 256) {
 		if (n->child[i]) {
-			fprintf(out, "\"%lu\" -> \"%lu\" [label=\"%c\"]\n", s, n->child[i], (char)i);
+			fprintf(out, "\"%zu\" -> \"%zu\" [label=\"%c\"]\n", s, n->child[i], (char)i);
 		}
 	}
 
 	if (n->ac_fail) {
-		fprintf(out, "\"%lu\" -> \"%lu\" [label=\"fail\"]\n", s, n->ac_fail);
+		fprintf(out, "\"%zu\" -> \"%zu\" [label=\"fail\"]\n", s, n->ac_fail);
 	}
 }
 
