@@ -185,7 +185,7 @@ if (CMAKE_GENERATOR MATCHES "Xcode")
 	set (CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
 else()
   if (APPLE)
-    set (CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+#    set (CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
   endif()
 endif()
 
@@ -594,36 +594,29 @@ include(CPack)
 
 enable_testing()
 
-find_program(MEMORYCHECK_COMMAND valgrind)
-set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --showl-leak-kinds=all")
+# MMD 7
 
-function(ADD_MMD_TEST NAME FLAGS FOLDER ACTION EXTENSION)
-	add_test ( ${NAME}
-		${PROJECT_SOURCE_DIR}/tests/MarkdownTest.pl
-		--Script="${CMAKE_CURRENT_BINARY_DIR}/multimarkdown"
-		--testdir=${PROJECT_SOURCE_DIR}/tests/${FOLDER}
-		"--Flags=${FLAGS}"
-		--action=${ACTION}
-		--ext=${EXTENSION}
-	)
-
-endfunction(ADD_MMD_TEST)
+function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXT)
+	add_test(NAME ${NAME}
+		COMMAND ${PROJECT_SOURCE_DIR}/tests/MMDTest.sh
+		${CMAKE_CURRENT_BINARY_DIR}/multimarkdown
+		${ARGS}
+		${PROJECT_SOURCE_DIR}/tests/${FOLDER}
+		${EXT}
+)
+endfunction(ADD_MMD_TEST_2)
 
 
-# MMD 6
-ADD_MMD_TEST(mmd-7 "-r" MMD7Tests parse html)
+ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests html)
+ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests htmlc)
+ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup htmla)
+ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup htmlr)
+ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests tex)
+ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests opml)
+ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests ast)
 
-ADD_MMD_TEST(mmd-7-compat "-c" MMD7Tests parse htmlc)
 
-ADD_MMD_TEST(mmd-7-critic-accept "-A" CriticMarkup parse htmla)
 
-ADD_MMD_TEST(mmd-7-critic-reject "-R" CriticMarkup parse htmlr)
-
-ADD_MMD_TEST(mmd-7-latex "-t latex -r" MMD7Tests parse tex)
-
-ADD_MMD_TEST(mmd-7-opml "-t opml -r" MMD7Tests parse opml)
-
-# ADD_MMD_TEST(mmd-7-ast "-t ast -r" MMD7Tests parse ast)
 
 # ADD_MMD_TEST(mmd-7-pathologic "-r" Pathologic parse html)
 
