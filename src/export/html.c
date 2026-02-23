@@ -292,6 +292,7 @@ static void export_html_raw_text(const char * text, size_t len, text_buffer * ou
 }
 
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 /// Write text as-is, except for \r characters
 static void export_text_except_cr(const char * text, size_t len, text_buffer * out) {
 	const char * stop = text + len;
@@ -309,6 +310,7 @@ static void export_text_except_cr(const char * text, size_t len, text_buffer * o
 		text++;
 	}
 }
+#endif
 
 
 static void export_html_tokens_raw(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w);
