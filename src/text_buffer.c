@@ -370,3 +370,22 @@ void text_buffer_fix_trailing_newline(text_buffer * b) {
 		}
 	}
 }
+
+
+/// Remove trailing CR or LF
+void text_buffer_trim_trailing_newline(text_buffer * b) {
+	if (b) {
+		while (b->len) {
+			switch (b->text[b->len - 1]) {
+				case '\r':
+				case '\n':
+					b->len--;
+					b->text[b->len] = '\0';
+					break;
+
+				default:
+					return;
+			}
+		}
+	}
+}
