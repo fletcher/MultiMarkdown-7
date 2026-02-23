@@ -60,7 +60,11 @@
 // #include <threads.h> // The header <threads.h> defines thread_local as a synonym for _Thread_local
 //thread_local const char * g_search_path = NULL;
 
-__thread char * g_search_path = NULL;
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	__declspec(thread) char * g_search_path = NULL;
+#else
+	__thread char * g_search_path = NULL;
+#endif
 
 
 #ifdef TEST
