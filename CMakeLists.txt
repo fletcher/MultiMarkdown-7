@@ -599,11 +599,7 @@ enable_testing()
 function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXT)
 	if (WIN32)
 		add_test(NAME ${NAME}
-			COMMAND ${PROJECT_SOURCE_DIR}/tests/MMDTest.sh
-			${CMAKE_CURRENT_BINARY_DIR}/multimarkdown.exe
-			${ARGS}
-			${PROJECT_SOURCE_DIR}/tests/${FOLDER}
-			${EXT}
+			COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh ${CMAKE_CURRENT_BINARY_DIR}/multimarkdown.exe \"${ARGS}\" ../tests/${FOLDER} ${EXT}"
 		)
 	else()
 		add_test(NAME ${NAME}
