@@ -190,9 +190,13 @@ static void export_html_line(mmd_node * n, const char * text, text_buffer * out)
 		default:
 			if (n->next) {
 				text_buffer_append_text(out, &text[n->start], (int)n->len);
+				text_buffer_fix_trailing_newline(out);
 			} else {
 				// Don't print final trailing newline
 				text_buffer_append_text(out, &text[n->start], (int)n->len - 1);
+
+				// On Windows it might be messier, so clean up anything left over
+				text_buffer_trim_trailing_newline(out);
 			}
 
 			break;
@@ -225,9 +229,13 @@ static void export_html_line_content(mmd_line_node * l, const char * text, text_
 		default:
 			if (l->general.next) {
 				text_buffer_append_text(out, text, (int)l->c_len);
+				text_buffer_fix_trailing_newline(out);
 			} else if (l->c_len > 1) {
 				// Don't print final trailing newline
 				text_buffer_append_text(out, text, (int)l->c_len - 1);
+
+				// On Windows it might be messier, so clean up anything left over
+				text_buffer_trim_trailing_newline(out);
 			}
 
 			break;
@@ -278,6 +286,25 @@ static void export_html_raw_text(const char * text, size_t len, text_buffer * ou
 
 	while (text < stop) {
 		export_html_raw_char(*text, out);
+
+		text++;
+	}
+}
+
+
+/// Write text as-is, except for \r characters
+static void export_text_except_cr(const char * text, size_t len, text_buffer * out) {
+	const char * stop = text + len;
+
+	while (text < stop) {
+		switch (*text) {
+			case '\r':
+				break;
+
+			default:
+				text_buffer_append_c(out, *text);
+				break;
+		}
 
 		text++;
 	}
@@ -998,7 +1025,11 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 				mmd_print_const(out, "</a>");
 				(*t) = (*t)->next;
 			} else if (scan_html(&text[(*t)->start])) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+				export_text_except_cr(&text[(*t)->start], (int)((*t)->next->start + (*t)->next->len - (*t)->start), out);
+#else
 				text_buffer_append_text(out, &text[(*t)->start], (int)((*t)->next->start + (*t)->next->len - (*t)->start));
+#endif
 				(*t) = (*t)->next;
 			} else {
 				// This is plain text that happens to be wrapped in <...>
