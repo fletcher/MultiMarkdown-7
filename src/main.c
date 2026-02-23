@@ -325,10 +325,9 @@ int main(int argc, char * const argv[]) {
 	}
 
 
-	// Is an action required?
+	// If no action is specified, default to parse
 	if (!err && !offset) {
-		fprintf(stderr, "%s: action missing\n", argv[0]);
-		err = 1;
+		action = 'p';
 	}
 
 	if (err == 0 && offset) {
@@ -358,8 +357,9 @@ int main(int argc, char * const argv[]) {
 			options &= (~MMD_OUT_FORMAT_MASK);
 			options |= FORMAT_HASH;
 		} else {
-			fprintf(stderr, "%s: action not recognized -- %s\n", argv[0], argv[1]);
-			err = 1;
+			// If no action is specified, default to parse and treat this as argument
+			action = 'p';
+			offset--;
 		}
 	}
 

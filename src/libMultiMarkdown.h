@@ -83,7 +83,6 @@ mmd_node * mmd_parse_str_len(const char * text, size_t in_len, read_ctx * c, uin
 
 /// Process MultiMarkdown text into AST and output a description to
 /// the specified file stream
-/// TODO: Add this to test suite for regression testing
 void mmd_ast_file(FILE * in, FILE * out, uint32_t options);
 void mmd_ast_filename(const char * fname, FILE * out, uint32_t options);
 void mmd_ast_str(const char * text, FILE * out, uint32_t options);
