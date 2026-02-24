@@ -85,7 +85,7 @@ int mmd_import_opml(text_buffer * source_buffer) {
 		yxml_ret_t ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
-			fprintf(stderr, "XML error parsing as OPML %d at line %d, byte %llu\n", ret, x->line, x->byte);
+			fprintf(stderr, "XML error parsing as OPML %d at line %d, byte %lu\n", ret, x->line, x->byte);
 			break;
 		} else {
 			switch (ret) {
