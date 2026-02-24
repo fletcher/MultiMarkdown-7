@@ -601,43 +601,46 @@ include(CPack)
 # MultiMarkdown Integration Test Suite
 # =====================================
 
-enable_testing()
+if (hasParent)
+else()
+	enable_testing()
 
-# MMD 7
+	# MMD 7
 
-function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXTI EXTO)
+	function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXTI EXTO)
+		if (WIN32)
+			add_test(NAME ${NAME}
+				COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh $<TARGET_FILE:multimarkdown> \"${ARGS}\" ../tests/${FOLDER} ${EXTI} ${EXTO}"
+			)
+		else()
+			add_test(NAME ${NAME}
+				COMMAND ${PROJECT_SOURCE_DIR}/tests/MMDTest.sh
+				$<TARGET_FILE:multimarkdown>
+				${ARGS}
+				${PROJECT_SOURCE_DIR}/tests/${FOLDER}
+				${EXTI}
+				${EXTO}
+			)
+		endif()
+	endfunction(ADD_MMD_TEST_2)
+
+
+	ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests text html)
+	ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests text htmlc)
+	ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup text htmla)
+	ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup text htmlr)
+	ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests text tex)
+	ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests text opml)
+
 	if (WIN32)
-		add_test(NAME ${NAME}
-			COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh $<TARGET_FILE:multimarkdown> \"${ARGS}\" ../tests/${FOLDER} ${EXTI} ${EXTO}"
-		)
-	else()
-		add_test(NAME ${NAME}
-			COMMAND ${PROJECT_SOURCE_DIR}/tests/MMDTest.sh
-			$<TARGET_FILE:multimarkdown>
-			${ARGS}
-			${PROJECT_SOURCE_DIR}/tests/${FOLDER}
-			${EXTI}
-			${EXTO}
-		)
+		# Too much trouble to make this work on Windows
+	else ()
+		ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests text ast)
 	endif()
-endfunction(ADD_MMD_TEST_2)
 
-
-ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests text html)
-ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests text htmlc)
-ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup text htmla)
-ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup text htmlr)
-ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests text tex)
-ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests text opml)
-
-if (WIN32)
-	# Too much trouble to make this work on Windows
-else ()
-	ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests text ast)
+	# These won't all pass, but it is useful to generally verify that OPML round-tripping works
+	# ADD_MMD_TEST_2(mmd-7-opml-2 "parse -t mmd" MMD7Tests opml text)
 endif()
-
-# These won't all pass, but it is useful to generally verify that OPML round-tripping works
-# ADD_MMD_TEST_2(mmd-7-opml-2 "parse -t mmd" MMD7Tests opml text)
 
 
 
