@@ -77,13 +77,14 @@ text_buffer * buffer_file(FILE * in, size_t capacity) {
 
 	char * text = malloc(sizeof(char) * capacity);
 
-	while ((bytes = fread(&text[size], 1, kBUFFERSIZE, in)) > 0) {
+	while ((bytes = fread(&text[size], sizeof(char), kBUFFERSIZE, in)) > 0) {
 		size += bytes;
 
 		while (size + kBUFFERSIZE + 1 > capacity) {
 			char * new = realloc(text, capacity * 2);
 
 			if (new == NULL) {
+				fprintf(stderr, "Failed to realloc() while buffering file\n");
 				// Reallocation failed
 				free(text);
 				return NULL;

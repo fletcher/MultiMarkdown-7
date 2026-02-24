@@ -169,10 +169,10 @@ mz_bool zip_binary_extract_to_path(const char * data, size_t len, const char * p
 		if (status) {
 			status = zip_extract_to_path(&pZip, path);
 		} else {
-			fprintf(stderr, "mz_zip_reader_init_mem() failed.\n");
+			fprintf(stderr, "mz_zip_validate_archive() failed.\n");
 		}
 	} else {
-		fprintf(stderr, "mz_zip_validate_archive() failed.\n");
+		fprintf(stderr, "mz_zip_reader_init_mem() failed.\n");
 	}
 
 	mz_zip_reader_end(&pZip);

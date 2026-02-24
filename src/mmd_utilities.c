@@ -224,7 +224,7 @@ FILE * flex_fopen(const char * fname) {
 	FILE * in = NULL;
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
-	in = fopen(fname, L"rb");
+	in = fopen(fname, "rb");
 	// int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
 	// wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
 	// MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
