@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "libMultiMarkdown7", "index.html", [
-    [ "MultiMarkdown 7.0.0-alpha.1", "index.html#autotoc_md0", [
+    [ "MultiMarkdown 7.0.0-alpha.2", "index.html#autotoc_md0", [
       [ "About", "index.html#autotoc_md1", null ],
       [ "Current Status (2025-09-10)", "index.html#autotoc_md2", null ],
       [ "Building", "index.html#autotoc_md3", null ],

@@ -26,5 +26,5 @@ var searchData=
   ['mmd_5fprocess_5ffile_5fto_5fstr_23',['mmd_process_file_to_str',['../lib_multi_markdown_8h.html#a079923146a161588763754e4eca8ed3d',1,'libMultiMarkdown.h']]],
   ['mmd_5fsmart_5fquote_5ffrom_5fopts_24',['MMD_SMART_QUOTE_FROM_OPTS',['../lib_multi_markdown_8h.html#a7ba626e779543114e2a82ccc06568f92',1,'libMultiMarkdown.h']]],
   ['mmd_5ftype_5fmask_25',['MMD_TYPE_MASK',['../lib_multi_markdown_8h.html#a2ca740743d47036115d862f5f76aeec2',1,'libMultiMarkdown.h']]],
-  ['multimarkdown_207_200_200_20alpha_201_26',['MultiMarkdown 7.0.0-alpha.1',['../index.html#autotoc_md0',1,'']]]
+  ['multimarkdown_207_200_200_20alpha_202_26',['MultiMarkdown 7.0.0-alpha.2',['../index.html#autotoc_md0',1,'']]]
 ];
