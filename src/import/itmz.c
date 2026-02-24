@@ -209,11 +209,13 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 	}
 
 	yxml_ret_t ret = yxml_eof(x);
+	free(x);
 	text_buffer_free(extracted, 1);
 
 	if (ret < 0) {
 		fprintf(stderr, "XML error parsing as ITMZ %d at EOF\n", ret);
 		text_buffer_free(output, 1);
+		text_buffer_free(metadata, 1);
 		text_buffer_free(buf, 1);
 		return 0;
 	} else {
@@ -222,6 +224,7 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 		text_buffer_append_text(source_buffer, output->text, output->len);
 
 		text_buffer_free(output, 1);
+		text_buffer_free(metadata, 1);
 		text_buffer_free(buf, 1);
 		return 1;
 	}
