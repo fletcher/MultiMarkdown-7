@@ -39,6 +39,7 @@
 */
 
 
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -102,7 +103,7 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 		yxml_ret_t ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
-			fprintf(stderr, "XML error parsing as ITMZ %d at line %d, byte %lu\n", ret, x->line, x->byte);
+			fprintf(stderr, "XML error parsing as ITMZ %d at line %d, byte %" PRIu64 "\n", ret, x->line, x->byte);
 			break;
 		} else {
 			switch (ret) {
