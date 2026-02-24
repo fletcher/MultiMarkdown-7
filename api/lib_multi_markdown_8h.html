@@ -141,17 +141,17 @@ Typedefs</h2></td></tr>
 Enumerations</h2></td></tr>
 <tr class="memitem:adab978eb5c8aa199396471558598dc53" id="r_adab978eb5c8aa199396471558598dc53"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adab978eb5c8aa199396471558598dc53">output_format</a> { <br />
 &#160;&#160;<a class="el" href="#adab978eb5c8aa199396471558598dc53a9bf619d1a083a4082d78f40641281824">FORMAT_HTML</a>
-, <b>FORMAT_AST</b>
-, <b>FORMAT_EPUB</b>
-, <b>FORMAT_HASH</b>
+, <a class="el" href="#adab978eb5c8aa199396471558598dc53a39616f86bfd40c2c26aeca84d0f71ef7">FORMAT_AST</a>
+, <a class="el" href="#adab978eb5c8aa199396471558598dc53ab8fed9f722fa825bb3490ae902eade9e">FORMAT_EPUB</a>
+, <a class="el" href="#adab978eb5c8aa199396471558598dc53ac2decc796e136cfd3f2c9f477858f5b4">FORMAT_HASH</a>
 , <br />
-&#160;&#160;<b>FORMAT_ITMZ</b>
+&#160;&#160;<a class="el" href="#adab978eb5c8aa199396471558598dc53afdb89a7c2b2700efac5bd1a027d19465">FORMAT_ITMZ</a>
 , <a class="el" href="#adab978eb5c8aa199396471558598dc53a59626c460e5d94bb7319ea863cf47084">FORMAT_LATEX</a>
 , <a class="el" href="#adab978eb5c8aa199396471558598dc53a7d16c90e62f7b9318a6f375d18eae35c">FORMAT_MMD</a>
-, <b>FORMAT_OPML</b>
+, <a class="el" href="#adab978eb5c8aa199396471558598dc53a7c1a33f6bbb34d14651b991597e456a6">FORMAT_OPML</a>
 , <br />
-&#160;&#160;<b>FORMAT_TEXTBUNDLE</b>
-, <b>FORMAT_TEXTPACK</b>
+&#160;&#160;<a class="el" href="#adab978eb5c8aa199396471558598dc53a95bb6022b9ac56eea546d10daabb362c">FORMAT_TEXTBUNDLE</a>
+, <a class="el" href="#adab978eb5c8aa199396471558598dc53acdaf9b18bfac3992d3952fbec8bcf2e6">FORMAT_TEXTPACK</a>
 , <b>FORMAT_DOCX</b>
 , <b>FORMAT_BEAMER</b>
 , <br />
@@ -381,9 +381,9 @@ Enumerations</h2></td></tr>
 , <b>TOKEN_PAIR_QUOTE_SINGLE</b>
 , <br />
 &#160;&#160;<b>TOKEN_PAIR_STAR</b>
-, <b>TOKEN_PAIR_STAR_USED</b>
+, <a class="el" href="#abdd8c792f45359f065209298e96ec8b3a1fc9622025c4c16f2803e393c3c0d33f">TOKEN_PAIR_STAR_USED</a>
 , <b>TOKEN_PAIR_UL</b>
-, <b>TOKEN_PAIR_UL_USED</b>
+, <a class="el" href="#abdd8c792f45359f065209298e96ec8b3afeae95ea3883212999ccb15bfb2d6804">TOKEN_PAIR_UL_USED</a>
 , <br />
 &#160;&#160;<b>TOKEN_SPECIAL_CHARACTER</b>
 , <b>TOKEN_PAIR_EMPH</b>
@@ -891,6 +891,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>read_ctx_dump_headers
 </div><div class="memdoc">
 
 <p>AST node types. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="abdd8c792f45359f065209298e96ec8b3a1fc9622025c4c16f2803e393c3c0d33f" name="abdd8c792f45359f065209298e96ec8b3a1fc9622025c4c16f2803e393c3c0d33f"></a>TOKEN_PAIR_STAR_USED&#160;</td><td class="fielddoc"><p>Must immediately follow TOKEN_PAIR_STAR. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="abdd8c792f45359f065209298e96ec8b3afeae95ea3883212999ccb15bfb2d6804" name="abdd8c792f45359f065209298e96ec8b3afeae95ea3883212999ccb15bfb2d6804"></a>TOKEN_PAIR_UL_USED&#160;</td><td class="fielddoc"><p>Must immediately follow TOKEN_PAIR_UL. </p>
+</td></tr>
+</table>
 
 <p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00268">268</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
@@ -910,9 +916,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>read_ctx_dump_headers
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53a9bf619d1a083a4082d78f40641281824" name="adab978eb5c8aa199396471558598dc53a9bf619d1a083a4082d78f40641281824"></a>FORMAT_HTML&#160;</td><td class="fielddoc"><p>Plain HTML. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53a39616f86bfd40c2c26aeca84d0f71ef7" name="adab978eb5c8aa199396471558598dc53a39616f86bfd40c2c26aeca84d0f71ef7"></a>FORMAT_AST&#160;</td><td class="fielddoc"><p>Display the AST for informational/debugging purposes. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53ab8fed9f722fa825bb3490ae902eade9e" name="adab978eb5c8aa199396471558598dc53ab8fed9f722fa825bb3490ae902eade9e"></a>FORMAT_EPUB&#160;</td><td class="fielddoc"><p>EPUB v3. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53ac2decc796e136cfd3f2c9f477858f5b4" name="adab978eb5c8aa199396471558598dc53ac2decc796e136cfd3f2c9f477858f5b4"></a>FORMAT_HASH&#160;</td><td class="fielddoc"><p>Display the AST with hash values for informational/debugging purposes. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53afdb89a7c2b2700efac5bd1a027d19465" name="adab978eb5c8aa199396471558598dc53afdb89a7c2b2700efac5bd1a027d19465"></a>FORMAT_ITMZ&#160;</td><td class="fielddoc"><p>iThoughts Mind Mapping document </p>
+</td></tr>
 <tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53a59626c460e5d94bb7319ea863cf47084" name="adab978eb5c8aa199396471558598dc53a59626c460e5d94bb7319ea863cf47084"></a>FORMAT_LATEX&#160;</td><td class="fielddoc"><p>LaTeX to generate PDF. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53a7d16c90e62f7b9318a6f375d18eae35c" name="adab978eb5c8aa199396471558598dc53a7d16c90e62f7b9318a6f375d18eae35c"></a>FORMAT_MMD&#160;</td><td class="fielddoc"><p>Raw MultiMarkdown source text. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53a7c1a33f6bbb34d14651b991597e456a6" name="adab978eb5c8aa199396471558598dc53a7c1a33f6bbb34d14651b991597e456a6"></a>FORMAT_OPML&#160;</td><td class="fielddoc"><p>Outline Processor Markup Language for outliners or mind-mapping programs. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53a95bb6022b9ac56eea546d10daabb362c" name="adab978eb5c8aa199396471558598dc53a95bb6022b9ac56eea546d10daabb362c"></a>FORMAT_TEXTBUNDLE&#160;</td><td class="fielddoc"><p>TextBundle is a package file format for macOS/iOS. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adab978eb5c8aa199396471558598dc53acdaf9b18bfac3992d3952fbec8bcf2e6" name="adab978eb5c8aa199396471558598dc53acdaf9b18bfac3992d3952fbec8bcf2e6"></a>FORMAT_TEXTPACK&#160;</td><td class="fielddoc"><p>Compressed variant of the TextBundle file format. </p>
 </td></tr>
 </table>
 

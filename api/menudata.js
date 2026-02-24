@@ -42,12 +42,14 @@ var menudata={children:[
 {text:"o",url:"globals.html#index_o"},
 {text:"q",url:"globals.html#index_q"},
 {text:"r",url:"globals.html#index_r"},
-{text:"s",url:"globals.html#index_s"}]},
+{text:"s",url:"globals.html#index_s"},
+{text:"t",url:"globals.html#index_t"}]},
 {text:"Functions",url:"globals_func.html"},
 {text:"Enumerations",url:"globals_enum.html"},
 {text:"Enumerator",url:"globals_eval.html",children:[
 {text:"f",url:"globals_eval.html#index_f"},
 {text:"l",url:"globals_eval.html#index_l"},
 {text:"m",url:"globals_eval.html#index_m"},
-{text:"q",url:"globals_eval.html#index_q"}]},
+{text:"q",url:"globals_eval.html#index_q"},
+{text:"t",url:"globals_eval.html#index_t"}]},
 {text:"Macros",url:"globals_defs.html"}]}]}]}
