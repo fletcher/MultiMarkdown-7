@@ -218,17 +218,20 @@ char * uuid_new(void) {
 
 
 /// Open file for reading regardless of OS
+/// NOTE: Disabled Windows variant as this seemed to break parsing files with non-ASCII characters
+/// (the opposite of what this is supposed to do...)
 FILE * flex_fopen(const char * fname) {
 	FILE * in = NULL;
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
-	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
-	wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
-	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
+	in = fopen(fname, L"rb");
+	// int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
+	// wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
+	// MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
 
-	in = _wfopen(wstr, L"rb");
+	// in = _wfopen(wstr, L"rb");
 
-	free(wstr);
+	// free(wstr);
 #else
 	in = fopen(fname, "r");
 #endif
