@@ -150,15 +150,15 @@ void custom_seed_rand(void);
 
 enum output_format {
 	FORMAT_HTML,								//!< Plain HTML
-	FORMAT_AST,
-	FORMAT_EPUB,
-	FORMAT_HASH,
-	FORMAT_ITMZ,
+	FORMAT_AST,									//!< Display the AST for informational/debugging purposes
+	FORMAT_EPUB,								//!< EPUB v3
+	FORMAT_HASH,								//!< Display the AST with hash values for informational/debugging purposes
+	FORMAT_ITMZ,								//!< iThoughts Mind Mapping document
 	FORMAT_LATEX,								//!< LaTeX to generate PDF
 	FORMAT_MMD,									//!< Raw MultiMarkdown source text
-	FORMAT_OPML,
-	FORMAT_TEXTBUNDLE,
-	FORMAT_TEXTPACK,
+	FORMAT_OPML,								//!< Outline Processor Markup Language for outliners or mind-mapping programs
+	FORMAT_TEXTBUNDLE,							//!< TextBundle is a package file format for macOS/iOS
+	FORMAT_TEXTPACK,							//!< Compressed variant of the TextBundle file format
 
 	FORMAT_DOCX,
 	FORMAT_BEAMER,
@@ -424,9 +424,9 @@ enum node_types {
 	TOKEN_PAIR_QUOTE_DOUBLE,
 	TOKEN_PAIR_QUOTE_SINGLE,
 	TOKEN_PAIR_STAR,
-	TOKEN_PAIR_STAR_USED,			// Must immediately follow TOKEN_PAIR_STAR
+	TOKEN_PAIR_STAR_USED,			//!< Must immediately follow TOKEN_PAIR_STAR
 	TOKEN_PAIR_UL,
-	TOKEN_PAIR_UL_USED,				// Must immediately follow TOKEN_PAIR_UL
+	TOKEN_PAIR_UL_USED,				//!< Must immediately follow TOKEN_PAIR_UL
 	TOKEN_SPECIAL_CHARACTER,
 
 	TOKEN_PAIR_EMPH,
