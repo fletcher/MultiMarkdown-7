@@ -36,6 +36,26 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 
+
+
+	MultiMarkdown 7 makes use of:
+
+	uthash for hash tables
+		https://troydhanson.github.io/uthash/
+
+	miniz for zip archive handling
+		https://github.com/richgel999/miniz
+
+	yxml for XML parsing
+		https://dev.yorhel.nl/yxml
+
+	wingetopt for options parsing on Windows
+		https://github.com/alex85k/wingetopt
+
+	base64 for encoding binary data in HTML
+		https://github.com/zhicheng/base64
+
+	re2c is used to generate mmd_token_scanner.c and mmd_line_scanner.c
 */
 
 
