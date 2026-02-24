@@ -73,8 +73,7 @@
 #include "outline.h"
 #include "textbundle.h"
 
-#include "import/itmz.h"
-#include "import/opml.h"
+#include "import/outline.h"
 #include "yxml.h"
 
 #ifdef TEST
@@ -309,11 +308,11 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 	// Are we starting from OPML or ITMZ?
 	if (options & MMD_OPTION_PARSE_OPML) {
-		mmd_import_opml(source_buffer);
+		mmd_import_outline(source_buffer, OUTLINE_OPML);
 	}
 
 	if (options & MMD_OPTION_PARSE_ITMZ) {
-		mmd_import_itmz(source_buffer);
+		mmd_import_outline(source_buffer, OUTLINE_ITMZ);
 	}
 
 	// Create structures used for parsing

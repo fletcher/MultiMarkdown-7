@@ -69,8 +69,7 @@ set(src_files
 	src/export/outline.c
 	src/export/textbundle.c
 
-	src/import/opml.c
-	src/import/itmz.c
+	src/import/outline.c
 
 	src/aho-corasick.c
 
@@ -120,8 +119,7 @@ set(private_headers
 	src/export/outline.h
 	src/export/textbundle.h
 
-	src/import/opml.h
-	src/import/itmz.h
+	src/import/outline.h
 
 	src/aho-corasick.h
 
@@ -650,14 +648,8 @@ endif()
 
 
 
-# ADD_MMD_TEST(mmd-7-pathologic "-r" Pathologic parse html)
-
-# ADD_MMD_TEST(mmd-7-pathologic-latex "-t latex -r" Pathologic parse tex)
-
 # ADD_MMD_TEST(mmd-6-beamer "-t beamer" Beamer tex)
 # 
 # ADD_MMD_TEST(mmd-6-memoir "-t memoir" Memoir tex)
 # 
 # ADD_MMD_TEST(mmd-6-fodt "-t fodt" MMD7Tests fodt)
-# 
-# ADD_MMD_TEST(mmd-6-opml "-t opml" MMD7Tests opml)

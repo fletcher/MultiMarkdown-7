@@ -50,6 +50,8 @@
 
 #include "opml.h"
 #include "yxml.h"
+#include "zip.h"
+
 
 #define F(i,n) for(int i= 0;i<n;i++)
 

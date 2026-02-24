@@ -48,7 +48,7 @@
 #include "mmd_utilities.h"
 #include "text_buffer.h"
 
-#include "itmz.h"
+#include "outline.h"
 #include "yxml.h"
 #include "zip.h"
 
@@ -57,29 +57,37 @@
 
 #define kYXML_BUFSIZE 4096
 
+static char * name[] = {
+	[OUTLINE_OPML] = "OPML",
+	[OUTLINE_ITMZ] = "ITMZ",
+};
+
+
+static char * level[] = {
+	[OUTLINE_OPML] = "outline",
+	[OUTLINE_ITMZ] = "topic",
+};
+
+
+static char * header[] = {
+	[OUTLINE_OPML] = "text",
+	[OUTLINE_ITMZ] = "text",
+};
+
+
+static char * content[] = {
+	[OUTLINE_OPML] = "_note",
+	[OUTLINE_ITMZ] = "note",
+};
+
+
 /// If the source text is ITMZ, convert to MultiMarkdown text and replace the buffer
-int mmd_import_itmz(text_buffer * source_buffer) {
-	// Is this a zip file?
-	if (memcmp(source_buffer->text, "PK\3\4", 4)) {
-		// Not a zip
-		return 0;
-	}
-
-	// Get mapdata.xml
-	text_buffer * extracted = text_buffer_new(0);
-	mz_bool status = zip_binary_extract_file(source_buffer->text, source_buffer->len, "mapdata.xml", extracted);
-
-	if (!status) {
-		text_buffer_free(extracted, 1);
-		return 0;
-	}
-
-	// Does it look like XML?
-	if (strncmp("<iThoughts>", extracted->text, 11)) {
-		return 0;
-	}
-
-	// Try to parse it
+int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
+	char * ch = NULL;
+	text_buffer * extracted = NULL;
+	int result = 0;
+	int depth = 0;
+	yxml_ret_t ret;
 	yxml_t * x = malloc(sizeof(yxml_t) + kYXML_BUFSIZE);
 	yxml_init(x, x + 1, kYXML_BUFSIZE);
 
@@ -87,13 +95,41 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 	text_buffer * output = text_buffer_new(0);
 	text_buffer * metadata = text_buffer_new(0);
 
-	char * ch = extracted->text;
-
 	// Temporary storage
 	text_buffer * buf = text_buffer_new(0);
 
-	// Track outline levels
-	int depth = -1;
+	if (type == OUTLINE_ITMZ) {
+		// Is this a zip file?
+		if (memcmp(source_buffer->text, "PK\3\4", 4)) {
+			// Not a zip
+			return 0;
+		}
+
+		// Get mapdata.xml
+		extracted = text_buffer_new(0);
+		mz_bool status = zip_binary_extract_file(source_buffer->text, source_buffer->len, "mapdata.xml", extracted);
+
+		if (!status) {
+			goto cleanup;
+		}
+
+		// Does it look like XML?
+		if (strncmp("<iThoughts>", extracted->text, 11)) {
+			goto cleanup;
+		}
+
+		ch = extracted->text;
+
+		// Track outline levels
+		depth = -1;
+	} else if (type == OUTLINE_OPML) {
+		// Does it look like XML?
+		if (strncmp("<?xml", source_buffer->text, 5)) {
+			return 0;
+		}
+
+		ch = source_buffer->text;
+	}
 
 	// Remember last element type
 	char * last_e = NULL;
@@ -105,12 +141,12 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 		yxml_ret_t ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
-			fprintf(stderr, "XML error parsing as ITMZ %d at line %d, byte %" PRIu64 "\n", ret, x->line, x->byte);
+			fprintf(stderr, "XML error parsing as %s %d at line %d, byte %" PRIu64 "\n", name[type], ret, x->line, x->byte);
 			break;
 		} else {
 			switch (ret) {
 				case YXML_ELEMSTART:
-					if (!strcmp("topic", x->elem)) {
+					if (!strcmp(level[type], x->elem)) {
 						depth++;
 					}
 
@@ -118,7 +154,7 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 					break;
 
 				case YXML_ELEMEND:
-					if (!strcmp("topic", last_e)) {
+					if (!strcmp(level[type], last_e)) {
 						depth--;
 					}
 
@@ -131,7 +167,7 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 					break;
 
 				case YXML_ATTREND:
-					if (!strcmp("text", x->attr)) {
+					if (!strcmp(header[type], x->attr)) {
 						// Skip central topic
 						if (depth == 0) {
 							buf->len = 0;
@@ -188,7 +224,7 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 
 							text_buffer_append_c(output, '\n');
 						}
-					} else if (!strcmp("note", x->attr)) {
+					} else if (!strcmp(content[type], x->attr)) {
 						if (in_meta) {
 							text_buffer_append_text(metadata, buf->text, buf->len);
 							text_buffer_append_c(metadata, '\n');
@@ -208,16 +244,20 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 		ch++;
 	}
 
-	yxml_ret_t ret = yxml_eof(x);
+cleanup:
+
+	ret = yxml_eof(x);
 	free(x);
-	text_buffer_free(extracted, 1);
+
+	if (extracted) {
+		text_buffer_free(extracted, 1);
+	}
 
 	if (ret < 0) {
-		fprintf(stderr, "XML error parsing as ITMZ %d at EOF\n", ret);
+		fprintf(stderr, "XML error parsing as %s %d at EOF\n", name[type], ret);
 		text_buffer_free(output, 1);
 		text_buffer_free(metadata, 1);
 		text_buffer_free(buf, 1);
-		return 0;
 	} else {
 		source_buffer->len = 0;
 		text_buffer_append_text(source_buffer, metadata->text, metadata->len);
@@ -226,6 +266,8 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 		text_buffer_free(output, 1);
 		text_buffer_free(metadata, 1);
 		text_buffer_free(buf, 1);
-		return 1;
+		result = 1;
 	}
+
+	return result;
 }

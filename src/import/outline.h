@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file itmz.h
+	@file outline.h
 
 	@brief
 
@@ -39,11 +39,17 @@
 */
 
 
-#ifndef ITMZ_LIBMULTIMARKDOWN7_H
-#define ITMZ_LIBMULTIMARKDOWN7_H
+#ifndef OUTLINE_IMPORT_LIBMULTIMARKDOWN7_H
+#define OUTLINE_IMPORT_LIBMULTIMARKDOWN7_H
+
+enum outline_type {
+	OUTLINE_OPML,
+	OUTLINE_ITMZ,
+};
+
 
 /// If the source text is ITMZ, convert to MultiMarkdown text and replace the buffer
-int mmd_import_itmz(text_buffer * source_buffer);
+int mmd_import_outline(text_buffer * source_buffer, enum outline_type type);
 
 
 #endif
