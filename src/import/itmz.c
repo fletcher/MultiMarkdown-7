@@ -150,20 +150,38 @@ int mmd_import_itmz(text_buffer * source_buffer) {
 						}
 
 						if (in_meta) {
+							// Metadata
 							text_buffer_append_text(metadata, buf->text, buf->len);
 							text_buffer_append_c(metadata, ':');
 							text_buffer_append_c(metadata, '\t');
 						} else {
-							F(i, depth) {
-								text_buffer_append_c(output, '#');
-							}
+							// Header
+							if (strnstr(buf->text, "\n", buf->len) == NULL) {
+								// ATX Header
+								F(i, depth) {
+									text_buffer_append_c(output, '#');
+								}
 
-							text_buffer_append_c(output, ' ');
-							text_buffer_append_text(output, buf->text, buf->len);
-							text_buffer_append_c(output, ' ');
+								text_buffer_append_c(output, ' ');
+								text_buffer_append_text(output, buf->text, buf->len);
+								text_buffer_append_c(output, ' ');
 
-							F(i, depth) {
-								text_buffer_append_c(output, '#');
+								F(i, depth) {
+									text_buffer_append_c(output, '#');
+								}
+							} else {
+								// Setext Header
+								text_buffer_append_text(output, buf->text, buf->len);
+
+								switch (depth) {
+									case 1:
+										text_buffer_append_text(output, "\n========", 9);
+										break;
+
+									default:
+										text_buffer_append_text(output, "\n--------", 9);
+										break;
+								}
 							}
 
 							text_buffer_append_c(output, '\n');

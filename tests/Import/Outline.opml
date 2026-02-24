@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opml version="1.0">
+<head><title>Outline Test Document</title></head>
+<body>
+<outline text="&gt;&gt;Preamble&lt;&lt;" _note="&#10;&#10;This is a *preamble*, before the first header.&#10;&#10;"></outline>
+<outline text="Heading 1 [h1]" _note="&#10;h1 content.&#10;&#10;"></outline>
+<outline text="Setext Header&#10;With 2 Lines" _note="&#10;Setext content.&#10;&#10;"><outline text="Setext header&#10;level 2" _note="&#10;Final section content.&#10;"></outline>
+</outline>
+<outline text="&gt;&gt;Metadata&lt;&lt;">
+<outline text="title" _note="Outline Test Document"/>
+<outline text="longmetadata" _note="This is some long metadata."/>
+</outline>
+</body>
+</opml>
+

@@ -640,6 +640,12 @@ else()
 
 	# These won't all pass, but it is useful to generally verify that OPML round-tripping works
 	# ADD_MMD_TEST_2(mmd-7-opml-2 "parse -t mmd" MMD7Tests opml text)
+
+	# Round trip tests with a simple document
+	ADD_MMD_TEST_2(mmd-7-import-1 "parse -O -t html" Import opml html)
+	ADD_MMD_TEST_2(mmd-7-import-2 "parse -O -t mmd" Import opml mmd)
+	ADD_MMD_TEST_2(mmd-7-import-3 "parse -I -t html" Import itmz html)
+	ADD_MMD_TEST_2(mmd-7-import-4 "parse -I -t mmd" Import itmz mmd)
 endif()
 
 
