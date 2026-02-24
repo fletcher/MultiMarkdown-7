@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file zip.h
+	@file itmz.h
 
 	@brief
 
@@ -39,18 +39,11 @@
 */
 
 
-#ifndef ZIP_LIBMULTIMARKDOWN7_H
-#define ZIP_LIBMULTIMARKDOWN7_H
+#ifndef ITMZ_LIBMULTIMARKDOWN7_H
+#define ITMZ_LIBMULTIMARKDOWN7_H
 
-#include "miniz.h"
-#include "text_buffer.h"
+/// If the source text is ITMZ, convert to MultiMarkdown text and replace the buffer
+int mmd_import_itmz(text_buffer * source_buffer);
 
-/// Create a new zip archive
-mz_bool zip_new_archive(mz_zip_archive * pZip);
-mz_bool zip_extract_to_path(mz_zip_archive * pZip, const char * path);
-mz_bool zip_binary_extract_to_path(const char * data, size_t len, const char * path);
-
-mz_bool zip_extract_file(mz_zip_archive * pZip, const char * fname, text_buffer * out);
-mz_bool zip_binary_extract_file(const char * data, size_t len, const char * fname, text_buffer * out);
 
 #endif

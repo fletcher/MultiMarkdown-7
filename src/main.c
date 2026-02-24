@@ -185,7 +185,7 @@ int main(int argc, char * const argv[]) {
 	custom_seed_rand();
 
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARIOx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -251,6 +251,16 @@ int main(int argc, char * const argv[]) {
 			case 'r':
 				// Enable transclusion
 				options |= MMD_OPTION_TRANSCLUDE;
+				break;
+
+			case 'O':
+				// Convert from OPML
+				options |= MMD_OPTION_PARSE_OPML;
+				break;
+
+			case 'I':
+				// Convert from ITMZ
+				options |= MMD_OPTION_PARSE_ITMZ;
 				break;
 
 			case 's':
@@ -406,6 +416,7 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\t-R\t\tReject all CriticMarkup changes\n");
 		fprintf(stderr, "\t-b\t\tLimit parsing to block level only\n");
 		fprintf(stderr, "\t-s\t\tLog some processing time statistics\n");
+		fprintf(stderr, "\t-O\t\tConvert OPML source to MMD text before parsing\n");
 		fprintf(stderr, "\t-o OUT_FILE\tSpecify output file (e.g. when parsing from stdin\n");
 		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
 		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");

@@ -69,12 +69,16 @@ set(src_files
 	src/export/outline.c
 	src/export/textbundle.c
 
+	src/import/opml.c
+	src/import/itmz.c
+
 	src/aho-corasick.c
 
 	src/vector_line_node.c
 
-	src/zip.c
 	src/miniz.c
+	src/yxml.c
+	src/zip.c
 )
 
 set(public_headers
@@ -116,12 +120,16 @@ set(private_headers
 	src/export/outline.h
 	src/export/textbundle.h
 
+	src/import/opml.h
+	src/import/itmz.h
+
 	src/aho-corasick.h
 
 	src/vector_line_node.h
 
-	src/zip.h
 	src/miniz.h
+	src/yxml.h
+	src/zip.h
 	
 	version.h
 )
@@ -202,6 +210,7 @@ endif()
 # Search source directory
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/export)
+include_directories(${PROJECT_SOURCE_DIR}/src/import)
 include_directories(${PROJECT_SOURCE_DIR}/test)
 
 
@@ -596,10 +605,10 @@ enable_testing()
 
 # MMD 7
 
-function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXT)
+function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXTI EXTO)
 	if (WIN32)
 		add_test(NAME ${NAME}
-			COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh $<TARGET_FILE:multimarkdown> \"${ARGS}\" ../tests/${FOLDER} ${EXT}"
+			COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh $<TARGET_FILE:multimarkdown> \"${ARGS}\" ../tests/${FOLDER} ${EXTI} ${EXTO}"
 		)
 	else()
 		add_test(NAME ${NAME}
@@ -607,24 +616,28 @@ function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXT)
 			$<TARGET_FILE:multimarkdown>
 			${ARGS}
 			${PROJECT_SOURCE_DIR}/tests/${FOLDER}
-			${EXT}
+			${EXTI}
+			${EXTO}
 		)
 	endif()
 endfunction(ADD_MMD_TEST_2)
 
 
-ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests html)
-ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests htmlc)
-ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup htmla)
-ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup htmlr)
-ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests tex)
-ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests opml)
+ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests text html)
+ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests text htmlc)
+ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup text htmla)
+ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup text htmlr)
+ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests text tex)
+ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests text opml)
 
 if (WIN32)
 	# Too much trouble to make this work on Windows
 else ()
-	ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests ast)
+	ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests text ast)
 endif()
+
+# These won't all pass, but it is useful to generally verify that OPML round-tripping works
+# ADD_MMD_TEST_2(mmd-7-opml-2 "parse -t mmd" MMD7Tests opml text)
 
 
 
@@ -639,17 +652,3 @@ endif()
 # ADD_MMD_TEST(mmd-6-fodt "-t fodt" MMD7Tests fodt)
 # 
 # ADD_MMD_TEST(mmd-6-opml "-t opml" MMD7Tests opml)
-
-# Some of these will (properly) fail.
-# But it's useful to run manually at times to verify that
-# round-tripping through OPML generally works
-
-# add_test ( mmd-6-opml-parse 
-# 		${PROJECT_SOURCE_DIR}/tests/MarkdownTest.pl
-# 		--Script="${CMAKE_CURRENT_BINARY_DIR}/multimarkdown"
-# 		--testdir=${PROJECT_SOURCE_DIR}/tests/MMD7Tests
-# 		"--Flags=--opml -t mmd"
-# 		--ext=text
-# 		--source_ext=opml
-# )
-

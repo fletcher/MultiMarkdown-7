@@ -47,8 +47,10 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/stat.h>
 
+#include "text_buffer.h"
 #include "zip.h"
 
 
@@ -162,7 +164,69 @@ mz_bool zip_binary_extract_to_path(const char * data, size_t len, const char * p
 	mz_bool status = mz_zip_reader_init_mem(&pZip, data, len, 0);
 
 	if (status) {
-		status = zip_extract_to_path(&pZip, path);
+		status = mz_zip_validate_archive(&pZip, 0);
+
+		if (status) {
+			status = zip_extract_to_path(&pZip, path);
+		} else {
+			fprintf(stderr, "mz_zip_reader_init_mem() failed.\n");
+		}
+	} else {
+		fprintf(stderr, "mz_zip_validate_archive() failed.\n");
+	}
+
+	mz_zip_reader_end(&pZip);
+	return status;
+}
+
+
+mz_bool zip_extract_file(mz_zip_archive * pZip, const char * fname, text_buffer * out) {
+	mz_uint32 index;
+	mz_zip_archive_file_stat pStat;
+	mz_bool status;
+
+	status = mz_zip_reader_locate_file_v2(pZip, fname, NULL, 0, &index);
+
+	if (status == -1) {
+		fprintf(stderr, "mz_zip_reader_locate_file_v2() unable to find '%s'\n", fname);
+		return 0;
+	}
+
+	mz_zip_reader_file_stat(pZip, index, &pStat);
+	size_t size = pStat.m_uncomp_size + 1;	// Allow for null terminator
+
+	if (out->capacity < size) {
+		free(out->text);
+		out->text = malloc(size);
+		out->capacity = size;
+		out->len = 0;
+	}
+
+	status = mz_zip_reader_extract_to_mem(pZip, index, out->text, out->capacity, 0);
+
+	if (status) {
+		out->len = size - 1;
+		out->text[out->len] = '\0';
+	} else {
+		fprintf(stderr, "mz_zip_reader_extract_to_mem() failed\n");
+	}
+
+	return status;
+}
+
+
+mz_bool zip_binary_extract_file(const char * data, size_t len, const char * fname, text_buffer * out) {
+	mz_zip_archive pZip = {0};
+	mz_bool status = mz_zip_reader_init_mem(&pZip, data, len, 0);
+
+	if (status) {
+		status = mz_zip_validate_archive(&pZip, 0);
+
+		if (status) {
+			status = zip_extract_file(&pZip, fname, out);
+		} else {
+			fprintf(stderr, "mz_zip_validate_archive() failed.\n");
+		}
 	} else {
 		fprintf(stderr, "mz_zip_reader_init_mem() failed.\n");
 	}

@@ -73,6 +73,9 @@
 #include "outline.h"
 #include "textbundle.h"
 
+#include "import/itmz.h"
+#include "import/opml.h"
+#include "yxml.h"
 
 #ifdef TEST
 	#include "CuTest.h"
@@ -80,6 +83,9 @@
 
 
 #define kDEFAULTCAPACITY (4096 * 8)		// How big should file_buffer start?
+
+
+#define F(i,n) for(int i= 0;i<n;i++)
 
 
 // https://stackoverflow.com/questions/64893834/measuring-elapsed-time-using-clock-gettimeclock-monotonic
@@ -300,6 +306,15 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 #endif
+
+	// Are we starting from OPML or ITMZ?
+	if (options & MMD_OPTION_PARSE_OPML) {
+		mmd_import_opml(source_buffer);
+	}
+
+	if (options & MMD_OPTION_PARSE_ITMZ) {
+		mmd_import_itmz(source_buffer);
+	}
 
 	// Create structures used for parsing
 	vector_line_node * vl = vector_line_node_new(0);

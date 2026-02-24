@@ -3,14 +3,15 @@
 command="${1}"
 args="${2}"
 dir=${3}
-ext="${4}"
+ext_in="${4}"
+ext_out="${5}"
 
 passed=0
 failed=0
 
-for file in "$dir"/*.text; do
+for file in "$dir"/*.$ext_in; do
 	# Look for matching file with desired extension
-	target="${file%.*}.$ext"
+	target="${file%.*}.$ext_out"
 
 	if [[ -f "$target" ]]; then
 		name=$(basename -s .$ext "$target")

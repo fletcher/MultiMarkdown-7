@@ -43,7 +43,6 @@
 
 #include "libMultiMarkdown.h"
 #include "assets.h"
-#include "text_buffer.h"
 #include "transclude.h"
 #include "mmd_utilities.h"
 
