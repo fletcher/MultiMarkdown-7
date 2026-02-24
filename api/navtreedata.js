@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "libMultiMarkdown7", "index.html", [
-    [ "MultiMarkdown 7.0.0-alpha.2", "index.html#autotoc_md0", [
+    [ "MultiMarkdown 7.0.0-beta.1", "index.html#autotoc_md0", [
       [ "About", "index.html#autotoc_md1", null ],
       [ "Current Status (2025-09-10)", "index.html#autotoc_md2", null ],
       [ "Building", "index.html#autotoc_md3", null ],
@@ -59,7 +59,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"lib_multi_markdown_8h.html#adab978eb5c8aa199396471558598dc53a786012995d4cfdbd0238918b16f9aa69"
+"lib_multi_markdown_8h.html#ad4eea468a0db544edb0020e150d0efcda20b079f356dd1f8a9b39e7d5342c90bc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

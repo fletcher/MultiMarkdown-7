@@ -33,7 +33,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">libMultiMarkdown7<span id="projectnumber">&#160;7.0.0-alpha.2</span>
+   <div id="projectname">libMultiMarkdown7<span id="projectnumber">&#160;7.0.0-beta.1</span>
    </div>
    <div id="projectbrief">Lightweight markup processor to produce HTML, LaTeX, and more.</div>
   </td>
@@ -141,21 +141,23 @@ Typedefs</h2></td></tr>
 Enumerations</h2></td></tr>
 <tr class="memitem:adab978eb5c8aa199396471558598dc53" id="r_adab978eb5c8aa199396471558598dc53"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adab978eb5c8aa199396471558598dc53">output_format</a> { <br />
 &#160;&#160;<a class="el" href="#adab978eb5c8aa199396471558598dc53a9bf619d1a083a4082d78f40641281824">FORMAT_HTML</a>
+, <b>FORMAT_AST</b>
 , <b>FORMAT_EPUB</b>
+, <b>FORMAT_HASH</b>
+, <br />
+&#160;&#160;<b>FORMAT_ITMZ</b>
 , <a class="el" href="#adab978eb5c8aa199396471558598dc53a59626c460e5d94bb7319ea863cf47084">FORMAT_LATEX</a>
+, <a class="el" href="#adab978eb5c8aa199396471558598dc53a7d16c90e62f7b9318a6f375d18eae35c">FORMAT_MMD</a>
+, <b>FORMAT_OPML</b>
+, <br />
+&#160;&#160;<b>FORMAT_TEXTBUNDLE</b>
+, <b>FORMAT_TEXTPACK</b>
+, <b>FORMAT_DOCX</b>
 , <b>FORMAT_BEAMER</b>
 , <br />
 &#160;&#160;<b>FORMAT_MEMOIR</b>
 , <b>FORMAT_FODT</b>
 , <b>FORMAT_ODT</b>
-, <b>FORMAT_TEXTBUNDLE</b>
-, <br />
-&#160;&#160;<b>FORMAT_TEXTBUNDLE_COMPRESSED</b>
-, <b>FORMAT_OPML</b>
-, <b>FORMAT_ITMZ</b>
-, <a class="el" href="#adab978eb5c8aa199396471558598dc53a7d16c90e62f7b9318a6f375d18eae35c">FORMAT_MMD</a>
-, <br />
-&#160;&#160;<b>FORMAT_HTML_WITH_ASSETS</b>
 <br />
  }</td></tr>
 <tr class="memitem:ad4eea468a0db544edb0020e150d0efcd" id="r_ad4eea468a0db544edb0020e150d0efcd"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4eea468a0db544edb0020e150d0efcd">smart_quote_language</a> { <br />
@@ -192,6 +194,14 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#a28bc71c681236c9e40551bff49033981af457c100e3373e05c41bb1e20c61e5dd">MMD_OPTION_CRITIC_ACCEPT</a> = 1 &lt;&lt; 20
 , <br />
 &#160;&#160;<a class="el" href="#a28bc71c681236c9e40551bff49033981a0f4d3d201e70fb5c5cc4e1153986c242">MMD_OPTION_CRITIC_REJECT</a> = 1 &lt;&lt; 21
+, <a class="el" href="#a28bc71c681236c9e40551bff49033981ac404fad1294013f8f6a8f1919d36e83c">MMD_OPTION_COMPLETE</a> = 1 &lt;&lt; 22
+, <a class="el" href="#a28bc71c681236c9e40551bff49033981addbb2c5e6e0f237f0b147edc17c46515">MMD_OPTION_SNIPPET</a> = 1 &lt;&lt; 23
+, <a class="el" href="#a28bc71c681236c9e40551bff49033981a5e889e5469ffa6afe84daf4dbcad1b77">MMD_OPTION_EMBED_ASSETS</a> = 1 &lt;&lt; 24
+, <br />
+&#160;&#160;<a class="el" href="#a28bc71c681236c9e40551bff49033981ab748dff15fbe686e9301db916c0dd9ac">MMD_OPTION_STORE_ASSETS</a> = 1 &lt;&lt; 25
+, <a class="el" href="#a28bc71c681236c9e40551bff49033981ac01331e79bd685ad415fc3dc6e11a110">MMD_OPTION_DOWNLOAD_ASSETS</a> = 1 &lt;&lt; 26
+, <a class="el" href="#a28bc71c681236c9e40551bff49033981a549191da4b695b8f5ff6d68956e274c0">MMD_OPTION_PARSE_OPML</a> = 1 &lt;&lt; 27
+, <a class="el" href="#a28bc71c681236c9e40551bff49033981afa6f1057fdb72eeade1d6a3771215176">MMD_OPTION_PARSE_ITMZ</a> = 1 &lt;&lt; 28
 <br />
  }</td></tr>
 <tr class="memitem:abdd8c792f45359f065209298e96ec8b3" id="r_abdd8c792f45359f065209298e96ec8b3"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdd8c792f45359f065209298e96ec8b3">node_types</a> { <br />
@@ -228,200 +238,204 @@ Enumerations</h2></td></tr>
 &#160;&#160;<b>LINE_HTML</b>
 , <b>LINE_HTML_BLOCK</b>
 , <b>LINE_HTML_BLOCKISH</b>
-, <b>LINE_HTML_BlOCKISH</b>
+, <b>LINE_INDENTED_SPACE</b>
 , <br />
-&#160;&#160;<b>LINE_INDENTED_SPACE</b>
-, <b>LINE_INDENTED_TAB</b>
+&#160;&#160;<b>LINE_INDENTED_TAB</b>
 , <b>LINE_LIST_BULLETED</b>
 , <b>LINE_LIST_ENUMERATED</b>
+, <b>LINE_META</b>
 , <br />
-&#160;&#160;<b>LINE_META</b>
-, <b>LINE_PLAIN</b>
+&#160;&#160;<b>LINE_PLAIN</b>
 , <b>LINE_SETEXT_1</b>
 , <b>LINE_SETEXT_2</b>
+, <b>LINE_START_COMMENT</b>
 , <br />
-&#160;&#160;<b>LINE_START_COMMENT</b>
-, <b>LINE_STOP_COMMENT</b>
+&#160;&#160;<b>LINE_STOP_COMMENT</b>
 , <b>LINE_TABLE</b>
 , <b>LINE_TABLE_SEPARATOR</b>
+, <b>LINE_TOC</b>
 , <br />
-&#160;&#160;<b>LINE_TOC</b>
-, <b>LINE_YAML</b>
+&#160;&#160;<b>LINE_YAML</b>
 , <b>CODE_FENCE_LINE</b> = 63
 , <b>BLOCK_BLOCKQUOTE</b> = 64
+, <b>BLOCK_CODE_FENCED</b>
 , <br />
-&#160;&#160;<b>BLOCK_CODE_FENCED</b>
-, <b>BLOCK_CODE_INDENTED</b>
+&#160;&#160;<b>BLOCK_CODE_INDENTED</b>
 , <b>BLOCK_DEF_ABBREVIATION</b>
 , <b>BLOCK_DEF_CITATION</b>
+, <b>BLOCK_DEF_FOOTNOTE</b>
 , <br />
-&#160;&#160;<b>BLOCK_DEF_FOOTNOTE</b>
-, <b>BLOCK_DEF_GLOSSARY</b>
+&#160;&#160;<b>BLOCK_DEF_GLOSSARY</b>
 , <b>BLOCK_DEF_LINK</b>
 , <b>BLOCK_DEFINITION</b>
+, <b>BLOCK_DEFLIST</b>
 , <br />
-&#160;&#160;<b>BLOCK_DEFLIST</b>
-, <b>BLOCK_EMPTY</b>
+&#160;&#160;<b>BLOCK_EMPTY</b>
 , <b>BLOCK_GENERAL</b>
 , <b>BLOCK_H1</b>
+, <b>BLOCK_H2</b>
 , <br />
-&#160;&#160;<b>BLOCK_H2</b>
-, <b>BLOCK_H3</b>
+&#160;&#160;<b>BLOCK_H3</b>
 , <b>BLOCK_H4</b>
 , <b>BLOCK_H5</b>
+, <b>BLOCK_H6</b>
 , <br />
-&#160;&#160;<b>BLOCK_H6</b>
-, <b>BLOCK_HEADING</b>
+&#160;&#160;<b>BLOCK_HEADING</b>
 , <b>BLOCK_HR</b>
 , <b>BLOCK_HTML</b>
+, <b>BLOCK_LIST_BULLETED</b>
 , <br />
-&#160;&#160;<b>BLOCK_LIST_BULLETED</b>
-, <b>BLOCK_LIST_BULLETED_LOOSE</b>
+&#160;&#160;<b>BLOCK_LIST_BULLETED_LOOSE</b>
 , <b>BLOCK_LIST_ENUMERATED</b>
 , <b>BLOCK_LIST_ENUMERATED_LOOSE</b>
+, <b>BLOCK_LIST_ITEM</b>
 , <br />
-&#160;&#160;<b>BLOCK_LIST_ITEM</b>
-, <b>BLOCK_LIST_ITEM_TIGHT</b>
+&#160;&#160;<b>BLOCK_LIST_ITEM_TIGHT</b>
 , <b>BLOCK_META</b>
 , <b>BLOCK_PARA</b>
+, <b>BLOCK_SETEXT_1</b>
 , <br />
-&#160;&#160;<b>BLOCK_SETEXT_1</b>
-, <b>BLOCK_SETEXT_2</b>
+&#160;&#160;<b>BLOCK_SETEXT_2</b>
 , <b>BLOCK_TABLE</b>
 , <b>BLOCK_TABLE_HEADER</b>
+, <b>BLOCK_TABLE_SECTION</b>
 , <br />
-&#160;&#160;<b>BLOCK_TABLE_SECTION</b>
+&#160;&#160;<b>BLOCK_TABLE_ROW</b>
+, <b>BLOCK_TABLE_SEPARATOR</b>
 , <b>BLOCK_TERM</b>
 , <b>BLOCK_TOC</b>
-, <b>BLOCK_FIGURE</b>
 , <br />
-&#160;&#160;<b>TOKEN_EOF</b> = 128
+&#160;&#160;<b>BLOCK_FIGURE</b>
+, <b>TOKEN_EOF</b> = 128
 , <b>TOKEN_NL</b>
 , <b>TOKEN_LINEBREAK</b>
-, <b>TOKEN_TEXT</b>
 , <br />
-&#160;&#160;<b>TOKEN_TEXT_ABBREVIATION</b>
+&#160;&#160;<b>TOKEN_TEXT</b>
+, <b>TOKEN_TEXT_ABBREVIATION</b>
 , <b>TOKEN_TEXT_GLOSSARY</b>
 , <b>TOKEN_TEXT_WHITESPACE</b>
-, <b>TOKEN_AMPERSAND</b>
 , <br />
-&#160;&#160;<b>TOKEN_AMPERSAND_LONG</b>
+&#160;&#160;<b>TOKEN_AMPERSAND</b>
+, <b>TOKEN_AMPERSAND_LONG</b>
 , <b>TOKEN_HTML_ENTITY</b>
 , <b>TOKEN_HASH</b>
-, <b>TOKEN_STAR</b>
 , <br />
-&#160;&#160;<b>TOKEN_PLUS</b>
+&#160;&#160;<b>TOKEN_STAR</b>
+, <b>TOKEN_PLUS</b>
 , <b>TOKEN_MINUS</b>
 , <b>TEXT_NUMBER_POSS_LIST</b>
-, <b>TOKEN_UL</b>
 , <br />
-&#160;&#160;<b>TOKEN_COLON</b>
+&#160;&#160;<b>TOKEN_UL</b>
+, <b>TOKEN_COLON</b>
 , <b>TOKEN_ATX_MARKER</b>
 , <b>TOKEN_BLOCKQUOTE_MARKER</b>
-, <b>TOKEN_DEFLIST_COLON</b>
 , <br />
-&#160;&#160;<b>TOKEN_LIST_MARKER</b>
+&#160;&#160;<b>TOKEN_DEFLIST_COLON</b>
+, <b>TOKEN_LIST_MARKER</b>
 , <b>TOKEN_ABBREVIATION_MARKER</b>
 , <b>TOKEN_FOOTNOTE_MARKER</b>
-, <b>TOKEN_GLOSSARY_MARKER</b>
 , <br />
-&#160;&#160;<b>TOKEN_CITATION_MARKER</b>
+&#160;&#160;<b>TOKEN_GLOSSARY_MARKER</b>
+, <b>TOKEN_CITATION_MARKER</b>
 , <b>TOKEN_VARIABLE_MARKER</b>
 , <b>TOKEN_BACKTICK</b>
-, <b>TOKEN_APOSTROPHE</b>
 , <br />
-&#160;&#160;<b>TOKEN_QUOTE_SINGLE</b>
+&#160;&#160;<b>TOKEN_APOSTROPHE</b>
+, <b>TOKEN_QUOTE_SINGLE</b>
 , <b>TOKEN_QUOTE_DOUBLE</b>
 , <b>TOKEN_QUOTE_DOUBLE_ALT</b>
-, <b>TOKEN_ELLIPSIS</b>
 , <br />
-&#160;&#160;<b>TOKEN_DASH_M</b>
+&#160;&#160;<b>TOKEN_ELLIPSIS</b>
+, <b>TOKEN_DASH_M</b>
 , <b>TOKEN_DASH_N</b>
 , <b>TOKEN_DASH_N_RANGE</b>
-, <b>TOKEN_PAREN_LEFT</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAREN_RIGHT</b>
+&#160;&#160;<b>TOKEN_PAREN_LEFT</b>
+, <b>TOKEN_PAREN_RIGHT</b>
 , <b>TOKEN_BRACKET_LEFT</b>
 , <b>TOKEN_BRACKET_RIGHT</b>
-, <b>TOKEN_ANGLE_LEFT</b>
 , <br />
-&#160;&#160;<b>TOKEN_ANGLE_RIGHT</b>
+&#160;&#160;<b>TOKEN_ANGLE_LEFT</b>
+, <b>TOKEN_ANGLE_RIGHT</b>
 , <b>TOKEN_BRACE_LEFT</b>
 , <b>TOKEN_BRACE_RIGHT</b>
-, <b>TOKEN_PAIR_ANGLE</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_BACKTICK</b>
+&#160;&#160;<b>TOKEN_PAIR_ANGLE</b>
+, <b>TOKEN_PAIR_BACKTICK</b>
 , <b>TOKEN_PAIR_BRACE</b>
 , <b>TOKEN_PAIR_BRACKET</b>
-, <b>TOKEN_PAIR_BRACKET_EMPTY</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_BRACKET_NOT_CITED</b>
+&#160;&#160;<b>TOKEN_PAIR_BRACKET_EMPTY</b>
+, <b>TOKEN_PAIR_BRACKET_NOT_CITED</b>
 , <b>TOKEN_PAIR_BRACKET_ABBREVIATION</b>
 , <b>TOKEN_PAIR_BRACKET_FOOTNOTE</b>
-, <b>TOKEN_PAIR_BRACKET_GLOSSARY</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_BRACKET_CITATION</b>
+&#160;&#160;<b>TOKEN_PAIR_BRACKET_GLOSSARY</b>
+, <b>TOKEN_PAIR_BRACKET_CITATION</b>
 , <b>TOKEN_PAIR_BRACKET_IMAGE</b>
 , <b>TOKEN_PAIR_BRACKET_LINK</b>
-, <b>TOKEN_PAIR_BRACKET_VARIABLE</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_PAREN</b>
+&#160;&#160;<b>TOKEN_PAIR_BRACKET_VARIABLE</b>
+, <b>TOKEN_PAIR_PAREN</b>
 , <b>TOKEN_PAIR_QUOTE_DOUBLE</b>
 , <b>TOKEN_PAIR_QUOTE_SINGLE</b>
-, <b>TOKEN_PAIR_STAR</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_STAR_USED</b>
+&#160;&#160;<b>TOKEN_PAIR_STAR</b>
+, <b>TOKEN_PAIR_STAR_USED</b>
 , <b>TOKEN_PAIR_UL</b>
 , <b>TOKEN_PAIR_UL_USED</b>
-, <b>TOKEN_SPECIAL_CHARACTER</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_EMPH</b>
+&#160;&#160;<b>TOKEN_SPECIAL_CHARACTER</b>
+, <b>TOKEN_PAIR_EMPH</b>
 , <b>TOKEN_PAIR_STRONG</b>
 , <b>TOKEN_ESCAPED_CHARACTER</b>
-, <b>TOKEN_NBSP</b>
 , <br />
-&#160;&#160;<b>TOKEN_PIPE</b>
+&#160;&#160;<b>TOKEN_NBSP</b>
+, <b>TOKEN_PIPE</b>
 , <b>TOKEN_CM_ADD_OPEN</b>
 , <b>TOKEN_CM_ADD_CLOSE</b>
-, <b>TOKEN_CM_DEL_OPEN</b>
 , <br />
-&#160;&#160;<b>TOKEN_CM_DEL_CLOSE</b>
+&#160;&#160;<b>TOKEN_CM_DEL_OPEN</b>
+, <b>TOKEN_CM_DEL_CLOSE</b>
 , <b>TOKEN_CM_SUB_OPEN</b>
 , <b>TOKEN_CM_SUB_DIV</b>
-, <b>TOKEN_CM_SUB_CLOSE</b>
 , <br />
-&#160;&#160;<b>TOKEN_CM_COM_OPEN</b>
+&#160;&#160;<b>TOKEN_CM_SUB_CLOSE</b>
+, <b>TOKEN_CM_COM_OPEN</b>
 , <b>TOKEN_CM_COM_CLOSE</b>
 , <b>TOKEN_CM_HI_OPEN</b>
-, <b>TOKEN_CM_HI_CLOSE</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_CM_ADD</b>
+&#160;&#160;<b>TOKEN_CM_HI_CLOSE</b>
+, <b>TOKEN_PAIR_CM_ADD</b>
 , <b>TOKEN_PAIR_CM_DEL</b>
 , <b>TOKEN_PAIR_CM_SUB_DEL</b>
-, <b>TOKEN_PAIR_CM_SUB_ADD</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_CM_COM</b>
+&#160;&#160;<b>TOKEN_PAIR_CM_SUB_ADD</b>
+, <b>TOKEN_PAIR_CM_COM</b>
 , <b>TOKEN_PAIR_CM_HI</b>
 , <b>TOKEN_SUPERSCRIPT</b>
-, <b>TOKEN_SUBSCRIPT</b>
 , <br />
-&#160;&#160;<b>TOKEN_MATH_PAREN_OPEN</b>
-, <b>TOKEN_MATH_PAREN_CLOSE</b>
+&#160;&#160;<b>TOKEN_SUBSCRIPT</b>
+, <b>TOKEN_PAIR_SUPERSCRIPT</b>
+, <b>TOKEN_PAIR_SUBSCRIPT</b>
+, <b>TOKEN_MATH_PAREN_OPEN</b>
+, <br />
+&#160;&#160;<b>TOKEN_MATH_PAREN_CLOSE</b>
 , <b>TOKEN_MATH_BRACKET_OPEN</b>
 , <b>TOKEN_MATH_BRACKET_CLOSE</b>
+, <b>TOKEN_MATH_DOLLAR_SINGLE</b>
 , <br />
-&#160;&#160;<b>TOKEN_MATH_DOLLAR_SINGLE</b>
-, <b>TOKEN_MATH_DOLLAR_DOUBLE</b>
+&#160;&#160;<b>TOKEN_MATH_DOLLAR_DOUBLE</b>
 , <b>TOKEN_PAIR_MATH_PAREN</b>
 , <b>TOKEN_PAIR_MATH_BRACKET</b>
+, <b>TOKEN_PAIR_MATH_DOLLAR_SINGLE</b>
 , <br />
-&#160;&#160;<b>TOKEN_PAIR_MATH_DOLLAR_SINGLE</b>
-, <b>TOKEN_PAIR_MATH_DOLLAR_DOUBLE</b>
+&#160;&#160;<b>TOKEN_PAIR_MATH_DOLLAR_DOUBLE</b>
 , <b>TOKEN_TABLE_CELL</b>
 , <b>TOKEN_TABLE_DIVIDER</b>
+, <b>TOKEN_MANUAL_LABEL</b>
 , <br />
-&#160;&#160;<b>TOKEN_MANUAL_LABEL</b>
-, <b>OBJECT_REPLACEMENT_CHARACTER</b>
+&#160;&#160;<b>OBJECT_REPLACEMENT_CHARACTER</b>
 <br />
  }</td></tr>
 <tr class="memdesc:abdd8c792f45359f065209298e96ec8b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">AST node types.  <a href="#abdd8c792f45359f065209298e96ec8b3">More...</a><br /></td></tr>
@@ -456,6 +470,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_ast_filename</b> 
 void&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_ast_str</b> (const char *text, FILE *out, uint32_t options)</td></tr>
 <tr class="memitem:ada0e382a083493751077c2168c676239" id="r_ada0e382a083493751077c2168c676239"><td class="memItemLeft" align="right" valign="top"><a id="ada0e382a083493751077c2168c676239" name="ada0e382a083493751077c2168c676239"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_ast_str_len</b> (const char *text, size_t in_len, FILE *out, uint32_t options)</td></tr>
+<tr class="memitem:a6bb7e804896a76b2190a50a20014be9e" id="r_a6bb7e804896a76b2190a50a20014be9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb7e804896a76b2190a50a20014be9e">mmd_hash_file</a> (FILE *in, FILE *out, uint32_t options)</td></tr>
+<tr class="memitem:a043015d22e3e70ee63cc4bbf90d4e3ff" id="r_a043015d22e3e70ee63cc4bbf90d4e3ff"><td class="memItemLeft" align="right" valign="top"><a id="a043015d22e3e70ee63cc4bbf90d4e3ff" name="a043015d22e3e70ee63cc4bbf90d4e3ff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_hash_filename</b> (const char *fname, FILE *out, uint32_t options)</td></tr>
+<tr class="memitem:a79b261abfae9a13e19cc3e6e6aebbd43" id="r_a79b261abfae9a13e19cc3e6e6aebbd43"><td class="memItemLeft" align="right" valign="top"><a id="a79b261abfae9a13e19cc3e6e6aebbd43" name="a79b261abfae9a13e19cc3e6e6aebbd43"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_hash_str</b> (const char *text, FILE *out, uint32_t options)</td></tr>
+<tr class="memitem:ae8fc40bc806fb27ed2dbbec1a1b1ebe4" id="r_ae8fc40bc806fb27ed2dbbec1a1b1ebe4"><td class="memItemLeft" align="right" valign="top"><a id="ae8fc40bc806fb27ed2dbbec1a1b1ebe4" name="ae8fc40bc806fb27ed2dbbec1a1b1ebe4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_hash_str_len</b> (const char *text, size_t in_len, FILE *out, uint32_t options)</td></tr>
 <tr class="memitem:af652e6c12e859c1578c5f4e77f0de8f4" id="r_af652e6c12e859c1578c5f4e77f0de8f4"><td class="memItemLeft" align="right" valign="top">read_ctx *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af652e6c12e859c1578c5f4e77f0de8f4">mmd_metadata_filename</a> (const char *fname, uint32_t options)</td></tr>
 <tr class="memitem:a08b5748207336ff2785c83d6acacf4b1" id="r_a08b5748207336ff2785c83d6acacf4b1"><td class="memItemLeft" align="right" valign="top"><a id="a08b5748207336ff2785c83d6acacf4b1" name="a08b5748207336ff2785c83d6acacf4b1"></a>
 read_ctx *&#160;</td><td class="memItemRight" valign="bottom"><b>mmd_metadata_file</b> (FILE *in, uint32_t options)</td></tr>
@@ -486,6 +507,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>read_ctx_reset</b> (r
 void&#160;</td><td class="memItemRight" valign="bottom"><b>read_ctx_free</b> (read_ctx *c)</td></tr>
 <tr class="memitem:a2335aaddee5db727c902c5559b4f8b0a" id="r_a2335aaddee5db727c902c5559b4f8b0a"><td class="memItemLeft" align="right" valign="top"><a id="a2335aaddee5db727c902c5559b4f8b0a" name="a2335aaddee5db727c902c5559b4f8b0a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> (void)</td></tr>
+<tr class="memitem:a929f9f17eebf3f579ded2f8c52c87114" id="r_a929f9f17eebf3f579ded2f8c52c87114"><td class="memItemLeft" align="right" valign="top"><a id="a929f9f17eebf3f579ded2f8c52c87114" name="a929f9f17eebf3f579ded2f8c52c87114"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>read_ctx_dump_headers</b> (read_ctx *c)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>libMultiMarkdown7 &ndash; Lightweight markup processor to produce HTML, LaTeX, and more.</p>
@@ -512,7 +535,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </div><!-- fragment -->
 <p>Extract markup language from options. </p>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00190">190</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00228">228</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -528,7 +551,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00181">181</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00219">219</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -547,10 +570,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">((((<a class="code hl_struct" href="structmmd__node.html">mmd_node</a>*)x)-&gt;type &amp; <a class="code hl_define" href="#a2ca740743d47036115d862f5f76aeec2">MMD_TYPE_MASK</a>) == 0x40)</div>
-<div class="ttc" id="alib_multi_markdown_8h_html_a2ca740743d47036115d862f5f76aeec2"><div class="ttname"><a href="#a2ca740743d47036115d862f5f76aeec2">MMD_TYPE_MASK</a></div><div class="ttdeci">#define MMD_TYPE_MASK</div><div class="ttdoc">Macros to determine node class based on type value.</div><div class="ttdef"><b>Definition</b> <a href="lib_multi_markdown_8h_source.html#l00221">libMultiMarkdown.h:221</a></div></div>
-<div class="ttc" id="astructmmd__node_html"><div class="ttname"><a href="structmmd__node.html">mmd_node</a></div><div class="ttdoc">Nodes are used to build the AST during parsing.</div><div class="ttdef"><b>Definition</b> <a href="lib_multi_markdown_8h_source.html#l00194">libMultiMarkdown.h:194</a></div></div>
+<div class="ttc" id="alib_multi_markdown_8h_html_a2ca740743d47036115d862f5f76aeec2"><div class="ttname"><a href="#a2ca740743d47036115d862f5f76aeec2">MMD_TYPE_MASK</a></div><div class="ttdeci">#define MMD_TYPE_MASK</div><div class="ttdoc">Macros to determine node class based on type value.</div><div class="ttdef"><b>Definition</b> <a href="lib_multi_markdown_8h_source.html#l00259">libMultiMarkdown.h:259</a></div></div>
+<div class="ttc" id="astructmmd__node_html"><div class="ttname"><a href="structmmd__node.html">mmd_node</a></div><div class="ttdoc">Nodes are used to build the AST during parsing.</div><div class="ttdef"><b>Definition</b> <a href="lib_multi_markdown_8h_source.html#l00232">libMultiMarkdown.h:232</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00225">225</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00263">263</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +593,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">((((<a class="code hl_struct" href="structmmd__node.html">mmd_node</a>*)x)-&gt;type &amp; <a class="code hl_define" href="#a2ca740743d47036115d862f5f76aeec2">MMD_TYPE_MASK</a>) == 0x00)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00224">224</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00262">262</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -590,7 +613,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">((((<a class="code hl_struct" href="structmmd__node.html">mmd_node</a>*)x)-&gt;type &amp; MMD_TOKEN_MASK) == 0x80)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00226">226</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00264">264</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -609,11 +632,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">((x &amp; <a class="code hl_define" href="#abdc1942a6090efeb4d4f2c4d0890c379">MMD_OUT_FORMAT_MASK</a>) &gt;&gt; 0)</div>
-<div class="ttc" id="alib_multi_markdown_8h_html_abdc1942a6090efeb4d4f2c4d0890c379"><div class="ttname"><a href="#abdc1942a6090efeb4d4f2c4d0890c379">MMD_OUT_FORMAT_MASK</a></div><div class="ttdeci">#define MMD_OUT_FORMAT_MASK</div><div class="ttdoc">Macros to extract specific options.</div><div class="ttdef"><b>Definition</b> <a href="lib_multi_markdown_8h_source.html#l00179">libMultiMarkdown.h:179</a></div></div>
+<div class="ttc" id="alib_multi_markdown_8h_html_abdc1942a6090efeb4d4f2c4d0890c379"><div class="ttname"><a href="#abdc1942a6090efeb4d4f2c4d0890c379">MMD_OUT_FORMAT_MASK</a></div><div class="ttdeci">#define MMD_OUT_FORMAT_MASK</div><div class="ttdoc">Macros to extract specific options.</div><div class="ttdef"><b>Definition</b> <a href="lib_multi_markdown_8h_source.html#l00217">libMultiMarkdown.h:217</a></div></div>
 </div><!-- fragment -->
 <p>Extract Output format from options. </p>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00184">184</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00222">222</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -631,7 +654,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 
 <p>Macros to extract specific options. </p>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00179">179</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00217">217</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -653,7 +676,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </div><!-- fragment -->
 <p>Extract Smart Quotes language from options. </p>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00187">187</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00225">225</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -669,7 +692,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00180">180</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00218">218</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -685,7 +708,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00222">222</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00260">260</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -703,7 +726,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 
 <p>Macros to determine node class based on type value. </p>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00221">221</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00259">259</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -720,7 +743,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00217">217</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00255">255</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -736,7 +759,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00050">50</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00070">70</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -752,7 +775,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00051">51</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00071">71</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -768,7 +791,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00052">52</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00072">72</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -801,7 +824,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00151">151</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00182">182</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -835,9 +858,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </td></tr>
 <tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981a0f4d3d201e70fb5c5cc4e1153986c242" name="a28bc71c681236c9e40551bff49033981a0f4d3d201e70fb5c5cc4e1153986c242"></a>MMD_OPTION_CRITIC_REJECT&#160;</td><td class="fielddoc"><p>Reject all proposed changes. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981ac404fad1294013f8f6a8f1919d36e83c" name="a28bc71c681236c9e40551bff49033981ac404fad1294013f8f6a8f1919d36e83c"></a>MMD_OPTION_COMPLETE&#160;</td><td class="fielddoc"><p>Force creation of complete document. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981addbb2c5e6e0f237f0b147edc17c46515" name="a28bc71c681236c9e40551bff49033981addbb2c5e6e0f237f0b147edc17c46515"></a>MMD_OPTION_SNIPPET&#160;</td><td class="fielddoc"><p>Force creation of snippet instead of complete document. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981a5e889e5469ffa6afe84daf4dbcad1b77" name="a28bc71c681236c9e40551bff49033981a5e889e5469ffa6afe84daf4dbcad1b77"></a>MMD_OPTION_EMBED_ASSETS&#160;</td><td class="fielddoc"><p>Embed assets (imagees, CSS) within the output file itself (eg. HTML) </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981ab748dff15fbe686e9301db916c0dd9ac" name="a28bc71c681236c9e40551bff49033981ab748dff15fbe686e9301db916c0dd9ac"></a>MMD_OPTION_STORE_ASSETS&#160;</td><td class="fielddoc"><p>Store assets (images, CSS) within archive file formats. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981ac01331e79bd685ad415fc3dc6e11a110" name="a28bc71c681236c9e40551bff49033981ac01331e79bd685ad415fc3dc6e11a110"></a>MMD_OPTION_DOWNLOAD_ASSETS&#160;</td><td class="fielddoc"><p>Attempt to download assets from the internet for storage. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981a549191da4b695b8f5ff6d68956e274c0" name="a28bc71c681236c9e40551bff49033981a549191da4b695b8f5ff6d68956e274c0"></a>MMD_OPTION_PARSE_OPML&#160;</td><td class="fielddoc"><p>Convert from OPML to MMD text before parsing. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a28bc71c681236c9e40551bff49033981afa6f1057fdb72eeade1d6a3771215176" name="a28bc71c681236c9e40551bff49033981afa6f1057fdb72eeade1d6a3771215176"></a>MMD_OPTION_PARSE_ITMZ&#160;</td><td class="fielddoc"><p>Convert from ITMZ to MMD text before parsing. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00162">162</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00193">193</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -855,7 +892,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 
 <p>AST node types. </p>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00230">230</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00268">268</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -879,7 +916,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00123">123</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00151">151</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -911,7 +948,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00140">140</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_multi_markdown_8h_source.html#l00171">171</a> of file <a class="el" href="lib_multi_markdown_8h_source.html">libMultiMarkdown.h</a>.</p>
 
 </div>
 </div>
@@ -939,7 +976,34 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>custom_seed_rand</b> 
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Process MultiMarkdown text into AST and output a description to the specified file stream TODO: Add this to test suite for regression testing </p>
+<p>Process MultiMarkdown text into AST and output a description to the specified file stream </p>
+
+</div>
+</div>
+<a id="a6bb7e804896a76b2190a50a20014be9e" name="a6bb7e804896a76b2190a50a20014be9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bb7e804896a76b2190a50a20014be9e">&#9670;&#160;</a></span>mmd_hash_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mmd_hash_file </td>
+          <td>(</td>
+          <td class="paramtype">FILE *</td>          <td class="paramname"><span class="paramname"><em>in</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FILE *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>options</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Process MultiMarkdown text into AST with hash values and output a description to the specified file stream TODO: Add this to test suite for regression testing </p>
 
 </div>
 </div>
