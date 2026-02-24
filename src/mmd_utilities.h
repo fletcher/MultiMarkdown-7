@@ -64,4 +64,8 @@ FILE * flex_fopen(const char * fname);
 /// Cross-platform dirname()
 char * mmd_dirname(const char * path);
 
+
+/// Check text for a specified char
+int text_contains_char(const char * text, size_t len, char target);
+
 #endif

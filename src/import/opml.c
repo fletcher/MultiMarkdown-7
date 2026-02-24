@@ -44,6 +44,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "libMultiMarkdown.h"
+#include "mmd_utilities.h"
 #include "text_buffer.h"
 
 #include "opml.h"
@@ -133,7 +135,7 @@ int mmd_import_opml(text_buffer * source_buffer) {
 							text_buffer_append_c(metadata, '\t');
 						} else {
 							// Header
-							if (strnstr(buf->text, "\n", buf->len) == NULL) {
+							if (!text_contains_char(buf->text, buf->len, '\n')) {
 								// ATX Header
 								F(i, depth) {
 									text_buffer_append_c(output, '#');

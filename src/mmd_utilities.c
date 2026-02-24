@@ -262,3 +262,18 @@ char * mmd_dirname(const char * path) {
 #endif
 }
 
+
+/// Check text for a specified char
+int text_contains_char(const char * text, size_t len, char target) {
+	const char * stop = text + len;
+
+	while (*text != '\0' && text < stop) {
+		if (*text == target) {
+			return 1;
+		}
+
+		text++;
+	}
+
+	return 0;
+}
