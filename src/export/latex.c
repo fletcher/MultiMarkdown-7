@@ -1975,7 +1975,17 @@ static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w) 
 static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	if (w->used_cite_stack->size) {
 		pad(out, 2, w);
+
+		if (g_format == FORMAT_BEAMER) {
+			mmd_print_const(out, "\\part{Bibliography}\n" \
+							"\\begin{frame}[allowframebreaks]\n" \
+							"\\frametitle{Bibliography}\n" \
+							"\\def\\newblock{}\n" \
+						   );
+		}
+
 		mmd_print_const(out, "\\begin{thebibliography}{0}\n");
+
 		w->padding = 2;
 		w->in_endnote = 1;
 
@@ -1997,6 +2007,11 @@ static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx
 
 		pad(out, 2, w);
 		mmd_print_const(out, "\\end{thebibliography}");
+
+		if (g_format == FORMAT_BEAMER) {
+			mmd_print_const(out, "\n\\end{frame}");
+		}
+
 		w->padding = 0;
 		w->in_endnote = 0;
 	}
