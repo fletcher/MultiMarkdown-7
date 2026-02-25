@@ -5,7 +5,7 @@ Affiliation:		http://fletcherpenney.net/multimarkdown/
 Copyright:			2009-2011 Fletcher T. Penney.  
 					This work is licensed under a Creative Commons License.  
 					http://creativecommons.org/licenses/by-sa/2.5/
-base header level:	3  
+base header level:	4  
 latex mode:			beamer  
 latex header:		\input{mmd-natbib-plain}
 Theme:				keynote-gradient
