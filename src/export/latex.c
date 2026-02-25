@@ -185,7 +185,11 @@ static void embed_input_file(text_buffer * out, const char * fname) {
 
 	snprintf(command, sizeof(command), "kpsewhich %s", fname);
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	fp = _popen(command, "r");
+#else
 	fp = popen(command, "r");
+#endif
 
 	if (fp != NULL) {
 		if (fgets(buffer, sizeof(buffer), fp) != NULL) {
