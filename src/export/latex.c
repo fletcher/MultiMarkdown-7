@@ -1822,10 +1822,10 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 		if (m) {
 			if (options & MMD_OPTION_EMBED_ASSETS) {
 				char buf[1024];
-				snprintf(buf, sizeof(buf), "mmd6-%s-leader", m->value);
+				snprintf(buf, sizeof(buf), "mmd7-%s-leader", m->value);
 				embed_input_file(out, buf);
 			} else {
-				text_buffer_append_printf(out, "\\input{mmd6-%s-leader}\n", m->value);
+				text_buffer_append_printf(out, "\\input{mmd7-%s-leader}\n", m->value);
 			}
 		}
 	}
@@ -1995,10 +1995,10 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 		if (m) {
 			if (options & MMD_OPTION_EMBED_ASSETS) {
 				char buf[1024];
-				snprintf(buf, sizeof(buf), "mmd6-%s-begin", m->value);
+				snprintf(buf, sizeof(buf), "mmd7-%s-begin", m->value);
 				embed_input_file(out, buf);
 			} else {
-				text_buffer_append_printf(out, "\\input{mmd6-%s-begin}\n", m->value);
+				text_buffer_append_printf(out, "\\input{mmd7-%s-begin}\n", m->value);
 			}
 		}
 	}
@@ -2028,10 +2028,10 @@ static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w, 
 		if (m) {
 			if (options & MMD_OPTION_EMBED_ASSETS) {
 				char buf[1024];
-				snprintf(buf, sizeof(buf), "mmd6-%s-footer", m->value);
+				snprintf(buf, sizeof(buf), "mmd7-%s-footer", m->value);
 				embed_input_file(out, buf);
 			} else {
-				text_buffer_append_printf(out, "\\input{mmd6-%s-footer}\n", m->value);
+				text_buffer_append_printf(out, "\\input{mmd7-%s-footer}\n", m->value);
 			}
 		}
 	}

@@ -1,10 +1,10 @@
-\input{mmd6-beamer-leader}
+\input{mmd7-beamer-leader}
 \def\mytitle{Sample Beamer Presentation}
 \def\mysubtitle{With a subtitle, no less!}
 \def\myauthor{Fletcher T. Penney}
 \def\affiliation{http://fletcherpenney.net/multimarkdown}
 \def\mycopyright{2026 Fletcher T. Penney This document is licensed under a Creative Commons License. http://creativecommons.org/licenses/by-sa/2.5/}
-\input{mmd6-beamer-begin}
+\input{mmd7-beamer-begin}
 
 \part{Part 1}
 \label{part1}
@@ -84,5 +84,5 @@ Baz.
 \end{frame}
 
 \mode<all>
-\input{mmd6-beamer-footer}
+\input{mmd7-beamer-footer}
 \end{document}\mode*

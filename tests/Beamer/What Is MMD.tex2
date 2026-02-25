@@ -1,4 +1,4 @@
-\input{mmd6-beamer-leader}
+\input{mmd7-beamer-leader}
 \def\mytitle{What is MultiMarkdown?}
 \def\mysubtitle{And why should you care?}
 \def\myauthor{Fletcher T. Penney}
@@ -6,7 +6,7 @@
 \def\mycopyright{2009-2011 Fletcher T. Penney. This work is licensed under a Creative Commons License. http://creativecommons.org/licenses/by-sa/2.5/}
 \input{mmd-natbib-plain}
 \def\theme{keynote-gradient}
-\input{mmd6-beamer-begin}
+\input{mmd7-beamer-begin}
 
 \begin{frame}[fragile]
 \frametitle{MultiMarkdown is a derivative of Markdown}
@@ -301,5 +301,5 @@ John Doe. \emph{A Totally Fake Book}. Vanity Press, 2006.
 \end{thebibliography}
 \end{frame}
 \mode<all>
-\input{mmd6-beamer-footer}
+\input{mmd7-beamer-footer}
 \end{document}\mode*

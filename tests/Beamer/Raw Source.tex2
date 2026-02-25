@@ -1,6 +1,6 @@
-\input{mmd6-beamer-leader}
+\input{mmd7-beamer-leader}
 \def\mytitle{Raw Source}
-\input{mmd6-beamer-begin}
+\input{mmd7-beamer-begin}
 
 \begin{frame}[fragile]
 \frametitle{0}
@@ -42,5 +42,5 @@
 \end{frame}
 
 \mode<all>
-\input{mmd6-beamer-footer}
+\input{mmd7-beamer-footer}
 \end{document}\mode*

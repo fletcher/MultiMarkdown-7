@@ -4,9 +4,9 @@ css:	http://foo.com/bar.css
 htmlheader:	<script type="text/javascript"
 	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 	</script>
-latexleader:	mmd6-article-leader
-latexbegin:	mmd6-article-begin
-latexfooter:	mmd6-article-footer
+latexleader:	mmd7-article-leader
+latexbegin:	mmd7-article-begin
+latexfooter:	mmd7-article-footer
 foo:	bar
 foo bar
 	foo bar
@@ -29,11 +29,11 @@ multiline: first line\
 '
 	* (29) 183:11	'	</script>
 '
-	* (32) 194:33	'latexleader:	mmd6-article-leader
+	* (32) 194:33	'latexleader:	mmd7-article-leader
 '
-	* (32) 227:31	'latexbegin:	mmd6-article-begin
+	* (32) 227:31	'latexbegin:	mmd7-article-begin
 '
-	* (32) 258:33	'latexfooter:	mmd6-article-footer
+	* (32) 258:33	'latexfooter:	mmd7-article-footer
 '
 	* (32) 291:9	'foo:	bar
 '
