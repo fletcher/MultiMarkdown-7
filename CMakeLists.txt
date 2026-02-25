@@ -628,7 +628,7 @@ else()
 	ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup text htmla)
 	ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup text htmlr)
 	ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests text tex)
-	ADD_MMD_TEST_2(mmd-7-beamer "parse -r -t beamer" Beamer text tex)
+	ADD_MMD_TEST_2(mmd-7-beamer "parse -r -E -t beamer" Beamer text tex)
 	ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests text opml)
 
 	if (WIN32)

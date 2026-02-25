@@ -46,7 +46,11 @@
        \tableofcontents[currentsection,currentsubsection]
    \end{frame}
 }
-\def\mytitle{Raw Source}
+\def\mytitle{Sample Beamer Presentation}
+\def\mysubtitle{With a subtitle, no less!}
+\def\myauthor{Fletcher T. Penney}
+\def\affiliation{http://fletcherpenney.net/multimarkdown}
+\def\mycopyright{2026 Fletcher T. Penney This document is licensed under a Creative Commons License. http://creativecommons.org/licenses/by-sa/2.5/}
 %
 %	Get ready for the actual document
 %
@@ -98,43 +102,81 @@
 
 \maketitle
 
+\part{Part 1}
+\label{part1}
+
+\section{Section A}
+\label{sectiona}
+
+\subsection{Subsection 1}
+\label{subsection1}
+
 \begin{frame}[fragile]
-\frametitle{0}
-\label{0}
+\frametitle{MultiMarkdown}
+\label{multimarkdown}
 
-\texttt{*foo*}\{*\}
-
-
-
-*foo*
-
-
-
-*foo*
+Foo.
 
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{5}
-\label{5}
+\frametitle{More MultiMarkdown}
+\label{moremultimarkdown}
 
-\begin{lstlisting}[language={*}]
-*foo*
-\end{lstlisting}
-
-*foo*
-
-*foo*
+Foo.
 
 \end{frame}
 
+\subsection{Subsection 2}
+\label{subsection2}
+
 \begin{frame}[fragile]
-\frametitle{10}
-\label{10}
+\frametitle{Still MultiMarkdown}
+\label{stillmultimarkdown}
 
-*foo*
+Foo.
 
-*bar*
+\end{frame}
+
+\section{Section B}
+\label{sectionb}
+
+\subsection{Subsection a}
+\label{subsectiona}
+
+\begin{frame}[fragile]
+\frametitle{Again}
+\label{again}
+
+Bar.
+
+\end{frame}
+
+\subsection{Subsection b}
+\label{subsectionb}
+
+\begin{frame}[fragile]
+\frametitle{Yet Again}
+\label{yetagain}
+
+Bar.
+
+\end{frame}
+
+\part{Part 2}
+\label{part2}
+
+\section{Section 2A}
+\label{section2a}
+
+\subsection{SubSection 2A}
+\label{subsection2a}
+
+\begin{frame}[fragile]
+\frametitle{Wrap it up}
+\label{wrapitup}
+
+Baz.
 \end{frame}
 
 \mode<all>

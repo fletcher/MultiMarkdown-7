@@ -1,4 +1,51 @@
-\input{mmd6-beamer-leader}
+%
+%	Configure LaTeX to produce a PDF presentation using the beamer class
+%
+
+
+% Default is 16:9 widescreen ratio
+\documentclass[ignorenonframetext,12pt,aspectratio=169]{beamer}
+
+
+% Create a handout with the slides on a page
+% \documentclass[handout]{beamer}
+% \usepackage{pgfpages}
+% \usepackage{handoutWithNotes}
+% % \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=5mm]
+% \pgfpagesuselayout{3 on 1 with notes}
+
+
+
+
+% Allow things like '<a>' in verbatim environments (fixes font encoding issue)
+\usepackage[T1]{fontenc}
+
+
+% Minimum required packages to suppport MMD features
+\usepackage[sort&compress]{natbib}
+
+
+% For each part, show a title page and an outline of that part
+\AtBeginPart
+{
+   \begin{frame}
+      \partpage
+   \end{frame}
+
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents
+   \end{frame}
+}
+
+% For each section, show an outline highlighting where we are
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection,currentsubsection]
+   \end{frame}
+}
 \def\mytitle{What is MultiMarkdown?}
 \def\mysubtitle{And why should you care?}
 \def\myauthor{Fletcher T. Penney}
@@ -6,7 +53,56 @@
 \def\mycopyright{2009-2011 Fletcher T. Penney. This work is licensed under a Creative Commons License. http://creativecommons.org/licenses/by-sa/2.5/}
 \input{mmd-natbib-plain}
 \def\theme{keynote-gradient}
-\input{mmd6-beamer-begin}
+%
+%	Get ready for the actual document
+%
+
+
+% Use default MMD metadata for beamer equivalents
+
+\ifx\mysubtitle\undefined
+\else
+	\subtitle{\mysubtitle}
+\fi
+
+\ifx\affiliation\undefined
+\else
+	\institute{\affiliation}
+\fi
+
+\ifx\mydate\undefined
+	\def\mydate{\today}
+\else
+	\date{\mydate}
+\fi
+
+
+% This does not look good in all themes
+\ifx\event\undefined
+\else
+	\date[\mydate]{\mydate~ / \event }
+\fi
+
+
+% Show "current/total" slide counter in footer
+% Works differently in different themes
+\title[\mytitle\hspace{2em}\insertframenumber/
+\inserttotalframenumber]{\mytitle}
+
+% Set author
+\author{\myauthor}
+
+% Include space between paragraphs
+\addtolength{\parskip}{\baselineskip}
+
+\ifx\theme\undefined
+\else
+	\usetheme{\theme}
+\fi
+
+\begin{document}
+
+\maketitle
 
 \begin{frame}[fragile]
 \frametitle{MultiMarkdown is a derivative of Markdown}
@@ -301,5 +397,9 @@ John Doe. \emph{A Totally Fake Book}. Vanity Press, 2006.
 \end{thebibliography}
 \end{frame}
 \mode<all>
-\input{mmd6-beamer-footer}
+% Durham Theme has a thank you slide
+\ifdefined\makethankyou
+\makethankyou
+%\makethankyou{Foo}{Bar}
+\fi
 \end{document}\mode*

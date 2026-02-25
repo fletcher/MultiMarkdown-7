@@ -1,0 +1,53 @@
+Title:				Sample Beamer Presentation
+Subtitle:			With a subtitle, no less!
+Author:				Fletcher T. Penney
+Affiliation:		http://fletcherpenney.net/multimarkdown
+Copyright:			2026 Fletcher T. Penney
+					This document is licensed under a Creative Commons License.
+					http://creativecommons.org/licenses/by-sa/2.5/
+base header level:	1
+latex config:		beamer
+
+# Part 1 #
+
+## Section A ##
+
+### Subsection 1 ###
+
+#### MultiMarkdown ####
+
+Foo.
+
+#### More MultiMarkdown ####
+
+Foo.
+
+### Subsection 2 ###
+
+#### Still MultiMarkdown ####
+
+Foo.
+
+## Section B ##
+
+### Subsection a ###
+
+#### Again ####
+
+Bar.
+
+### Subsection b ###
+
+#### Yet Again ####
+
+Bar.
+
+# Part 2 #
+
+## Section 2A ##
+
+### SubSection 2A ###
+
+#### Wrap it up ####
+
+Baz.
