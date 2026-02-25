@@ -1,0 +1,48 @@
+%
+%	Configure LaTeX to produce a PDF presentation using the beamer class
+%
+
+
+% Default is 16:9 widescreen ratio
+\documentclass[ignorenonframetext,12pt,aspectratio=169]{beamer}
+
+
+% Create a handout with the slides on a page
+% \documentclass[handout]{beamer}
+% \usepackage{pgfpages}
+% \usepackage{handoutWithNotes}
+% % \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=5mm]
+% \pgfpagesuselayout{3 on 1 with notes}
+
+
+
+
+% Allow things like '<a>' in verbatim environments (fixes font encoding issue)
+\usepackage[T1]{fontenc}
+
+
+% Minimum required packages to suppport MMD features
+\usepackage[sort&compress]{natbib}
+
+
+% For each part, show a title page and an outline of that part
+\AtBeginPart
+{
+   \begin{frame}
+      \partpage
+   \end{frame}
+
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents
+   \end{frame}
+}
+
+% For each section, show an outline highlighting where we are
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection,currentsubsection]
+   \end{frame}
+}

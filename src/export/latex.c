@@ -177,6 +177,33 @@ static smart_quote headers[][6] = {
 };
 
 
+/// Embed a latex \input{} file directly in the output
+static void embed_input_file(text_buffer * out, const char * fname) {
+	FILE * fp;
+	char buffer[1024];
+	char command[1024];
+
+	snprintf(command, sizeof(command), "kpsewhich %s", fname);
+
+	fp = popen(command, "r");
+
+	if (fp != NULL) {
+		if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+			if (strlen(buffer) && buffer[strlen(buffer) - 1] == '\n') {
+				buffer[strlen(buffer) - 1] = '\0';
+			}
+
+			text_buffer * content = buffer_filename(buffer, 1024);
+			text_buffer_append_text(out, content->text, content->len);
+
+			text_buffer_free(content, 1);
+		}
+
+		pclose(fp);
+	}
+}
+
+
 /// Print each line as is
 static void export_latex_line(mmd_node * n, const char * text, text_buffer * out) {
 	switch (n->type) {
@@ -1776,12 +1803,22 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 	m = read_ctx_get_meta(r, "latexleader");
 
 	if (m) {
-		text_buffer_append_printf(out, "\\input{%s}\n", m->value);
+		if (options & MMD_OPTION_EMBED_ASSETS) {
+			embed_input_file(out, m->value);
+		} else {
+			text_buffer_append_printf(out, "\\input{%s}\n", m->value);
+		}
 	} else {
 		m = read_ctx_get_meta(r, "latexconfig");
 
 		if (m) {
-			text_buffer_append_printf(out, "\\input{mmd6-%s-leader}\n", m->value);
+			if (options & MMD_OPTION_EMBED_ASSETS) {
+				char buf[1024];
+				snprintf(buf, sizeof(buf), "mmd6-%s-leader", m->value);
+				embed_input_file(out, buf);
+			} else {
+				text_buffer_append_printf(out, "\\input{mmd6-%s-leader}\n", m->value);
+			}
 		}
 	}
 
@@ -1894,6 +1931,17 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 
 				break;
 
+			case 's':
+				if (strcmp(m->key, "subtitle") == 0) {
+					mmd_print_const(out, "\\def\\mysubtitle");
+					mmd_print_const(out, "{");
+					export_metadata_text(out, m->value, (int)m->value_len);
+					mmd_print_const(out, "}\n");
+					continue;
+				}
+
+				break;
+
 			case 't':
 				if (strcmp(m->key, "title") == 0) {
 					mmd_print_const(out, "\\def\\mytitle{");
@@ -1928,12 +1976,22 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 	m = read_ctx_get_meta(r, "latexbegin");
 
 	if (m) {
-		text_buffer_append_printf(out, "\\input{%s}\n", m->value);
+		if (options & MMD_OPTION_EMBED_ASSETS) {
+			embed_input_file(out, m->value);
+		} else {
+			text_buffer_append_printf(out, "\\input{%s}\n", m->value);
+		}
 	} else {
 		m = read_ctx_get_meta(r, "latexconfig");
 
 		if (m) {
-			text_buffer_append_printf(out, "\\input{mmd6-%s-begin}\n", m->value);
+			if (options & MMD_OPTION_EMBED_ASSETS) {
+				char buf[1024];
+				snprintf(buf, sizeof(buf), "mmd6-%s-begin", m->value);
+				embed_input_file(out, buf);
+			} else {
+				text_buffer_append_printf(out, "\\input{mmd6-%s-begin}\n", m->value);
+			}
 		}
 	}
 
@@ -1941,7 +1999,7 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 }
 
 
-static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	pad(out, 1, w);
 
 	if (g_format == FORMAT_BEAMER) {
@@ -1951,12 +2009,22 @@ static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w) 
 	meta * m = read_ctx_get_meta(r, "latexfooter");
 
 	if (m) {
-		text_buffer_append_printf(out, "\\input{%s}\n", m->value);
+		if (options & MMD_OPTION_EMBED_ASSETS) {
+			embed_input_file(out, m->value);
+		} else {
+			text_buffer_append_printf(out, "\\input{%s}\n", m->value);
+		}
 	} else {
 		m = read_ctx_get_meta(r, "latexconfig");
 
 		if (m) {
-			text_buffer_append_printf(out, "\\input{mmd6-%s-footer}\n", m->value);
+			if (options & MMD_OPTION_EMBED_ASSETS) {
+				char buf[1024];
+				snprintf(buf, sizeof(buf), "mmd6-%s-footer", m->value);
+				embed_input_file(out, buf);
+			} else {
+				text_buffer_append_printf(out, "\\input{mmd6-%s-footer}\n", m->value);
+			}
 		}
 	}
 
@@ -1977,8 +2045,7 @@ static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx
 		pad(out, 2, w);
 
 		if (g_format == FORMAT_BEAMER) {
-			mmd_print_const(out, "\\part{Bibliography}\n" \
-							"\\begin{frame}[allowframebreaks]\n" \
+			mmd_print_const(out, "\\begin{frame}[allowframebreaks]\n" \
 							"\\frametitle{Bibliography}\n" \
 							"\\def\\newblock{}\n" \
 						   );
@@ -2049,7 +2116,7 @@ void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx *
 	}
 
 	if (r->write_complete || (r->has_meta && !r->write_snippet)) {
-		export_latex_footer(out, r, w);
+		export_latex_footer(out, r, w, options);
 	}
 
 	pad(out, 1, w);
