@@ -92,9 +92,6 @@ static format formats[] = {
 	[FORMAT_EPUB] = { "epub", ".epub" },
 	[FORMAT_LATEX] = { "latex", ".tex" },
 	[FORMAT_BEAMER] = { "beamer", ".tex" },
-	[FORMAT_MEMOIR] = { "memoir", ".tex" },
-	[FORMAT_FODT] = { "fodt", ".fodt" },
-	[FORMAT_ODT] = { "odt", ".odt" },
 	[FORMAT_TEXTBUNDLE] = { "textbundle", ".textbundle" },
 	[FORMAT_TEXTPACK] = { "textpack", ".textpack" },
 	[FORMAT_OPML] = { "opml", ".opml" },
@@ -102,7 +99,10 @@ static format formats[] = {
 	[FORMAT_MMD] = { "mmd", ".mmdtext" },
 	[FORMAT_AST] = { "ast", ".ast" },
 	[FORMAT_HASH] = { "hash", ".hash" },
+	[FORMAT_MEMOIR] = { "memoir", ".tex" },
 	[FORMAT_DOCX] = { "docx", ".docx" },
+	[FORMAT_FODT] = { "fodt", ".fodt" },
+	[FORMAT_ODT] = { "odt", ".odt" },
 };
 
 

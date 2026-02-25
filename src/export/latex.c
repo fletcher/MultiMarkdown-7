@@ -64,6 +64,14 @@
 static void export_latex_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 static void export_latex_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	__declspec(thread) int g_format = 0;
+	__declspec(thread) int g_in_frame = 0;
+#else
+	__thread int g_format = 0;
+	__thread int g_in_frame = 0;
+#endif
+
 
 static parse_rule rules[256] = {
 	[BLOCK_BLOCKQUOTE]				= { 2, "\\begin{quote}", 1, DESCEND_CHILD, 1, "\\end{quote}", 0, 0, 0, 0 },
@@ -149,13 +157,23 @@ static smart_quote double_quotes[16] = {
 };
 
 
-static smart_quote headers[6] = {
-	{ "\\part{", "}", 0, 0 },
-	{ "\\chapter{", "}", 0, 0 },
-	{ "\\section{", "}", 0, 0 },
-	{ "\\subsection{", "}", 0, 0 },
-	{ "\\subsubsection{", "}", 0, 0 },
-	{ "\\paragraph{", "}", 0, 0 },
+static smart_quote headers[][6] = {
+	[FORMAT_LATEX]				= {
+		{ "\\part{", "}", 0, 0 },
+		{ "\\chapter{", "}", 0, 0 },
+		{ "\\section{", "}", 0, 0 },
+		{ "\\subsection{", "}", 0, 0 },
+		{ "\\subsubsection{", "}", 0, 0 },
+		{ "\\paragraph{", "}", 0, 0 },
+	},
+	[FORMAT_BEAMER]				= {
+		{ "\\part{", "}", 0, 0 },
+		{ "\\section{", "}", 0, 0 },
+		{ "\\subsection{", "}", 0, 0 },
+		{ "\\begin{frame}[fragile]\n\\frametitle{", "}", 0, 0 },
+		{ "\\emph{", "}", 0, 0 },
+		{ "\\emph{", "}", 0, 0 },
+	},
 };
 
 
@@ -1372,8 +1390,21 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 		case BLOCK_H6:
 			pad(out, 2, w);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
-									headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
+			if (g_format == FORMAT_BEAMER) {
+				if (g_in_frame) {
+					if (b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX) < 5) {
+						mmd_print_const(out, "\\end{frame}\n\n");
+						g_in_frame = 0;
+					}
+				}
+
+				if (b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX) == 3) {
+					g_in_frame = 1;
+				}
+			}
+
+			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
+									headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
 
 			if (options & MMD_OPTION_COMPATIBILITY) {
 				export_latex_tokens(b->content, &text[b->start], b->len, out, r, w, options);
@@ -1398,8 +1429,8 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 				}
 			}
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer,
-									headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer_len);
+			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer,
+									headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer_len);
 			w->padding = 0;
 			break;
 
@@ -1407,14 +1438,14 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 		case BLOCK_SETEXT_2:
 			pad(out, 2, w);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
-									headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
+			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
+									headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
 
 			export_latex_tokens(b->content, &text[b->start], b->len, out, r, w, options);
 			text_buffer_trim_trailing_whitespace(out);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer,
-									headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer_len);
+			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer,
+									headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer_len);
 
 			if (options & MMD_OPTION_COMPATIBILITY) {
 			} else {
@@ -1757,6 +1788,17 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 	// Iterate over metadata keys
 	for (m = r->meta_hash; m != NULL; m = m->hh.next) {
 		switch (m->key[0]) {
+			case 'a':
+				if (strcmp(m->key, "author") == 0) {
+					mmd_print_const(out, "\\def\\myauthor");
+					mmd_print_const(out, "{");
+					export_metadata_text(out, m->value, (int)m->value_len);
+					mmd_print_const(out, "}\n");
+					continue;
+				}
+
+				break;
+
 			case 'b':
 				if (strcmp(m->key, "baseheaderlevel") == 0) {
 					continue;
@@ -1771,6 +1813,23 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 
 			case 'c':
 				if (strcmp(m->key, "css") == 0) {
+					continue;
+				} else if (strcmp(m->key, "copyright") == 0) {
+					mmd_print_const(out, "\\def\\mycopyright");
+					mmd_print_const(out, "{");
+					export_metadata_text(out, m->value, (int)m->value_len);
+					mmd_print_const(out, "}\n");
+					continue;
+				}
+
+				break;
+
+			case 'd':
+				if (strcmp(m->key, "date") == 0) {
+					mmd_print_const(out, "\\def\\mydate");
+					mmd_print_const(out, "{");
+					export_metadata_text(out, m->value, (int)m->value_len);
+					mmd_print_const(out, "}\n");
 					continue;
 				}
 
@@ -1859,7 +1918,6 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 		mmd_print_const(out, "\\def\\");
 		text_buffer_append_printf(out, "%s", m->key);
 		mmd_print_const(out, "{");
-		//text_buffer_append_text(out, m->value, (int)m->value_len);
 		export_metadata_text(out, m->value, (int)m->value_len);
 		mmd_print_const(out, "}\n");
 	}
@@ -1886,6 +1944,10 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w) {
 	pad(out, 1, w);
 
+	if (g_format == FORMAT_BEAMER) {
+		mmd_print_const(out, "\\mode<all>\n");
+	}
+
 	meta * m = read_ctx_get_meta(r, "latexfooter");
 
 	if (m) {
@@ -1901,6 +1963,11 @@ static void export_latex_footer(text_buffer * out, read_ctx * r, write_ctx * w) 
 	w->padding = 1;
 
 	mmd_print_const(out, "\\end{document}");
+
+	if (g_format == FORMAT_BEAMER) {
+		mmd_print_const(out, "\\mode*");
+	}
+
 	w->padding = 0;
 }
 
@@ -1936,11 +2003,15 @@ static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx
 }
 
 
-void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, enum output_format format) {
+	g_format = format;
+
 	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
 	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
 	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
-	precalculate_quotes(headers, sizeof(headers) / sizeof(headers[0]));
+
+	precalculate_quotes(headers[FORMAT_LATEX], sizeof(headers[FORMAT_LATEX]) / sizeof(headers[FORMAT_LATEX][0]));
+	precalculate_quotes(headers[FORMAT_BEAMER], sizeof(headers[FORMAT_BEAMER]) / sizeof(headers[FORMAT_BEAMER][0]));
 
 	write_ctx * w = write_ctx_new();
 
@@ -1949,6 +2020,13 @@ void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx *
 	}
 
 	export_latex_blocks(b, text, out, r, w, options);
+
+	if (g_format == FORMAT_BEAMER) {
+		if (g_in_frame) {
+			pad(out, 1, w);
+			mmd_print_const(out, "\\end{frame}\n\n");
+		}
+	}
 
 	if (!read_ctx_get_meta(r, "bibtex")) {
 		// Include custom bibliography if we are not using BibTeX

@@ -155,13 +155,13 @@ enum output_format {
 	FORMAT_HASH,								//!< Display the AST with hash values for informational/debugging purposes
 	FORMAT_ITMZ,								//!< iThoughts Mind Mapping document
 	FORMAT_LATEX,								//!< LaTeX to generate PDF
+	FORMAT_BEAMER,								//!< Beamer (slide presentations in LaTeX)
 	FORMAT_MMD,									//!< Raw MultiMarkdown source text
 	FORMAT_OPML,								//!< Outline Processor Markup Language for outliners or mind-mapping programs
 	FORMAT_TEXTBUNDLE,							//!< TextBundle is a package file format for macOS/iOS
 	FORMAT_TEXTPACK,							//!< Compressed variant of the TextBundle file format
 
 	FORMAT_DOCX,
-	FORMAT_BEAMER,
 	FORMAT_MEMOIR,
 	FORMAT_FODT,
 	FORMAT_ODT,

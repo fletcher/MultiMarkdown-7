@@ -266,8 +266,12 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 			export_outline(n, source_buffer->text, source_buffer->len, out_buffer, c, options, FORMAT_ITMZ);
 			break;
 
+		case FORMAT_BEAMER:
+			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_BEAMER);
+			break;
+
 		case FORMAT_LATEX:
-			export_latex(n, source_buffer->text, out_buffer, c, options);
+			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_LATEX);
 			break;
 
 		case FORMAT_OPML:
