@@ -1,0 +1,422 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemedurham}[2026/02/23 v1.1.0 Durham Beamer Theme]
+
+\newif\ifDurhamAccessibility
+\newif\ifDurhamPlain
+\newif\ifDurhamInvert
+\DurhamAccessibilityfalse
+\DurhamPlainfalse
+\DurhamInvertfalse
+\DeclareOptionBeamer{accessibility}{\DurhamAccessibilitytrue}
+\DeclareOptionBeamer{plain}{\DurhamPlaintrue}
+\DeclareOptionBeamer{invert}{\DurhamInverttrue}
+\ProcessOptionsBeamer
+\RequirePackage{FiraMono}
+\RequirePackage[sfdefault]{FiraSans}
+\usefonttheme{professionalfonts}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\makeatletter
+\@ifundefined{color@Theme_Color}{\definecolor{Theme_Color}{HTML}{68236D}}{}
+\makeatother
+\usetikzlibrary{calc}
+\RequirePackage{xstring}
+\RequirePackage{etoolbox}
+\RequirePackage{appendixnumberbeamer}
+\mode<presentation>
+\ifDurhamAccessibility
+    \colorlet{Theme_Color}{black}
+    \definecolor{DgrayBar}{gray}{0.15}
+    \setbeamercolor{normal text}{fg=white,bg=black}
+\else
+    \definecolor{DgrayBar}{HTML}{F5F6F8}
+\fi
+\newcommand{\DurhamInactiveTint}{35}
+\colorlet{DurhamInactive}{white!\DurhamInactiveTint}
+\setbeamertemplate{navigation symbols}{}
+\ifDurhamInvert
+\setbeamercolor{background canvas}{bg=black}
+\setbeamercolor{normal text}{fg=white,bg=black}
+\setbeamercolor{structure}{fg=white}
+\else
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=Theme_Color}
+\fi
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{itemize subsubitem}[square]
+\newcommand{\DurhamMaxCharsOutline}{35}
+\newcommand{\DurhamMaxCharsHeadline}{20}
+\newcommand{\DurhamMaxCharsSubOutline}{35}
+\newcommand{\DurhamMaxCharsSubHeadline}{55}
+\makeatletter
+\newcommand{\DurhamTrunc}[2]{%
+  \begingroup
+    \let\hyperlink\@secondoftwo
+    \let\beamer@link\@secondoftwo
+    \let\beamer@linkparent\@secondoftwo
+    \edef\Durham@tmp{\detokenize{#1}}%
+    \IfSubStr{\Durham@tmp}{$}{#1}{%
+      \StrLen{\Durham@tmp}[\Durham@len]%
+      \ifnum\Durham@len>#2\relax
+        \StrLeft{\Durham@tmp}{#2}[\Durham@out]%
+        \Durham@out...\relax
+      \else
+        #1%
+      \fi
+    }%
+  \endgroup
+}
+\makeatother
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{author}{size=\large,series=\bfseries}
+\setbeamerfont{institute}{size=\normalsize}
+\setbeamerfont{date}{size=\small,series=\bfseries}
+\newcommand{\DurhamTitleRule}{%
+  \begin{tikzpicture}
+    \draw[Theme_Color, line width=1.5pt, line cap=round] (0,0) -- (0.9\linewidth,0);
+  \end{tikzpicture}%
+}
+\setbeamertemplate{title page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[white] (current page.south west) rectangle (current page.north east);
+    \fill[Theme_Color]
+      ($(current page.south east) + (0,0)$) --
+      ($(current page.south east) + (-4.5cm,0)$) --
+      ($(current page.south east) + (0,4.5cm)$) -- cycle;
+  \end{tikzpicture}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[
+      anchor=north west,
+      align=left,
+      text width=0.80\paperwidth
+    ] at ($(current page.north west) + (1.2cm,-1.5cm)$) {%
+      {\usebeamerfont{title}\color{Theme_Color}\inserttitle\par}
+      \vspace{0.5em}
+      {\usebeamerfont{subtitle}\color{black}\insertsubtitle\par}
+      \vspace{1.0em}
+      \DurhamTitleRule
+      \vspace{2.0em}
+      {%
+        \begingroup
+          \makeatletter
+          \def\and{\hspace{1.8em}}%
+          \def\beamer@and{\hspace{1.8em}}%
+          \def\hfill{\hskip0pt}%
+          \parbox[t]{\linewidth}{%
+            \raggedright
+            \usebeamerfont{author}\color{black}\insertauthor
+          }%
+          \makeatother
+        \endgroup
+        \par
+      }
+      \vspace{0.9em}
+      {\usebeamerfont{institute}\color{black}\insertinstitute\par}
+    };
+  \end{tikzpicture}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[
+      anchor=south east,
+      text=white,
+      align=right
+    ] at ($(current page.south east) + (-0.2cm,0.3cm)$) {%
+      {\usebeamerfont{date}\insertdate}%
+    };
+  \end{tikzpicture}
+}
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{frame}[plain,noframenumbering]
+    \titlepage
+  \end{frame}
+}
+\makeatother
+\newcommand{\DurhamOutlineLeftX}{0.14\paperwidth}
+\newcommand{\DurhamOutline}[1][Outline]{%
+  \begingroup
+  \ifDurhamInvert\setbeamercolor{normal text}{fg=white,bg=Theme_Color}\fi
+  \setbeamertemplate{background canvas}{%
+    \begin{tikzpicture}[remember picture,overlay]
+      \ifDurhamInvert
+        \fill[Theme_Color] (current page.south west) rectangle (current page.north east);
+      \else
+        \fill[Theme_Color]
+          (current page.north west) rectangle
+          ([yshift=-0.20\paperheight]current page.north east);
+      \fi
+      \node[
+        anchor=west,
+        text=white,
+        align=left,
+        text width=\dimexpr\paperwidth-\DurhamOutlineLeftX-0.08\paperwidth\relax
+      ] at ([xshift=\DurhamOutlineLeftX,yshift=-0.10\paperheight]current page.north west) {%
+        {\usebeamerfont{title}\bfseries #1}%
+      };
+    \end{tikzpicture}%
+  }%
+  \begin{frame}[plain,noframenumbering]
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[
+        anchor=north west,
+        align=left,
+        text width=\dimexpr\paperwidth-\DurhamOutlineLeftX-0.08\paperwidth\relax
+      ] at ([xshift=\DurhamOutlineLeftX,yshift=-0.23\paperheight]current page.north west) {%
+        \begingroup
+          \setlength{\parskip}{0pt}%
+          \tableofcontents
+        \endgroup
+      };
+    \end{tikzpicture}
+  \end{frame}
+  \endgroup
+}%
+\let\makeoutline\DurhamOutline
+\newcommand{\DurhamTOCSecDot}{%
+  \raisebox{0.05ex}{\tikz\fill[Theme_Color] (0,0) circle (0.55ex);}
+}
+\newcommand{\DurhamTOCSubDot}{%
+  \raisebox{0.25ex}{\tikz\fill[black] (0,0) circle (0.38ex);}
+}
+\newcommand{\DurhamTOCSepBetweenSections}{1.3ex}
+\makeatletter
+\newif\ifDurham@TOC@needgap
+\Durham@TOC@needgapfalse
+\setbeamertemplate{section in toc}{%
+  \ifDurham@TOC@needgap
+    \par\addvspace{\DurhamTOCSepBetweenSections}%
+  \fi
+  \global\Durham@TOC@needgaptrue
+  \leavevmode\noindent
+  \DurhamTOCSecDot\hspace{0.75em}%
+  \begingroup\fontsize{12}{14}\bfseries
+    \let\hyperlink\@secondoftwo
+    \let\beamer@link\@secondoftwo
+    \let\beamer@linkparent\@secondoftwo
+    \DurhamTrunc{\inserttocsection}{\DurhamMaxCharsOutline}%
+  \endgroup
+  \par\nobreak
+}
+\setbeamertemplate{subsection in toc}{%
+  \global\Durham@TOC@needgapfalse
+  \leavevmode\noindent\hspace*{1.8em}%
+  \DurhamTOCSubDot\hspace{0.75em}%
+  \begingroup
+    \let\hyperlink\@secondoftwo
+    \let\beamer@link\@secondoftwo
+    \let\beamer@linkparent\@secondoftwo
+    \DurhamTrunc{\inserttocsubsection}{\DurhamMaxCharsSubOutline}%
+  \endgroup
+  \par\nobreak
+  \addvspace{\DurhamTOCSepBetweenSections}%
+}
+\pretocmd{\tableofcontents}{\global\Durham@TOC@needgapfalse}{}{}
+\makeatother
+\setbeamercolor{headline}{fg=white,bg=Theme_Color}
+\ifDurhamAccessibility
+   \setbeamercolor{headline second}{fg=white,bg=DgrayBar}
+\else
+    \setbeamercolor{headline second}{fg=black,bg=DgrayBar}
+\fi
+\setbeamercolor{section in head/foot}{fg=white,bg=Theme_Color}
+\setbeamercolor{section in head/foot shaded}{fg=white,bg=Theme_Color}
+\setbeamerfont{section in head/foot}{size=\fontsize{6.5pt}{7.5pt}\selectfont}
+\setbeamerfont{subsection in head/foot}{size=\fontsize{6pt}{7pt}\selectfont}
+\makeatletter
+\setbeamertemplate{section in head/foot}{%
+  \raisebox{0.35ex}{\tikz[baseline=-0.2ex]\fill[fg] (0,0) circle (0.55ex);}%
+  \hspace{0.6ex}%
+  \usebeamerfont{section in head/foot}%
+  \DurhamTrunc{\insertsectionhead}{\DurhamMaxCharsHeadline}%
+  \hspace{1.2em}%
+}
+\setbeamertemplate{section in head/foot shaded}{%
+  \raisebox{0.35ex}{\tikz[baseline=-0.2ex]\draw[fg, line width=0.18ex] (0,0) circle (0.55ex);}%
+  \hspace{0.6ex}%
+  \usebeamerfont{section in head/foot}%
+  \DurhamTrunc{\insertsectionhead}{\DurhamMaxCharsHeadline}%
+  \hspace{1.2em}%
+}
+\ifDurhamPlain
+\setbeamertemplate{headline}{}
+\else
+\setbeamertemplate{headline}{%
+  \begin{beamercolorbox}[
+    wd=\paperwidth,
+    ht=3ex,dp=2.2ex,
+    leftskip=1.2em,rightskip=1.2em
+  ]{headline}
+    \insertsectionnavigationhorizontal{\dimexpr\paperwidth-2.4em\relax}{}{}%
+  \end{beamercolorbox}%
+  \begingroup
+    \makeatletter
+    \ifx\insertsubsectionhead\@empty
+    \else
+      \begin{beamercolorbox}[
+        wd=\paperwidth,
+        ht=2.8ex,dp=1.0ex,
+        leftskip=1.2em,rightskip=1.2em
+      ]{headline second}
+        \usebeamerfont{subsection in head/foot}\hspace*{1.4em}%
+        \DurhamTrunc{\insertsubsectionhead}{\DurhamMaxCharsSubHeadline}%
+      \end{beamercolorbox}%
+    \fi
+    \makeatother
+  \endgroup
+}
+\fi
+\makeatother
+\newcommand{\DurhamProgressBar}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \def\barx{0.25cm}
+    \def\barystart{0.9cm}
+    \def\baryend{.85\paperheight}
+    \def\barwidth{0.08cm}
+    \def\circleradius{0.09cm}
+    \pgfmathsetmacro{\TotalFrames}{max(\inserttotalframenumber,1)}
+    \pgfmathsetmacro{\barheight}{\baryend - \barystart}
+    \pgfmathsetmacro{\progress}{min(\insertframenumber/\TotalFrames,1)*\barheight}
+    \fill[gray!20,rounded corners=1.2pt]
+      ($(current page.south west)+(\barx,\barystart)$) rectangle
+      ($(current page.south west)+(\barx+\barwidth,\baryend)$);
+    \fill[Theme_Color,rounded corners=1.2pt]
+      ($(current page.south west)+(\barx,\baryend-\progress)$) rectangle
+      ($(current page.south west)+(\barx+\barwidth,\baryend)$);
+    \draw[Theme_Color,line width=0.8pt,fill=white]
+      ($(current page.south west)+(\barx+0.5*\barwidth,\baryend-\progress)$)
+      circle (\circleradius);
+  \end{tikzpicture}%
+}
+\ifDurhamPlain
+\setbeamertemplate{footline}{}
+\else
+\setbeamercolor{footline}{fg=white,bg=Theme_Color}
+\setbeamerfont{footline}{size=\fontsize{6pt}{7pt}\selectfont}
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \begin{beamercolorbox}[
+    wd=\paperwidth,
+    ht=2.5ex,
+    dp=1.1ex,
+    leftskip=1.2em,
+    rightskip=1.2em
+  ]{footline}%
+    \usebeamerfont{footline}%
+    \raisebox{0.25ex}{\insertshorttitle}%
+    \hfill%
+    \raisebox{0.25ex}{\insertshortauthor}%
+  \end{beamercolorbox}%
+  \DurhamProgressBar%
+}
+\fi
+\setbeamerfont{section title}{series=\bfseries}
+\newcommand{\DurhamSectionPage}{%
+  \begin{frame}[plain,noframenumbering]
+    \centering
+    \vfill
+    \ifDurhamInvert
+    {\usebeamerfont{section title}\color{white}\LARGE\DurhamTrunc{\insertsectionhead}{\DurhamMaxCharsOutline}\par}
+    \else
+    {\usebeamerfont{section title}\color{Theme_Color}\LARGE\DurhamTrunc{\insertsectionhead}{\DurhamMaxCharsOutline}\par}
+    \fi
+    \vfill
+    \begin{tikzpicture}[remember picture,overlay]
+    \pgfmathsetlengthmacro{\bary}{4cm}
+    \pgfmathsetlengthmacro{\barxstart}{0.10\paperwidth}
+    \pgfmathsetlengthmacro{\barxend}{0.90\paperwidth}
+    \pgfmathsetlengthmacro{\barheight}{0.08cm}
+    \pgfmathsetlengthmacro{\barwidth}{\barxend-\barxstart}
+    \pgfmathsetmacro{\totalframes}{max(\inserttotalframenumber,1)}
+    \pgfmathsetmacro{\ratio}{min((\value{framenumber})/\totalframes,1)}
+    \pgfmathsetlengthmacro{\progress}{\ratio*\barwidth}
+     \fill[gray!20,rounded corners=1.2pt]
+        ($(current page.south west)+(\barxstart,\bary)$) rectangle
+        ($(current page.south west)+(\barxend,\bary+\barheight)$);
+     \ifDurhamInvert
+    \fill[white,rounded corners=1.2pt]
+     \else
+    \fill[Theme_Color,rounded corners=1.2pt]
+     \fi
+        ($(current page.south west)+(\barxstart,\bary)$) rectangle
+        ($(current page.south west)+(\barxstart+\progress,\bary+\barheight)$);
+    \end{tikzpicture}
+  \end{frame}%
+}
+\AtBeginSection[]{\DurhamSectionPage}
+\setbeamerfont{frametitle}{size=\large\bfseries}
+\setbeamertemplate{frametitle}{%
+  \vspace{0.45em}\noindent{\usebeamerfont{frametitle}\insertframetitle\par}\vspace{0.25em}%
+}
+\makeatletter
+\providecommand{\DurhamThankYouDefaultA}{Thank You!}
+\providecommand{\DurhamThankYouDefaultB}{Questions • Feedback • Collaboration}
+\newcommand{\DurhamThankYou}[2]{%
+  \begin{frame}[plain,noframenumbering]
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[Theme_Color] (current page.south west) rectangle (current page.north east);
+      \fill[white]
+        ($(current page.south east) + (0,0)$) --
+        ($(current page.south east) + (-4.5cm,0)$) --
+        ($(current page.south east) + (0,4.5cm)$) -- cycle;
+    \end{tikzpicture}
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[anchor=center,align=center,text=white]
+        at ($(current page.center)+(0,0.6cm)$) {%
+        {\usebeamerfont{title}\bfseries #1}%
+      };
+      \draw[white,line width=0.7pt,line cap=round]
+        ($(current page.center)+(-0.22\paperwidth,0.15cm)$) --
+        ($(current page.center)+( 0.22\paperwidth,0.15cm)$);
+      \node[anchor=center,align=center,text=white]
+        at ($(current page.center)+(0,-0.35cm)$) {%
+        {\usebeamerfont{subtitle}#2}%
+      };
+    \end{tikzpicture}
+  \end{frame}
+}
+\newcommand{\Durham@makethankyou@default}{%
+  \DurhamThankYou{\DurhamThankYouDefaultA}{\DurhamThankYouDefaultB}%
+}
+\newcommand{\Durham@makethankyou@brace}[2]{%
+  \DurhamThankYou{#1}{#2}%
+}
+\newcommand{\Durham@makethankyou@opt}[1]{%
+  \@ifnextchar[{\Durham@makethankyou@optB{#1}}{%
+    \DurhamThankYou{#1}{\DurhamThankYouDefaultB}%
+  }%
+}
+\newcommand{\Durham@makethankyou@optB}[2]{%
+  \DurhamThankYou{#1}{#2}%
+}
+\providecommand{\makethankyou}{}
+\renewcommand{\makethankyou}{%
+  \@ifnextchar[{\Durham@makethankyou@opt}{%
+    \@ifnextchar\bgroup{\Durham@makethankyou@brace}{%
+      \Durham@makethankyou@default
+    }%
+  }%
+}
+\newcommand{\Durhamthankyou}{\Durham@makethankyou@default}
+\makeatother
+\makeatletter
+\setbeamertemplate{bibliography title}{%
+	\insertsectionhead
+}%
+\providecommand{\makereferences}{}%
+\renewcommand{\makereferences}{%
+  \@ifnextchar[{\Durham@makereferences@opt}{\Durham@makereferences@noopt}%
+}
+\newcommand{\Durham@makereferences@noopt}[1]{%
+  \begin{frame}[plain,noframenumbering,allowframebreaks]{References}%
+    \bibliography{#1}%
+  \end{frame}%
+}
+\newcommand{\Durham@makereferences@opt}[2]{%
+  \begin{frame}[plain,noframenumbering,allowframebreaks]{#1}%
+    \bibliography{#2}%
+  \end{frame}%
+}
+\makeatother
+%-------------------------------------------------%

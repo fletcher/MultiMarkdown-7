@@ -1,0 +1,13 @@
+<iThoughts>
+	<topic uuid="b030859f-b9c5-417b-98e5-fbe5572e742b" text="Outline Test Document">
+		<topic uuid="b6c3784e-c7e4-4fa0-8daf-cdeecd057712" text="&gt;&gt;Preamble&lt;&lt;" note="&#10;&#10;This is a *preamble*, before the first header.&#10;&#10;"/>
+		<topic uuid="e3b4c64c-2bba-4a80-8a6f-a87c69039ff1" text="Heading 1 [h1]" note="&#10;h1 content.&#10;&#10;"/>
+		<topic uuid="0afba79c-466d-4fef-8e69-1c6d2815fbc9" text="Setext Header&#10;With 2 Lines" note="&#10;Setext content.&#10;&#10;">
+			<topic uuid="4911a85b-e7b1-46bb-bba5-deab4dab499a" text="Setext header&#10;level 2" note="&#10;Final section content.&#10;"/>
+		</topic>
+		<topic uuid="8719a66c-c31f-4737-8d77-f30996d0e7fd" text="&gt;&gt;Metadata&lt;&lt;">
+			<topic uuid="153d4b76-3674-4c33-9e31-d6d0e06f2e1a" text="title" note="Outline Test Document"/>
+			<topic uuid="9b0b3f2c-d461-4291-acfc-43f3f7fe92d9" text="longmetadata" note="This is some long metadata."/>
+		</topic>
+	</topic>
+</iThoughts>
