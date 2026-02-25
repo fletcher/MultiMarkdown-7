@@ -203,7 +203,11 @@ static void embed_input_file(text_buffer * out, const char * fname) {
 			text_buffer_free(content, 1);
 		}
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		_pclose(fp);
+#else
 		pclose(fp);
+#endif
 	}
 }
 
