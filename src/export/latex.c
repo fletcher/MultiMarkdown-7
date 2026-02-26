@@ -1473,6 +1473,19 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 		case BLOCK_SETEXT_2:
 			pad(out, 2, w);
 
+			if (g_format == FORMAT_BEAMER) {
+				if (g_in_frame) {
+					if (b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX) < 5) {
+						mmd_print_const(out, "\\end{frame}\n\n");
+						g_in_frame = 0;
+					}
+				}
+
+				if (b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX) == 3) {
+					g_in_frame = 1;
+				}
+			}
+
 			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
 									headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
 

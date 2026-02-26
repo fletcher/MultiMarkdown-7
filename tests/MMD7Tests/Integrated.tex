@@ -1,84 +1,316 @@
-\input{mmd7-article-leader}
-\def\mytitle{Integrated}
+\def\mytitle{Integrated Test}
+\def\mysubtitle{MultiMarkdown test suite}
+\def\myauthor{Fletcher T. Penney}
 \longnewglossaryentry{term}{name=term}{A term to be defined.}
 \newacronym{MMD}{MMD}{MultiMarkdown}
-\input{mmd7-article-begin}
 
-This file is a designed as a single test that incorporates most of the
-\emph{commonly} used MultiMarkdown features. This allows a single test file to
+This file is a designed as a single test that incorporates most of
+the \emph{commonly} used MultiMarkdown features. This allows a single test file to
 identify common structures that are not supported yet -- particularly useful
 when developing a new output format.
 
-\part{Basic Blocks}
-\label{basicblocks}
+\part{Core Markdown Features}
+\label{coremarkdownfeatures}
 
-paragraph
+\chapter{Basic Block Level Elements}
+\label{basicblocklevelelements}
 
-\begin{itemize}
-\item list
-\item items
-\end{itemize}
+\section{Paragraphs}
+\label{paragraphs}
+
+Normal paragraphs consist of plain text.
+
+They are separated by empty lines.
+
+Long lines of text will wrap naturally as needed to ensure that they fit in the available space. This will vary by format, of course.
+
+By including two spaces at the end of a line\\
+a linebreak is inserted.
+
+MultiMarkdown adds the ability to use\\
+an ``escaped newline'' for this as well.
+
+\section{Headers}
+\label{headers}
+
+ATX headers and Setext headers are used in this document
 
 \begin{verbatim}
-fenced
-code
+## ATX Header 2 ##
+
+Setext Header 1
+===============
+
+Setext Header 2
+---------------
 \end{verbatim}
 
-\begin{verbatim}
-indented
-code
-\end{verbatim}
+\section{Blockquotes}
+\label{blockquotes}
+
+This is a normal paragraph.
 
 \begin{quote}
-blockquote
+This is a blockquote.
+
+With two paragraphs.
+
+\begin{quote}
+And a nested blockquote.
+(Which doesn't work well in Beamer.)
+\end{quote}
 \end{quote}
 
-\texttt{code span}
+\section{Unordered Lists}
+\label{unorderedlists}
 
-\emph{emph} and \textbf{strong} and \textbf{\emph{both}}
+Lists can be ``tight'' or ``loose''.
 
-\emph{emph} and \textbf{strong} and \textbf{\emph{both}}
+Unordered/tight:
 
-\chapter{Escapes}
-\label{escaped}
+\begin{itemize}
+\item foo
+\item bar
+\item bat
+\end{itemize}
+
+Unordered/loose:
+
+\begin{itemize}
+\item foo
+\item bar
+\item bat
+\end{itemize}
+
+\section{Ordered Lists}
+\label{orderedlists}
+
+Lists can be ``tight'' or ``loose''.
+
+Ordered/tight:
 
 \begin{enumerate}
-\item \$
-\item \#
-\item [
+\item foo
+\item bar
+\item bat
 \end{enumerate}
 
-\part{Footnotes}
+Ordered/loose:
+
+\begin{enumerate}
+\item foo
+\item bar
+\item bat
+\end{enumerate}
+
+\section{Complex Lists}
+\label{complexlists}
+
+Lists can contain other elements
+
+\begin{itemize}
+\item A list item.
+
+With a second paragraph.
+\item An item.
+
+\begin{enumerate}
+\item With
+\item a
+\item sublist
+\end{enumerate}
+\end{itemize}
+
+\section{Code Blocks}
+\label{codeblocks}
+
+Code blocks are indented with 4 spaces or 1 tab.
+
+\begin{verbatim}
+This is a code block.
+
+As is this.
+\end{verbatim}
+
+\section{Horizontal Rules}
+\label{horizontalrules}
+
+You can include horizontal rules
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+between paragraphs and other elements.
+
+\section{HTML Blocks}
+\label{htmlblocks}
+
+HTML blocks can be included, but will work differently when not exporting to HTML, of course.
+
+\emph{bar}
+
+\chapter{Basic Span Level Elements}
+\label{basicspanlevelelements}
+
+\section{Links}
+\label{links}
+
+Links can be \href{http://example.com/inline}{inline}\footnote{\href{http://example.com/inline}{http://example.com/inline}}, or \href{http://example.com/reference}{reference}\footnote{\href{http://example.com/reference}{http://example.com/reference}}.
+
+You can also use automatic links \href{http://example.com/auto}{http://example.com/auto}
+and email \href{mailto:auto@example.com}{auto@example.com}.
+
+\section{Emphasis}
+\label{emphasis}
+
+Text can be \emph{emphasized}, \textbf{strong}, or \textbf{\emph{both}}.
+
+\section{Code}
+\label{code}
+
+You can include \texttt{code()} in the middle of other text.
+
+\section{Images}
+\label{images}
+
+Images are similar to links, but with a leading \texttt{!}.
+
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{test-image.png}~
+
+\section{Backslash Escapes}
+\label{backslashescapes}
+
+*This is not emphasized.*
+
+[This is not a link][].
+
+* This is not a list item
+
+\section{Inline HTML}
+\label{inlinehtml}
+
+HTML can be included within other blocks.
+
+(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)
+
+This is text with \emph{bar} HTML.
+
+\part{MultiMarkdown Features}
+\label{multimarkdownfeatures}
+
+\chapter{Extended Block Level Elements}
+\label{extendedblocklevelelements}
+
+\section{Metadata}
+\label{metadata}
+
+Metadata can be included at the top of a document.
+
+\begin{verbatim}
+Title:		Integrated Test  
+Subtitle:	MultiMarkdown test suite  
+Author:		Fletcher T. Penney  
+\end{verbatim}
+
+It can be referenced with \texttt{[\%title]} to insert the meta value - Integrated Test.
+
+\section{Header Cross-References}
+\label{headercross-references}
+
+MultiMarkdown automatically generates anchors for headers, to allow for navigation,
+such as jumping back to the previous Metadata (\autoref{metadata}) section.
+
+\section{Table of Contents}
+\label{tableofcontents}
+
+MultiMarkdown can generate a TOC from the header structure.
+
+\tableofcontents
+
+\section{Fenced Code Blocks}
+\label{fencedcodeblocks}
+
+\begin{verbatim}
+Fenced code blocks are easier in some circumstances.
+\end{verbatim}
+
+\section{Definition Lists}
+\label{definitionlists}
+
+\begin{description}
+\item[Term 1]
+\item[Term 2]
+Definition 1
+
+Definition 2
+\end{description}
+
+\section{Tables}
+\label{tables}
+
+\begin{table}[htbp]
+\begin{minipage}{\linewidth}
+\setlength{\tymax}{0.5\linewidth}
+\centering
+\small
+\begin{tabulary}{\textwidth}{@{}LC@{}} \toprule
+ foo & bar \\
+\midrule
+
+ \emph{foo} & \emph{bar} \\
+\multicolumn{2}{c}{ \textbf{foo bar} }\\
+\bottomrule
+
+\end{tabulary}
+\end{minipage}
+\end{table}
+
+\section{Figures}
+\label{figures}
+
+An image in a paragraph by itself becomes a figure.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=40pt,keepaspectratio,height=0.75\textheight]{test-image.png}
+\caption[Image title]{image2}
+\label{image2}
+\end{figure}
+
+\chapter{Extended Span Level Elements}
+\label{extendedspanlevelelements}
+
+\section{Footnotes}
 \label{footnotes}
 
 Foo.\footnote{This is an inline footnote}
 
 Bar.\footnote{And a reference footnote.}
 
-Cite.~\citep{inlinecitation}
+\section{Citations}
+\label{citations}
 
-Cite.~\citep{foo}
+An inline citation.~\citep{inlinecitation}
 
-\part{Links and Images}
-\label{linksandimages}
+A reference citation.~\citep{foo}
 
-\href{http://foo.net/}{link}\footnote{\href{http://foo.net/}{http://foo.net/}} and \href{http://bar.net}{link}\footnote{\href{http://bar.net}{http://bar.net}}
+\section{Glossaries}
+\label{glossaries}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=40pt,height=400pt]{http://foo.bar/}
-\caption[title]{test}
-\end{figure}
+\gls{term}
 
-Math (\autoref{math})
+\section{Abbreviations}
+\label{abbreviations}
 
-foo (\autoref{math})
+\gls{MMD} and \gls{MMD}.
 
-bar (\autoref{bar})
+\section{Image attributes}
+\label{imageattributes}
 
-bar (\autoref{bar})
+Images can have attributes.
 
-\part{Math}
+\includegraphics[width=40pt,keepaspectratio,height=0.75\textheight]{test-image.png}~
+
+\section{Math}
 \label{math}
 
 foo \({e}^{i\pi }+1=0\) bar
@@ -91,49 +323,23 @@ foo ${e}^{i\pi }+1=0$, bar
 
 $${x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}$$
 
-\part{Smart Quotes}
+\section{Smart Quotes}
 \label{smartquotes}
 
 ``foo'' and `bar' -- with --- dashes{\ldots}
 
-\part{CriticMarkup}
+\section{CriticMarkup}
 \label{criticmarkup}
 
-\underline{foo}
+\underline{Insert}
 
-\sout{bar}
+\sout{Delete}
 
-\sout{foo}\underline{bar}
+\sout{Old}\underline{New}
 
-\cmnote{foo}
+\cmnote{Comment}
 
-\hl{bar}
-
-\part{Definition Lists}
-\label{definitionlists}
-
-\begin{description}
-\item[foo]
-\item[bar]
-*foo bar
-
-baz bat*
-\end{description}
-
-\part{Horizontal Rules}
-\label{horizontalrules}
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-\part{Glossary}
-\label{glossary}
-
-\gls{term}
-
-\part{Abbreviations}
-\label{abbreviations}
-
-\gls{MMD}
+\hl{Highlighted}
 
 \begin{thebibliography}{0}
 \bibitem{inlinecitation}
@@ -143,5 +349,4 @@ Inline Citation
 bar
 
 \end{thebibliography}
-\input{mmd7-article-footer}
 \end{document}

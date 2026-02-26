@@ -1,0 +1,48 @@
+%
+%	Configure information from metadata for use in title
+%
+
+\ifx\latexauthor\undefined
+\else
+	\def\myauthor{\latexauthor}
+\fi
+
+\ifx\subtitle\undefined
+\else
+%	\addtodef{\mytitle}{}{ \\ \subtitle}
+	\expandafter\def\expandafter\mytitle\expandafter{\mytitle \\ \subtitle}
+\fi
+
+\ifx\affiliation\undefined
+\else
+%	\addtodef{\myauthor}{}{ \\ \affiliation}
+	\expandafter\def\expandafter\myauthor\expandafter{\myauthor \\ \affiliation}
+\fi
+
+\ifx\address\undefined
+\else
+%	\addtodef{\myauthor}{}{ \\ \address}
+	\expandafter\def\expandafter\myauthor\expandafter{\myauthor \\ \address}
+\fi
+
+\ifx\phone\undefined
+\else
+%	\addtodef{\myauthor}{}{ \\ \phone}
+	\expandafter\def\expandafter\myauthor\expandafter{\myauthor \\ \phone}
+\fi
+
+\ifx\email\undefined
+\else
+%	\addtodef{\myauthor}{}{ \\ \email}
+	\expandafter\def\expandafter\myauthor\expandafter{\myauthor \\ \email}
+\fi
+
+\ifx\event\undefined
+\else
+	\date[\mydate]{\today}
+\fi
+
+\ifx\latextitle\undefined
+	\def\latextitle{\mytitle}
+\else
+\fi

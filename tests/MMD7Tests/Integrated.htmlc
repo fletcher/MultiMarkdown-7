@@ -1,46 +1,236 @@
-<p>title: Integrated
-latexconfig: article</p>
+<p>title: Integrated Test<br />
+subtitle: MultiMarkdown test suite<br />
+author: Fletcher T. Penney</p>
 
-<p>This file is a designed as a single test that incorporates most of the
-<em>commonly</em> used MultiMarkdown features. This allows a single test file to
+<p>This file is a designed as a single test that incorporates most of
+the <em>commonly</em> used MultiMarkdown features. This allows a single test file to
 identify common structures that are not supported yet -- particularly useful
 when developing a new output format.</p>
 
-<h1>Basic Blocks</h1>
+<h1>Core Markdown Features</h1>
 
-<p>paragraph</p>
+<h2>Basic Block Level Elements</h2>
 
-<ul>
-<li>list</li>
-<li>items</li>
-</ul>
+<h3>Paragraphs</h3>
 
-<p><code>fenced
-code</code></p>
+<p>Normal paragraphs consist of plain text.</p>
 
-<pre><code>indented
-code
+<p>They are separated by empty lines.</p>
+
+<p>Long lines of text will wrap naturally as needed to ensure that they fit in the available space. This will vary by format, of course.</p>
+
+<p>By including two spaces at the end of a line<br />
+a linebreak is inserted.</p>
+
+<p>MultiMarkdown adds the ability to use<br />
+an &quot;escaped newline&quot; for this as well.</p>
+
+<h3>Headers</h3>
+
+<p>ATX headers and Setext headers are used in this document</p>
+
+<pre><code>## ATX Header 2 ##
+
+Setext Header 1
+===============
+
+Setext Header 2
+---------------
 </code></pre>
 
+<h3>Blockquotes</h3>
+
+<p>This is a normal paragraph.</p>
+
 <blockquote>
-<p>blockquote</p>
+<p>This is a blockquote.</p>
+
+<p>With two paragraphs.</p>
+
+<blockquote>
+<p>And a nested blockquote.
+(Which doesn't work well in Beamer.)</p>
+</blockquote>
 </blockquote>
 
-<p><code>code span</code></p>
+<h3>Unordered Lists</h3>
 
-<p><em>emph</em> and <strong>strong</strong> and <strong><em>both</em></strong></p>
+<p>Lists can be &quot;tight&quot; or &quot;loose&quot;.</p>
 
-<p><em>emph</em> and <strong>strong</strong> and <strong><em>both</em></strong></p>
+<p>Unordered/tight:</p>
 
-<h2>Escapes [escaped]</h2>
+<ul>
+<li>foo</li>
+<li>bar</li>
+<li>bat</li>
+</ul>
+
+<p>Unordered/loose:</p>
+
+<ul>
+<li><p>foo</p></li>
+<li><p>bar</p></li>
+<li><p>bat</p></li>
+</ul>
+
+<h3>Ordered Lists</h3>
+
+<p>Lists can be &quot;tight&quot; or &quot;loose&quot;.</p>
+
+<p>Ordered/tight:</p>
 
 <ol>
-<li><p>$</p></li>
-<li><p>#</p></li>
-<li><p>[</p></li>
+<li>foo</li>
+<li>bar</li>
+<li>bat</li>
 </ol>
 
-<h1>Footnotes</h1>
+<p>Ordered/loose:</p>
+
+<ol>
+<li><p>foo</p></li>
+<li><p>bar</p></li>
+<li><p>bat</p></li>
+</ol>
+
+<h3>Complex Lists</h3>
+
+<p>Lists can contain other elements</p>
+
+<ul>
+<li><p>A list item.</p>
+
+<p>With a second paragraph.</p></li>
+<li><p>An item.</p>
+
+<ol>
+<li>With</li>
+<li>a</li>
+<li>sublist</li>
+</ol></li>
+</ul>
+
+<h3>Code Blocks</h3>
+
+<p>Code blocks are indented with 4 spaces or 1 tab.</p>
+
+<pre><code>This is a code block.
+
+As is this.
+</code></pre>
+
+<h3>Horizontal Rules</h3>
+
+<p>You can include horizontal rules</p>
+
+<hr />
+
+<p>between paragraphs and other elements.</p>
+
+<h3>HTML Blocks</h3>
+
+<p>HTML blocks can be included, but will work differently when not exporting to HTML, of course.</p>
+
+<div>*foo*</div>
+
+<div>
+
+<p><em>bar</em></p>
+
+</div>
+
+<h2>Basic Span Level Elements</h2>
+
+<h3>Links</h3>
+
+<p>Links can be <a href="http://example.com/inline" title="Inline Link">inline</a>, or <a href="http://example.com/reference" title="Reference Link">reference</a>.</p>
+
+<p>You can also use automatic links <a href="http://example.com/auto">http://example.com/auto</a>
+and email <a href="mailto:auto@example.com">auto@example.com</a>.</p>
+
+<h3>Emphasis</h3>
+
+<p>Text can be <em>emphasized</em>, <strong>strong</strong>, or <strong><em>both</em></strong>.</p>
+
+<h3>Code</h3>
+
+<p>You can include <code>code()</code> in the middle of other text.</p>
+
+<h3>Images</h3>
+
+<p>Images are similar to links, but with a leading <code>!</code>.</p>
+
+<p><img src="test-image.png" alt="image" title="Image title" />\ </p>
+
+<h3>Backslash Escapes</h3>
+
+<p>*This is not emphasized.*</p>
+
+<p>[This is not a link][].</p>
+
+<p>* This is not a list item</p>
+
+<h3>Inline HTML</h3>
+
+<p>HTML can be included within other blocks.</p>
+
+<p>(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)</p>
+
+<p>This is text with <foo><em>bar</em></foo> HTML.</p>
+
+<h1>MultiMarkdown Features</h1>
+
+<h2>Extended Block Level Elements</h2>
+
+<h3>Metadata</h3>
+
+<p>Metadata can be included at the top of a document.</p>
+
+<pre><code>Title:		Integrated Test  
+Subtitle:	MultiMarkdown test suite  
+Author:		Fletcher T. Penney  
+</code></pre>
+
+<p>It can be referenced with <code>[%title]</code> to insert the meta value - [%title].</p>
+
+<h3>Header Cross-References</h3>
+
+<p>MultiMarkdown automatically generates anchors for headers, to allow for navigation,
+such as jumping back to the previous [Metadata][] section.</p>
+
+<h3>Table of Contents</h3>
+
+<p>MultiMarkdown can generate a TOC from the header structure.</p>
+
+<p>{{TOC}}</p>
+
+<h3>Fenced Code Blocks</h3>
+
+<p><code>Fenced code blocks are easier in some circumstances.</code></p>
+
+<h3>Definition Lists</h3>
+
+<p>Term 1
+Term 2
+: Definition 1
+: Definition 2</p>
+
+<h3>Tables</h3>
+
+<p>| foo | bar |<br />
+-----+ | :--:+ |<br />
+| <em>foo</em> | <em>bar</em> |<br />
+| <strong>foo bar</strong> ||</p>
+
+<h3>Figures</h3>
+
+<p>An image in a paragraph by itself becomes a figure.</p>
+
+<p>![image2]</p>
+
+<h2>Extended Span Level Elements</h2>
+
+<h3>Footnotes</h3>
 
 <p>Foo.[^This is an inline footnote]</p>
 
@@ -48,27 +238,31 @@ code
 
 <p>[^foot]: And a reference footnote.</p>
 
-<p>Cite.[#Inline Citation]</p>
+<h3>Citations</h3>
 
-<p>Cite.<a href="bar">#foo</a></p>
+<p>An inline citation.[#Inline Citation]</p>
 
-<h1>Links and Images</h1>
+<p>A reference citation.<a href="bar">#foo</a></p>
 
-<p><a href="http://foo.net/">link</a> and [link]</p>
+<h3>Glossaries</h3>
 
-<p>[link]: http://bar.net &quot;title&quot; class=&quot;custom&quot;</p>
+<p>[?term]</p>
 
-<p>![test](http://foo.bar/ &quot;title&quot; width=&quot;40px&quot; height=400px)</p>
+<p>[?term]: A term to be defined.</p>
 
-<p>[Math]</p>
+<h3>Abbreviations</h3>
 
-<p>[foo][math]</p>
+<p><a href="MultiMarkdown">&gt;MMD</a> and <a href="MultiMarkdown">&gt;MMD</a>.</p>
 
-<p><a href="#bar">bar</a></p>
+<h3>Image attributes</h3>
 
-<p><a href="#bar">bar</a></p>
+<p>Images can have attributes.</p>
 
-<h1>Math</h1>
+<p>![image2]\ </p>
+
+<p>[image2]: test-image.png &quot;Image title&quot; width=40px</p>
+
+<h3>Math</h3>
 
 <p>foo \\({e}^{i\pi }+1=0\\) bar</p>
 
@@ -80,39 +274,18 @@ code
 
 <p>$${x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}$$</p>
 
-<h1>Smart Quotes</h1>
+<h3>Smart Quotes</h3>
 
 <p>&quot;foo&quot; and 'bar' -- with --- dashes...</p>
 
-<h1>CriticMarkup</h1>
+<h3>CriticMarkup</h3>
 
-<p>{++foo++}</p>
+<p>{++Insert++}</p>
 
-<p>{--bar--}</p>
+<p>{--Delete--}</p>
 
-<p>{~~foo~&gt;bar~~}</p>
+<p>{~~Old~&gt;New~~}</p>
 
-<p>{&gt;&gt;foo&lt;&lt;}</p>
+<p>{&gt;&gt;Comment&lt;&lt;}</p>
 
-<p>{==bar==}</p>
-
-<h1>Definition Lists</h1>
-
-<p>foo
-bar
-: <em>foo bar
-: baz bat</em></p>
-
-<h1>Horizontal Rules</h1>
-
-<hr />
-
-<h1>Glossary</h1>
-
-<p>[?term]</p>
-
-<p>[?term]: A term to be defined.</p>
-
-<h1>Abbreviations</h1>
-
-<p><a href="MultiMarkdown">&gt;MMD</a></p>
+<p>{==Highlighted==}</p>

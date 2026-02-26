@@ -1,10 +1,9 @@
 %
-%	Get ready for the actual document
+%	For setup that must follow metadata included in the source MultiMarkdown document
 %
 
 
 % Use default MMD metadata for beamer equivalents
-
 \ifx\mysubtitle\undefined
 \else
 	\subtitle{\mysubtitle}
@@ -40,6 +39,8 @@
 % Include space between paragraphs
 \addtolength{\parskip}{\baselineskip}
 
+
+% Specify theme within MMD Metadata
 \ifx\theme\undefined
 \else
 	\usetheme{\theme}

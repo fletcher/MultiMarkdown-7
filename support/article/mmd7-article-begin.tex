@@ -1,0 +1,44 @@
+%
+%	For setup that must follow metadata included in the source MultiMarkdown document
+%
+
+% Configure hyperref now that we have metadata
+\hypersetup{
+	plainpages=false,
+	pdfpagelabels,
+	pdftitle={\mytitle},
+	pagebackref,
+	pdfauthor={\myauthor},
+	pdfkeywords={\mykeywords}	
+}
+
+% Share core configuration for other memoir-based configurations
+\input{mmd7-title}
+
+
+\begin{document}
+
+\VerbatimFootnotes
+
+\title{\latextitle}
+\author{\myauthor}
+
+\ifx\mydate\undefined
+\else
+	\date{\mydate}
+\fi
+
+\mainmatter
+\maketitle
+
+
+% Copyright
+\setlength{\parindent}{0pt}
+
+\ifx\mycopyright\undefined
+\else
+	\textcopyright{} \mycopyright
+\fi
+
+\setlength{\parindent}{1em}
+
