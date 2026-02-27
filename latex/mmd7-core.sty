@@ -1,0 +1,161 @@
+%
+%	Core LaTeX package for MultiMarkdown 7 feature support
+%
+
+
+% Useful "variables"
+
+%	Defined by MultiMarkdown metadata (or by LaTeX code):
+%	\mytitle
+%	\myauthor
+%	\mydate
+%	\mykeywords
+%	\subtitle
+%	\affiliation
+%	\showtoc		% Insert Table of Contents at beginning of document if defined
+
+
+\ProvidesPackage{mmd7-core}
+
+
+% Base packages to use
+\usepackage{hyperref}				% Must preceed glossaries
+
+\@ifclassloaded{memoir}{
+	\usepackage{memhfixc}				% Fix error with hyperref and memoir class
+}{}
+
+\usepackage[acronym]{glossaries}    % Support glossary entries
+\usepackage{fancyvrb}				% Allow \verbatim et al. in footnotes
+\usepackage{graphicx}				% Enable images
+\usepackage{booktabs}				% Better tables
+\usepackage{tabulary}				% Support longer table cells
+\usepackage[T1]{fontenc}			% Use T1 font encoding for accented characters (e.g. <> in verbatim)
+\usepackage[utf8]{inputenc}			% For UTF-8 support
+\usepackage{xcolor}					% Allow for color (annotations)
+\usepackage{listings}				% Allow for source code highlighting
+
+% NOTE: Loading natbib with these options silences warnings for basic MMD citations
+% If you are using BibTeX, you'll need to change this
+\@ifclassloaded{tufte-handout}{}{
+	\@ifclassloaded{tufte-book}{}{
+		\usepackage[sort&compress,numbers]{natbib}	% Better bibliography support
+	}
+}
+
+\usepackage[normalem]{ulem}			% Support strikethrough
+
+
+% Packages to support CriticMarkup
+\usepackage{soul}
+\usepackage{xargs}
+\usepackage{todonotes}
+\@ifclassloaded{beamer}{
+	\presetkeys{todonotes}{inline}{}    % We need inline notes in Beamer
+}{}
+\newcommandx{\cmnote}[2][1=]{\linespread{1.0}\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+
+% Use \ul instead of \underline since we are using soul
+\let\underline\ul
+
+
+% Configure glossary
+\glstoctrue	% Show Glossaries in the TOC
+\makeglossaries
+\makeindex
+
+
+% Fill in missing metadata
+\ifx\mytitle\undefined
+	\def\mytitle{Title}
+\fi
+
+\ifx\myauthor\undefined
+	\def\myauthor{Author}
+\fi
+
+\ifx\mydate\undefined
+	\def\mydate{\today}
+\else
+	\date{\mydate}
+\fi
+
+\ifx\mykeywords\undefined
+	\def\mykeywords{}
+\fi
+
+
+% Use basic metadata
+\title{\mytitle}
+\author{\myauthor}
+
+
+\@ifclassloaded{beamer}{
+	% Special commands for beamer
+	\ifx\mysubtitle\undefined
+	\else
+		\subtitle{\mysubtitle}
+	\fi
+
+	\ifx\affiliation\undefined
+	\else
+		\institute{\affiliation}
+	\fi
+
+	% Start with a title
+	\AtBeginDocument{
+		\maketitle
+
+		% Include outline slide at the beginning of the deck
+		\ifx\showtoc\undefined
+		\else
+			\makeoutline
+		\fi
+	}
+
+	% Show an outline for each part
+	\AtBeginPart {
+		\begin{frame}
+			\partpage
+		\end{frame}
+
+		\begin{frame}
+			\frametitle{Outline}
+			\tableofcontents
+		\end{frame}
+	}
+
+	% For each section, show an outline highlighting where we are
+	\AtBeginSection[] {
+		\begin{frame}
+			\frametitle{Outline}
+			\tableofcontents[currentsection,currentsubsection]
+		\end{frame}
+	}
+
+	% Include space between paragraphs
+	\addtolength{\parskip}{\baselineskip}
+}{
+	% Special commands for other classes besides Beamer
+
+	% Use document metadata to configure hyperref (Beamer already does this)
+	\hypersetup{
+		plainpages=false,
+		pdfpagelabels,
+		pdftitle={\mytitle},
+		pagebackref,
+		pdfauthor={\myauthor},
+		pdfkeywords={\mykeywords}	
+	}
+
+	% Start with a title
+	\AtBeginDocument{
+		\maketitle
+
+		% Show table of contents at the beginning of the document
+		\ifx\showtoc\undefined
+		\else
+			\tableofcontents
+		\fi
+	}
+}

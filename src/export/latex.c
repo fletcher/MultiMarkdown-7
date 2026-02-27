@@ -1840,6 +1840,18 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 			} else {
 				text_buffer_append_printf(out, "\\input{mmd7-%s-leader}\n", m->value);
 			}
+		} else {
+			m = read_ctx_get_meta(r, "latexclass");
+
+			if (m) {
+				meta * o = read_ctx_get_meta(r, "latexclassoptions");
+
+				if (o) {
+					text_buffer_append_printf(out, "\\documentclass[%s]{%s}\n", o->value, m->value);
+				} else {
+					text_buffer_append_printf(out, "\\documentclass{%s}\n", m->value);
+				}
+			}
 		}
 	}
 
@@ -1858,6 +1870,7 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 				break;
 
 			case 'b':
+
 				if (strcmp(m->key, "baseheaderlevel") == 0) {
 					continue;
 				} else if (strcmp(m->key, "bibtex") == 0) {
@@ -1981,6 +1994,8 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 				} else if (strcmp(m->key, "xhtmlheaderlevel") == 0) {
 					continue;
 				}
+
+				break;
 		}
 
 		// Any other metadata comes here
@@ -1989,6 +2004,13 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 		mmd_print_const(out, "{");
 		export_metadata_text(out, m->value, (int)m->value_len);
 		mmd_print_const(out, "}\n");
+	}
+
+	// Include core package, if specified
+	m = read_ctx_get_meta(r, "latexpackage");
+
+	if (m) {
+		text_buffer_append_printf(out, "\\usepackage{%s}\n", m->value);
 	}
 
 	// Define glossary/acronym entries in preamble
@@ -2013,6 +2035,8 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 			} else {
 				text_buffer_append_printf(out, "\\input{mmd7-%s-begin}\n", m->value);
 			}
+		} else {
+			mmd_print_const(out, "\\begin{document}\n");
 		}
 	}
 

@@ -1,0 +1,28 @@
+%
+%	Beamer LaTeX package for MultiMarkdown 7
+%
+
+
+% Useful "variables"
+
+%	Defined by MultiMarkdown metadata (or by LaTeX code):
+%	\mytitle
+%	\myauthor
+%	\mydate
+%	\mykeywords
+%	\subtitle
+%	\affiliation
+%	\showtoc		% Insert Table of Contents at beginning of document if defined
+%	\theme			% Use a Beamer theme
+
+\ProvidesPackage{mmd7-beamer}
+
+% Builds on the MultiMarkdown 7 core package
+\usepackage{mmd7-core}
+
+
+% Use chosen theme
+\ifx\theme\undefined
+\else
+	\usetheme{\theme}
+\fi
