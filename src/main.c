@@ -396,7 +396,7 @@ int main(int argc, char * const argv[]) {
 		// Error
 		fprintf(stderr, "\nMultiMarkdown %s -- %s\n\n", LIBMULTIMARKDOWN7_VERSION, LIBMULTIMARKDOWN7_COPYRIGHT);
 
-		fprintf(stderr, "usage: %s [--help] {ast|batch|hash|meta|parse} [-b] [-h] [-r] [-s] [-e META_KEY] [-l LANGUAGE] [-t FORMAT]\n", argv[0]);
+		fprintf(stderr, "usage: %s [--help] {ast|batch|hash|meta|parse} [options] [Input file names]\n", argv[0]);
 
 		fprintf(stderr, "\nActions:\n");
 		fprintf(stderr, "\tast\t\tDisplay abstract syntax tree for the document\n");
@@ -422,7 +422,12 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
 		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd|latex|docx|epub|itmz|opml|textbundle|textpack|ast|hash]\n");
 
-		fprintf(stderr, "\nuthash -- Copyright (c) 2003-2022, Troy D. Hanson  https://troydhanson.github.io/uthash/  All rights reserved.\n\n");
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		fprintf(stderr, "\ngetopt\t-- Copyright (c) 2002 Todd C. Miller  All rights reserved.");
+#endif
+		fprintf(stderr, "\nminiz\tCopyright 2013-2014 RAD Game Tools and Valve Software\n\tCopyright 2010-2014 Rich Geldreich and Tenacious Software LLC  All rights reserved.\n");
+		fprintf(stderr, "uthash\tCopyright (c) 2003-2022, Troy D. Hanson  All rights reserved.\n");
+		fprintf(stderr, "yxml\tCopyright (c) 2013-2014 Yoran Heling  All rights reserved.\n");
 	} else {
 		// Proceed
 		switch (action) {
