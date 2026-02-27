@@ -114,7 +114,7 @@ int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 		}
 
 		// Does it look like XML?
-		if (strncmp("<iThoughts>", extracted->text, 11)) {
+		if (strncmp("<iThoughts", extracted->text, 10)) {
 			goto cleanup;
 		}
 
