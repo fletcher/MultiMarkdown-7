@@ -162,7 +162,6 @@ enum output_format {
 	FORMAT_TEXTPACK,							//!< Compressed variant of the TextBundle file format
 
 	FORMAT_DOCX,
-	FORMAT_MEMOIR,
 	FORMAT_FODT,
 	FORMAT_ODT,
 };

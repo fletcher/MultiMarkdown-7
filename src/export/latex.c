@@ -1807,7 +1807,7 @@ static void export_metadata_text(text_buffer * out, const char * text, int len) 
 	F(i, len) {
 		switch (text[i]) {
 			case '\n':
-				text_buffer_append_text(out, "\\\\\n", 3);
+				text_buffer_append_text(out, "\\\n", 2);
 				break;
 
 			default:
@@ -1865,7 +1865,14 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 					export_metadata_text(out, m->value, (int)m->value_len);
 					mmd_print_const(out, "}\n");
 					continue;
+				} else if (strcmp(m->key, "address") == 0) {
+					mmd_print_const(out, "\\def\\myaddress");
+					mmd_print_const(out, "{");
+					export_metadata_text(out, m->value, (int)m->value_len);
+					mmd_print_const(out, "}\n");
+					continue;
 				}
+
 
 				break;
 
@@ -1965,6 +1972,17 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 
 				break;
 
+			case 'r':
+				if (strcmp(m->key, "returnaddress") == 0) {
+					mmd_print_const(out, "\\def\\myreturnaddress");
+					mmd_print_const(out, "{");
+					export_metadata_text(out, m->value, (int)m->value_len);
+					mmd_print_const(out, "}\n");
+					continue;
+				}
+
+				break;
+
 			case 's':
 				if (strcmp(m->key, "subtitle") == 0) {
 					mmd_print_const(out, "\\def\\mysubtitle");
@@ -2010,7 +2028,16 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 	m = read_ctx_get_meta(r, "latexpackage");
 
 	if (m) {
-		text_buffer_append_printf(out, "\\usepackage{%s}\n", m->value);
+		char * stop = strstr(m->value, "]");
+
+		if (m->value[0] == '[' && stop) {
+			// We have options
+			mmd_print_const(out, "\\usepackage");
+			text_buffer_append_text(out, m->value, stop - m->value);
+			text_buffer_append_printf(out, "]{%s}\n", stop + 1);
+		} else {
+			text_buffer_append_printf(out, "\\usepackage{%s}\n", m->value);
+		}
 	}
 
 	// Define glossary/acronym entries in preamble

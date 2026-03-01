@@ -39,7 +39,9 @@
 % If you are using BibTeX, you'll need to change this
 \@ifclassloaded{tufte-handout}{}{
 	\@ifclassloaded{tufte-book}{}{
-		\usepackage[sort&compress,numbers]{natbib}	% Better bibliography support
+		\@ifclassloaded{letter}{}{
+			\usepackage[sort&compress,numbers]{natbib}	% Better bibliography support
+		}
 	}
 }
 
@@ -148,14 +150,18 @@
 		pdfkeywords={\mykeywords}	
 	}
 
-	% Start with a title
-	\AtBeginDocument{
-		\maketitle
+	\@ifclassloaded{letter}{
+		% These don't work with letters
+	}{
+		% Start with a title
+		\AtBeginDocument{
+			\maketitle
 
-		% Show table of contents at the beginning of the document
-		\ifx\showtoc\undefined
-		\else
-			\tableofcontents
-		\fi
+			% Show table of contents at the beginning of the document
+			\ifx\showtoc\undefined
+			\else
+				\tableofcontents
+			\fi
+		}
 	}
 }

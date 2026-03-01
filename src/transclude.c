@@ -236,7 +236,6 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 
 				case FORMAT_LATEX:
 				case FORMAT_BEAMER:
-				case FORMAT_MEMOIR:
 					strcat(file_path, ".tex");
 					break;
 

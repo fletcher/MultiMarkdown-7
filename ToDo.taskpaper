@@ -42,8 +42,8 @@ MultiMarkdown Features:
 		Could write as a very short parent parsing function that only checks for metadata block type?
 	- compatibility mode fails to reject inline links with attributes
 	- Add CriticMarkup accept/reject support @done
-	- Read OPML
-	- Read ITMZ
+	- Read OPML @done
+	- Read ITMZ @done
 
 UX:
 	- Review command line actions
@@ -57,7 +57,7 @@ Performance:
 	- Better to address EOF line match offsets in the re2c regex rather than checking for type == 0 for EVERY line token in the code.
 	- Can I grab ATX Header names as part of the parsing process to avoid having to go back and parse again?  Seems like this could be sped up greatly @done
 	- Remove mmd_node_free and mmd_node_tree_free() @done
-	- mmd_line_scan() is performance hit in recursive blocks (e.g. blockquotes)
+	- mmd_line_scan() is performance hit in recursive blocks (e.g. blockquotes) @done
 		It goes to the end of the line, which is great for typing a line and finding the end at the same time, but unnecessary in recursive line typing...
 
 Code:
@@ -75,13 +75,13 @@ Code:
 
 Export Formats:
 	- LaTeX @done
-	- Beamer/Memoir
-	- OPML
-	- ITMZ
+	- Beamer/Memoir @done
+	- OPML @done
+	- ITMZ @done
 	- OpenDocument
 	- Word
 	- Powerpoint
 	- Pages
 	- Keynote
-	- EPUB
-	- Textbundle
+	- EPUB @done
+	- Textbundle @done

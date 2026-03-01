@@ -99,7 +99,6 @@ static format formats[] = {
 	[FORMAT_MMD] = { "mmd", ".mmdtext" },
 	[FORMAT_AST] = { "ast", ".ast" },
 	[FORMAT_HASH] = { "hash", ".hash" },
-	[FORMAT_MEMOIR] = { "memoir", ".tex" },
 	[FORMAT_DOCX] = { "docx", ".docx" },
 	[FORMAT_FODT] = { "fodt", ".fodt" },
 	[FORMAT_ODT] = { "odt", ".odt" },
@@ -185,7 +184,7 @@ int main(int argc, char * const argv[]) {
 	custom_seed_rand();
 
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARIOx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARCSIOx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -288,6 +287,16 @@ int main(int argc, char * const argv[]) {
 				// Reject all proposed CriticMarkup changes
 				options &= ~MMD_OPTION_CRITIC_ACCEPT;
 				options |= MMD_OPTION_CRITIC_REJECT;
+				break;
+
+			case 'C':
+				// Force complete document
+				options |= MMD_OPTION_COMPLETE;
+				break;
+
+			case 'S':
+				// Force snippet
+				options |= MMD_OPTION_SNIPPET;
 				break;
 
 			case 't':
@@ -412,6 +421,8 @@ int main(int argc, char * const argv[]) {
 		fprintf(stderr, "\t-D\t\tDownload assets from the internet (images, CSS) for inclusion in package formats\n");
 		fprintf(stderr, "\t-E\t\tEmbed assets in non-package formats (e.g. embed images directly in HTML)\n");
 		fprintf(stderr, "\t-r\t\tEnable file transclusion (\"recursive\")\n");
+		fprintf(stderr, "\t-C\t\tGenerate complete document\n");
+		fprintf(stderr, "\t-S\t\tGenerate snippet\n");
 		fprintf(stderr, "\t-A\t\tAccept all CriticMarkup changes\n");
 		fprintf(stderr, "\t-R\t\tReject all CriticMarkup changes\n");
 		fprintf(stderr, "\t-b\t\tLimit parsing to block level only\n");
