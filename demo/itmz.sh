@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/medium.mmd src/deep.mmd src/flat.mmd)
+files=(src/shallow.mmd src/medium.mmd src/deep.mmd src/flat.mmd src/letter.mmd src/integration.mmd)
 
 mkdir -p build
 

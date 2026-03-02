@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/letter.mmd src/shallow.mmd)
+files=(src/letter.mmd src/shallow.mmd src/flat.mmd src/integration.mmd)
 packages=(mmd7-core)
 options=("")
 
@@ -14,7 +14,7 @@ for file in "${files[@]}"; do
 	name=${base%.*}
 
 	for package in "${packages[@]}"; do
-		echo -e "latexclass: tufte-handout\nlatexpackage: $option$package\nbaseheaderlevel: 2" | cat - "$file" | ../build/multimarkdown -E -t latex > build/$name-tufte-handout-$package-$option.tex
+		echo -e "latexclass: tufte-handout\nlatexpackage: $option$package\nbaseheaderlevel: 3" | cat - "$file" | ../build/multimarkdown -E -t latex > build/$name-tufte-handout-$package-$option.tex
 	done
 done
 

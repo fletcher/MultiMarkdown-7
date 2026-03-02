@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/letter.mmd src/medium.mmd ../tests/MMD7Tests/Integrated.text)
+files=(src/letter.mmd src/medium.mmd src/integration.mmd ../tests/MMD7Tests/Integrated.text)
 packages=(mmd7-core)
 options=("")
 
@@ -13,8 +13,14 @@ for file in "${files[@]}"; do
 	base=$(basename "${file}")
 	name=${base%.*}
 
+	level = "\nbaseheaderlevel: 1"
+
+	if [[ "$name" == "integration" ]]; then
+		level="\nbaseheaderlevel: 2"
+	fi
+
 	for package in "${packages[@]}"; do
-		echo -e "latexclass: tufte-book\nlatexpackage: $option$package\nbaseheaderlevel: 1" | cat - "$file" | ../build/multimarkdown -E -t latex > build/$name-tufte-book-$package-$option.tex
+		echo -e "latexclass: tufte-book\nlatexpackage: $option$package$level" | cat - "$file" | ../build/multimarkdown -E -t latex > build/$name-tufte-book-$package-$option.tex
 	done
 done
 

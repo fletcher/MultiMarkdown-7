@@ -1,12 +1,9 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/medium.mmd src/deep.mmd src/flat.mmd)
-# files=(docs/beamer.mmd)
+files=(src/medium.mmd src/deep.mmd src/flat.mmd src/integration.mmd)
 packages=(mmd7-beamer)
 options=("")
-# options=("")
-# themes=(default durham metropolis)
 themes=(default durham keynote-gradient)
 
 
