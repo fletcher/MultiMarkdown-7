@@ -2,6 +2,8 @@
 %	Beamer LaTeX package for MultiMarkdown 7
 %
 
+% Options:
+%	[showtoc] -- Include TOC at the beginning of the document
 
 % Useful "variables"
 
@@ -17,6 +19,10 @@
 
 \ProvidesPackage{mmd7-beamer}
 
+\PassOptionsToPackage{showtoc}{mmd7-core}
+\RequirePackageWithOptions{mmd7-core}
+
+
 % Builds on the MultiMarkdown 7 core package
 \usepackage{mmd7-core}
 
@@ -26,3 +32,8 @@
 \else
 	\usetheme{\theme}
 \fi
+
+% Ignore other options
+\DeclareOption*{}
+
+\ProcessOptions

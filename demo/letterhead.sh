@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(docs/letter.mmd ../tests/MMD7Tests/Integrated.text)
-# files=(docs/letter.mmd)
+files=(src/letter.mmd ../tests/MMD7Tests/Integrated.text)
+# files=(src/letter.mmd)
 packages=(mmd7-letterhead)
 options=("" "[printed]")
 # options=("")
@@ -70,4 +70,3 @@ for file in "${files[@]}"; do
 		done
 	done
 done
-

@@ -2,6 +2,8 @@
 %	Core LaTeX package for MultiMarkdown 7 feature support
 %
 
+% Options:
+%	[showtoc] -- Include TOC at the beginning of the document
 
 % Useful "variables"
 
@@ -92,6 +94,14 @@
 \author{\myauthor}
 
 
+% Ignore other options
+\DeclareOption{showtoc}{
+	\def\showtoc{true}
+}
+
+\ProcessOptions
+
+
 \@ifclassloaded{beamer}{
 	% Special commands for beamer
 	\ifx\mysubtitle\undefined
@@ -111,7 +121,10 @@
 		% Include outline slide at the beginning of the deck
 		\ifx\showtoc\undefined
 		\else
-			\makeoutline
+			\begin{frame}
+				\frametitle{Outline}
+				\tableofcontents
+			\end{frame}
 		\fi
 	}
 
