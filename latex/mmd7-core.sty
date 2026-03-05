@@ -21,7 +21,9 @@
 
 
 % Base packages to use
-\usepackage{hyperref}				% Must preceed glossaries
+\@ifclassloaded{sffms}{}{
+	\usepackage{hyperref}				% Must preceed glossaries
+}
 
 \@ifclassloaded{memoir}{
 	\usepackage{memhfixc}				% Fix error with hyperref and memoir class
@@ -47,7 +49,9 @@
 	}
 }
 
-\usepackage[normalem]{ulem}			% Support strikethrough
+\@ifclassloaded{sffms}{}{
+	\usepackage[normalem]{ulem}			% Support strikethrough
+}
 
 
 % Packages to support CriticMarkup
@@ -90,13 +94,24 @@
 
 
 % Use basic metadata
-\title{\mytitle}
-\author{\myauthor}
+\@ifclassloaded{sffms}{
+	\title{\mytitle}
+	\runningtitle{\mytitle}
+	\author{\myauthor}
+	\surname{\myauthor}
+}{
+	\title{\mytitle}
+	\author{\myauthor}
+}
 
 
 % Ignore other options
 \DeclareOption{showtoc}{
 	\def\showtoc{true}
+}
+
+\DeclareOption{notoc}{
+	\def\notoc{true}
 }
 
 \ProcessOptions
@@ -154,27 +169,39 @@
 	% Special commands for other classes besides Beamer
 
 	% Use document metadata to configure hyperref (Beamer already does this)
-	\hypersetup{
-		plainpages=false,
-		pdfpagelabels,
-		pdftitle={\mytitle},
-		pagebackref,
-		pdfauthor={\myauthor},
-		pdfkeywords={\mykeywords}	
+	\@ifclassloaded{sffms}{}{
+		\hypersetup{
+			plainpages=false,
+			pdfpagelabels,
+			pdftitle={\mytitle},
+			pagebackref,
+			pdfauthor={\myauthor},
+			pdfkeywords={\mykeywords}	
+		}
 	}
 
 	\@ifclassloaded{letter}{
 		% These don't work with letters
 	}{
-		% Start with a title
-		\AtBeginDocument{
-			\maketitle
+		\@ifclassloaded{sffms}{}{
+			% Start with a title
+			\AtBeginDocument{
+				\maketitle
 
-			% Show table of contents at the beginning of the document
-			\ifx\showtoc\undefined
-			\else
-				\tableofcontents
-			\fi
+				% Show table of contents at the beginning of the document
+				\ifx\showtoc\undefined
+				\else
+					\ifx\notoc\undefined
+						\tableofcontents
+						\ifboolexpr{
+							test {\@classloaded{tufte-book}}
+								% or
+						}{
+							\clearpage
+						}{}
+					\fi
+				\fi
+			}
 		}
 	}
 }
