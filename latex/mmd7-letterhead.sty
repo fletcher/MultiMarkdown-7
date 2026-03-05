@@ -208,7 +208,7 @@
 	% 	};
 	% \end{tikzpicture}
 	% Restore original margins
-	\ifx\firstpagetopmargin\undefined \else \afterpage{\globaldefs=1 \restoregeometry} \fi
+	\ifx\firstpagetopmargin\undefined \else \afterpage{\aftergroup\restoregeometry} \fi
 }
 
 
