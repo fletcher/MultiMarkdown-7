@@ -1844,10 +1844,13 @@ static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, 
 			m = read_ctx_get_meta(r, "latexclass");
 
 			if (m) {
-				meta * o = read_ctx_get_meta(r, "latexclassoptions");
+				char * stop = strstr(m->value, "]");
 
-				if (o) {
-					text_buffer_append_printf(out, "\\documentclass[%s]{%s}\n", o->value, m->value);
+				if (m->value[0] == '[' && stop) {
+					// We have options
+					mmd_print_const(out, "\\documentclass");
+					text_buffer_append_text(out, m->value, stop - m->value);
+					text_buffer_append_printf(out, "]{%s}\n", stop + 1);
 				} else {
 					text_buffer_append_printf(out, "\\documentclass{%s}\n", m->value);
 				}
