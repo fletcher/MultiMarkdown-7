@@ -2,6 +2,7 @@
 
 # Generates each combination of the below
 files=(src/medium.mmd src/deep.mmd src/flat.mmd src/integration.mmd)
+# files=(src/medium.mmd)
 packages=(mmd7-beamer)
 options=("")
 themes=(default durham keynote-gradient)
@@ -17,7 +18,7 @@ for file in "${files[@]}"; do
 	for package in "${packages[@]}"; do
 		for option in "${options[@]}"; do
 			for theme in "${themes[@]}"; do
-				echo -e "latexclass: beamer\nlatexclassoptions: ignorenonframetext,12pt,aspectratio=169\nlatexpackage: $option$package\ntheme: $theme" | cat - "$file" | ../build/multimarkdown -E -t beamer > "build/$name-$package-$option-$theme.tex"
+				echo -e "latexclass: [ignorenonframetext,12pt,aspectratio=169]beamer\nlatexpackage: $option$package\ntheme: $theme" | cat - "$file" | ../build/multimarkdown -E -t beamer > "build/$name-$package-$option-$theme.tex"
 			done
 		done
 	done
