@@ -152,32 +152,15 @@ static int accept_blockquote_line(mmd_node ** l) {
 	}
 
 	switch ((*l)->type) {
-		case LINE_ATX_1:
-		case LINE_ATX_2:
-		case LINE_ATX_3:
-		case LINE_ATX_4:
-		case LINE_ATX_5:
-		case LINE_ATX_6:
-		case LINE_DEF_ABBREVIATION:
-		case LINE_DEF_CITATION:
-		case LINE_DEF_FOOTNOTE:
-		case LINE_DEF_GLOSSARY:
-		case LINE_DEF_LINK:
-		case LINE_DEFINITION:
-		case LINE_EMPTY:
-		case LINE_FENCE_BACKTICK_3:
-		case LINE_FENCE_BACKTICK_4:
-		case LINE_FENCE_BACKTICK_5:
-		case LINE_FENCE_BACKTICK_START_3:
-		case LINE_FENCE_BACKTICK_START_4:
-		case LINE_FENCE_BACKTICK_START_5:
-
-		// case LINE_SETEXT_1:
-		case LINE_SETEXT_2:
-			return 0;
+		case LINE_BLOCKQUOTE:
+		case LINE_PLAIN:
+		case LINE_SETEXT_1:
+		case LINE_INDENTED_TAB:
+		case LINE_INDENTED_SPACE:
+			return 1;
 
 		default:
-			return 1;
+			return 0;
 	}
 }
 
@@ -428,6 +411,12 @@ static int accept_tail_line(mmd_node ** l) {
 
 		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
+		case LINE_ATX_1:
+		case LINE_ATX_2:
+		case LINE_ATX_3:
+		case LINE_ATX_4:
+		case LINE_ATX_5:
+		case LINE_ATX_6:
 			return 0;
 
 		default:
@@ -1678,30 +1667,41 @@ static mmd_node * recursive_blockquote_parse(mmd_node * l, mmd_node_pool * p, co
 
 	while (w) {
 		// Skip blockquote marker if present and reassign line type
-		if (w->type == LINE_BLOCKQUOTE) {
-			const char * content = &text[w->start + line->c_start];
+		switch (w->type) {
+			case LINE_BLOCKQUOTE: {
+				const char * content = &text[w->start + line->c_start];
 
-			if (!strncmp(content, ">", 1)) {
-				line->c_start += 1;
-				line->c_len -= 1;
-			} else if (!strncmp(content, " >", 2)) {
-				line->c_start += 2;
-				line->c_len -= 2;
-			} else if (!strncmp(content, "  >", 3)) {
-				line->c_start += 3;
-				line->c_len -= 3;
-			} else if (!strncmp(content, "   >", 4)) {
-				line->c_start += 4;
-				line->c_len -= 4 ;
-			} else {
-				s = mmd_scanner(&text[w->start + line->c_start], line->c_len);
-				w->type = mmd_line_scan(&s, options);
+				if (!strncmp(content, ">", 1)) {
+					line->c_start += 1;
+					line->c_len -= 1;
+				} else if (!strncmp(content, " >", 2)) {
+					line->c_start += 2;
+					line->c_len -= 2;
+				} else if (!strncmp(content, "  >", 3)) {
+					line->c_start += 3;
+					line->c_len -= 3;
+				} else if (!strncmp(content, "   >", 4)) {
+					line->c_start += 4;
+					line->c_len -= 4 ;
+				} else {
+					s = mmd_scanner(&text[w->start + line->c_start], line->c_len);
+					w->type = mmd_line_scan(&s, options);
 
-				if (w->type) {
-					((mmd_line_node *)w)->c_start = (s.c_start - text) - w->start;
-					((mmd_line_node *)w)->c_len = s.cur - s.c_start;
+					if (w->type) {
+						((mmd_line_node *)w)->c_start = (s.c_start - text) - w->start;
+						((mmd_line_node *)w)->c_len = s.cur - s.c_start;
+					}
 				}
 			}
+			break;
+
+			// Reassign certain line types to "disable" them
+			case LINE_SETEXT_1:
+				w->type = LINE_PLAIN;
+				break;
+
+			default:
+				break;
 		}
 
 		w->tail = w;
