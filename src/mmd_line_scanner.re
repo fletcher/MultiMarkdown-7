@@ -287,11 +287,15 @@ void flag_list_loose(mmd_node * n) {
 	if (n) {
 		mmd_node * item = n->child;
 
-		while (item && item->next) {
+		while (item) {
 			if (item->type == BLOCK_EMPTY) {
-				n->type++;
-				make_list_items_loose(n);
-				return;
+				if (item->next) {
+					n->type++;
+					make_list_items_loose(n);
+					return;
+				} else {
+					return;
+				}
 			}
 
 			mmd_node * content = item->child;
@@ -313,8 +317,6 @@ void flag_list_loose(mmd_node * n) {
 		}
 	}
 }
-
-
 
 
 void extract_trailing_empty_lines(mmd_node_pool * p, mmd_node *n) {
