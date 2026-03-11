@@ -171,7 +171,8 @@ static int accept_blockquote_line(mmd_node ** l) {
 		case LINE_FENCE_BACKTICK_START_3:
 		case LINE_FENCE_BACKTICK_START_4:
 		case LINE_FENCE_BACKTICK_START_5:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			return 0;
 
@@ -244,7 +245,8 @@ static int accept_chunk_line(mmd_node ** l) {
 		case LINE_HTML_BLOCK:
 		case LINE_LIST_BULLETED:
 		case LINE_LIST_ENUMERATED:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			return 0;
 
@@ -318,7 +320,8 @@ static int accept_html_line(mmd_node ** l) {
 		case LINE_FENCE_BACKTICK_START_5:
 		case LINE_START_COMMENT:
 		case LINE_STOP_COMMENT:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			//return 0;
 			return 1;
@@ -362,7 +365,8 @@ static int accept_html_comment_line(mmd_node ** l) {
 		case LINE_HTML:
 		case LINE_HTML_BLOCK:
 		case LINE_START_COMMENT:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 
 		//return 0;
@@ -421,7 +425,8 @@ static int accept_tail_line(mmd_node ** l) {
 		case LINE_EMPTY:
 		case LINE_LIST_BULLETED:
 		case LINE_LIST_ENUMERATED:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			return 0;
 
@@ -1106,7 +1111,8 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 			}
 
 		case LINE_HR:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			b = block_hr(l, p);
 			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
@@ -1354,7 +1360,8 @@ static mmd_node * block_only(mmd_node ** l, mmd_node_pool * p, const char * text
 			}
 
 		case LINE_HR:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			b = block_hr(l, p);
 			break;
@@ -1635,6 +1642,14 @@ static mmd_node * recursive_indent_parse(mmd_line_node * l, mmd_node_pool * p, c
 			line->c_len -= 4;
 		} else {
 			// If no adjustment, no change to line type
+			// Except Setext
+			switch (line->general.type) {
+				case LINE_SETEXT_1:
+				case LINE_SETEXT_2:
+					line->general.type = LINE_PLAIN;
+					break;
+			}
+
 			line = (mmd_line_node *) line->general.next;
 			continue;
 		}
