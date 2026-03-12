@@ -117,3 +117,17 @@ latexconfig: article</p>
 <p><a href="https://www.test.com/foo?bar=XXX-YYY&x=400">foo</a></p>
 
 <p><a href="https://www.test.com/foo?bar=XXX-YYY%5C&x=400">foo</a></p>
+
+<p>``</p>
+
+<p><code>\\</code></p>
+
+<p><code>\</code></p>
+
+<p>50</p>
+
+<p><code>foo</code>`bar`</p>
+
+<p>`foo<code></code>foo`</p>
+
+<p>`<code>foo</code></p>
