@@ -1422,24 +1422,27 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 		case BLOCK_H3:
 		case BLOCK_H4:
 		case BLOCK_H5:
-		case BLOCK_H6:
+		case BLOCK_H6: {
 			pad(out, 2, w);
+
+			int level = b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX);
 
 			if (g_format == FORMAT_BEAMER) {
 				if (g_in_frame) {
-					if (b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX) < 5) {
+					if (level < 5) {
 						mmd_print_const(out, "\\end{frame}\n\n");
 						g_in_frame = 0;
 					}
 				}
 
-				if (b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX) == 3) {
+				if (level == 3) {
 					g_in_frame = 1;
 				}
 			}
 
-			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
-									headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[g_format][level].opener, headers[g_format][level].opener_len);
+			}
 
 			if (options & MMD_OPTION_COMPATIBILITY) {
 				export_latex_tokens(b->content, &text[b->start], b->len, out, r, w, options);
@@ -1464,36 +1467,43 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 				}
 			}
 
-			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer,
-									headers[g_format][b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[g_format][level].closer, headers[g_format][level].closer_len);
+			}
+
 			w->padding = 0;
-			break;
+		}
+		break;
 
 		case BLOCK_SETEXT_1:
-		case BLOCK_SETEXT_2:
+		case BLOCK_SETEXT_2: {
 			pad(out, 2, w);
+
+			int level = b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX);
 
 			if (g_format == FORMAT_BEAMER) {
 				if (g_in_frame) {
-					if (b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX) < 5) {
+					if (level < 5) {
 						mmd_print_const(out, "\\end{frame}\n\n");
 						g_in_frame = 0;
 					}
 				}
 
-				if (b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX) == 3) {
+				if (level == 3) {
 					g_in_frame = 1;
 				}
 			}
 
-			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener,
-									headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].opener_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[g_format][level].opener, headers[g_format][level].opener_len);
+			}
 
 			export_latex_tokens(b->content, &text[b->start], b->len, out, r, w, options);
 			text_buffer_trim_trailing_whitespace(out);
 
-			text_buffer_append_text(out, headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer,
-									headers[g_format][b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX)].closer_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[g_format][level].closer, headers[g_format][level].closer_len);
+			}
 
 			if (options & MMD_OPTION_COMPATIBILITY) {
 			} else {
@@ -1513,7 +1523,8 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 			}
 
 			w->padding = 0;
-			break;
+		}
+		break;
 
 		case BLOCK_LIST_ITEM_TIGHT:
 			// Custom because we need to handle the first child differently

@@ -52,22 +52,34 @@
 #include "assets.h"
 
 
-read_ctx * read_ctx_new(uint32_t options) {
-	read_ctx * c = calloc(1, sizeof(read_ctx));
-
+void read_ctx_init(read_ctx * c, uint32_t options) {
 	if (c) {
 		c->allow_meta = !((options & MMD_OPTION_COMPATIBILITY) == MMD_OPTION_COMPATIBILITY);
-		c->write_snippet = ((options & MMD_OPTION_SNIPPET) == MMD_OPTION_SNIPPET);
+
 		c->write_complete = ((options & MMD_OPTION_COMPLETE) == MMD_OPTION_COMPLETE);
+		c->write_snippet = ((options & MMD_OPTION_SNIPPET) == MMD_OPTION_SNIPPET);
+
+		c->base_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->epub_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->html_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->latex_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->beamer_header_level = MMD_HEADER_LEVEL_DISABLED;
+
+		c->language = MMD_LANGUAGE_FROM_OPTS(options);
+		c->quotes_language = MMD_SMART_QUOTE_FROM_OPTS(options);
 
 		c->token_pair_stack = stack_new(32);
 
 		c->header_stack = stack_new(16);
 		c->random_header_seed = (uint16_t) rand();
-
-		c->language = MMD_LANGUAGE_FROM_OPTS(options);
-		c->quotes_language = MMD_SMART_QUOTE_FROM_OPTS(options);
 	}
+}
+
+
+read_ctx * read_ctx_new(uint32_t options) {
+	read_ctx * c = calloc(1, sizeof(read_ctx));
+
+	read_ctx_init(c, options);
 
 	return c;
 }
@@ -144,10 +156,6 @@ static void asset_free(asset * a) {
 
 void read_ctx_reset(read_ctx * c, uint32_t options) {
 	if (c) {
-		c->allow_meta = !(options & MMD_OPTION_COMPATIBILITY);
-
-		c->token_pair_stack->size = 0;
-
 		while (c->header_stack->size) {
 			header_free(stack_pop(c->header_stack));
 		}
@@ -196,16 +204,22 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 			HASH_DEL(c->asset_hash, s);
 			asset_free(s);
 		}
+
+		stack * token_pair_stack = c->token_pair_stack;
+		stack * header_stack = c->header_stack;
+
+		memset(c, 0, sizeof(read_ctx));
+
+		c->token_pair_stack = token_pair_stack;
+		c->header_stack = header_stack;
+
+		read_ctx_init(c, options);
 	}
 }
 
 void read_ctx_free(read_ctx * c) {
 	if (c) {
 		read_ctx_reset(c, 0);
-
-		while (c->header_stack->size) {
-			header_free(stack_pop(c->header_stack));
-		}
 
 		stack_free(c->header_stack);
 
@@ -367,12 +381,10 @@ void read_ctx_store_meta(read_ctx * c, meta * m) {
 					c->epub_header_level = atoi(m->value);
 				} else if (strcmp(m->key, "htmlheaderlevel") == 0) {
 					c->html_header_level = atoi(m->value);
-				} else if (strcmp(m->key, "xhtmlheaderlevel") == 0) {
-					c->xhtml_header_level = atoi(m->value);
+				} else if (strcmp(m->key, "beamerheaderlevel") == 0) {
+					c->beamer_header_level = atoi(m->value);
 				} else if (strcmp(m->key, "latexheaderlevel") == 0) {
 					c->latex_header_level = atoi(m->value);
-				} else if (strcmp(m->key, "odfheaderlevel") == 0) {
-					c->odf_header_level = atoi(m->value);
 				} else if (strcmp(m->key, "language") == 0) {
 					if (strncmp(m->value, "de", 2) == 0) {
 						c->language = LANGUAGE_DE;
@@ -572,27 +584,34 @@ endnote_def * read_ctx_get_note(read_ctx * c, char * key) {
 int read_ctx_get_header_level(read_ctx * c, int format) {
 	int r = 0;
 
-	if (c->base_header_level) {
+	if (c->base_header_level != MMD_HEADER_LEVEL_DISABLED) {
 		r = c->base_header_level - 1;
 	}
 
 	switch (format) {
 		case FORMAT_EPUB:
-			if (c->epub_header_level) {
+			if (c->epub_header_level != MMD_HEADER_LEVEL_DISABLED) {
 				r = c->epub_header_level - 1;
 			}
 
 			break;
 
 		case FORMAT_HTML:
-			if (c->html_header_level) {
+			if (c->html_header_level != MMD_HEADER_LEVEL_DISABLED) {
 				r = c->html_header_level - 1;
 			}
 
 			break;
 
+		case FORMAT_BEAMER:
+			if (c->latex_header_level != MMD_HEADER_LEVEL_DISABLED) {
+				r = c->beamer_header_level - 1;
+			}
+
+			break;
+
 		case FORMAT_LATEX:
-			if (c->latex_header_level) {
+			if (c->latex_header_level != MMD_HEADER_LEVEL_DISABLED) {
 				r = c->latex_header_level - 1;
 			}
 

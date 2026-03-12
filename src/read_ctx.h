@@ -168,10 +168,8 @@ struct read_ctx {
 	int					base_header_level;
 	int					epub_header_level;
 	int					html_header_level;
-	int					xhtml_header_level;
 	int					latex_header_level;
-	int					odf_header_level;
-
+	int					beamer_header_level;
 
 	char				language;
 	char				quotes_language;
@@ -201,6 +199,8 @@ struct read_ctx {
 	asset *				asset_hash;
 };
 
+
+#define MMD_HEADER_LEVEL_DISABLED -6
 
 
 read_ctx * read_ctx_new(uint32_t options);

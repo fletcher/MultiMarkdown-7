@@ -1239,16 +1239,19 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 		case BLOCK_H3:
 		case BLOCK_H4:
 		case BLOCK_H5:
-		case BLOCK_H6:
+		case BLOCK_H6: {
 			pad(out, 2, w);
 
-			if (options & MMD_OPTION_COMPATIBILITY) {
-				text_buffer_append_text(out, headers_compat[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers_compat[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+			int level = b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML);
 
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers_compat[level].opener, headers_compat[level].opener_len);
+				}
 			} else {
-				text_buffer_append_text(out, headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers[level].opener, headers[level].opener_len);
+				}
 
 				header * h = stack_peek_index(r->header_stack, w->header_count++);
 
@@ -1267,22 +1270,28 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 
 			text_buffer_trim_trailing_whitespace(out);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer,
-									headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[level].closer, headers[level].closer_len);
+			}
+
 			w->padding = 0;
-			break;
+		}
+		break;
 
 		case BLOCK_SETEXT_1:
-		case BLOCK_SETEXT_2:
+		case BLOCK_SETEXT_2: {
 			pad(out, 2, w);
 
-			if (options & MMD_OPTION_COMPATIBILITY) {
-				text_buffer_append_text(out, headers_compat[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers_compat[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+			int level = b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML);
 
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers_compat[level].opener, headers_compat[level].opener_len);
+				}
 			} else {
-				text_buffer_append_text(out, headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers[level].opener, headers[level].opener_len);
+				}
 
 				header * h = stack_peek_index(r->header_stack, w->header_count++);
 
@@ -1301,10 +1310,13 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 
 			text_buffer_trim_trailing_whitespace(out);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer,
-									headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[level].closer, headers[level].closer_len);
+			}
+
 			w->padding = 0;
-			break;
+		}
+		break;
 
 		case BLOCK_LIST_ITEM_TIGHT:
 			// Custom because we need to handle the first child differently
