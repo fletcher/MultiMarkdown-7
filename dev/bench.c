@@ -51,15 +51,6 @@
 #endif
 
 
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest * tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-
-#endif
-
-
 #define F(i,n) for(int i= 0;i<n;i++)
 
 

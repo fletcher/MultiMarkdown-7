@@ -56,15 +56,6 @@
 #endif
 
 
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest * tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-
-#endif
-
-
 #define kBUFFERSIZE 4096				// How many bytes to read at a time?
 
 /// Read from file stream into a buffer

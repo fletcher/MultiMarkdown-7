@@ -371,6 +371,8 @@ void Test_ac_prepare(CuTest * tc) {
 
 	ac_prepare(a, 0);
 
+	CuAssertIntEquals(tc, 5, a->size);
+
 	ac_free(a);
 }
 
@@ -469,6 +471,15 @@ match * ac_search(ac * a, int options, const unsigned char * source, size_t star
 
 #ifdef TEST
 
+static void match_set_buffer(match * m, const char * text, text_buffer * buffer) {
+	while (m) {
+		text_buffer_append_printf(buffer, "%.*s\n", (int)m->len, &text[m->start]);
+
+		m = m->next;
+	}
+}
+
+
 int options[] = {
 	0,
 	AC_LEFTMOST,
@@ -511,7 +522,7 @@ void Test_ac_search(CuTest * tc) {
 
 	ac_prepare(a, 0);
 
-	match * m = ac_search(a, 0, "This is a bar that serves food.", 0, 31);
+	match * m = ac_search(a, 0, (const unsigned char *) "This is a bar that serves food.", 0, 31);
 
 	CuAssertPtrNotNull(tc, m);
 	CuAssertIntEquals(tc, 41, m->type);
@@ -549,16 +560,17 @@ void Test_ac_search(CuTest * tc) {
 	ac_insert(a, "ufo", 38);
 	ac_insert(a, "otb", 37);
 
-	F(i, sizeof(options) / sizeof(options[0])) {
+	F(i, (int) (sizeof(options) / sizeof(options[0]))) {
 		// Prepare AC trie with new options
 		ac_prepare(a, options[i]);
 
 		// ac_to_graphviz(a, stdout);
 
 		// Test with multiple haystacks
-		F(j, sizeof(haystack) / sizeof(haystack[0])) {
-			m = ac_search(a, options[i], haystack[j], 0, strlen(haystack[j]));
+		F(j, (int) (sizeof(haystack) / sizeof(haystack[0]))) {
+			m = ac_search(a, options[i], (const unsigned char *) haystack[j], 0, strlen(haystack[j]));
 			buf = text_buffer_new(0);
+
 			match_set_buffer(m, haystack[j], buf);
 
 			CuAssertStrEquals(tc, results[i][j], buf->text);

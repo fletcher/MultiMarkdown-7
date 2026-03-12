@@ -299,11 +299,15 @@ endif()
 
 # Is libcurl available?
 # Note -- linking to libcurl seems to impart a small performance hit, even if it is not used?
-find_package(CURL)
-if (CURL_FOUND)
-	add_definitions(-DUSE_CURL)
-	target_link_libraries(libMultiMarkdown7 CURL::libcurl)
+if (DEFINED TEST)
+else()
+	find_package(CURL)
+	if (CURL_FOUND)
+		add_definitions(-DUSE_CURL)
+		target_link_libraries(libMultiMarkdown7 CURL::libcurl)
+	endif(CURL_FOUND)
 endif()
+
 
 # ======================
 # Process Template Files
@@ -601,56 +605,58 @@ include(CPack)
 
 if (hasParent)
 else()
-	enable_testing()
+	if (DEFINED TEST)
+	else()
+		enable_testing()
 
-	# MMD 7
+		# MMD 7
 
-	function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXTI EXTO)
+		function(ADD_MMD_TEST_2 NAME ARGS FOLDER EXTI EXTO)
+			if (WIN32)
+				add_test(NAME ${NAME}
+					COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh $<TARGET_FILE:multimarkdown> \"${ARGS}\" ../tests/${FOLDER} ${EXTI} ${EXTO}"
+				)
+			else()
+				add_test(NAME ${NAME}
+					COMMAND ${PROJECT_SOURCE_DIR}/tests/MMDTest.sh
+					$<TARGET_FILE:multimarkdown>
+					${ARGS}
+					${PROJECT_SOURCE_DIR}/tests/${FOLDER}
+					${EXTI}
+					${EXTO}
+				)
+			endif()
+		endfunction(ADD_MMD_TEST_2)
+
+
+		ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests text html)
+		ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests text htmlc)
+		ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup text htmla)
+		ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup text htmlr)
+		ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests text tex)
+		ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests text opml)
+
+		# This requires that LaTeX is installed
+		# ADD_MMD_TEST_2(mmd-7-beamer "parse -r -E -t beamer" Beamer text tex)
+
+		ADD_MMD_TEST_2(mmd-7-beamer "parse -r -t beamer" Beamer text tex2)
+
 		if (WIN32)
-			add_test(NAME ${NAME}
-				COMMAND "C:/Program Files/Git/bin/bash.exe" -c "../tests/MMDTest.sh $<TARGET_FILE:multimarkdown> \"${ARGS}\" ../tests/${FOLDER} ${EXTI} ${EXTO}"
-			)
-		else()
-			add_test(NAME ${NAME}
-				COMMAND ${PROJECT_SOURCE_DIR}/tests/MMDTest.sh
-				$<TARGET_FILE:multimarkdown>
-				${ARGS}
-				${PROJECT_SOURCE_DIR}/tests/${FOLDER}
-				${EXTI}
-				${EXTO}
-			)
+			# Too much trouble to make this work on Windows
+		else ()
+			ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests text ast)
 		endif()
-	endfunction(ADD_MMD_TEST_2)
 
+		# These won't all pass, but it is useful to generally verify that OPML round-tripping works
+		# ADD_MMD_TEST_2(mmd-7-opml-2 "parse -t mmd" MMD7Tests opml text)
 
-	ADD_MMD_TEST_2(mmd-7 "parse -r" MMD7Tests text html)
-	ADD_MMD_TEST_2(mmd-7-compatible "parse -c" MMD7Tests text htmlc)
-	ADD_MMD_TEST_2(mmd-7-critic-accept "parse -A" CriticMarkup text htmla)
-	ADD_MMD_TEST_2(mmd-7-critic-reject "parse -R" CriticMarkup text htmlr)
-	ADD_MMD_TEST_2(mmd-7-latex "parse -r -t latex" MMD7Tests text tex)
-	ADD_MMD_TEST_2(mmd-7-opml "parse -r -t opml" MMD7Tests text opml)
-
-	# This requires that LaTeX is installed
-	# ADD_MMD_TEST_2(mmd-7-beamer "parse -r -E -t beamer" Beamer text tex)
-
-	ADD_MMD_TEST_2(mmd-7-beamer "parse -r -t beamer" Beamer text tex2)
-
-	if (WIN32)
-		# Too much trouble to make this work on Windows
-	else ()
-		ADD_MMD_TEST_2(mmd-7-ast "parse -r -t ast" MMD7Tests text ast)
+		# Round trip tests with a simple document
+		ADD_MMD_TEST_2(mmd-7-import-1 "parse -O -t html" Import opml html)
+		ADD_MMD_TEST_2(mmd-7-import-2 "parse -O -t mmd" Import opml mmd)
+		ADD_MMD_TEST_2(mmd-7-import-3 "parse -I -t html" Import itmz html)
+		ADD_MMD_TEST_2(mmd-7-import-4 "parse -I -t mmd" Import itmz mmd)
 	endif()
-
-	# These won't all pass, but it is useful to generally verify that OPML round-tripping works
-	# ADD_MMD_TEST_2(mmd-7-opml-2 "parse -t mmd" MMD7Tests opml text)
-
-	# Round trip tests with a simple document
-	ADD_MMD_TEST_2(mmd-7-import-1 "parse -O -t html" Import opml html)
-	ADD_MMD_TEST_2(mmd-7-import-2 "parse -O -t mmd" Import opml mmd)
-	ADD_MMD_TEST_2(mmd-7-import-3 "parse -I -t html" Import itmz html)
-	ADD_MMD_TEST_2(mmd-7-import-4 "parse -I -t mmd" Import itmz mmd)
 endif()
-
 
 
 # ADD_MMD_TEST(mmd-6-memoir "-t memoir" Memoir tex)

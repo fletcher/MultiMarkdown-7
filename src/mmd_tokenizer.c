@@ -55,15 +55,6 @@
 #endif
 
 
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest * tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-
-#endif
-
-
 struct mmd_tokenizer {
 	read_ctx 	*	ctx;
 
