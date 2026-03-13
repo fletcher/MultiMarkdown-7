@@ -42,7 +42,7 @@
 #ifndef MMD_NODE_libMultiMarkdown7_H
 #define MMD_NODE_libMultiMarkdown7_H
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "mmd_node_pool.h"
 
 #define kRelativeStarts 1

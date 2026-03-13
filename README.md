@@ -85,7 +85,7 @@ Why a new version of MultiMarkdown?  Briefly, I wanted to:
 		know why.  Building md4c yourself from source repo works fine.)
 
 *	The API is cleaner.  I still need some testing and feedback on this, but
-	I am generally happy so far.  I've tried to make `libMultiMarkdown.h`
+	I am generally happy so far.  I've tried to make `libMultiMarkdown7.h`
 	more self-explanatory and more complete.  That said, I have not used
 	MMD 7 inside a "real" project yet, so this may change.
 

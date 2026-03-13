@@ -49,7 +49,7 @@
 #endif
 
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "stack.h"
 
 struct mmd_node_pool {

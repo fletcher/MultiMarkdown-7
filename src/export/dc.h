@@ -42,7 +42,7 @@
 #ifndef DC_LIBMULTIMARKDOWN7_H
 #define DC_LIBMULTIMARKDOWN7_H
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "text_buffer.h"
 
 enum dc_metadata {

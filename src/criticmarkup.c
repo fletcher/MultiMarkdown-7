@@ -41,7 +41,7 @@
 
 #include <stdlib.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "read_ctx.h"
 #include "mmd_node.h"

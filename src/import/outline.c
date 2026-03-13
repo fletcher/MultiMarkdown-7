@@ -44,7 +44,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "mmd_utilities.h"
 #include "text_buffer.h"
 

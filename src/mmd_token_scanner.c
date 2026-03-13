@@ -44,7 +44,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "char.h"
 #include "read_ctx.h"

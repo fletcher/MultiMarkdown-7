@@ -47,7 +47,7 @@
 	#include <windows.h>
 #endif
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "text_buffer.h"
 
 #include "mmd_core.h"

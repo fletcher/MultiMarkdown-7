@@ -55,7 +55,7 @@
 	#include <windows.h>
 #endif
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "vector_line_node.h"
 

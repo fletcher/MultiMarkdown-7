@@ -2,7 +2,7 @@
 
 	libMultiMarkdown7 -- Lightweight markup processor to produce HTML, LaTeX, and more.
 
-	@file libMultiMarkdown.h
+	@file libMultiMarkdown7.h
 
 	@brief
 

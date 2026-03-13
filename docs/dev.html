@@ -85,7 +85,7 @@ another project.</p>
 <ul>
 <li><p>The code has been almost completely rewritten yet again. It is generally
 much cleaner and better organized.</p></li>
-<li><p>The API is cleaner. A single header file (<code>libMultiMarkdown.h</code>) needs to be
+<li><p>The API is cleaner. A single header file (<code>libMultiMarkdown7.h</code>) needs to be
 included and should have everything you need to use MultiMarkdown (<abbr title="MultiMarkdown">MMD</abbr>) in most other
 projects. I have used libMultiMarkdown inside a Swift project without any
 difficulty.</p></li>
@@ -229,7 +229,7 @@ make run
 
 <h3 id="apicalls">API calls</h3>
 
-<p><code>libMultiMarkdown.h</code> defines the API for interacting with the MultiMarkdown 7
+<p><code>libMultiMarkdown7.h</code> defines the API for interacting with the MultiMarkdown 7
 library. I have tried to clean this file up in order to make it clearer to
 read and to included everything required to incorporate <abbr title="MultiMarkdown">MMD</abbr> in most
 projects.</p>
@@ -284,7 +284,7 @@ generator so that different numbers are generated each time.</p></li>
 
 <h3 id="apienumerations">API enumerations</h3>
 
-<p><code>libMultiMarkdown.h</code> also includes the various enums that are used.</p>
+<p><code>libMultiMarkdown7.h</code> also includes the various enums that are used.</p>
 
 <ul>
 <li><p><code>output_format</code> &#8211; specifies which output format is desired (one at a time)</p></li>
@@ -324,7 +324,7 @@ level tokens.</p>
 
 <p><strong><em>NOTE</em></strong>: If you customize <abbr title="MultiMarkdown">MMD</abbr> and add additional node types to the
 enumeration list, be sure assign to the proper value range and follow any
-directions in the comments of <code>libMultiMarkdown.h</code>.</p>
+directions in the comments of <code>libMultiMarkdown7.h</code>.</p>
 
 <p>There are several utility macros to help easily determine what grouping a
 specific <code>mmd_node</code> belongs to based on its type:</p>

@@ -41,7 +41,7 @@
 
 #include <stdlib.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "assets.h"
 #include "transclude.h"
 #include "mmd_utilities.h"

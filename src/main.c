@@ -51,7 +51,7 @@
 	#include <unistd.h>
 #endif
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "read_ctx.h"
 #include "version.h"
 #include "zip.h"

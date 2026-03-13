@@ -81,7 +81,7 @@ set(src_files
 )
 
 set(public_headers
-	src/libMultiMarkdown.h
+	src/libMultiMarkdown7.h
 )
 
 set(private_headers
@@ -539,6 +539,10 @@ else()
 	if (APPLE)
 		# Apple Builds
 
+		# Prevent installer from attempting to install Rosetta
+		#    https://gitlab.kitware.com/cmake/cmake/-/issues/21734
+		list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/tools)
+
 		if (DEFINED ZIP)
 			set (CPACK_GENERATOR ZIP)
 		else (DEFINED ZIP)
@@ -562,38 +566,27 @@ else()
 	endif (APPLE)
 
 	# Install Target
-	install (TARGETS ${My_Project_Title}
+	install (TARGETS multimarkdown
 		DESTINATION bin
 		COMPONENT Main
 	)
-	set (CPACK_COMPONENT_MAIN_DISPLAY_NAME "${My_Project_Title}")
-	set (CPACK_COMPONENT_MAIN_DESCRIPTION "Install ${My_Project_Title}.")
+	set (CPACK_COMPONENT_MAIN_DISPLAY_NAME "MultiMarkdown v7")
+	set (CPACK_COMPONENT_MAIN_DESCRIPTION "Install MultiMarkdown ${My_Project_Version}.")
 
-	if (public_headers)
-		# Install Headers
-		install(FILES
-			${public_headers}
-			DESTINATION include/${My_Project_Title}
-			COMPONENT Headers
-		)
-		set (CPACK_COMPONENT_HEADERS_DISPLAY_NAME "Development")
-		set (CPACK_COMPONENT_HEADERS_DESCRIPTION "Install the public headers for development use.")
+	set (CPACK_COMPONENTS_ALL Main)
 
-		set (CPACK_COMPONENTS_ALL Main Headers)
-	else (public_headers)
-		set (CPACK_COMPONENTS_ALL Main)
-	endif (public_headers)
+	if (WIN32)
+		set (CPACK_INSTALL_PREFIX "")
+		set (CPACK_NSIS_MODIFY_PATH ON)
+		if (ZIP)
+			set(CPACK_SET_DESTDIR true)
+		endif(ZIP)
+	else(WIN32)
+		set(CPACK_SET_DESTDIR true)
+		set (CPACK_INSTALL_PREFIX /usr/local)
+	endif(WIN32)
 
-	# Install Documentation
-	install(FILES
-		"${PROJECT_BINARY_DIR}/LICENSE.txt"
-		"${PROJECT_BINARY_DIR}/README.txt"
-		COMPONENT Docs
-		DESTINATION share/doc/${My_Project_Title}
-	)
-	set (CPACK_COMPONENT_DOCS_DISPLAY_NAME "Documentation")
-	set (CPACK_COMPONENT_DOCS_DESCRIPTION "Install README and LICENSE.")
-
+	set (CPACK_PACKAGE_CONTACT "fletcher@fletcherpenney.net")
 endif (DEFINED TEST)
 
 include(CPack)

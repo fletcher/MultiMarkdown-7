@@ -44,7 +44,7 @@
 #include <stdlib.h>
 
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "mmd_node.h"
 

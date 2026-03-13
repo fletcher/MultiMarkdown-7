@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "text_buffer.h"
 #include "mmd_core.h"

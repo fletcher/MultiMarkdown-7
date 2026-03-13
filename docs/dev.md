@@ -10,7 +10,6 @@ mmdheader: {{header.md}}
 mmdfooter: {{footer.md}}
 
 ## Introduction ##
-
 ### Why MultiMarkdown v7? ###
 
 The "initial public commit" for MultiMarkdown v6 was January 18, 2017.  I had
@@ -29,7 +28,7 @@ another project.
 * The code has been almost completely rewritten yet again.  It is generally
   much cleaner and better organized.
 
-* The API is cleaner.  A single header file (`libMultiMarkdown.h`) needs to be
+* The API is cleaner.  A single header file (`libMultiMarkdown7.h`) needs to be
   included and should have everything you need to use MMD in most other
   projects.  I have used libMultiMarkdown inside a Swift project without any
   difficulty.
@@ -67,7 +66,6 @@ another project.
 
 
 ## Testing ##
-
 ### Updated test suite ###
 
 The standard test suite files from prior versions of MMD have been updated to
@@ -171,10 +169,9 @@ these programs are installed on your machine.
 
 
 ## API changes ##
-
 ### API calls ###
 
-`libMultiMarkdown.h` defines the API for interacting with the MultiMarkdown 7
+`libMultiMarkdown7.h` defines the API for interacting with the MultiMarkdown 7
 library.  I have tried to clean this file up in order to make it clearer to
 read and to included everything required to incorporate MMD in most
 projects.
@@ -235,7 +232,7 @@ There are several different call classes available:
 
 ### API enumerations ###
 
-`libMultiMarkdown.h` also includes the various enums that are used.
+`libMultiMarkdown7.h` also includes the various enums that are used.
 
 * `output_format` -- specifies which output format is desired (one at a time)
 
@@ -276,7 +273,7 @@ level tokens.
 
 ***NOTE***: If you customize MMD and add additional node types to the
    enumeration list, be sure assign to the proper value range and follow any
-   directions in the comments of `libMultiMarkdown.h`.
+   directions in the comments of `libMultiMarkdown7.h`.
 
 There are several utility macros to help easily determine what grouping a
 specific `mmd_node` belongs to based on its type:
@@ -290,7 +287,6 @@ specific `mmd_node` belongs to based on its type:
 
 
 ## Cross-platform compatibility ##
-
 ### macOS ###
 
 Primary development for MMD is done on macOS, so everything works.
@@ -319,7 +315,7 @@ purchasing Windows hardware, any contributions here are appreciated!
 ### Others ###
 
 MultiMarkdown is written in C, and is intended to be able to compiled on any
-operating system.
+(reasonable) operating system.
 
 The only external library it uses is `libcurl`, but only if it is found.
 
@@ -345,8 +341,6 @@ expected output on the test suite on any of the three systems.
 
 
 ## Contributing ##
-
-
 ### Bug reports and suggestions ###
 
 I welcome examples of source text that causes MMD to misbehave.  You can

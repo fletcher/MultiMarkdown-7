@@ -52,7 +52,7 @@
 #endif
 
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "mmd_utilities.h"
 

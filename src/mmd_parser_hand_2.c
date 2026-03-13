@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "vector_line_node.h"
 #include "mmd_node_pool.h"

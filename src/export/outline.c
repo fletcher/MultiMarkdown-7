@@ -53,7 +53,7 @@
 
 #include "export_core.h"
 #include "outline.h"
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "zip.h"
 
 
