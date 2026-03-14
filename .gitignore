@@ -40,3 +40,6 @@ dev/benchmark
 
 src/_generate_test_emph
 src/_generate_test_reference
+
+docs/dev.html
+docs/user.html

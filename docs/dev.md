@@ -1,11 +1,14 @@
 title:	MultiMarkdown Developer's Guide
 author:	Fletcher T. Penney
 version:	7.0.0
-revised:	2026-03-12
+revised:	2026-03-13
 baseheaderlevel:	1
 css:	css/Classless.min.css
-zhtmlheader:	<style>.TOC {position: absolute; left: 100px; width:250px; }</style>
-htmlheader:	<style>main {display: grid; grid-template-columns: 15em 1fr; margine: 0 auto; } main > nav {position: sticky; align-self: start; top: 2rem; animation-timeline: view();}</style>
+htmlheader: <style>main {display: grid; grid-template-columns: 16em 45em; margin: 0 auto; gap: 20px;}
+    main > nav {position: sticky; align-self: start; top: 2rem; animation-timeline: view();}
+    del { background: #fae6e6; } ins { background: #ecfce6; } span.critic.comment { color: #0000bb; }
+    span.critic.comment::before { content: "{>> "; } span.critic.comment::after { content: " <<}"; } 
+    </style>
 mmdheader: {{header.md}}
 mmdfooter: {{footer.md}}
 
@@ -66,7 +69,7 @@ another project.
 
 
 ## Testing ##
-### Updated test suite ###
+### Updated Test Suite ###
 
 The standard test suite files from prior versions of MMD have been updated to
 account for changes from the v7 parser, but also to include new test
@@ -83,7 +86,7 @@ updated to a bash script rather than using a very old Perl script. This
 allows the test suite to run on Windows without a Perl installation.
 
 
-### Unit testing ###
+### Unit Testing ###
 
 In most of my projects, I try to make heavy use of unit testing and a
 Test-driven development approach.
@@ -102,7 +105,7 @@ run.
 	./run_tests
 
 
-### Programmatically generated test files ###
+### Programmatically Generated Test Files ###
 
 In addition to hand-generated test files in the test suite that have been
 built up over time, there are some computer generated tests as well.  These
@@ -151,7 +154,7 @@ yourself, and send me any examples that trigger an error!
     ./fuzz_mmd-7
 
 
-### Performance benchmarking ###
+### Performance Benchmarking ###
 
 `bench.c` builds a small test program that generates a collection of test
 files that stress test a MMD parser with a few different scenarios.
@@ -168,8 +171,8 @@ these programs are installed on your machine.
     make run
 
 
-## API changes ##
-### API calls ###
+## API Changes ##
+### API Calls ###
 
 `libMultiMarkdown7.h` defines the API for interacting with the MultiMarkdown 7
 library.  I have tried to clean this file up in order to make it clearer to
@@ -230,7 +233,7 @@ There are several different call classes available:
   must be called in order to do the initial seeding for the random number
   generator so that different numbers are generated each time.
 
-### API enumerations ###
+### API Enumerations ###
 
 `libMultiMarkdown7.h` also includes the various enums that are used.
 
@@ -254,7 +257,7 @@ are couple of macros to extract specific values if needed:
 * `MMD_LANGUAGE_FROM_OPTS()`
 
 
-### Abstract syntax tree ###
+### Abstract Syntax Tree ###
 
 The AST consists of `mmd_node` structs, which specify a type of node, the
 starting offset in the source text (in bytes), the length (in bytes), and
@@ -283,10 +286,74 @@ specific `mmd_node` belongs to based on its type:
 * `MMD_NODE_IS_TOKEN()`
 
 
-## Command-line changes ##
+## Command-Line Changes ##
+
+MMD v7 handles arguments from the command-line in a slightly different way
+from v6, though the most common use cases are unchanged.
+
+  multimarkdown [--help] {ast|batch|hash|meta|parse} [options] [Input file names]
+
+The first argument should be an action.  If no action is specified, MMD
+defaults to the `parse` action.
+
+* `ast` -- Display the AST showing how the document was parsed
+
+* `batch` -- Parse each file individually and write to the same filename with
+  a new extension
+
+* `hash` -- Display the hash tree for the parsed document
+
+* `meta` -- Extra metadata from the document without parsing the rest
+
+* `parse` -- Parse the document(s) and export to the desired format
 
 
-## Cross-platform compatibility ##
+You can then specify different options to adjust the default behavior:
+
+* `-t FORMAT` -- Specify the output format (`html`, `mmd`, `latex`, `docx`,
+  `epub`, `itmz`, `opml`, `textbundle`, `textpack`, `ast`, `hash`)
+
+* `-o OUT_FILE` -- Specify the filename for writing the output
+
+* `-l LANGUAGE` -- Specify the language for smart quotes and default markup
+  (`en`, `es`, `de`, `fr`, `nl`, `sv`, `he`)
+
+* `-c` -- Markdown compatibility mode -- turn off features that are not in the
+  original Markdown specification.  Note that due to bugs in the original
+  `Markdown.pl` and due to ambiguities in the original "spec", the output
+  will not exactly match John Gruber's `Markdown.pl`.
+
+* `-C` -- Generate a complete document
+
+* `-S` -- Generate a snippet
+
+* `-r` -- Enable file transclusion ("recursive")
+
+* `-D` -- Download assets from the internet (images, CSS) for inclusion in
+  package formats (requires libcurl when compiling)
+
+* `-E` -- Embedd assets in non-package formats where possible (e.g. embed
+  images directly in HTML as Base64)
+
+* `-p PATH` -- Specify a working directory when parsing from stdin (e.g. for
+  transclusion or embedding assets)
+
+* `-A` -- Accept all CriticMarkup changes
+
+* `-R` -- Reject all CriticMarkup changes
+
+* `-O` -- Convert OPML source to MMD text before parsing
+
+* `-I` -- Convert iThoughts source to MMD text before parsing
+
+* `-e` -- Specify metadata key to extract value from MMD source
+
+* `-b` -- Limit parsing to block level only (useful for diagnostics only)
+
+* `-s` -- Log some processing time statistics (does not work on Windows)
+
+
+## Cross-Platform Compatibility ##
 ### macOS ###
 
 Primary development for MMD is done on macOS, so everything works.
@@ -341,7 +408,7 @@ expected output on the test suite on any of the three systems.
 
 
 ## Contributing ##
-### Bug reports and suggestions ###
+### Bug Reports and Suggestions ###
 
 I welcome examples of source text that causes MMD to misbehave.  You can
 contribute them at the [Github issues page].
@@ -351,7 +418,7 @@ rarely add new features to the MMD syntax unless they are truly valuable to a
 wide range of users.
 
 
-### Code contributions ###
+### Code Contributions ###
 
 Pull requests can be managed through Github.  However, if your request is more
 than a straightforward bug fix, it is unlikely that I will accept it

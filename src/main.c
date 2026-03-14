@@ -416,22 +416,31 @@ int main(int argc, char * const argv[]) {
 
 		fprintf(stderr, "\nOptions:\n");
 		fprintf(stderr, "\t-h, --help\tShow this help\n");
+
+		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd|latex|docx|epub|itmz|opml|textbundle|textpack|ast|hash]\n");
+		fprintf(stderr, "\t-o OUT_FILE\tSpecify output file (e.g. when parsing from stdin\n");
+		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
+
 		fprintf(stderr, "\t-c\t\tMarkdown compatibility mode\n");
-		fprintf(stderr, "\t-p PATH\tSpecify a working directory when parsing from stdin (e.g. for transclusion or embedding assets\n");
-		fprintf(stderr, "\t-D\t\tDownload assets from the internet (images, CSS) for inclusion in package formats\n");
-		fprintf(stderr, "\t-E\t\tEmbed assets in non-package formats (e.g. embed images directly in HTML)\n");
-		fprintf(stderr, "\t-r\t\tEnable file transclusion (\"recursive\")\n");
+
 		fprintf(stderr, "\t-C\t\tGenerate complete document\n");
 		fprintf(stderr, "\t-S\t\tGenerate snippet\n");
+
+		fprintf(stderr, "\t-r\t\tEnable file transclusion (\"recursive\")\n");
+		fprintf(stderr, "\t-D\t\tDownload assets from the internet (images, CSS) for inclusion in package formats\n");
+		fprintf(stderr, "\t-E\t\tEmbed assets in non-package formats (e.g. embed images directly in HTML)\n");
+		fprintf(stderr, "\t-p PATH\t\tSpecify a working directory when parsing from stdin (e.g. for transclusion or embedding assets\n");
+
 		fprintf(stderr, "\t-A\t\tAccept all CriticMarkup changes\n");
 		fprintf(stderr, "\t-R\t\tReject all CriticMarkup changes\n");
+
+		fprintf(stderr, "\t-O\t\tConvert OPML source to MMD text before parsing\n");
+		fprintf(stderr, "\t-I\t\tConvert iThoughts source to MMD text before parsing\n");
+
+		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
+
 		fprintf(stderr, "\t-b\t\tLimit parsing to block level only\n");
 		fprintf(stderr, "\t-s\t\tLog some processing time statistics\n");
-		fprintf(stderr, "\t-O\t\tConvert OPML source to MMD text before parsing\n");
-		fprintf(stderr, "\t-o OUT_FILE\tSpecify output file (e.g. when parsing from stdin\n");
-		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
-		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
-		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd|latex|docx|epub|itmz|opml|textbundle|textpack|ast|hash]\n");
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 		fprintf(stderr, "\ngetopt\t-- Copyright (c) 2002 Todd C. Miller  All rights reserved.");

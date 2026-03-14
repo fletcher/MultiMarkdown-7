@@ -16,13 +16,13 @@ cmake_minimum_required(VERSION 3.28)
 # Project Description
 
 set (My_Project_Title "libMultiMarkdown7")
-set (My_Project_Description "Lightweight markup processor to produce HTML, LaTeX, and more.")
+set (My_Project_Description "C parser for Markdown with additional features and multiple output formats.")
 set (My_Project_Author "Fletcher T. Penney")
-set (My_Project_Revised_Date "2026-02-10")
+set (My_Project_Revised_Date "2026-03-13")
 set (My_Project_Version_Major 7)
 set (My_Project_Version_Minor 0)
 set (My_Project_Version_Patch 0)
-set (My_Project_Version_Prerelease -beta.1)
+# set (My_Project_Version_Prerelease -beta.1)
 
 set (My_Project_Copyright_Date "2024-2026")
 
@@ -191,7 +191,7 @@ if (CMAKE_GENERATOR MATCHES "Xcode")
 	set (CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
 else()
   if (APPLE)
-#    set (CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+		set (CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
   endif()
 endif()
 
@@ -515,6 +515,21 @@ configure_file (
 # Build Installer with CPack
 # ==========================
 
+# Build documentation
+
+if (CMAKE_GENERATOR MATCHES "Xcode")
+else()
+	add_custom_command(TARGET multimarkdown
+		POST_BUILD
+		COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/dev.md" > "${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
+		COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/user.md" > "${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+		COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/README.md" > "${PROJECT_BINARY_DIR}/ReadMe.html"
+		VERBATIM
+		COMMENT "Generating Documentation"
+	)
+endif()
+
+set (CPACK_PACKAGE_NAME "MultiMarkdown")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "${My_Project_Description}")
 set (CPACK_PACKAGE_VERSION "${My_Project_Version_Major}.${My_Project_Version_Minor}.${My_Project_Version_Patch}")
 set (CPACK_PACKAGE_VERSION_MAJOR "${My_Project_Version_Major}")
@@ -546,9 +561,14 @@ else()
 		if (DEFINED ZIP)
 			set (CPACK_GENERATOR ZIP)
 		else (DEFINED ZIP)
-			set (CPACK_GENERATOR productbuild)
-			# set (CPACK_GENERATOR DragNDrop)
-			# set (CPACK_GENERATOR TGZ)
+			if (DEFINED DND)
+				set (CPACK_GENERATOR DragNDrop)
+				set (CPACK_DMG_DISABLE_APPLICATIONS_SYMLINK ON)
+				set (CPACK_DMG_SLA_USE_RESOURCE_FILE_LICENSE ON)
+			else()
+				set (CPACK_GENERATOR productbuild)
+				# set (CPACK_GENERATOR TGZ)
+			endif (DEFINED DND)
 		endif (DEFINED ZIP)
 	else (APPLE)
 		if (WIN32)
@@ -570,10 +590,38 @@ else()
 		DESTINATION bin
 		COMPONENT Main
 	)
-	set (CPACK_COMPONENT_MAIN_DISPLAY_NAME "MultiMarkdown v7")
+	set (CPACK_COMPONENT_MAIN_DISPLAY_NAME "MultiMarkdown ${My_Project_Version}")
 	set (CPACK_COMPONENT_MAIN_DESCRIPTION "Install MultiMarkdown ${My_Project_Version}.")
 
-	set (CPACK_COMPONENTS_ALL Main)
+	install (FILES
+		latex/mmd7-core.sty
+		latex/mmd7-article.sty
+		latex/mmd7-beamer.sty
+		latex/mmd7-letterhead.sty
+		COMPONENT LaTeX
+		DESTINATION /Latex\ Packages
+	)
+
+	install (FILES
+		"${PROJECT_BINARY_DIR}/README.html"
+		"${PROJECT_BINARY_DIR}/LICENSE.txt"
+		"${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
+		"${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+		COMPONENT Readme
+		DESTINATION /
+	)
+
+	set (CPACK_COMPONENT_LATEX_DISPLAY_NAME "LaTeX Packages")
+	set (CPACK_COMPONENT_LATEX_DESCRIPTION "Install LaTeX packages for MultiMarkdown support")
+
+	# Rename package
+	if (APPLE)
+		set (CPACK_PACKAGE_FILE_NAME "MultiMarkdown-Mac-${CPACK_PACKAGE_VERSION}")
+	else (APPLE)
+		set (CPACK_PACKAGE_FILE_NAME "MultiMarkdown-${CMAKE_SYSTEM_NAME}-${CPACK_PACKAGE_VERSION}")
+	endif (APPLE)
+
+	set (CPACK_COMPONENTS_ALL Main LaTeX Readme)
 
 	if (WIN32)
 		set (CPACK_INSTALL_PREFIX "")

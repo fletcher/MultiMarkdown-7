@@ -1,11 +1,14 @@
 title:	MultiMarkdown User's Guide
 author:	Fletcher T. Penney
 version:	7.0.0
-revised:	2026-03-12
+revised:	2026-03-13
 baseheaderlevel:	1
 css:	css/Classless.min.css
-zhtmlheader:	<style>.TOC {position: absolute; left: 100px; width:250px; }</style>
-htmlheader:	<style>main {display: grid; grid-template-columns: 15em 1fr; margine: 0 auto; } main > nav {position: sticky; align-self: start; top: 2rem; animation-timeline: view();}</style>
+htmlheader: <style>main {display: grid; grid-template-columns: 16em 45em; margin: 0 auto; gap: 20px;}
+    main > nav {position: sticky; align-self: start; top: 2rem; animation-timeline: view();}
+    del { background: #fae6e6; } ins { background: #ecfce6; } span.critic.comment { color: #0000bb; }
+    span.critic.comment::before { content: "{>> "; } span.critic.comment::after { content: " <<}"; }
+    </style>
 mmdheader: {{header.md}}
 mmdfooter: {{footer.md}}
 
@@ -24,7 +27,8 @@ convert plain text into HTML suitable for using on a web page.
 > [][#Gruber]
 
 
-[#Gruber]: John Gruber.  Daring Fireball: Markdown. [Cited January 2006]. Available from <http://daringfireball.net/projects/markdown/>.
+[#Gruber]: John Gruber.  Daring Fireball: Markdown. [Cited January 2006].
+Available from <http://daringfireball.net/projects/markdown/>.
 
 ### What is MultiMarkdown? ###
 
@@ -53,7 +57,16 @@ MMD v7 accomplishes a few things:
 ## Installation ##
 ### Where to Obtain MultiMarkdown ###
 
+Installers for macOS and archived source files for each release are available
+on the Github repository [Releases] page.
+
 The source code for MMD is available on [Github][repo].
+
+(*NOTE*: At this time I don't have a convenient way to package installers for
+Windows for various machine architectures.  I am open to suggestions.  It
+looks like it *might* be possible to do this on Github itself, but I'll need
+to dig into this further.)
+
 
 ### How to Compile MultiMarkdown ###
 
@@ -71,7 +84,20 @@ You can test to ensure that everything works correctly:
 
 ### How to Install MultiMarkdown ###
 
-TODO: Build installers automatically
+You can install your own build:
+
+    make
+    cd build
+    make
+    make install
+
+
+Or you can use a pre-built installer from the Github
+[releases page](https://github.com/fletcher/MultiMarkdown-7/releases).
+
+(Currently the installers are for macOS only.  I don't have a workflow yet to
+generate Windows installers.)
+
 
 ## Usage ##
 ### Basic Usage ###
@@ -94,6 +120,73 @@ Convert source text from stdin into LaTeX:
 
 
 Check the program's help for more information.
+
+
+## Command-Line Changes ##
+
+MMD v7 handles arguments from the command-line in a slightly different way
+from v6, though the most common use cases are unchanged.
+
+  multimarkdown [--help] {ast|batch|hash|meta|parse} [options] [Input file names]
+
+The first argument should be an action.  If no action is specified, MMD
+defaults to the `parse` action.
+
+* `ast` -- Display the AST showing how the document was parsed
+
+* `batch` -- Parse each file individually and write to the same filename with
+  a new extension
+
+* `hash` -- Display the hash tree for the parsed document
+
+* `meta` -- Extra metadata from the document without parsing the rest
+
+* `parse` -- Parse the document(s) and export to the desired format
+
+
+You can then specify different options to adjust the default behavior:
+
+* `-t FORMAT` -- Specify the output format (`html`, `mmd`, `latex`, `docx`,
+  `epub`, `itmz`, `opml`, `textbundle`, `textpack`, `ast`, `hash`)
+
+* `-o OUT_FILE` -- Specify the filename for writing the output
+
+* `-l LANGUAGE` -- Specify the language for smart quotes and default markup
+  (`en`, `es`, `de`, `fr`, `nl`, `sv`, `he`)
+
+* `-c` -- Markdown compatibility mode -- turn off features that are not in the
+  original Markdown specification.  Note that due to bugs in the original
+  `Markdown.pl` and due to ambiguities in the original "spec", the output
+  will not exactly match John Gruber's `Markdown.pl`.
+
+* `-C` -- Generate a complete document
+
+* `-S` -- Generate a snippet
+
+* `-r` -- Enable file transclusion ("recursive")
+
+* `-D` -- Download assets from the internet (images, CSS) for inclusion in
+  package formats (requires libcurl when compiling)
+
+* `-E` -- Embedd assets in non-package formats where possible (e.g. embed
+  images directly in HTML as Base64)
+
+* `-p PATH` -- Specify a working directory when parsing from stdin (e.g. for
+  transclusion or embedding assets)
+
+* `-A` -- Accept all CriticMarkup changes
+
+* `-R` -- Reject all CriticMarkup changes
+
+* `-O` -- Convert OPML source to MMD text before parsing
+
+* `-I` -- Convert iThoughts source to MMD text before parsing
+
+* `-e` -- Specify metadata key to extract value from MMD source
+
+* `-b` -- Limit parsing to block level only (useful for diagnostics only)
+
+* `-s` -- Log some processing time statistics (does not work on Windows)
 
 
 ### Batch Mode ###
@@ -123,7 +216,8 @@ in the file.
 
 MMD has a few other optional features:
 
-* Compatibility mode (`-c`) -- disables most functionality that was not in the original `Markdown.pl` script.
+* Compatibility mode (`-c`) -- disables most functionality that was not in the
+  original `Markdown.pl` script.
 
 * Smart quotes -- MMD generates more typographically correct punctuation, such
   as quotation marks. The `quotes language` metadata can change this to match
@@ -146,7 +240,8 @@ MMD has a few other optional features:
   words, it will determine that a paragraph exists, but will not parse the
   content inside the paragraph.  This may be useful if you just want to see
   the overall structure of a document, or if you are using MMD as a library
-  in your own application.
+  in your own application. (NOTE: This is really only useful with the AST or
+  Hash output formats, since each block will be empty.)
 
 
 ## Output Formats ##
@@ -183,11 +278,12 @@ attempt to download CSS and image files for embedding.
 ### HTML ###
 
 Markdown converts text into HTML.  MMD extended this to include other output
-formats, but HTML will always be the first.
+formats as well.
 
 If no output format is specified, HTML is assumed.
 
     multimarkdown input.txt > output.html
+    multimarkdown parse input.txt > output.html
 
 
 ### MMD ###
@@ -196,6 +292,7 @@ Sometimes it is useful to process a MMD document, but output the file back to
 plain MMD text rather than a different output format.
 
     multimarkdown -t mmd input.txt > output.mmd
+    multimarkdown parse -t mmd input.txt > output.mmd
 
 
 ### AST ###
@@ -379,18 +476,47 @@ header has the same title.
 
 ### HTML Blocks ###
 
-TODO
+Just like regular Markdown, MMD supports including raw HTML blocks within your
+document.  The key difference is that MultiMarkdown *will* parse inside HTML
+blocks that include a blank line between the opening HTML tag and the content.
+
+MMD will *not* parse inside this:
+
+    <del>
+    *foo*
+    </del>
+
+but will parse inside this:
+
+    <del>
+
+    *foo*
+    </del>
 
 
 ### HTML Spans ###
 
-TODO
+HTML spans are raw HTML that is within a single MultiMarkdown block, such as a
+paragraph.  MultiMarkdown *will* parse inside these spans.
+
+    foo
+    <del>
+    *bar*
+    </del>
+
+    foo <del>*bar*</del>
 
 
 ## Extended MultiMarkdown Features ##
 ### Metadata ###
 
 TODO include common keys.
+
+You can use MMD to extract metadata from source text:
+
+    multimarkdown meta input.txt
+    multimarkdown meta -e key_name input.txt
+
 
 ### Table of Contents ###
 
@@ -447,13 +573,45 @@ See the [PHP Markdown Extra][] page for more information.
 
 
 ### Tables ###
+
+TODO
+
+
 ### Figures ###
+
+TODO
+
+
 ### Footnotes ###
+
+TODO
+
+
 ### Citations ###
+
+TODO
+
+
 ### Glossaries ###
+
+TODO
+
+
 ### Abbreviations ###
+
+TODO
+
+
 ### Link Attributes ###
+
+TODO
+
+
 ### Math ###
+
+TODO
+
+
 ### Smart Quotes ###
 
 MultiMarkdown converts "plain" punctuation into "smarter" typographic punctuation:
@@ -463,7 +621,8 @@ MultiMarkdown converts "plain" punctuation into "smarter" typographic punctuatio
 * Dashes (`--` and `---`) into en- and em- dashes
 * Three dots (`...`) become an ellipsis
 
-MultiMarkdown also includes support for quotes styles other than English (the default).  Use the `quotes language` metadata to choose:
+MultiMarkdown also includes support for quotes styles other than English
+(the default).  Use the `quotes language` metadata to choose:
 
 * English (`en`)
 * Dutch (`nl`)
@@ -476,12 +635,152 @@ MultiMarkdown also includes support for quotes styles other than English (the de
 
 ### File Transclusion ###
 
+TODO
+
 
 ## CriticMarkup Support ##
 ### What is CriticMarkup? ###
+
+> CriticMarkup is a way for authors and editors to track changes to documents
+> in plain text. As with Markdown, small groups of distinctive characters
+> allow you to highlight insertions, deletions, substitutions and comments,
+> all without the overhead of heavy, proprietary office suites.
+> <http://criticmarkup.com/> 
+
+CriticMarkup is integrated with MultiMarkdown itself, as well as
+[MultiMarkdown Composer].  I encourage you to check out the [CriticMarkup] web
+site to learn more as it can be a very useful tool.  There is also a great
+video showing CriticMarkup in use while editing a document in MultiMarkdown
+Composer. 
+
+
+### Using CriticMarkup with MultiMarkdown ###
+
+When using CriticMarkup with MultiMarkdown itself, you have three choices: 
+
+*   Leave the CriticMarkup syntax in place (`multimarkdown foo.txt`).
+    MultiMarkdown will attempt to show the changes as highlights in the
+    exported document, where possible.  This will not *always* result in a
+    valid output document.
+
+*   **Accept** all changes, giving you the "new" document
+    (`multimarkdown -A foo.txt`)
+
+*   **Reject** all changes, giving you the "original" document
+    (`multimarkdown -R foo.txt`)
+
+*   CriticMarkup comments and highlighting are ignored when processing with
+    `-A` or `-R`. 
+
+
 ### CriticMarkup Syntax ###
-### Options for CriticMarkup ###
-### CriticMarkup Limitations ###
+
+The CriticMarkup syntax is fairly straightforward.  The key thing to remember
+is that CriticMarkup is processed *before* any other MultiMarkdown is
+handled.  It's almost like a separate layer on top of the MultiMarkdown
+syntax. 
+
+When editing in MultiMarkdown Composer, you can have CriticMarkup syntax
+flagged in the both the editor pane and the preview window.  This will allow
+you to see changes in the HTML preview. 
+
+*   Deletions from the original text: 
+
+        This is {--is --}a test.
+
+    This is {--is --}a test.
+
+*   Additions: 
+
+        This {++is ++}a test.
+
+    This {++is ++}a test.
+
+*   Substitutions: 
+
+        This {~~isn't~>is~~} a test.
+
+    This {~~isn't~>is~~} a test.
+
+* Highlighting: 
+
+        This is a {==test==}.
+
+    This is a {==test==}.
+
+*   Comments: 
+
+        This is a test{>>What is it a test of?<<}.
+
+    This is a test{>>What is it a test of?<<}.
+
+
+### CriticMarkup limitations ###
+
+If you accept or reject CriticMarkup changes, then it should work properly in
+any document.
+
+If you want to try to include your changes as "markup notes" in the final
+document, then certain situations will lead to results that were probably not
+what you intended.
+
+1.  CriticMarkup must be contained within a single block (e.g. paragraph, list
+item, etc.)  CM that spans multiple blocks will not be recognized.
+
+2.  CriticMarkup that crosses multiple MMD spans (e.g. `{++** foo} bar**`)
+will not properly manage the intended MultiMarkdown markup.  This example
+would not result in bold being applied to `foo bar`.
+
+
+### My philosophy on CriticMarkup
+
+I view CriticMarkup as two things (in addition to the actual tools that
+implement these concepts): 
+
+1.  A syntax for documenting editing notes and changes, and for collaborating
+amongst coauthors. 
+
+2.  A means to display those notes/changes in the HTML output. 
+
+I believe that #1 is a really great idea, and well implemented.  #2 is not so
+well implemented, largely due to the "orthogonal" nature of CriticMarkup and
+the underlying Markdown syntax. 
+
+CM is designed as a separate layer on top of Markdown/MultiMarkdown.  This
+means that a Markdown span could, for example, start in the middle of a
+CriticMarkup structure, but end outside of it.  This means that an algorithm
+to properly convert a CM/Markdown document to HTML would be quite complex,
+with a huge number of edge cases to consider.  I've tried a few
+(fairly creative, in my opinion) approaches, but they didn't work.  Perhaps
+someone else will come up with a better solution, or will be so interested
+that they put the work in to create the complex algorithm.  I have no current
+plans to do so. 
+
+Additionally, there is a philosophical distinction between documenting editing
+notes, and using those notes to produce a "finished" document (e.g. HTML or
+PDF) that keeps those editing notes intact (e.g. strikethroughs,
+highlighting, etc.) I believe that CM is incredibly useful for the editing
+process, but am less convinced for the output process (I know many others
+disagree with me, and that's ok.  And to be clear, I think that what Gabe and
+Erik have done with CriticMarkup is fantastic!) 
+
+There are other CriticMarkup tools besides MultiMarkdown and
+[MultiMarkdown Composer], and you are more than
+welcome to use them. 
+
+For now, the *official* MultiMarkdown support for CriticMarkup consists of: 
+
+1.  CriticMarkup syntax is "understood" by the MultiMarkdown parser, and by
+MultiMarkdown Composer syntax highlighting.
+
+2.  When converting from MultiMarkdown text to an output format, you can
+ignore CM formatting with compatibility mode (probably not what you want to
+do), accept all changes, or reject all changes (as above).  These are the
+preferred choices.
+
+3.  The secondary choice, is to *attempt* to show the changes in the exported
+document.  Because the syntaxes are orthogonal, this will not always work
+properly, and will not always give valid output files.
 
 
 [>AST]: Abstract Syntax Tree
@@ -492,11 +791,14 @@ MultiMarkdown also includes support for quotes styles other than English (the de
 
 [beamer]: https://ctan.org/pkg/beamer "Beamer LaTeX class"
 [cmake]: https://cmake.org "CMake"
+[CriticMarkup]: https://github.com/CriticMarkup/CriticMarkup-toolkit "CriticMarkup"
 [cURL]: https://github.com/curl/curl "cURL"
 [LaTeX]: https://www.latex-project.org "LaTeX Project"
 [Markdown]: http://daringfireball.net/projects/markdown/ "Markdown"
 [MultiMarkdown]: https://fletcherpenney.net/multimarkdown/ "MultiMarkdown"
-[PHP Markdown Extra]:    http://www.michelf.com/projects/php-markdown/extra/ "PHP Markdown Extra"
-[repo]:    https://github.com/fletcher/MultiMarkdown-7 "MultiMarkdown GitHub Repository"
+[MultiMarkdown Composer]: https://multimarkdown.com/ "MultiMarkdown Composer"
+[PHP Markdown Extra]: http://www.michelf.com/projects/php-markdown/extra/ "PHP Markdown Extra"
+[Releases]: https://github.com/fletcher/MultiMarkdown-7/releases "MultiMarkdown Releases"
+[repo]: https://github.com/fletcher/MultiMarkdown-7 "MultiMarkdown GitHub Repository"
 [TeX]: https://tug.org "TeX User's Group"
 [TextBundle]: https://textbundle.org "TextBundle"
