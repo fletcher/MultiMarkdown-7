@@ -515,129 +515,133 @@ configure_file (
 # Build Installer with CPack
 # ==========================
 
-# Build documentation
+if(TARGET multimarkdown)
 
-if (CMAKE_GENERATOR MATCHES "Xcode")
-else()
-	add_custom_command(TARGET multimarkdown
-		POST_BUILD
-		COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/dev.md" > "${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
-		COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/user.md" > "${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
-		COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/README.md" > "${PROJECT_BINARY_DIR}/ReadMe.html"
-		VERBATIM
-		COMMENT "Generating Documentation"
+	# Build documentation
+
+	if (CMAKE_GENERATOR MATCHES "Xcode")
+	else()
+		add_custom_command(TARGET multimarkdown
+			POST_BUILD
+			COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/dev.md" > "${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
+			COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/user.md" > "${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+			COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/README.md" > "${PROJECT_BINARY_DIR}/ReadMe.html"
+			VERBATIM
+			COMMENT "Generating Documentation"
+		)
+	endif()
+
+	set (CPACK_PACKAGE_NAME "MultiMarkdown")
+	set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "${My_Project_Description}")
+	set (CPACK_PACKAGE_VERSION "${My_Project_Version_Major}.${My_Project_Version_Minor}.${My_Project_Version_Patch}")
+	set (CPACK_PACKAGE_VERSION_MAJOR "${My_Project_Version_Major}")
+	set (CPACK_PACKAGE_VERSION_MINOR "${My_Project_Version_Minor}")
+	set (CPACK_PACKAGE_VERSION_PATCH "My_Project_Version_Patch")
+
+	configure_file (
+		"${PROJECT_SOURCE_DIR}/LICENSE"
+		"${PROJECT_BINARY_DIR}/LICENSE.txt"
 	)
-endif()
+	configure_file (
+		"${PROJECT_SOURCE_DIR}/README.md"
+		"${PROJECT_BINARY_DIR}/README.txt"
+	)
 
-set (CPACK_PACKAGE_NAME "MultiMarkdown")
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "${My_Project_Description}")
-set (CPACK_PACKAGE_VERSION "${My_Project_Version_Major}.${My_Project_Version_Minor}.${My_Project_Version_Patch}")
-set (CPACK_PACKAGE_VERSION_MAJOR "${My_Project_Version_Major}")
-set (CPACK_PACKAGE_VERSION_MINOR "${My_Project_Version_Minor}")
-set (CPACK_PACKAGE_VERSION_PATCH "My_Project_Version_Patch")
+	set (CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.txt")
+	set (CPACK_RESOURCE_FILE_README "${PROJECT_BINARY_DIR}/README.txt")
 
-configure_file (
-	"${PROJECT_SOURCE_DIR}/LICENSE"
-	"${PROJECT_BINARY_DIR}/LICENSE.txt"
-)
-configure_file (
-	"${PROJECT_SOURCE_DIR}/README.md"
-	"${PROJECT_BINARY_DIR}/README.txt"
-)
+	if (DEFINED TEST)
+		# Don't install the test suite
+	else()
+		if (APPLE)
+			# Apple Builds
 
-set (CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.txt")
-set (CPACK_RESOURCE_FILE_README "${PROJECT_BINARY_DIR}/README.txt")
-
-if (DEFINED TEST)
-	# Don't install the test suite
-else()
-	if (APPLE)
-		# Apple Builds
-
-		# Prevent installer from attempting to install Rosetta
-		#    https://gitlab.kitware.com/cmake/cmake/-/issues/21734
-		list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/tools)
-
-		if (DEFINED ZIP)
-			set (CPACK_GENERATOR ZIP)
-		else (DEFINED ZIP)
-			if (DEFINED DND)
-				set (CPACK_GENERATOR DragNDrop)
-				set (CPACK_DMG_DISABLE_APPLICATIONS_SYMLINK ON)
-				set (CPACK_DMG_SLA_USE_RESOURCE_FILE_LICENSE ON)
-			else()
-				set (CPACK_GENERATOR productbuild)
-				# set (CPACK_GENERATOR TGZ)
-			endif (DEFINED DND)
-		endif (DEFINED ZIP)
-	else (APPLE)
-		if (WIN32)
-			# Windows Builds
+			# Prevent installer from attempting to install Rosetta
+			#    https://gitlab.kitware.com/cmake/cmake/-/issues/21734
+			list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/tools)
 
 			if (DEFINED ZIP)
 				set (CPACK_GENERATOR ZIP)
 			else (DEFINED ZIP)
-				set (CPACK_GENERATOR NSIS)
+				if (DEFINED DND)
+					set (CPACK_GENERATOR DragNDrop)
+					set (CPACK_DMG_DISABLE_APPLICATIONS_SYMLINK ON)
+					set (CPACK_DMG_SLA_USE_RESOURCE_FILE_LICENSE ON)
+				else()
+					set (CPACK_GENERATOR productbuild)
+					# set (CPACK_GENERATOR TGZ)
+				endif (DEFINED DND)
 			endif (DEFINED ZIP)
-		elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-			# Linux
-			set (CPACK_GENERATOR ZIP)
-		endif (WIN32)
-	endif (APPLE)
+		else (APPLE)
+			if (WIN32)
+				# Windows Builds
 
-	# Install Target
-	install (TARGETS multimarkdown
-		DESTINATION bin
-		COMPONENT Main
-	)
-	set (CPACK_COMPONENT_MAIN_DISPLAY_NAME "MultiMarkdown ${My_Project_Version}")
-	set (CPACK_COMPONENT_MAIN_DESCRIPTION "Install MultiMarkdown ${My_Project_Version}.")
+				if (DEFINED ZIP)
+					set (CPACK_GENERATOR ZIP)
+				else (DEFINED ZIP)
+					set (CPACK_GENERATOR NSIS)
+				endif (DEFINED ZIP)
+			elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+				# Linux
+				set (CPACK_GENERATOR ZIP)
+			endif (WIN32)
+		endif (APPLE)
 
-	install (FILES
-		latex/mmd7-core.sty
-		latex/mmd7-article.sty
-		latex/mmd7-beamer.sty
-		latex/mmd7-letterhead.sty
-		COMPONENT LaTeX
-		DESTINATION /Latex\ Packages
-	)
+		# Install Target
+		install (TARGETS multimarkdown
+			DESTINATION bin
+			COMPONENT Main
+		)
+		set (CPACK_COMPONENT_MAIN_DISPLAY_NAME "MultiMarkdown ${My_Project_Version}")
+		set (CPACK_COMPONENT_MAIN_DESCRIPTION "Install MultiMarkdown ${My_Project_Version}.")
 
-	install (FILES
-		"${PROJECT_BINARY_DIR}/README.html"
-		"${PROJECT_BINARY_DIR}/LICENSE.txt"
-		"${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
-		"${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
-		COMPONENT Readme
-		DESTINATION /
-	)
+		install (FILES
+			latex/mmd7-core.sty
+			latex/mmd7-article.sty
+			latex/mmd7-beamer.sty
+			latex/mmd7-letterhead.sty
+			COMPONENT LaTeX
+			DESTINATION /Latex\ Packages
+		)
 
-	set (CPACK_COMPONENT_LATEX_DISPLAY_NAME "LaTeX Packages")
-	set (CPACK_COMPONENT_LATEX_DESCRIPTION "Install LaTeX packages for MultiMarkdown support")
+		install (FILES
+			"${PROJECT_BINARY_DIR}/README.html"
+			"${PROJECT_BINARY_DIR}/LICENSE.txt"
+			"${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
+			"${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+			COMPONENT Readme
+			DESTINATION /
+		)
 
-	# Rename package
-	if (APPLE)
-		set (CPACK_PACKAGE_FILE_NAME "MultiMarkdown-Mac-${CPACK_PACKAGE_VERSION}")
-	else (APPLE)
-		set (CPACK_PACKAGE_FILE_NAME "MultiMarkdown-${CMAKE_SYSTEM_NAME}-${CPACK_PACKAGE_VERSION}")
-	endif (APPLE)
+		set (CPACK_COMPONENT_LATEX_DISPLAY_NAME "LaTeX Packages")
+		set (CPACK_COMPONENT_LATEX_DESCRIPTION "Install LaTeX packages for MultiMarkdown support")
 
-	set (CPACK_COMPONENTS_ALL Main LaTeX Readme)
+		# Rename package
+		if (APPLE)
+			set (CPACK_PACKAGE_FILE_NAME "MultiMarkdown-Mac-${CPACK_PACKAGE_VERSION}")
+		else (APPLE)
+			set (CPACK_PACKAGE_FILE_NAME "MultiMarkdown-${CMAKE_SYSTEM_NAME}-${CPACK_PACKAGE_VERSION}")
+		endif (APPLE)
 
-	if (WIN32)
-		set (CPACK_INSTALL_PREFIX "")
-		set (CPACK_NSIS_MODIFY_PATH ON)
-		if (ZIP)
+		set (CPACK_COMPONENTS_ALL Main LaTeX Readme)
+
+		if (WIN32)
+			set (CPACK_INSTALL_PREFIX "")
+			set (CPACK_NSIS_MODIFY_PATH ON)
+			if (ZIP)
+				set(CPACK_SET_DESTDIR true)
+			endif(ZIP)
+		else(WIN32)
 			set(CPACK_SET_DESTDIR true)
-		endif(ZIP)
-	else(WIN32)
-		set(CPACK_SET_DESTDIR true)
-		set (CPACK_INSTALL_PREFIX /usr/local)
-	endif(WIN32)
+			set (CPACK_INSTALL_PREFIX /usr/local)
+		endif(WIN32)
 
-	set (CPACK_PACKAGE_CONTACT "fletcher@fletcherpenney.net")
-endif (DEFINED TEST)
+		set (CPACK_PACKAGE_CONTACT "fletcher@fletcherpenney.net")
+	endif (DEFINED TEST)
 
-include(CPack)
+	include(CPack)
+
+endif(TARGET multimarkdown)
 
 
 # =====================================
