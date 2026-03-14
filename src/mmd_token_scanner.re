@@ -548,7 +548,6 @@ size_t scan_metadata(const char * text, size_t len, meta ** m) {
 	meta_key		= [A-Za-z0-9] [A-Za-z0-9_ \240\t\-.]*;
 
 	first_line		= [^\x00\n\r]*;
-//	continuation	= eol s [^ \t\n\r\x00] (([^:\n\r\x00]* url [^\x00\n\r]*) | ([^:\n\r\x00]* email [^\x00\n\r]*) | [^:\x00\n\r]+);
 	continuation	= eol (([ \t\240] s [^\n\r\x00]*) | ([^:\n\r\x00]* url [^\x00\n\r]*) | ([^:\n\r\x00]* email [^\x00\n\r]*) | [^:\x00\n\r]+);
 	meta_value		= first_line (continuation)*; 
 
