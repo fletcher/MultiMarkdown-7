@@ -205,13 +205,10 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 			asset_free(s);
 		}
 
-		stack * token_pair_stack = c->token_pair_stack;
-		stack * header_stack = c->header_stack;
+		stack_free(c->header_stack);
+		stack_free(c->token_pair_stack);
 
 		memset(c, 0, sizeof(read_ctx));
-
-		c->token_pair_stack = token_pair_stack;
-		c->header_stack = header_stack;
 
 		read_ctx_init(c, options);
 	}
