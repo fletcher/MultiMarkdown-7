@@ -264,7 +264,7 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 
 		// Skip anything else (e.g. invalid UTF-8 bytes)
 		*															{ goto skip; }
-		$															{ ret 0; }
+		//$															{ ret 0; }
 	*/
 }
 
