@@ -119,8 +119,10 @@ use.
 * `structure.sh` -- shell script to generate exhaustive combinations of line
   types to verify parser behavior in determining the overall block structure.
   The script can be modified to determine how deep the testing goes.  3 line
-  combinations cover the majority of situations, but some additional edge
-  cases arise the further you go.
+  combinations cover the majority of common situations, but some additional
+  edge cases arise the further you go.  By the time you get to 5 levels, the
+  generated HTML output is over 11 MB long.  As of 2026-03-14, I have tested
+  up to 6 levels deep (135.6 MB).
 
 		./tests/structure.sh | ./build/multimarkdown -c | tidy > mmd.html
 		./tests/structure.sh | cmark | tidy > cmark.html
@@ -135,17 +137,17 @@ use.
 	other block level elements in Markdown.  I had previously assumed
 	(decided??) that lazy blockquote formatting (leaving out the
 	initial '>') applied to any blockquote content.  Based on CommonMark's
-	interpretation, I reread the Markdown syntax "spec" and decided that
+	interpretation, I reread the Markdown syntax "spec" and agreed that
 	it only applied to regular text paragraphs.)
 
 
 ### libFuzzer ###
 
 [libFuzzer] is used for fuzz testing.  Through the course of development, I
-was able to find a fair number of bugs this way that I would never have found
-otherwise.  This doesn't work on macOS, so I use vagrant and do the fuzz
-testing in Ubuntu.  Feel free to participate by running the fuzz tester
-yourself, and send me any examples that trigger an error!
+was able to find a fair number of bugs this way that would have been
+challenging to find otherwise.  This doesn't work on macOS, so I use vagrant
+and do the fuzz testing in Ubuntu.  Feel free to participate by running the
+fuzz tester yourself, and send me any examples that trigger an error!
 
     cd fuzz
     make
@@ -179,24 +181,28 @@ library.  I have tried to clean this file up in order to make it clearer to
 read and to included everything required to incorporate MMD in most
 projects.
 
-You'll notice that most of the primary API calls have 4 versions:
+You'll notice that most of the primary API calls have 4 variants:
 
-* One requires a FILE pointer to a file that has been opened. This can also be
-  `stdin`.
+1. One requires a FILE pointer to a file that has been opened. This can also
+be `stdin`.
 
-* One requires path to a file, and MMD handles opening the file for reading.
+2. One requires path to a file, and MMD handles opening the file for reading.
 
-* One requires a nul-terminated C string
+3. One requires a null terminated C string (which means the string has to be
+scanned to determine how long it is.)
 
-* One requires a C string (optionally nul-terminated) along with the length of
-  that string (in bytes)
+4. One requires a C string (optionally null terminated) along with the length
+of that string (in bytes). This version does not require an additional pass
+to determine the length of the string since it is provided up front. This
+variant is preferable to variant 3 if you already know the length of the
+string for that reason.
 
-
-Regardless of how the source text is delivered, MMD expects UTF-8 encoding.
+Regardless of how the source text is delivered, MMD expects UTF-8 encoding
+(with or without a BOM, which is not needed with UTF-8 encoding).
 
 There are several different call classes available:
 
-* `mmd_process_X` -- source MMD text is processed into another format
+* `mmd_process_X` -- source MMD text is fuly processed into another format
   (e.g. HTML) and sent to the desired FILE pointer (e.g. `stdout`)
 
 * `mmd_process_X_to_str` -- same as above, but instead the result is returned
@@ -214,10 +220,12 @@ There are several different call classes available:
 
 * `mmd_ast_X` -- this is a shortcut function that parses source text and sends
   a description of the AST to `stdout` (or another FILE pointer) without
-  requiring you to know about `mmd_node`.
+  requiring you to know about `mmd_node`.  Alternatively, you can use
+  `mmd_process_X` with an output format of `ast`.
 
 * `mmd_hash_X` -- similar to `mmd_ast_X` but includes hash values for the
-  nodes.  I'm still working on some ways to use these, but the idea is that
+  nodes.  Alternatively, you can use `mmd_process_X` with an output format of
+  `hash`.  I'm still working on some ways to use these, but the idea is that
   the hash values for each node in the tree allow you to quickly determine
   whether two AST's (or subtrees of the same) are the equivalent
   (identical hash values) or not.
@@ -226,12 +234,13 @@ There are several different call classes available:
   (which must be freed after use with `read_ctx_free()`.)  This allows you to
   access metadata from a MMD document, along with other extracted
   information.  Currently, you would need `read_ctx.h` in order to do much
-  with this, but I plan to do more in the future.
+  with this, but I plan to update this aspect of the API in the future.
 
 * `custom_seed_rand()` -- several MMD features use pseudo-random numbers to
   prevent collisions between footnote and header anchor ids.  This function
   must be called in order to do the initial seeding for the random number
   generator so that different numbers are generated each time.
+
 
 ### API Enumerations ###
 
@@ -246,11 +255,13 @@ There are several different call classes available:
   the final HTML file (such as "see footnote".) Let me know if you have
   another language to contribute.
 
-* `mmd_options` -- bitwise flags for controlling various features of MMD.
+* `mmd_options` -- bitwise flags for controlling various features of MMD.  See
+  `libMultiMarkdown7.h` for details of these options.
 
 
 All of these values are combined into a single 32-bit unsigned integer.  There
-are couple of macros to extract specific values if needed:
+are couple of macros to extract specific values from that combined value if
+needed:
 
 * `MMD_OUT_FORMAT_FROM_OPTS()`
 * `MMD_SMART_QUOTE_FROM_OPTS()`

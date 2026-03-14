@@ -493,6 +493,9 @@ but will parse inside this:
     *foo*
     </del>
 
+(This difference in behavior allows you to control what is treated as Markdown
+and what is treated as raw HTML by adjusting the spacing as necessary.)
+
 
 ### HTML Spans ###
 
