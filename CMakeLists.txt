@@ -523,11 +523,11 @@ if(TARGET multimarkdown)
 	else()
 		add_custom_command(TARGET multimarkdown
 			POST_BUILD
-			COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/dev.md" > "${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
-			COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/docs/user.md" > "${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
-			COMMAND "${PROJECT_BINARY_DIR}/multimarkdown" -E -r "${CMAKE_SOURCE_DIR}/README.md" > "${PROJECT_BINARY_DIR}/ReadMe.html"
+			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/docs/dev.md" > "${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
+			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/docs/user.md" > "${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/README.md" > "${PROJECT_BINARY_DIR}/ReadMe.html"
 			VERBATIM
-			COMMENT "Generating Documentation"
+			COMMENT "Generating Documentation..."
 		)
 	endif()
 
