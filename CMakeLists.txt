@@ -525,6 +525,7 @@ if(TARGET multimarkdown)
 			POST_BUILD
 			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/docs/dev.md" > "${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
 			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/docs/user.md" > "${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/docs/history.md" > "${PROJECT_BINARY_DIR}/MMD\ History.html"
 			COMMAND $<TARGET_FILE:multimarkdown> -E -r "${CMAKE_SOURCE_DIR}/README.md" > "${PROJECT_BINARY_DIR}/ReadMe.html"
 			VERBATIM
 			COMMENT "Generating Documentation..."
@@ -609,6 +610,7 @@ if(TARGET multimarkdown)
 			"${PROJECT_BINARY_DIR}/LICENSE.txt"
 			"${PROJECT_BINARY_DIR}/Developer\'s\ Guide.html"
 			"${PROJECT_BINARY_DIR}/User\'s\ Guide.html"
+			"${PROJECT_BINARY_DIR}/MMD\ History.html"
 			COMPONENT Readme
 			DESTINATION /
 		)
