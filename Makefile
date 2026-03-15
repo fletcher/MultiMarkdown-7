@@ -1,6 +1,6 @@
 # Compile the MultiMarkdown User's Guide into documentation or test suite
 
-srcfiles := $(wildcard *.md */*.md )
+srcfiles := $(wildcard *.md)
 
 htmlfiles := $(patsubst %.md, %.html, $(srcfiles))
 

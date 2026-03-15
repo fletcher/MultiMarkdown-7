@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>MultiMarkdown Developer's Guide</title>
+	<meta name="author" content="Fletcher T. Penney"/>
+	<meta name="version" content="7.0.0"/>
+	<meta name="revised" content="2026-03-13"/>
+	<style>
+:root{--primary: #364153;--primary-contrast: #202732;--primary-invert: #364153;--secondary: #64748b;--secondary-light: #94a3b8;--success: #10b981;--success-light: #34d399;--danger: #ef4444;--danger-light: #f87171;--warning: #f59e0b;--warning-light: #fbbf24;--info: #0ea5e9;--info-light: #38bdf8;--light: #f8fafc;--dark: #1e293b;--body-bg: #ffffff;--body-color: #334155;--heading-color: #1e293b;--link-color: #3b82f6;--link-hover-color: #0b65ff;--border-color: #e2e8f0;--shadow-color: rgba(0,0,0,0.1);--card-bg: #ffffff;--gradient-primary: linear-gradient(135deg,var(--primary) 0%,var(--primary-contrast) 100%);--gradient-link: linear-gradient(135deg,var(--link-color) 0%,var(--link-hover-color) 100%);--gradient-secondary: linear-gradient(135deg,var(--secondary) 0%,var(--secondary-light) 100%);--gradient-success: linear-gradient(135deg,var(--success) 0%,var(--success-light) 100%);--gradient-danger: linear-gradient(135deg,var(--danger) 0%,var(--danger-light) 100%);--gradient-warning: linear-gradient(135deg,var(--warning) 0%,var(--warning-light) 100%);--gradient-info: linear-gradient(135deg,var(--info) 0%,var(--info-light) 100%);--shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.1);--shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);--shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);--shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);--font-family-sans: 'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--font-family-mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--font-size-base: 1rem;--line-height-base: 1.6;--font-weight-normal: 400;--font-weight-medium: 500;--font-weight-bold: 700;--spacing-base: 1rem;--spacing-base-half: 0.5rem;--border-radius-sm: 0.25rem;--border-radius: 0.5rem;--border-radius-md: 0.75rem;--border-radius-lg: 1rem;--border-radius-xl: 1.5rem;--border-radius-full: 9999px;--container-max-width: 1200px;--transition-base: all 0.2s ease-in-out;--transition-slow: all 0.3s ease-in-out;}:root{color-scheme: light;--color-mode: 'light';}@media (prefers-color-scheme: dark){:root{--color-mode: 'dark';}}:root[color-scheme="dark"]{--primary: #13181f;--primary-contrast: #13181f;--primary-invert: #cbe0ff;--body-bg: #0f172a;--body-color: #e2e8f0;--heading-color: #f8fafc;--border-color: #334155;--shadow-color: rgba(0,0,0,0.3);--card-bg: #1e293b;--shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.2);--shadow: 0 4px 6px -1px rgba(0,0,0,0.3),0 2px 4px -1px rgba(0,0,0,0.2);--shadow-md: 0 10px 15px -3px rgba(0,0,0,0.3),0 4px 6px -2px rgba(0,0,0,0.2);--shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.3),0 10px 10px -5px rgba(0,0,0,0.2);}*{margin: 0;padding: 0;box-sizing: border-box;}html{font-size: 16px;scroll-behavior: smooth;}body{font-family: var(--font-family-sans);font-size: var(--font-size-base);line-height: var(--line-height-base);color: var(--body-color);background-color: var(--body-bg);padding: var(--spacing-base);max-width: var(--container-max-width);margin: 0 auto;transition: var(--transition-slow);}h1,h2,h3,h4,h5,h6{color: var(--heading-color);margin-bottom: var(--spacing-base);font-weight: var(--font-weight-bold);line-height: 1.2;letter-spacing: -0.025em;}h1{font-size: 2.75rem;margin-top: 2rem;background: var(--heading-color);background-clip: text;text-fill-color: transparent;}h2{font-size: 2.25rem;margin-top: 1.75rem;position: relative;}h2::after{content: "";position: absolute;bottom: -0.5rem;left: 0;width: 3rem;height: 0.15rem;background: var(--gradient-primary);border-radius: var(--border-radius-full);}h3{font-size: 1.75rem;margin-top: 1.5rem;}h4{font-size: 1.5rem;margin-top: 1.25rem;}h5{font-size: 1.25rem;margin-top: 1rem;}h6{font-size: 1rem;margin-top: 0.75rem;text-transform: uppercase;letter-spacing: 0.05em;}p{margin-top: var(--spacing-base-half);margin-bottom: var(--spacing-base);}a{color: var(--link-color);text-decoration: none;transition: var(--transition-base);position: relative;}a:hover{color: var(--link-hover-color);}a:not(nav a):before{content: '';position: absolute;width: 100%;transform: scaleX(0);height: 2px;bottom: -2px;left: 0;background: var(--gradient-link);transform-origin: bottom right;transition: transform 0.3s ease-out;}a:not(nav a):hover:before{transform: scaleX(1);transform-origin: bottom left;}a[target="_blank"]:after{content: "[+]";display: inline-block;margin-left: 0.25em;font-size: 0.6em;font-weight: bold;text-decoration: none;vertical-align: super;}small{font-size: 0.875rem;opacity: 0.85;}code,pre{font-family: var(--font-family-mono);border-radius: var(--border-radius);}code{padding: 0.2em 0.4em;font-size: 0.875em;background-color: rgba(0,0,0,0.05);}:root[color-scheme="dark"] code{background-color: rgba(255,255,255,0.1);}pre{padding: var(--spacing-base);margin-bottom: var(--spacing-base);overflow-x: auto;background-color: rgba(0,0,0,0.03);border-radius: var(--border-radius-md);box-shadow: var(--shadow-sm);}:root[color-scheme="dark"] pre{background-color: rgba(255,255,255,0.05);}pre code{display: inline-block;background-color: transparent;min-width: 100%;}blockquote{border-left: 4px solid var(--primary);padding: var(--spacing-base);margin-bottom: var(--spacing-base);font-style: italic;background-color: rgba(0,0,0,0.02);border-radius: 0 var(--border-radius) var(--border-radius) 0;box-shadow: var(--shadow-sm);}:root[color-scheme="dark"] blockquote{background-color: rgba(255,255,255,0.03);}hr{border: 0;height: 1px;background: linear-gradient(to right,transparent,var(--border-color),transparent);margin: calc(var(--spacing-base) * 2) 0;}ul,ol{margin-bottom: var(--spacing-base);padding-left: 1.5rem;}li{margin-bottom: calc(var(--spacing-base) * 0.5);}table{width: 100%;border-collapse: separate;border-spacing: 0;margin-bottom: var(--spacing-base);border-radius: var(--border-radius);overflow: hidden;box-shadow: var(--shadow);}th,td{padding: calc(var(--spacing-base) * 0.75);border-bottom: 1px solid var(--border-color);text-align: left;}thead{background: var(--gradient-secondary);}th{font-weight: var(--font-weight-bold);color: white;text-transform: uppercase;font-size: 0.875rem;letter-spacing: 0.05em;}tr:last-child td{border-bottom: none;}tr:hover td{background-color: rgba(0,0,0,0.02);}:root[color-scheme="dark"] tr:hover td{background-color: rgba(255,255,255,0.03);}form{background-color: var(--card-bg);padding: var(--spacing-base);border-radius: var(--border-radius-lg);box-shadow: var(--shadow-md);margin-bottom: var(--spacing-base);border: 1px solid var(--border-color);}form > div{margin-bottom: var(--spacing-base);}input,select,textarea,button{font-family: inherit;font-size: inherit;line-height: inherit;}input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="search"],input[type="tel"],input[type="url"],input[type="date"],input[type="datetime-local"],input[type="month"],input[type="week"],input[type="time"],select,textarea{display: block;width: 100%;padding: calc(var(--spacing-base) * 0.75);border: 1px solid var(--border-color);border-radius: var(--border-radius-md);background-color: var(--body-bg);color: var(--body-color);margin-bottom: var(--spacing-base);transition: var(--transition-base);box-shadow: var(--shadow-sm);}input:focus,select:focus,textarea:focus{outline: none;border-color: var(--border-color);box-shadow: 0 0 0px 3px rgba(102,118,201,0.54);}select{appearance: none;padding-right: 2.5rem;background-image: url("data:image/svg+xml;utf8,<svg fill='%23364153' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat: no-repeat;background-position: right 1rem center;background-size: 2rem;}:root[color-scheme="dark"] select{background-image: url("data:image/svg+xml;utf8,<svg fill='%23e2e8f0' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");}textarea{min-height: 9rem;resize: vertical;}label{display: block;margin-bottom: calc(var(--spacing-base) * 0.5);font-weight: var(--font-weight-medium);}button,input[type="button"],input[type="reset"],input[type="submit"]{min-width: 100px;display: inline-block;padding: calc(var(--spacing-base) * 0.75) var(--spacing-base);margin: 0.125rem 0.125rem 0.125rem 0;background: var(--gradient-primary);color: white;border: none;border-radius: var(--border-radius-md);cursor: pointer;font-weight: var(--font-weight-medium);text-align: center;transition: var(--transition-base);position: relative;overflow: hidden;}button::after,input[type="button"]::after,input[type="reset"]::after,input[type="submit"]::after{content: '';position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255,255,255,0);transition: var(--transition-base);}button:hover::after,input[type="button"]:hover::after,input[type="reset"]:hover::after,input[type="submit"]:hover::after{background-color: rgba(255,255,255,0.1);}button:hover,input[type="button"]:hover,input[type="reset"]:hover,input[type="submit"]:hover{box-shadow: var(--shadow-md);}button:active,input[type="button"]:active,input[type="reset"]:active,input[type="submit"]:active{transform: translateY(2px);box-shadow: var(--shadow-sm);filter: saturate(0.9) brightness(1.1);}button:disabled,input[type="button"]:disabled,input[type="reset"]:disabled,input[type="submit"]:disabled{background: var(--gradient-secondary);cursor: not-allowed;opacity: 0.7;transform: none;}button.success,input[type="button"].success,input[type="submit"].success{background: var(--gradient-success);}button.danger,input[type="button"].danger,input[type="submit"].danger{background: var(--gradient-danger);}button.warning,input[type="button"].warning,input[type="submit"].warning{background: var(--gradient-warning);}button.info,input[type="button"].info,input[type="submit"].info{background: var(--gradient-info);}button.outline,input[type="button"].outline,input[type="submit"].outline{background: transparent;border: 1px solid var(--primary-invert);color: var(--primary-invert);}button.outline:hover,input[type="button"].outline:hover,input[type="submit"].outline:hover{background-color: var(--primary);color: white;}img{max-width: 100%;height: auto;border-radius: var(--border-radius-md);transition: var(--transition-base);box-shadow: var(--shadow);}img:hover{transform: scale(1.01);box-shadow: var(--shadow-md);}figure{text-align: center;margin-bottom: var(--spacing-base);}figcaption{font-size: 0.875rem;color: var(--secondary);text-align: center;margin-top: calc(var(--spacing-base) * 0.5);font-style: italic;}details summary{cursor: pointer;position: relative;padding-bottom: calc(var(--spacing-base) * 0.5);}details summary::after{content: '';position: absolute;left: 0;bottom: 0;width: 100%;height: 1px;background: linear-gradient(to right,var(--border-color),transparent);}details > *:not(summary){cursor: auto;margin-top: calc(var(--spacing-base) * 0.5);}article,section,aside{margin-bottom: calc(var(--spacing-base) * 2);padding: var(--spacing-base);background-color: var(--card-bg);border-radius: var(--border-radius-lg);box-shadow: var(--shadow);transition: var(--transition-base);border: 1px solid var(--border-color);}article:hover,section:hover,aside:hover{box-shadow: var(--shadow-md);}:focus-visible{outline: 2px solid var(--primary);outline-offset: 2px;}.glass{background: rgba(255,255,255,0.5);backdrop-filter: blur(10px);border: 1px solid rgba(255,255,255,0.2);color: var(--body-color);box-shadow: 0 4px 6px rgba(0,0,0,0.1);}:root[color-scheme="dark"] .glass{background: rgba(0,0,0,0.3);border: 1px solid rgba(255,255,255,0.1);}:root:not([color-scheme="dark"]) .glass{text-shadow: 0 1px 1px rgba(0,0,0,0.1);}@media (max-width: 768px){html{font-size: 14px;}body{padding: calc(var(--spacing-base) * 0.75);}table{width: 100%;display: block;overflow-x: auto;}h1{font-size: 2.25rem;}h2{font-size: 1.75rem;}}@media print{body{background-color: #fff;color: #000;}a{text-decoration: underline;color: #000;}a[href]:after{content: " (" attr(href) ")";}pre,blockquote{border: 1px solid #999;page-break-inside: avoid;}thead{background: var(--gradient-secondary);display: table-header-group;}tr,img{page-break-inside: avoid;}p,h2,h3{orphans: 3;widows: 3;}h2,h3{page-break-after: avoid;}h1,h2::after,button,input[type="button"],input[type="reset"],input[type="submit"]{background: none!important;text-fill-color: #000;box-shadow: none!important;}article,section,aside,img,pre,blockquote,table{box-shadow: none!important;}}body,a,button,input,select,textarea,th,td,code,pre,blockquote,article,section,aside{transition: background-color 0.3s ease,color 0.3s ease,border-color 0.3s ease,box-shadow 0.3s ease;}@keyframes colorSchemeTransition{0%{opacity: 0;}100%{opacity: 1;}}body{animation: colorSchemeTransition 0.5s ease-out;}	</style>
+<style>main {display: grid; grid-template-columns: 16em 45em; margin: 0 auto; gap: 20px;} main > nav {position: sticky; align-self: start; top: 2rem; animation-timeline: view();} del { background: #fae6e6; } ins { background: #ecfce6; } span.critic.comment { color: #0000bb; } span.critic.comment::before { content: "{>> "; } span.critic.comment::after { content: " <<}"; } </style>
+</head>
+<body>
+<main>
+<nav>
+
+<div class="TOC">
+
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#whymultimarkdownv7">Why MultiMarkdown v7?</a></li>
+<li><a href="#differencesfrommultimarkdownv6">Differences from MultiMarkdown v6</a></li>
+</ul>
+</li>
+<li><a href="#testing">Testing</a>
+<ul>
+<li><a href="#updatedtestsuite">Updated Test Suite</a></li>
+<li><a href="#unittesting">Unit Testing</a></li>
+<li><a href="#programmaticallygeneratedtestfiles">Programmatically Generated Test Files</a></li>
+<li><a href="#libfuzzer">libFuzzer</a></li>
+<li><a href="#performancebenchmarking">Performance Benchmarking</a></li>
+</ul>
+</li>
+<li><a href="#apichanges">API Changes</a>
+<ul>
+<li><a href="#apicalls">API Calls</a></li>
+<li><a href="#apienumerations">API Enumerations</a></li>
+<li><a href="#abstractsyntaxtree">Abstract Syntax Tree</a></li>
+</ul>
+</li>
+<li><a href="#command-linechanges">Command-Line Changes</a></li>
+<li><a href="#cross-platformcompatibility">Cross-Platform Compatibility</a>
+<ul>
+<li><a href="#macos">macOS</a></li>
+<li><a href="#nix">*nix</a></li>
+<li><a href="#windows">Windows</a></li>
+<li><a href="#others">Others</a></li>
+<li><a href="#continuousintegration">Continuous Integration</a></li>
+</ul>
+</li>
+<li><a href="#contributing">Contributing</a>
+<ul>
+<li><a href="#bugreportsandsuggestions">Bug Reports and Suggestions</a></li>
+<li><a href="#codecontributions">Code Contributions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+</nav>
+
+<div>
+
+<h1 id="title">MultiMarkdown Developer's Guide</h1>
+
+<p>(Revised 2026-03-13)</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<h3 id="whymultimarkdownv7">Why MultiMarkdown v7?</h3>
+
+<p>The &#8220;initial public commit&#8221; for MultiMarkdown v6 was January 18, 2017. I had
+first started working on it in early 2016, however. v6 was almost a complete
+rewrite of v5, which still used a <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar" title="Parsing Expression Grammar">PEG</a>. Because of that, there was a great
+deal of &#8220;learning while building&#8221;, and the code was sloppier than it should
+have been in some places.</p>
+
+<p>The API was also not as clean as it could have been, which required including
+several different header files in order to parse text into HTML within
+another project.</p>
+
+<h3 id="differencesfrommultimarkdownv6">Differences from MultiMarkdown v6</h3>
+
+<ul>
+<li><p>The code has been almost completely rewritten yet again. It is generally
+much cleaner and better organized.</p></li>
+<li><p>The API is cleaner. A single header file (<code>libMultiMarkdown7.h</code>) needs to be
+included and should have everything you need to use MultiMarkdown (<abbr title="MultiMarkdown">MMD</abbr>) in most other
+projects. I have used libMultiMarkdown inside a Swift project without any
+difficulty.</p></li>
+<li><p>Performance is better. Depending on the test content, it is <em>significantly</em>
+faster than v6. It is almost always faster than <a href="https://commonmark.org" title="CommonMark">CommonMark</a> (v 0.31.1),
+and at times gets somewhat close to <a href="https://github.com/mity/md4c" title="MD4C">MD4C</a>. There are a few things to
+remember:</p>
+
+<ul>
+<li><p>MultiMarkdown has more features than CommonMark and MD4C. Some of these
+will necessarily cause a performance hit when compared to not using
+those features (such as the more complex output for <code># Headers #</code>).
+Compatibility mode turns off most of those features, but in a few cases
+there will still be a slight performance cost even in compatibility mode.</p></li>
+<li><p>MultiMarkdown has to be capable of returning an AST in order to be used
+in some situations (e.g. as a syntax highlighter for MultiMarkdown
+Composer.) This means it will necessarily be slower than MD4C in all
+but the most trivial of test cases. That said, I include MD4C in the
+benchmark testing as something of a &#8220;lower bound&#8221; to shoot for.</p></li>
+<li><p>The benchmark testing (in /dev) performs comparisons between <abbr title="MultiMarkdown">MMD</abbr> 6, <abbr title="MultiMarkdown">MMD</abbr>
+7, CommonMark, and MD4C (if you have those installed). Additionally, it
+compares HTML, compatibility mode, and LaTeX output in <abbr title="MultiMarkdown">MMD</abbr> 7.
+(NOTE: MD4C installed via homebrew chokes on the <code>many-links</code> test
+file. I don&#8217;t know why. Building MD4C yourself from source repo works
+fine.)</p></li>
+</ul></li>
+<li><p>The syntax is generally the same, but there are edge cases that are handled
+slightly differently. To my knowledge, these represent intentional changes
+that I believe are more &#8220;correct.&#8221; At this time, I do not have an
+exhaustive list. The best way to see the differences is to compare the
+output from v6 and v7 on the same source file. The test suite has been
+updated to reflect these changes.</p></li>
+</ul>
+
+<h2 id="testing">Testing</h2>
+
+<h3 id="updatedtestsuite">Updated Test Suite</h3>
+
+<p>The standard test suite files from prior versions of <abbr title="MultiMarkdown">MMD</abbr> have been updated to
+account for changes from the v7 parser, but also to include new test
+situations that have come up. Most of the changes are relatively minor.</p>
+
+<pre><code>make
+cd build
+make
+ctest
+ctest -V	# To see details
+</code></pre>
+
+<p>Additionally, the &#8220;test harness&#8221; I use to perform integration testing has been
+updated to a bash script rather than using a very old Perl script. This
+allows the test suite to run on Windows without a Perl installation.</p>
+
+<h3 id="unittesting">Unit Testing</h3>
+
+<p>In most of my projects, I try to make heavy use of unit testing and a
+Test-driven development approach.</p>
+
+<p>MultiMarkdown is a bit different because unit testing would be very labor
+intensive, and it&#8217;s really the integration testing at the end that I care the
+most about. (I&#8217;m not saying that unit testing would be wrong, just that in
+this case I&#8217;m not sure it&#8217;s the approach I want to take.)</p>
+
+<p>That said there are a few components that have some unit tests that can be
+run.</p>
+
+<pre><code>make test
+cd build-test
+make
+./run_tests
+</code></pre>
+
+<h3 id="programmaticallygeneratedtestfiles">Programmatically Generated Test Files</h3>
+
+<p>In addition to hand-generated test files in the test suite that have been
+built up over time, there are some computer generated tests as well. These
+allow more exhaustively testing situations that might not come up in regular
+use.</p>
+
+<ul>
+<li><p><code>Emphasis Test</code> &#8211; generated by <code>_generate_test_emphasis.c</code> to exhaustively
+test combinations of opening and closing strong/emphasis markers using both
+<code>*</code> and<code>_</code></p></li>
+<li><p><code>structure.sh</code> &#8211; shell script to generate exhaustive combinations of line
+types to verify parser behavior in determining the overall block structure.
+The script can be modified to determine how deep the testing goes. 3 line
+combinations cover the majority of common situations, but some additional
+edge cases arise the further you go. By the time you get to 5 levels, the
+generated HTML output is over 11 MB long. As of 2026&#8211;03&#8211;14, I have tested
+up to 6 levels deep (135.6 MB).</p>
+
+<pre><code>./tests/structure.sh | ./build/multimarkdown -c | tidy &gt; mmd.html
+./tests/structure.sh | cmark | tidy &gt; cmark.html
+diff mmd.html cmark.html
+</code></pre>
+
+<p>(<code>tidy</code> cleans up the whitespace to reduce &#8220;false positives&#8221; when looking
+for differences between MMD and CommonMark. And to be clear, I am not
+implying that CommonMark gets everything correct in this sort of a
+test. But John MacFarlane has, as usual, done a great job of being
+consistent and precise. One change that I made based on this test was
+to revisit my interpretation of how lazy blockquotes interact with
+other block level elements in Markdown. I had previously assumed
+(decided??) that lazy blockquote formatting (leaving out the
+initial &#8216;&gt;&#8217;) applied to any blockquote content. Based on CommonMark&#8217;s
+interpretation, I reread the Markdown syntax &#8220;spec&#8221; and agreed that
+it only applied to regular text paragraphs.)</p></li>
+</ul>
+
+<h3 id="libfuzzer">libFuzzer</h3>
+
+<p><a href="https://llvm.org/docs/LibFuzzer.html" title="libFuzzer">libFuzzer</a> is used for fuzz testing. Through the course of development, I
+was able to find a fair number of bugs this way that would have been
+challenging to find otherwise. This doesn&#8217;t work on macOS, so I use vagrant
+and do the fuzz testing in Ubuntu. Feel free to participate by running the
+fuzz tester yourself, and send me any examples that trigger an error!</p>
+
+<pre><code>cd fuzz
+make
+cd build
+make
+./fuzz_mmd-7
+</code></pre>
+
+<h3 id="performancebenchmarking">Performance Benchmarking</h3>
+
+<p><code>bench.c</code> builds a small test program that generates a collection of test
+files that stress test a <abbr title="MultiMarkdown">MMD</abbr> parser with a few different scenarios.
+(from <a href="https://gist.github.com/mity/24822b24d35ef1f998f970965f8c8e53">https://gist.github.com/mity/24822b24d35ef1f998f970965f8c8e53</a>)</p>
+
+<p>It then parses those files several times with <abbr title="MultiMarkdown">MMD</abbr> v6 and v7, CommonMark, and
+MD4C. <code>bench.c</code> will in all likelihood need to be modified to match how
+these programs are installed on your machine.</p>
+
+<pre><code>make
+cd build
+make
+cd ../dev
+make run
+</code></pre>
+
+<h2 id="apichanges">API Changes</h2>
+
+<h3 id="apicalls">API Calls</h3>
+
+<p><code>libMultiMarkdown7.h</code> defines the API for interacting with the MultiMarkdown 7
+library. I have tried to clean this file up in order to make it clearer to
+read and to included everything required to incorporate <abbr title="MultiMarkdown">MMD</abbr> in most
+projects.</p>
+
+<p>You&#8217;ll notice that most of the primary API calls have 4 variants:</p>
+
+<ol>
+<li><p>One requires a FILE pointer to a file that has been opened. This can also
+be <code>stdin</code>.</p></li>
+<li><p>One requires path to a file, and <abbr title="MultiMarkdown">MMD</abbr> handles opening the file for reading.</p></li>
+<li><p>One requires a null terminated C string (which means the string has to be
+scanned to determine how long it is.)</p></li>
+<li><p>One requires a C string (optionally null terminated) along with the length
+of that string (in bytes). This version does not require an additional pass
+to determine the length of the string since it is provided up front. This
+variant is preferable to variant 3 if you already know the length of the
+string for that reason.</p></li>
+</ol>
+
+<p>Regardless of how the source text is delivered, <abbr title="MultiMarkdown">MMD</abbr> expects UTF-8 encoding
+(with or without a BOM, which is not needed with UTF-8 encoding).</p>
+
+<p>There are several different call classes available:</p>
+
+<ul>
+<li><p><code>mmd_process_X</code> &#8211; source <abbr title="MultiMarkdown">MMD</abbr> text is fuly processed into another format
+(e.g. HTML) and sent to the desired FILE pointer (e.g. <code>stdout</code>)</p></li>
+<li><p><code>mmd_process_X_to_str</code> &#8211; same as above, but instead the result is returned
+as a <code>char *</code> which represents the output string (or binary data for some
+formats). The length of the output is placed in <code>* out_len</code>. The returned
+<code>char *</code> will need to be freed.</p></li>
+<li><p><code>mmd_parse_X</code> &#8211; these functions return the AST in the form of a <code>mmd_node</code>
+tree. This can be used as you need, and then cleaned up with
+<code>mmd_node_tree_free()</code>. You will need to pass a pointer to a <code>read_ctx</code>.
+Between the returned AST and the updated <code>read_ctx</code> you have everything you
+need to do whatever you like with the parsed information, though must also
+have access to the original source text if you want to extract the text
+that a node points to, for example.</p></li>
+<li><p><code>mmd_ast_X</code> &#8211; this is a shortcut function that parses source text and sends
+a description of the AST to <code>stdout</code> (or another FILE pointer) without
+requiring you to know about <code>mmd_node</code>. Alternatively, you can use
+<code>mmd_process_X</code> with an output format of <code>ast</code>.</p></li>
+<li><p><code>mmd_hash_X</code> &#8211; similar to <code>mmd_ast_X</code> but includes hash values for the
+nodes. Alternatively, you can use <code>mmd_process_X</code> with an output format of
+<code>hash</code>. I&#8217;m still working on some ways to use these, but the idea is that
+the hash values for each node in the tree allow you to quickly determine
+whether two AST&#8217;s (or subtrees of the same) are the equivalent
+(identical hash values) or not.</p></li>
+<li><p><code>mmd_metadata</code> &#8211; process <abbr title="MultiMarkdown">MMD</abbr> source text and return the <code>* read_ctx</code>
+(which must be freed after use with <code>read_ctx_free()</code>.) This allows you to
+access metadata from a <abbr title="MultiMarkdown">MMD</abbr> document, along with other extracted
+information. Currently, you would need <code>read_ctx.h</code> in order to do much
+with this, but I plan to update this aspect of the API in the future.</p></li>
+<li><p><code>custom_seed_rand()</code> &#8211; several <abbr title="MultiMarkdown">MMD</abbr> features use pseudo-random numbers to
+prevent collisions between footnote and header anchor ids. This function
+must be called in order to do the initial seeding for the random number
+generator so that different numbers are generated each time.</p></li>
+</ul>
+
+<h3 id="apienumerations">API Enumerations</h3>
+
+<p><code>libMultiMarkdown7.h</code> also includes the various enums that are used.</p>
+
+<ul>
+<li><p><code>output_format</code> &#8211; specifies which output format is desired (one at a time)</p></li>
+<li><p><code>smart_quote_language</code> &#8211; specify which localization to use for single and
+double quote pairs, etc. If I am missing something, please let me know!</p></li>
+<li><p><code>language</code> &#8211; some features in <abbr title="MultiMarkdown">MMD</abbr> (e.g. footnotes) generate English text in
+the final HTML file (such as &#8220;see footnote&#8221;.) Let me know if you have
+another language to contribute.</p></li>
+<li><p><code>mmd_options</code> &#8211; bitwise flags for controlling various features of <abbr title="MultiMarkdown">MMD</abbr>. See
+<code>libMultiMarkdown7.h</code> for details of these options.</p></li>
+</ul>
+
+<p>All of these values are combined into a single 32-bit unsigned integer. There
+are couple of macros to extract specific values from that combined value if
+needed:</p>
+
+<ul>
+<li><code>MMD_OUT_FORMAT_FROM_OPTS()</code></li>
+<li><code>MMD_SMART_QUOTE_FROM_OPTS()</code></li>
+<li><code>MMD_LANGUAGE_FROM_OPTS()</code></li>
+</ul>
+
+<h3 id="abstractsyntaxtree">Abstract Syntax Tree</h3>
+
+<p>The AST consists of <code>mmd_node</code> structs, which specify a type of node, the
+starting offset in the source text (in bytes), the length (in bytes), and
+pointers to the next node and the first child node. The tail node points to
+the last childe node and is primarily used when building the AST so that a
+new child can be appended without walking the linked list.</p>
+
+<p><code>mmd_line_node</code> is the same but adds two more fields specifying where the
+actual &#8220;content&#8221; of the line starts and ends, which allows you to more easily
+ignore the markup, such as the leading and trailing <code>##</code> in a header.</p>
+
+<p><code>node_type</code> is a value from 1 - 255 that specifies what a specific <code>mmd_node</code>
+represents. Values from 1&#8211;63 represent LINES in the source text. Values from
+64&#8211;127 represent block level structures. Values from 128&#8211;255 represent span
+level tokens.</p>
+
+<p><strong><em>NOTE</em></strong>: If you customize <abbr title="MultiMarkdown">MMD</abbr> and add additional node types to the
+enumeration list, be sure assign to the proper value range and follow any
+directions in the comments of <code>libMultiMarkdown7.h</code>.</p>
+
+<p>There are several utility macros to help easily determine what grouping a
+specific <code>mmd_node</code> belongs to based on its type:</p>
+
+<ul>
+<li><code>MMD_NODE_IS_LINE()</code></li>
+<li><code>MMD_NODE_IS_BLOCK()</code></li>
+<li><code>MMD_NODE_IS_TOKEN()</code></li>
+</ul>
+
+<h2 id="command-linechanges">Command-Line Changes</h2>
+
+<p><abbr title="MultiMarkdown">MMD</abbr> v7 handles arguments from the command-line in a slightly different way
+from v6, though the most common use cases are unchanged.</p>
+
+<p>multimarkdown [&#8211;help] {ast|batch|hash|meta|parse} [options] [Input file names]</p>
+
+<p>The first argument should be an action. If no action is specified, <abbr title="MultiMarkdown">MMD</abbr>
+defaults to the <code>parse</code> action.</p>
+
+<ul>
+<li><p><code>ast</code> &#8211; Display the AST showing how the document was parsed</p></li>
+<li><p><code>batch</code> &#8211; Parse each file individually and write to the same filename with
+a new extension</p></li>
+<li><p><code>hash</code> &#8211; Display the hash tree for the parsed document</p></li>
+<li><p><code>meta</code> &#8211; Extra metadata from the document without parsing the rest</p></li>
+<li><p><code>parse</code> &#8211; Parse the document(s) and export to the desired format</p></li>
+</ul>
+
+<p>You can then specify different options to adjust the default behavior:</p>
+
+<ul>
+<li><p><code>-t FORMAT</code> &#8211; Specify the output format (<code>html</code>, <code>mmd</code>, <code>latex</code>, <code>docx</code>,
+<code>epub</code>, <code>itmz</code>, <code>opml</code>, <code>textbundle</code>, <code>textpack</code>, <code>ast</code>, <code>hash</code>)</p></li>
+<li><p><code>-o OUT_FILE</code> &#8211; Specify the filename for writing the output</p></li>
+<li><p><code>-l LANGUAGE</code> &#8211; Specify the language for smart quotes and default markup
+(<code>en</code>, <code>es</code>, <code>de</code>, <code>fr</code>, <code>nl</code>, <code>sv</code>, <code>he</code>)</p></li>
+<li><p><code>-c</code> &#8211; Markdown compatibility mode &#8211; turn off features that are not in the
+original Markdown specification. Note that due to bugs in the original
+<code>Markdown.pl</code> and due to ambiguities in the original &#8220;spec&#8221;, the output
+will not exactly match John Gruber&#8217;s <code>Markdown.pl</code>.</p></li>
+<li><p><code>-C</code> &#8211; Generate a complete document</p></li>
+<li><p><code>-S</code> &#8211; Generate a snippet</p></li>
+<li><p><code>-r</code> &#8211; Enable file transclusion (&#8220;recursive&#8221;)</p></li>
+<li><p><code>-D</code> &#8211; Download assets from the internet (images, CSS) for inclusion in
+package formats (requires libcurl when compiling)</p></li>
+<li><p><code>-E</code> &#8211; Embedd assets in non-package formats where possible (e.g. embed
+images directly in HTML as Base64)</p></li>
+<li><p><code>-p PATH</code> &#8211; Specify a working directory when parsing from stdin (e.g. for
+transclusion or embedding assets)</p></li>
+<li><p><code>-A</code> &#8211; Accept all CriticMarkup changes</p></li>
+<li><p><code>-R</code> &#8211; Reject all CriticMarkup changes</p></li>
+<li><p><code>-O</code> &#8211; Convert OPML source to <abbr title="MultiMarkdown">MMD</abbr> text before parsing</p></li>
+<li><p><code>-I</code> &#8211; Convert iThoughts source to <abbr title="MultiMarkdown">MMD</abbr> text before parsing</p></li>
+<li><p><code>-e</code> &#8211; Specify metadata key to extract value from <abbr title="MultiMarkdown">MMD</abbr> source</p></li>
+<li><p><code>-b</code> &#8211; Limit parsing to block level only (useful for diagnostics only)</p></li>
+<li><p><code>-s</code> &#8211; Log some processing time statistics (does not work on Windows)</p></li>
+</ul>
+
+<h2 id="cross-platformcompatibility">Cross-Platform Compatibility</h2>
+
+<h3 id="macos">macOS</h3>
+
+<p>Primary development for <abbr title="MultiMarkdown">MMD</abbr> is done on macOS, so everything works.</p>
+
+<h3 id="nix">*nix</h3>
+
+<p>Additional compilation and testing is frequently done on Ubuntu Linux via a
+Virtualbox VM, so everything should work properly on *nix machines.</p>
+
+<h3 id="windows">Windows</h3>
+
+<p>I was finally able to get a minimal development environment working on a
+Windows VM using UTM and Windows 11. It is not tested as regularly as macOS
+or *nix environments, but it works and passes the test suite.</p>
+
+<p>However, performance is not what I would have expected. It&#8217;s possible this is
+because running Windows inside macOS imparts too much of a performance hit?
+(Yet running on an Ubuntu VM is just fine&#8230;) I worry it&#8217;s something more
+integral to the code and that Windows needs more time profiling to help
+improve things. As I do not have Windows hardware, and have no intention on
+purchasing Windows hardware, any contributions here are appreciated!</p>
+
+<h3 id="others">Others</h3>
+
+<p>MultiMarkdown is written in C, and is intended to be able to compiled on any
+(reasonable) operating system.</p>
+
+<p>The only external library it uses is <code>libcurl</code>, but only if it is found.</p>
+
+<p>CMake is normally used as the build system, but <abbr title="MultiMarkdown">MMD</abbr> could be compiled by
+manually specifying the source files to be compiled of course. So this is
+not a hard requirement either.</p>
+
+<p>If you need to compile <abbr title="MultiMarkdown">MMD</abbr> on a different system and find that I have done
+something that prevents you from doing that, let me know and I will consider
+whether anything can be changed.</p>
+
+<h3 id="continuousintegration">Continuous Integration</h3>
+
+<p>I use Github&#8217;s actions to run the test suite with every push to the public
+repository. This includes:</p>
+
+<ul>
+<li>compiling on macOS, Ubuntu, and Windows with <code>clang</code> and <code>gcc</code></li>
+<li>running <code>ctest</code> on all 3 operating systems</li>
+</ul>
+
+<p>At the very least, this warns me if I push a commit that breaks compilation or
+expected output on the test suite on any of the three systems.</p>
+
+<h2 id="contributing">Contributing</h2>
+
+<h3 id="bugreportsandsuggestions">Bug Reports and Suggestions</h3>
+
+<p>I welcome examples of source text that causes <abbr title="MultiMarkdown">MMD</abbr> to misbehave. You can
+contribute them at the <a href="https://github.com/fletcher/MultiMarkdown-7/issues" title="MultiMarkdown Issues">Github issues page</a>.</p>
+
+<p>Same thing with suggestions for new features. Be warned, however, that I
+rarely add new features to the <abbr title="MultiMarkdown">MMD</abbr> syntax unless they are truly valuable to a
+wide range of users.</p>
+
+<h3 id="codecontributions">Code Contributions</h3>
+
+<p>Pull requests can be managed through Github. However, if your request is more
+than a straightforward bug fix, it is unlikely that I will accept it
+directly. It is more likely that I would rewrite the suggested code to
+ensure it matches the style and structure of existing code and my
+expectations. So you may be better off discussing the idea with me first
+before worrying too much about a pull request.</p>
+
+</div>
+</main>
+</body>
+</html>
