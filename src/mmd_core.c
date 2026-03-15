@@ -208,7 +208,16 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 	if (!(options & MMD_OPTION_COMPATIBILITY)) {
 		// Insert `mmdheader` and `mmdfooter` if appropriate
 		if (options & MMD_OPTION_MMD_HEADER) {
-			mmd_add_mmd_header_footer(source_buffer, options);
+			switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+				case FORMAT_MMD:
+				case FORMAT_OPML:
+				case FORMAT_ITMZ:
+					break;
+
+				default:
+					mmd_add_mmd_header_footer(source_buffer, options);
+					break;
+			}
 		}
 
 		// Handle transclusion
