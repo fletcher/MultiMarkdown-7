@@ -789,8 +789,10 @@ properly, and will not always give valid output files.
 [>AST]: Abstract Syntax Tree
 [>MMD]: MultiMarkdown
 [>OPML]: Outliner Processor Markup Language
+[>PEG]: Parsing Expression Grammar
 [>UUID]: Universally Uniquie Identifier
 [>TOC]: Table of Contents
+[>XSLT]: Extensible Stylesheet Language Transformations
 
 [beamer]: https://ctan.org/pkg/beamer "Beamer LaTeX class"
 [cmake]: https://cmake.org "CMake"
