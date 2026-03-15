@@ -1,3 +1,7 @@
 #!/bin/bash
 
-../build/multimarkdown batch -E -r dev.md history.md user.md
+# Update source files from develop branch
+git checkout develop .
+
+# Update HTML
+../build/multimarkdown batch -r dev.md history.md user.md
