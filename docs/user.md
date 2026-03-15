@@ -122,7 +122,7 @@ Convert source text from stdin into LaTeX:
 Check the program's help for more information.
 
 
-## Command-Line Changes ##
+### Command-Line Changes ###
 
 MMD v7 handles arguments from the command-line in a slightly different way
 from v6, though the most common use cases are unchanged.
@@ -735,7 +735,7 @@ will not properly manage the intended MultiMarkdown markup.  This example
 would not result in bold being applied to `foo bar`.
 
 
-### My philosophy on CriticMarkup
+### My philosophy on CriticMarkup ###
 
 I view CriticMarkup as two things (in addition to the actual tools that
 implement these concepts): 
