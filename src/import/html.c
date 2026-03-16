@@ -49,6 +49,9 @@
 
 #include "char.h"
 #include "html.h"
+#include "mmd_node_pool.h"
+#include "read_ctx.h"
+#include "mmd_span_parser.h"
 #include "yxml.h"
 
 #define F(i,n) for(int i= 0;i<n;i++)
@@ -75,6 +78,7 @@ static yxml_ret_t parse_meta(text_buffer * out, text_buffer * lead, char ** sour
 static yxml_ret_t parse_ol(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 static yxml_ret_t parse_ul(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
+static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 
 
 static html_element elements[] = {
@@ -92,17 +96,18 @@ static html_element elements[] = {
 	{ "p", 2, NULL, "", 2, NULL, NULL },
 	{ "blockquote", 2, "> ", "", 2, "> ", NULL },
 	{ "pre", 2, "\t", "", 2, "\t", &parse_pre },
-	{ "hr", 2, "***", NULL, 2, NULL, NULL },
+	{ "hr", 2, NULL, "***", 2, NULL, NULL },
 	{ "ul", 2, NULL, "", 2, NULL, &parse_ul },
 	{ "ol", 2, NULL, "", 2, NULL, &parse_ol },
 	{ "li", 1, NULL, NULL, 1, "\t", NULL },
+	{ "a", 0, NULL, NULL, 0, NULL, &parse_a },
 	{ "strong", 0, "**", "**", 0, NULL, NULL },
 	{ "em", 0, "*", "*", 0, NULL, NULL },
 	{ "code", 0, "`", "`", 0, NULL, NULL },
 	{ "ins", 0, "{++", "++}", 0, NULL, NULL },
 	{ "del", 0, "{--", "--}", 0, NULL, NULL },
 	{ "mark", 0, "{==", "==}", 0, NULL, NULL },
-	{ "br", 0, "\\", NULL, 0, NULL, NULL },
+	{ "br", 0, NULL, "\\", 0, NULL, NULL },
 };
 
 
@@ -267,6 +272,8 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 
 	text_buffer * buf = text_buffer_new(0);
 
+	text_buffer_pad(out, 2);
+
 	while (*ch != '\0') {
 		ret = yxml_parse(x, *ch);
 
@@ -314,6 +321,12 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 				if (strcmp(x->elem, "html") && strcmp(x->elem, "head") && strcmp(x->elem, "body") && strcmp(x->elem, "head")) {
 					// Ignore extra stuff and whitespace, at least for now
 					append_content(out, lead, x);
+
+					if (x->data[0] == '\n') {
+						out->padding = 1;
+					} else {
+						out->padding = 0;
+					}
 				}
 
 				break;
@@ -330,6 +343,8 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 	}
 
 leave:
+
+	text_buffer_pad(out, 2);
 
 exit:
 	lead->len = lead_len;
@@ -524,6 +539,110 @@ exit:
 }
 
 
+static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
+
+	text_buffer * buf = text_buffer_new(0);
+	text_buffer * content = text_buffer_new(0);
+
+	size_t href = -1;
+	size_t href_len = 0;
+
+	size_t title = -1;
+	size_t title_len = 0;
+
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
+
+		if (ret < 0) {
+			goto exit;
+		}
+
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
+				ret = xml_parse_elem(out, lead, &ch, x);
+
+				if (ret < 0) {
+					goto exit;
+				}
+
+				break;
+
+			case YXML_ATTRSTART:
+				if (!strcmp(x->attr, "href")) {
+					href = buf->len;
+				} else if (!strcmp(x->attr, "title")) {
+					title = buf->len;
+				}
+
+				break;
+
+			case YXML_ATTRVAL:
+				text_buffer_append_printf(buf, "%s", x->data);
+				break;
+
+			case YXML_ATTREND:
+				if (!strcmp(x->attr, "href")) {
+					href_len = buf->len - href;
+				} else if (!strcmp(x->attr, "title")) {
+					title_len = buf->len - title;
+				}
+
+				break;
+
+			case YXML_CONTENT:
+				text_buffer_append_printf(content, "%s", x->data);
+				break;
+
+			case YXML_ELEMEND:
+				goto leave;
+				break;
+
+			default:
+				break;
+		}
+
+		ch++;
+	}
+
+leave:
+
+	if (title_len > 0) {
+		text_buffer_append_printf(out, "[%s](%.*s \"%.*s\")", content->text, href_len, &buf->text[href], title_len, &buf->text[title]);
+	} else {
+		if (!strncmp(content->text, &buf->text[href], href_len)) {
+			// Automatic Link
+			text_buffer_append_printf(out, "<%s>", content->text);
+		} else if (!strncmp(&buf->text[href], "mailto:", 7) && !strcmp(content->text, &buf->text[href + 7])) {
+			// Mailto automatic link
+			text_buffer_append_printf(out, "<%s>", content->text);
+		} else if (buf->text[href] == '#') {
+			char * id = html_id_from_text(content->text, content->len, false);
+
+			if (!strcmp(id, &buf->text[href + 1])) {
+				text_buffer_append_printf(out, "[%s][]", content->text);
+			} else {
+				text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
+			}
+
+			free(id);
+		} else {
+			text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
+		}
+	}
+
+exit:
+	lead->len = lead_len;
+	text_buffer_free(buf, 1);
+	text_buffer_free(content, 1);
+	*source = ch;
+	return ret;
+}
+
+
 static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
 	char * ch = *source;
 	yxml_ret_t ret = 0;
@@ -537,8 +656,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 		text_buffer_pad(out, elements[i].pre_pad);
 
 		if (elements[i].prefix) {
-			out->padding = 0;
 			text_buffer_append_printf(out, "%s", elements[i].prefix);
+			out->padding = 2;
 		}
 
 		if (elements[i].lead) {
@@ -622,6 +741,7 @@ leave:
 	if (i >= 0) {
 		if (elements[i].suffix) {
 			text_buffer_append_printf(out, "%s", elements[i].suffix);
+			out->padding = 0;
 		}
 
 		text_buffer_pad(out, elements[i].post_pad);
