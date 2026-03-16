@@ -70,6 +70,7 @@ set(src_files
 	src/export/textbundle.c
 
 	src/import/outline.c
+	src/import/html.c
 
 	src/aho-corasick.c
 
@@ -120,6 +121,7 @@ set(private_headers
 	src/export/textbundle.h
 
 	src/import/outline.h
+	src/import/html.h
 
 	src/aho-corasick.h
 

@@ -348,7 +348,11 @@ static yxml_ret_t yxml_refend(yxml_t * x, yxml_ret_t ret) {
 			i == INTFROM5CHARS('g', 't', 0,  0, 0) ? '>' :
 			i == INTFROM5CHARS('a', 'm', 'p', 0, 0) ? '&' :
 			i == INTFROM5CHARS('a', 'p', 'o', 's', 0) ? '\'' :
-			i == INTFROM5CHARS('q', 'u', 'o', 't', 0) ? '"' : 0;
+			// Changed by FTP to allow any named entity since I want to parse HTML as well.
+			// Since I am not particularly concerned about validity, this should be OK
+			// and shouldn't interfere with parsing OPML or ITMZ (XML not HTML)
+			// i == INTFROM5CHARS('q', 'u', 'o', 't', 0) ? '"' : 0;
+			i == INTFROM5CHARS('q', 'u', 'o', 't', 0) ? '"' : '&';
 	}
 
 	/* Codepoints not allowed in the XML 1.1 definition of a Char */

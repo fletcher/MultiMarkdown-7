@@ -207,8 +207,9 @@ enum mmd_options {
 	MMD_OPTION_EMBED_ASSETS		= 1 << 24,		//!< Embed assets (imagees, CSS) within the output file itself (eg. HTML)
 	MMD_OPTION_STORE_ASSETS		= 1 << 25,		//!< Store assets (images, CSS) within archive file formats
 	MMD_OPTION_DOWNLOAD_ASSETS	= 1 << 26,		//!< Attempt to download assets from the internet for storage
-	MMD_OPTION_PARSE_OPML		= 1 << 27,		//!< Convert from OPML to MMD text before parsing
-	MMD_OPTION_PARSE_ITMZ		= 1 << 28,		//!< Convert from ITMZ to MMD text before parsing
+	MMD_OPTION_PARSE_HTML		= 1 << 27,		//!< Convert from HTML to MMD text before parsing
+	MMD_OPTION_PARSE_OPML		= 1 << 28,		//!< Convert from OPML to MMD text before parsing
+	MMD_OPTION_PARSE_ITMZ		= 1 << 29,		//!< Convert from ITMZ to MMD text before parsing
 };
 
 

@@ -81,12 +81,14 @@ static char * content[] = {
 };
 
 
-/// If the source text is ITMZ, convert to MultiMarkdown text and replace the buffer
+/// If the source text is ITMZ or OPML, convert to MultiMarkdown text and replace the buffer
 int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 	char * ch = NULL;
 	text_buffer * extracted = NULL;
 	int result = 0;
 	int depth = 0;
+
+	// Prepare to parse XML
 	yxml_ret_t ret;
 	yxml_t * x = malloc(sizeof(yxml_t) + kYXML_BUFSIZE);
 	yxml_init(x, x + 1, kYXML_BUFSIZE);
@@ -98,11 +100,12 @@ int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 	// Temporary storage
 	text_buffer * buf = text_buffer_new(0);
 
+
 	if (type == OUTLINE_ITMZ) {
 		// Is this a zip file?
 		if (memcmp(source_buffer->text, "PK\3\4", 4)) {
 			// Not a zip
-			return 0;
+			goto cleanup;
 		}
 
 		// Get mapdata.xml
@@ -125,7 +128,7 @@ int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 	} else if (type == OUTLINE_OPML) {
 		// Does it look like XML?
 		if (strncmp("<?xml", source_buffer->text, 5)) {
-			return 0;
+			goto cleanup;
 		}
 
 		ch = source_buffer->text;
@@ -138,7 +141,7 @@ int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 	int in_meta = 0;
 
 	while (*ch != '\0') {
-		yxml_ret_t ret = yxml_parse(x, *ch);
+		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
 			fprintf(stderr, "XML error parsing as %s %d at line %d, byte %" PRIu64 "\n", name[type], ret, x->line, x->byte);
@@ -255,19 +258,17 @@ cleanup:
 
 	if (ret < 0) {
 		fprintf(stderr, "XML error parsing as %s %d at EOF\n", name[type], ret);
-		text_buffer_free(output, 1);
-		text_buffer_free(metadata, 1);
-		text_buffer_free(buf, 1);
 	} else {
 		source_buffer->len = 0;
 		text_buffer_append_text(source_buffer, metadata->text, metadata->len);
 		text_buffer_append_text(source_buffer, output->text, output->len);
 
-		text_buffer_free(output, 1);
-		text_buffer_free(metadata, 1);
-		text_buffer_free(buf, 1);
 		result = 1;
 	}
+
+	text_buffer_free(output, 1);
+	text_buffer_free(metadata, 1);
+	text_buffer_free(buf, 1);
 
 	return result;
 }

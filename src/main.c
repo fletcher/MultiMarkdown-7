@@ -184,7 +184,7 @@ int main(int argc, char * const argv[]) {
 	custom_seed_rand();
 
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARCSIOx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARCSHIOx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -250,6 +250,11 @@ int main(int argc, char * const argv[]) {
 			case 'r':
 				// Enable transclusion
 				options |= MMD_OPTION_TRANSCLUDE;
+				break;
+
+			case 'H':
+				// Convert from HTML
+				options |= MMD_OPTION_PARSE_HTML;
 				break;
 
 			case 'O':

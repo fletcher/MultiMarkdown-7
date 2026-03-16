@@ -73,6 +73,7 @@
 #include "outline.h"
 #include "textbundle.h"
 
+#include "import/html.h"
 #include "import/outline.h"
 #include "yxml.h"
 
@@ -326,6 +327,11 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 	if (options & MMD_OPTION_PARSE_ITMZ) {
 		mmd_import_outline(source_buffer, OUTLINE_ITMZ);
+	}
+
+	// Or HTML
+	if (options & MMD_OPTION_PARSE_HTML) {
+		mmd_import_html(source_buffer);
 	}
 
 	// Create structures used for parsing
