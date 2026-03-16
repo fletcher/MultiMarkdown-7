@@ -186,6 +186,7 @@ text_buffer * text_buffer_new(size_t capacity) {
 		b->len = 0;
 		b->capacity = start_capacity;
 		b->text[0] = '\0';
+		b->padding = 0;
 	}
 
 	return b;
@@ -328,6 +329,15 @@ void text_buffer_delete_bom(text_buffer * b) {
 	}
 
 	text_buffer_delete_range(b, 0, skip);
+}
+
+
+/// Pad text with newlines
+void text_buffer_pad(text_buffer * b, short n) {
+	while (n > b->padding) {
+		text_buffer_append_c(b, '\n');
+		b->padding++;
+	}
 }
 
 
