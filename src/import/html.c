@@ -74,6 +74,7 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 static yxml_ret_t parse_meta(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 static yxml_ret_t parse_ol(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 static yxml_ret_t parse_ul(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
+static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 
 
 static html_element elements[] = {
@@ -90,7 +91,7 @@ static html_element elements[] = {
 	{ "h6", 3, "###### ", " ######", 2, NULL, NULL },
 	{ "p", 2, NULL, "", 2, NULL, NULL },
 	{ "blockquote", 2, "> ", "", 2, "> ", NULL },
-	{ "pre", 2, "\t", "", 2, "\t", NULL },
+	{ "pre", 2, "\t", "", 2, "\t", &parse_pre },
 	{ "hr", 2, "***", NULL, 2, NULL, NULL },
 	{ "ul", 2, NULL, "", 2, NULL, &parse_ul },
 	{ "ol", 2, NULL, "", 2, NULL, &parse_ol },
@@ -465,6 +466,64 @@ exit:
 }
 
 
+static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
+
+	text_buffer * buf = text_buffer_new(0);
+
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
+
+		if (ret < 0) {
+			goto exit;
+		}
+
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
+				ret = parse_pre(out, lead, &ch, x);
+
+				if (ret < 0) {
+					goto exit;
+				}
+
+				break;
+
+			case YXML_CONTENT:
+
+				// May be one or several characters
+				text_buffer_append_printf(out, "%s", x->data);
+
+				if (x->data[0] == '\n') {
+					text_buffer_append_text(out, lead->text, lead->len);
+				}
+
+				break;
+
+			case YXML_ELEMEND:
+				goto leave;
+				break;
+
+			default:
+				break;
+		}
+
+		ch++;
+	}
+
+leave:
+
+exit:
+	out->padding = 1;
+	lead->len = lead_len;
+	text_buffer_free(buf, 1);
+	*source = ch;
+	return ret;
+}
+
+
 static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
 	char * ch = *source;
 	yxml_ret_t ret = 0;
@@ -495,6 +554,7 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 
 			text_buffer_pad(out, elements[i].post_pad);
 
+			lead->len = lead_len;
 			*source = ch;
 			return ret;
 		}
