@@ -7,7 +7,7 @@ css:	css/Classless.min.css
 htmlheader: <style>main {display: grid; grid-template-columns: 16em 45em; margin: 0 auto; gap: 20px;}
     main > nav {position: sticky; align-self: start; top: 2rem; animation-timeline: view();}
     del { background: #fae6e6; } ins { background: #ecfce6; } span.critic.comment { color: #0000bb; }
-    span.critic.comment::before { content: "{>> "; } span.critic.comment::after { content: " <<}"; }
+    span.critic.comment::before { content: "{>> "; } span.critic.comment::after { content: " \3C\3C}"; }
     </style>
 mmdheader: {{header.md}}
 mmdfooter: {{footer.md}}
