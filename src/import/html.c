@@ -71,6 +71,15 @@ typedef struct {
 } html_element;
 
 
+enum link_type {
+	TYPE_PLAIN,
+	TYPE_FOOTNOTE,
+	TYPE_GLOSSARY,
+	TYPE_CITATION,
+	TYPE_IGNORE
+};
+
+
 static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 
 static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
@@ -265,14 +274,35 @@ exit:
 }
 
 
-static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, enum link_type type) {
 	char * ch = *source;
 	yxml_ret_t ret = 0;
 	size_t lead_len = lead->len;
+	text_buffer_append_text(lead, "\t", 1);
 
-	text_buffer * buf = text_buffer_new(0);
+	text_buffer * content = text_buffer_new(0);
 
-	text_buffer_pad(out, 2);
+	char marker = '\0';
+
+	switch (type) {
+		case TYPE_CITATION:
+			marker = '#';
+			break;
+
+		case TYPE_FOOTNOTE:
+			marker = '^';
+			break;
+
+		case TYPE_GLOSSARY:
+			marker = '?';
+			break;
+
+		default:
+			marker = ' ';
+			break;
+	}
+
+	int c = 1;
 
 	while (*ch != '\0') {
 		ret = yxml_parse(x, *ch);
@@ -284,7 +314,89 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 		switch (ret) {
 			case YXML_ELEMSTART:
 				ch++;
+
+				if (type == TYPE_GLOSSARY) {
+					c++;
+					text_buffer_append_printf(out, "[%c TODO: Fix this (parse li special)%s]: ", marker, content->text);
+				} else {
+					text_buffer_append_printf(out, "[%c%d]: ", marker, c++);
+				}
+
+				out->padding = 2;
+
 				ret = xml_parse_elem(out, lead, &ch, x);
+
+				if (ret < 0) {
+					goto exit;
+				}
+
+				break;
+
+			case YXML_CONTENT:
+				text_buffer_append_printf(content, "%s", x->data);
+				break;
+
+			case YXML_ELEMEND:
+				goto leave;
+				break;
+
+			default:
+				break;
+		}
+
+		ch++;
+	}
+
+leave:
+
+	text_buffer_pad(out, 2);
+
+exit:
+	lead->len = lead_len;
+	text_buffer_free(content, 1);
+	*source = ch;
+	return ret;
+}
+
+
+static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
+
+	text_buffer * buf = text_buffer_new(0);
+
+	text_buffer_pad(out, 2);
+
+	enum link_type type = TYPE_PLAIN;
+
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
+
+		if (ret < 0) {
+			goto exit;
+		}
+
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
+
+				switch (type) {
+					case TYPE_CITATION:
+					case TYPE_FOOTNOTE:
+					case TYPE_GLOSSARY:
+						if (!strcmp("ol", x->elem)) {
+							ret = parse_endnotes(out, lead, &ch, x, type);
+						} else {
+							ret = parse_ignore(out, lead, &ch, x);
+						}
+
+						break;
+
+					default:
+						ret = xml_parse_elem(out, lead, &ch, x);
+						break;
+				}
 
 				if (ret < 0) {
 					goto exit;
@@ -310,6 +422,12 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 						text_buffer_append_text(out, "{{TOC}}\n", 9);
 						out->padding = 1;
 						goto exit;
+					} else if (!strcmp(buf->text, "citations")) {
+						type = TYPE_CITATION;
+					} else if (!strcmp(buf->text, "footnotes")) {
+						type = TYPE_FOOTNOTE;
+					} else if (!strcmp(buf->text, "glossary")) {
+						type = TYPE_GLOSSARY;
 					}
 				}
 
@@ -553,6 +671,11 @@ static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source,
 	size_t title = -1;
 	size_t title_len = 0;
 
+	size_t id = -1;
+	size_t class = -1;
+
+	enum link_type type = TYPE_PLAIN;
+
 	while (*ch != '\0') {
 		ret = yxml_parse(x, *ch);
 
@@ -563,7 +686,8 @@ static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source,
 		switch (ret) {
 			case YXML_ELEMSTART:
 				ch++;
-				ret = xml_parse_elem(out, lead, &ch, x);
+				// ret = xml_parse_elem(out, lead, &ch, x);
+				ret = parse_ignore(out, lead, &ch, x);
 
 				if (ret < 0) {
 					goto exit;
@@ -576,6 +700,10 @@ static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source,
 					href = buf->len;
 				} else if (!strcmp(x->attr, "title")) {
 					title = buf->len;
+				} else if (!strcmp(x->attr, "id")) {
+					id = buf->len;
+				} else if (!strcmp(x->attr, "class")) {
+					class = buf->len;
 				}
 
 				break;
@@ -589,6 +717,18 @@ static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source,
 					href_len = buf->len - href;
 				} else if (!strcmp(x->attr, "title")) {
 					title_len = buf->len - title;
+				} else if (!strcmp(x->attr, "id")) {
+					if (!strncmp("cnref:", &buf->text[id], 6)) {
+						type = TYPE_CITATION;
+					} else if (!strncmp("fnref:", &buf->text[id], 6)) {
+						type = TYPE_FOOTNOTE;
+					} else if (!strncmp("gnref:", &buf->text[id], 6)) {
+						type = TYPE_GLOSSARY;
+					}
+				} else if (!strcmp(x->attr, "class")) {
+					if (!strncmp("reverse", &buf->text[class], 7)) {
+						type = TYPE_IGNORE;
+					}
 				}
 
 				break;
@@ -610,28 +750,48 @@ static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source,
 
 leave:
 
-	if (title_len > 0) {
-		text_buffer_append_printf(out, "[%s](%.*s \"%.*s\")", content->text, href_len, &buf->text[href], title_len, &buf->text[title]);
-	} else {
-		if (!strncmp(content->text, &buf->text[href], href_len)) {
-			// Automatic Link
-			text_buffer_append_printf(out, "<%s>", content->text);
-		} else if (!strncmp(&buf->text[href], "mailto:", 7) && !strcmp(content->text, &buf->text[href + 7])) {
-			// Mailto automatic link
-			text_buffer_append_printf(out, "<%s>", content->text);
-		} else if (buf->text[href] == '#') {
-			char * id = html_id_from_text(content->text, content->len, false);
+	switch (type) {
+		case TYPE_FOOTNOTE:
+			text_buffer_append_printf(out, "[^%.*s]", href_len - 4, &buf->text[href + 4]);
+			break;
 
-			if (!strcmp(id, &buf->text[href + 1])) {
-				text_buffer_append_printf(out, "[%s][]", content->text);
+		case TYPE_GLOSSARY:
+			text_buffer_append_printf(out, "[?%s]", content->text);
+			break;
+
+		case TYPE_CITATION:
+			text_buffer_append_printf(out, "[#%.*s]", href_len - 4, &buf->text[href + 4]);
+			break;
+
+		case TYPE_PLAIN:
+			if (title_len > 0) {
+				text_buffer_append_printf(out, "[%s](%.*s \"%.*s\")", content->text, href_len, &buf->text[href], title_len, &buf->text[title]);
 			} else {
-				text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
+				if (!strncmp(content->text, &buf->text[href], href_len)) {
+					// Automatic Link
+					text_buffer_append_printf(out, "<%s>", content->text);
+				} else if (!strncmp(&buf->text[href], "mailto:", 7) && !strcmp(content->text, &buf->text[href + 7])) {
+					// Mailto automatic link
+					text_buffer_append_printf(out, "<%s>", content->text);
+				} else if (buf->text[href] == '#') {
+					char * id = html_id_from_text(content->text, content->len, false);
+
+					if (!strcmp(id, &buf->text[href + 1])) {
+						text_buffer_append_printf(out, "[%s][]", content->text);
+					} else {
+						text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
+					}
+
+					free(id);
+				} else {
+					text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
+				}
 			}
 
-			free(id);
-		} else {
-			text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
-		}
+			break;
+
+		case TYPE_IGNORE:
+			break;
 	}
 
 exit:
