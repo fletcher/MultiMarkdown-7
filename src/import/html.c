@@ -64,6 +64,7 @@ typedef struct {
 	const char *	element;
 	short			pre_pad;
 	const char *	prefix;
+	short			ignore_content;
 	const char *	suffix;
 	short			post_pad;
 	const char *	lead;
@@ -91,32 +92,40 @@ static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source,
 
 
 static html_element elements[] = {
-	{ "html", 0, NULL, NULL, 0, NULL, NULL },
-	{ "head", 0, NULL, NULL, 0, NULL, NULL },
-	{ "title", 0, "title:\t", "  ", 1, NULL, NULL },
-	{ "meta", 0, NULL, NULL, 0, NULL, &parse_meta },
-	{ "div", 0, NULL, NULL, 0, NULL, &parse_div },
-	{ "h1", 3, "# ", " #", 2, NULL, NULL },
-	{ "h2", 3, "## ", " ##", 2, NULL, NULL },
-	{ "h3", 3, "### ", " ###", 2, NULL, NULL },
-	{ "h4", 3, "#### ", " ####", 2, NULL, NULL },
-	{ "h5", 3, "##### ", " #####", 2, NULL, NULL },
-	{ "h6", 3, "###### ", " ######", 2, NULL, NULL },
-	{ "p", 2, NULL, "", 2, NULL, NULL },
-	{ "blockquote", 2, "> ", "", 2, "> ", NULL },
-	{ "pre", 2, "\t", "", 2, "\t", &parse_pre },
-	{ "hr", 2, NULL, "***", 2, NULL, NULL },
-	{ "ul", 2, NULL, "", 2, NULL, &parse_ul },
-	{ "ol", 2, NULL, "", 2, NULL, &parse_ol },
-	{ "li", 1, NULL, NULL, 1, "\t", NULL },
-	{ "a", 0, NULL, NULL, 0, NULL, &parse_a },
-	{ "strong", 0, "**", "**", 0, NULL, NULL },
-	{ "em", 0, "*", "*", 0, NULL, NULL },
-	{ "code", 0, "`", "`", 0, NULL, NULL },
-	{ "ins", 0, "{++", "++}", 0, NULL, NULL },
-	{ "del", 0, "{--", "--}", 0, NULL, NULL },
-	{ "mark", 0, "{==", "==}", 0, NULL, NULL },
-	{ "br", 0, NULL, "\\", 0, NULL, NULL },
+	{ "html", 0, NULL, 0, NULL, 0, NULL, NULL },
+	{ "head", 0, NULL, 0, NULL, 0, NULL, NULL },
+	{ "title", 0, "title:\t", 0, "  ", 1, NULL, NULL },
+	{ "meta", 0, NULL, 0, NULL, 0, NULL, &parse_meta },
+	{ "div", 0, NULL, 0, NULL, 0, NULL, &parse_div },
+	{ "h1", 3, "# ", 0, " #", 2, NULL, NULL },
+	{ "h2", 3, "## ", 0, " ##", 2, NULL, NULL },
+	{ "h3", 3, "### ", 0, " ###", 2, NULL, NULL },
+	{ "h4", 3, "#### ", 0, " ####", 2, NULL, NULL },
+	{ "h5", 3, "##### ", 0, " #####", 2, NULL, NULL },
+	{ "h6", 3, "###### ", 0, " ######", 2, NULL, NULL },
+	{ "p", 2, NULL, 0, "", 2, NULL, NULL },
+	{ "blockquote", 2, "> ", 0, "", 2, "> ", NULL },
+	{ "pre", 2, "\t", 0, "", 2, "\t", &parse_pre },
+	{ "hr", 2, NULL, 0, "***", 2, NULL, NULL },
+	{ "ul", 2, NULL, 0, "", 2, NULL, &parse_ul },
+	{ "ol", 2, NULL, 0, "", 2, NULL, &parse_ol },
+	{ "li", 1, NULL, 0, NULL, 1, "\t", NULL },
+	{ "a", 0, NULL, 0, NULL, 0, NULL, &parse_a },
+	{ "strong", 0, "**", 0, "**", 0, NULL, NULL },
+	{ "em", 0, "*", 0, "*", 0, NULL, NULL },
+	{ "code", 0, "`", 0, "`", 0, NULL, NULL },
+	{ "ins", 0, "{++", 0, "++}", 0, NULL, NULL },
+	{ "del", 0, "{--", 0, "--}", 0, NULL, NULL },
+	{ "mark", 0, "{==", 0, "==}", 0, NULL, NULL },
+	{ "br", 0, NULL, 0, "\\", 0, NULL, NULL },
+	{ "table", 2, NULL, 1, NULL, 2, NULL, NULL },
+	{ "tbody", 0, NULL, 1, NULL, 2, NULL, NULL },
+	{ "tr", 1, NULL, 1, " |  ", 1, NULL, NULL },
+	{ "th", 0, "| ", 0, NULL, 0, NULL, NULL },
+	{ "td", 0, "| ", 0, NULL, 0, NULL, NULL },
+	{ "dl", 2, NULL, 1, NULL, 2, NULL, NULL },
+	{ "dt", 1, NULL, 0, NULL, 1, NULL, NULL },
+	{ "dd", 1, ":\t", 0, NULL, 1, "\t", NULL },
 };
 
 
@@ -872,15 +881,18 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 				break;
 
 			case YXML_CONTENT:
+				if (i >= 0 && elements[i].ignore_content) {
 
-				// May be one or several characters
-				if (strcmp(x->elem, "html") && strcmp(x->elem, "head") && strcmp(x->elem, "body") && strcmp(x->elem, "head")) {
-					// Ignore extra stuff and whitespace, at least for now
-					if (x->data[0] != '\n') {
-						out->padding = 0;
+				} else {
+					// May be one or several characters
+					if (strcmp(x->elem, "html") && strcmp(x->elem, "head") && strcmp(x->elem, "body") && strcmp(x->elem, "head")) {
+						// Ignore extra stuff and whitespace, at least for now
+						if (x->data[0] != '\n') {
+							out->padding = 0;
+						}
+
+						append_content(out, lead, x);
 					}
-
-					append_content(out, lead, x);
 				}
 
 				break;
