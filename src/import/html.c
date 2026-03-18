@@ -93,11 +93,11 @@ typedef struct {
 	const char *	element;
 	short			pre_pad;
 	const char *	prefix;
-	short			ignore_content;
+	short			handle_content;
 	const char *	suffix;
 	short			post_pad;
 	const char *	lead;
-	xml_parse_func	f;
+	xml_parse_func	parse;
 	custom_func		custom_out;
 } html_element;
 
@@ -111,9 +111,15 @@ enum link_type {
 };
 
 
+enum content_actions {
+	CONTENT_IGNORE	= 1 << 0,
+	CONTENT_LEAD	= 1 << 1,
+};
+
+
 static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 
-// static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
+static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 // static yxml_ret_t parse_meta(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 // static yxml_ret_t parse_ol(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 // static yxml_ret_t parse_ul(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
@@ -124,41 +130,41 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 
 static html_element elements[] = {
-	{ "html",		0,	NULL,		1,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "head",		0,	NULL,		1,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "title",		1,	"title:\t",	0,	"  ",		0,	NULL,		NULL,	NULL },
-	{ "meta",		1,	NULL,		1,	NULL,		0,	NULL,		NULL, 	&custom_meta },
-	{ "body",		2,	NULL,		1,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "div",		2,	NULL,		0,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "h1",			3,	"# ",		0,	" #",		0,	NULL,		NULL,	NULL },
-	{ "h2",			3,	"## ",		0,	" ##",		0,	NULL,		NULL,	NULL },
-	{ "h3",			3,	"### ",		0,	" ###",		0,	NULL,		NULL,	NULL },
-	{ "h4",			3,	"#### ",	0,	" ####",	0,	NULL,		NULL,	NULL },
-	{ "h5",			3,	"##### ",	0,	" #####",	0,	NULL,		NULL,	NULL },
-	{ "h6",			3,	"###### ",	0,	" ######",	0,	NULL,		NULL,	NULL },
-	{ "p",			2,	NULL,		0,	"",			0,	NULL,		NULL,	NULL },
-	{ "blockquote",	2,	"> ",		0,	"",			0,	">	",		NULL,	NULL },
-	{ "pre",		2,	"\t",		0,	"",			0,	"	\t",	NULL,	NULL },
-	{ "hr",			2,	NULL,		0,	"***",		0,	NULL,		NULL,	NULL },
-	{ "ul",			2,	NULL,		0,	"",			0,	NULL,		NULL,	NULL },
-	{ "ol",			2,	NULL,		0,	"",			0,	NULL,		NULL,	NULL },
-	{ "li",			1,	NULL,		0,	NULL,		0,	"	\t",	NULL,	NULL },
-	{ "a",			0,	NULL,		1,	NULL,		0,	NULL,		NULL,	&custom_link },
-	{ "strong",		0,	"**",		0,	"**",		0,	NULL,		NULL,	NULL },
-	{ "em",			0,	"*",		0,	"*",		0,	NULL,		NULL,	NULL },
-	{ "code",		0,	"`",		0,	"`",		0,	NULL,		NULL,	NULL },
-	{ "ins",		0,	"{++",		0,	"++}",		0,	NULL,		NULL,	NULL },
-	{ "del",		0,	"{--",		0,	"--}",		0,	NULL,		NULL,	NULL },
-	{ "mark",		0,	"{==",		0,	"==}",		0,	NULL,		NULL,	NULL },
-	{ "br",			0,	NULL,		0,	"\\",		0,	NULL,		NULL,	NULL },
-	{ "table",		2,	NULL,		1,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "tbody",		0,	NULL,		1,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "tr",			1,	NULL,		1,	" |  ",		0,	NULL,		NULL,	NULL },
-	{ "th",			0,	"| ",		0,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "td",			0,	"| ",		0,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "dl",			2,	NULL,		1,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "dt",			1,	NULL,		0,	NULL,		0,	NULL,		NULL,	NULL },
-	{ "dd",			1,	":\t",		0,	NULL,		0,	"	\t",	NULL,	NULL },
+	{ "html",		0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "head",		0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "title",		1,	"title:\t",	0,				"  ",		0,	NULL,		NULL,		NULL },
+	{ "meta",		1,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL, 		&custom_meta },
+	{ "body",		2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "div",		2,	NULL,		0,				NULL,		0,	NULL,		&parse_div,	NULL },
+	{ "h1",			3,	"# ",		0,				" #",		0,	NULL,		NULL,		NULL },
+	{ "h2",			3,	"## ",		0,				" ##",		0,	NULL,		NULL,		NULL },
+	{ "h3",			3,	"### ",		0,				" ###",		0,	NULL,		NULL,		NULL },
+	{ "h4",			3,	"#### ",	0,				" ####",	0,	NULL,		NULL,		NULL },
+	{ "h5",			3,	"##### ",	0,				" #####",	0,	NULL,		NULL,		NULL },
+	{ "h6",			3,	"###### ",	0,				" ######",	0,	NULL,		NULL,		NULL },
+	{ "p",			2,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
+	{ "blockquote",	2,	"> ",		CONTENT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
+	{ "pre",		2,	"\t",		CONTENT_LEAD,	NULL,		0,	"\t",		NULL,		NULL },
+	{ "hr",			2,	NULL,		0,				"***",		0,	NULL,		NULL,		NULL },
+	{ "ul",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "ol",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "li",			1,	NULL,		0,				NULL,		0,	"\t",		NULL,		NULL },
+	{ "a",			0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_link },
+	{ "strong",		0,	"**",		0,				"**",		0,	NULL,		NULL,		NULL },
+	{ "em",			0,	"*",		0,				"*",		0,	NULL,		NULL,		NULL },
+	{ "code",		0,	"`",		CONTENT_LEAD,	"`",		0,	NULL,		NULL,		NULL },
+	{ "ins",		0,	"{++",		0,				"++}",		0,	NULL,		NULL,		NULL },
+	{ "del",		0,	"{--",		0,				"--}",		0,	NULL,		NULL,		NULL },
+	{ "mark",		0,	"{==",		0,				"==}",		0,	NULL,		NULL,		NULL },
+	{ "br",			0,	NULL,		0,				"\\",		0,	NULL,		NULL,		NULL },
+	{ "table",		2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "tbody",		0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "tr",			1,	NULL,		CONTENT_IGNORE,	" |  ",		0,	NULL,		NULL,		NULL },
+	{ "th",			0,	"| ",		0,				NULL,		0,	NULL,		NULL,		NULL },
+	{ "td",			0,	"| ",		0,				NULL,		0,	NULL,		NULL,		NULL },
+	{ "dl",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "dt",			1,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
+	{ "dd",			1,	":\t",		0,				NULL,		0,	"\t",		NULL,		NULL },
 };
 
 
@@ -229,14 +235,15 @@ static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * att
 
 	if (index->name_len) {
 		text_buffer_append_printf(out, "%.*s:\t", index->name_len, &attr->text[index->name]);
-		text_buffer_append_printf(out, "%.*s", index->content_len, &attr->text[index->content]);
+		// Include 2 spaces for line break when falling back to plain Markdown without metadata
+		text_buffer_append_printf(out, "%.*s  ", index->content_len, &attr->text[index->content]);
 		out->padding = 0;
 	}
 }
 
 
 static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && content && x) {}
+	if (0 && lead && x) {}
 
 	// What sort of link are we dealing with?
 	enum link_type type = TYPE_PLAIN;
@@ -306,301 +313,249 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 }
 
 
-// static yxml_ret_t parse_meta(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
-// 	char * ch = *source;
-// 	yxml_ret_t ret = 0;
-// 	size_t lead_len = lead->len;
+/// Ignore this element (and its children)
+static yxml_ret_t parse_ignore(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+	char * ch = *source;
+	yxml_ret_t ret = 0;
 
-// 	text_buffer * buf = text_buffer_new(0);
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
 
-// 	while (*ch != '\0') {
-// 		ret = yxml_parse(x, *ch);
+		if (ret < 0) {
+			goto exit;
+		}
 
-// 		if (ret < 0) {
-// 			goto exit;
-// 		}
+		switch (ret) {
+			case YXML_ELEMEND:
+				goto leave;
+				break;
 
-// 		switch (ret) {
-// 			case YXML_ATTRSTART:
-// 				buf->len = 0;
-// 				break;
+			case YXML_ELEMSTART:
+				ch++;
+				ret = parse_ignore(out, lead, &ch, x);
 
-// 			case YXML_ATTRVAL:
-// 				text_buffer_append_printf(buf, "%s", x->data);
-// 				break;
+				if (ret < 0) {
+					goto exit;
+				}
 
-// 			case YXML_ATTREND:
-// 				if (!strcmp(x->attr, "name")) {
-// 					text_buffer_append_text(out, buf->text, buf->len);
-// 					text_buffer_append_text(out, ":\t", 2);
-// 				} else if (!strcmp(x->attr, "content")) {
-// 					text_buffer_append_text(out, buf->text, buf->len);
-// 					text_buffer_append_text(out, "  \n", 3);
-// 					out->padding = 1;
-// 				}
+				break;
 
-// 				break;
+			default:
+				break;
+		}
 
-// 			case YXML_ELEMEND:
-// 				goto leave;
-// 				break;
+		ch++;
+	}
 
-// 			default:
-// 				break;
-// 		}
+leave:
 
-// 		ch++;
-// 	}
+exit:
+	*source = ch;
+	return ret;
+}
 
-// leave:
 
-// exit:
-// 	lead->len = lead_len;
-// 	text_buffer_free(buf, 1);
-// 	*source = ch;
-// 	return ret;
-// }
+static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, enum link_type type) {
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
+	text_buffer_append_text(lead, "\t", 1);
 
+	text_buffer * content = text_buffer_new(0);
 
-// static yxml_ret_t parse_ignore(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
-// 	char * ch = *source;
-// 	yxml_ret_t ret = 0;
+	char marker = '\0';
 
-// 	while (*ch != '\0') {
-// 		ret = yxml_parse(x, *ch);
+	switch (type) {
+		case TYPE_CITATION:
+			marker = '#';
+			break;
 
-// 		if (ret < 0) {
-// 			goto exit;
-// 		}
+		case TYPE_FOOTNOTE:
+			marker = '^';
+			break;
 
-// 		switch (ret) {
-// 			case YXML_ELEMEND:
-// 				goto leave;
-// 				break;
+		case TYPE_GLOSSARY:
+			marker = '?';
+			break;
 
-// 			case YXML_ELEMSTART:
-// 				ch++;
-// 				ret = parse_ignore(out, lead, &ch, x);
+		default:
+			marker = ' ';
+			break;
+	}
 
-// 				if (ret < 0) {
-// 					goto exit;
-// 				}
+	int c = 1;
 
-// 				break;
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
 
-// 			default:
-// 				break;
-// 		}
+		if (ret < 0) {
+			goto exit;
+		}
 
-// 		ch++;
-// 	}
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
 
-// leave:
+				if (type == TYPE_GLOSSARY) {
+					c++;
+					text_buffer_append_printf(out, "[%c TODO: Fix this (parse li special)%s]: ", marker, content->text);
+				} else {
+					text_buffer_append_printf(out, "[%c%d]: ", marker, c++);
+				}
 
-// exit:
-// 	*source = ch;
-// 	return ret;
-// }
+				out->padding = 2;
 
+				ret = xml_parse_elem(out, lead, &ch, x);
 
-// static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, enum link_type type) {
-// 	char * ch = *source;
-// 	yxml_ret_t ret = 0;
-// 	size_t lead_len = lead->len;
-// 	text_buffer_append_text(lead, "\t", 1);
+				if (ret < 0) {
+					goto exit;
+				}
 
-// 	text_buffer * content = text_buffer_new(0);
+				break;
 
-// 	char marker = '\0';
-
-// 	switch (type) {
-// 		case TYPE_CITATION:
-// 			marker = '#';
-// 			break;
-
-// 		case TYPE_FOOTNOTE:
-// 			marker = '^';
-// 			break;
-
-// 		case TYPE_GLOSSARY:
-// 			marker = '?';
-// 			break;
-
-// 		default:
-// 			marker = ' ';
-// 			break;
-// 	}
-
-// 	int c = 1;
-
-// 	while (*ch != '\0') {
-// 		ret = yxml_parse(x, *ch);
-
-// 		if (ret < 0) {
-// 			goto exit;
-// 		}
-
-// 		switch (ret) {
-// 			case YXML_ELEMSTART:
-// 				ch++;
-
-// 				if (type == TYPE_GLOSSARY) {
-// 					c++;
-// 					text_buffer_append_printf(out, "[%c TODO: Fix this (parse li special)%s]: ", marker, content->text);
-// 				} else {
-// 					text_buffer_append_printf(out, "[%c%d]: ", marker, c++);
-// 				}
-
-// 				out->padding = 2;
-
-// 				ret = xml_parse_elem(out, lead, &ch, x);
-
-// 				if (ret < 0) {
-// 					goto exit;
-// 				}
-
-// 				break;
-
-// 			case YXML_CONTENT:
-// 				text_buffer_append_printf(content, "%s", x->data);
-// 				break;
-
-// 			case YXML_ELEMEND:
-// 				goto leave;
-// 				break;
-
-// 			default:
-// 				break;
-// 		}
-
-// 		ch++;
-// 	}
-
-// leave:
-
-// 	lead->len = lead_len;
-// 	lead_pad(out, lead, 2);
-
-// exit:
-// 	lead->len = lead_len;
-// 	text_buffer_free(content, 1);
-// 	*source = ch;
-// 	return ret;
-// }
-
-
-// static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
-// 	char * ch = *source;
-// 	yxml_ret_t ret = 0;
-// 	size_t lead_len = lead->len;
-
-// 	text_buffer * buf = text_buffer_new(0);
-
-// 	lead_pad(out, lead, 2);
-
-// 	enum link_type type = TYPE_PLAIN;
-
-// 	while (*ch != '\0') {
-// 		ret = yxml_parse(x, *ch);
-
-// 		if (ret < 0) {
-// 			goto exit;
-// 		}
-
-// 		switch (ret) {
-// 			case YXML_ELEMSTART:
-// 				ch++;
-
-// 				switch (type) {
-// 					case TYPE_CITATION:
-// 					case TYPE_FOOTNOTE:
-// 					case TYPE_GLOSSARY:
-// 						if (!strcmp("ol", x->elem)) {
-// 							ret = parse_endnotes(out, lead, &ch, x, type);
-// 						} else {
-// 							ret = parse_ignore(out, lead, &ch, x);
-// 						}
-
-// 						break;
-
-// 					default:
-// 						ret = xml_parse_elem(out, lead, &ch, x);
-// 						break;
-// 				}
-
-// 				if (ret < 0) {
-// 					goto exit;
-// 				}
-
-// 				break;
-
-// 			case YXML_ATTRSTART:
-// 				buf->len = 0;
-// 				break;
-
-// 			case YXML_ATTRVAL:
-// 				text_buffer_append_printf(buf, "%s", x->data);
-// 				break;
-
-// 			case YXML_ATTREND:
-// 				if (!strcmp(x->attr, "class")) {
-// 					if (!strcmp(buf->text, "TOC")) {
-// 						ch++;
-// 						// Ignore everything inside this <div>
-// 						ret = parse_ignore(out, lead, &ch, x);
-// 						lead_pad(out, lead, 2);
-// 						text_buffer_append_text(out, "{{TOC}}", 9);
-// 						out->padding = 0;
-// 						goto exit;
-// 					} else if (!strcmp(buf->text, "citations")) {
-// 						type = TYPE_CITATION;
-// 					} else if (!strcmp(buf->text, "footnotes")) {
-// 						type = TYPE_FOOTNOTE;
-// 					} else if (!strcmp(buf->text, "glossary")) {
-// 						type = TYPE_GLOSSARY;
-// 					}
-// 				}
-
-// 				break;
-
-// 			case YXML_CONTENT:
-
-// 				// May be one or several characters
-// 				if (strcmp(x->elem, "html") && strcmp(x->elem, "head") && strcmp(x->elem, "body") && strcmp(x->elem, "head")) {
-// 					// Ignore extra stuff and whitespace, at least for now
-// 					append_content(out, lead, x);
-
-// 					if (x->data[0] == '\n') {
-// 						out->padding = 1;
-// 					} else {
-// 						out->padding = 0;
-// 					}
-// 				}
-
-// 				break;
-
-// 			case YXML_ELEMEND:
-// 				goto leave;
-// 				break;
-
-// 			default:
-// 				break;
-// 		}
-
-// 		ch++;
-// 	}
-
-// leave:
-
-// 	lead->len = lead_len;
-// 	lead_pad(out, lead, 2);
-
-// exit:
-// 	lead->len = lead_len;
-// 	text_buffer_free(buf, 1);
-// 	*source = ch;
-// 	return ret;
-// }
+			case YXML_CONTENT:
+				text_buffer_append_printf(content, "%s", x->data);
+				break;
+
+			case YXML_ELEMEND:
+				goto leave;
+				break;
+
+			default:
+				break;
+		}
+
+		ch++;
+	}
+
+leave:
+
+	lead->len = lead_len;
+	lead_pad(out, lead, 2);
+
+exit:
+	lead->len = lead_len;
+	text_buffer_free(content, 1);
+	*source = ch;
+	return ret;
+}
+
+
+static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
+
+	text_buffer * buf = text_buffer_new(0);
+
+	lead_pad(out, lead, 2);
+
+	enum link_type type = TYPE_PLAIN;
+
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
+
+		if (ret < 0) {
+			goto exit;
+		}
+
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
+
+				switch (type) {
+					case TYPE_CITATION:
+					case TYPE_FOOTNOTE:
+					case TYPE_GLOSSARY:
+						if (!strcmp("ol", x->elem)) {
+							// TODO: Refactor this
+							ret = parse_endnotes(out, lead, &ch, x, type);
+
+							// ret = parse_ignore(out, lead, &ch, x);
+						} else {
+							ret = parse_ignore(out, lead, &ch, x);
+						}
+
+						break;
+
+					default:
+						ret = xml_parse_elem(out, lead, &ch, x);
+						break;
+				}
+
+				if (ret < 0) {
+					goto exit;
+				}
+
+				break;
+
+			case YXML_ATTRSTART:
+				buf->len = 0;
+				break;
+
+			case YXML_ATTRVAL:
+				text_buffer_append_printf(buf, "%s", x->data);
+				break;
+
+			case YXML_ATTREND:
+				if (!strcmp(x->attr, "class")) {
+					if (!strcmp(buf->text, "TOC")) {
+						ch++;
+						// Ignore everything inside this <div>
+						ret = parse_ignore(out, lead, &ch, x);
+						lead_pad(out, lead, 2);
+						text_buffer_append_text(out, "{{TOC}}", 7);
+						out->padding = 0;
+						goto exit;
+					} else if (!strcmp(buf->text, "citations")) {
+						type = TYPE_CITATION;
+					} else if (!strcmp(buf->text, "footnotes")) {
+						type = TYPE_FOOTNOTE;
+					} else if (!strcmp(buf->text, "glossary")) {
+						type = TYPE_GLOSSARY;
+					}
+				}
+
+				break;
+
+			case YXML_CONTENT:
+
+				// May be one or several characters
+				if (strcmp(x->elem, "html") && strcmp(x->elem, "head") && strcmp(x->elem, "body") && strcmp(x->elem, "head")) {
+					// Ignore extra stuff and whitespace, at least for now
+					append_content(out, lead, x);
+
+					if (x->data[0] == '\n') {
+						out->padding = 1;
+					} else {
+						out->padding = 0;
+					}
+				}
+
+				break;
+
+			case YXML_ELEMEND:
+				goto leave;
+				break;
+
+			default:
+				break;
+		}
+
+		ch++;
+	}
+
+leave:
+
+	lead->len = lead_len;
+	lead_pad(out, lead, 2);
+
+exit:
+	lead->len = lead_len;
+	text_buffer_free(buf, 1);
+	*source = ch;
+	return ret;
+}
 
 
 // static yxml_ret_t parse_ul(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
@@ -788,152 +743,6 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 // }
 
 
-// static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
-// 	char * ch = *source;
-// 	yxml_ret_t ret = 0;
-// 	size_t lead_len = lead->len;
-
-// 	text_buffer * buf = text_buffer_new(0);
-// 	text_buffer * content = text_buffer_new(0);
-
-// 	size_t href = -1;
-// 	size_t href_len = 0;
-
-// 	size_t title = -1;
-// 	size_t title_len = 0;
-
-// 	size_t id = -1;
-// 	size_t class = -1;
-
-// 	enum link_type type = TYPE_PLAIN;
-
-// 	while (*ch != '\0') {
-// 		ret = yxml_parse(x, *ch);
-
-// 		if (ret < 0) {
-// 			goto exit;
-// 		}
-
-// 		switch (ret) {
-// 			case YXML_ELEMSTART:
-// 				ch++;
-// 				// ret = xml_parse_elem(out, lead, &ch, x);
-// 				ret = parse_ignore(out, lead, &ch, x);
-
-// 				if (ret < 0) {
-// 					goto exit;
-// 				}
-
-// 				break;
-
-// 			case YXML_ATTRSTART:
-// 				if (!strcmp(x->attr, "href")) {
-// 					href = buf->len;
-// 				} else if (!strcmp(x->attr, "title")) {
-// 					title = buf->len;
-// 				} else if (!strcmp(x->attr, "id")) {
-// 					id = buf->len;
-// 				} else if (!strcmp(x->attr, "class")) {
-// 					class = buf->len;
-// 				}
-
-// 				break;
-
-// 			case YXML_ATTRVAL:
-// 				text_buffer_append_printf(buf, "%s", x->data);
-// 				break;
-
-// 			case YXML_ATTREND:
-// 				if (!strcmp(x->attr, "href")) {
-// 					href_len = buf->len - href;
-// 				} else if (!strcmp(x->attr, "title")) {
-// 					title_len = buf->len - title;
-// 				} else if (!strcmp(x->attr, "id")) {
-// 					if (!strncmp("cnref:", &buf->text[id], 6)) {
-// 						type = TYPE_CITATION;
-// 					} else if (!strncmp("fnref:", &buf->text[id], 6)) {
-// 						type = TYPE_FOOTNOTE;
-// 					} else if (!strncmp("gnref:", &buf->text[id], 6)) {
-// 						type = TYPE_GLOSSARY;
-// 					}
-// 				} else if (!strcmp(x->attr, "class")) {
-// 					if (!strncmp("reverse", &buf->text[class], 7)) {
-// 						type = TYPE_IGNORE;
-// 					}
-// 				}
-
-// 				break;
-
-// 			case YXML_CONTENT:
-// 				text_buffer_append_printf(content, "%s", x->data);
-// 				break;
-
-// 			case YXML_ELEMEND:
-// 				goto leave;
-// 				break;
-
-// 			default:
-// 				break;
-// 		}
-
-// 		ch++;
-// 	}
-
-// leave:
-
-// 	switch (type) {
-// 		case TYPE_FOOTNOTE:
-// 			text_buffer_append_printf(out, "[^%.*s]", href_len - 4, &buf->text[href + 4]);
-// 			break;
-
-// 		case TYPE_GLOSSARY:
-// 			text_buffer_append_printf(out, "[?%s]", content->text);
-// 			break;
-
-// 		case TYPE_CITATION:
-// 			text_buffer_append_printf(out, "[#%.*s]", href_len - 4, &buf->text[href + 4]);
-// 			break;
-
-// 		case TYPE_PLAIN:
-// 			if (title_len > 0) {
-// 				text_buffer_append_printf(out, "[%s](%.*s \"%.*s\")", content->text, href_len, &buf->text[href], title_len, &buf->text[title]);
-// 			} else {
-// 				if (!strncmp(content->text, &buf->text[href], href_len)) {
-// 					// Automatic Link
-// 					text_buffer_append_printf(out, "<%s>", content->text);
-// 				} else if (!strncmp(&buf->text[href], "mailto:", 7) && !strcmp(content->text, &buf->text[href + 7])) {
-// 					// Mailto automatic link
-// 					text_buffer_append_printf(out, "<%s>", content->text);
-// 				} else if (buf->text[href] == '#') {
-// 					char * id = html_id_from_text(content->text, content->len, false);
-
-// 					if (!strcmp(id, &buf->text[href + 1])) {
-// 						text_buffer_append_printf(out, "[%s][]", content->text);
-// 					} else {
-// 						text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
-// 					}
-
-// 					free(id);
-// 				} else {
-// 					text_buffer_append_printf(out, "[%s](%.*s)", content->text, href_len, &buf->text[href]);
-// 				}
-// 			}
-
-// 			break;
-
-// 		case TYPE_IGNORE:
-// 			break;
-// 	}
-
-// exit:
-// 	lead->len = lead_len;
-// 	text_buffer_free(buf, 1);
-// 	text_buffer_free(content, 1);
-// 	*source = ch;
-// 	return ret;
-// }
-
-
 static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
 	char * ch = *source;
 	yxml_ret_t ret = 0;
@@ -956,8 +765,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 			text_buffer_append_printf(lead, "%s", elements[i].lead);
 		}
 
-		if (elements[i].f) {
-			ret = elements[i].f(out, lead, &ch, x);
+		if (elements[i].parse) {
+			ret = elements[i].parse(out, lead, &ch, x);
 
 			if (elements[i].suffix) {
 				text_buffer_append_printf(out, "%s", elements[i].suffix);
@@ -1036,11 +845,18 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 				break;
 
 			case YXML_CONTENT:
-				if (i >= 0 && elements[i].ignore_content) {
+
+				// May be one or several characters
+				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE)) {
 					// Store for possible use
 					text_buffer_append_printf(content, "%s", x->data);
+				} else if (elements[i].handle_content & CONTENT_LEAD) {
+					text_buffer_append_printf(out, "%s", x->data);
+
+					if (x->data[0] == '\n') {
+						text_buffer_append_text(out, lead->text, lead->len);
+					}
 				} else {
-					// May be one or several characters
 					if (x->data[0] != '\n') {
 						out->padding = 0;
 					}
@@ -1095,13 +911,11 @@ int mmd_import_html(text_buffer * source_buffer) {
 	yxml_t * x = malloc(sizeof(yxml_t) + kYXML_BUFSIZE);
 	yxml_init(x, x + 1, kYXML_BUFSIZE);
 
+
 	// We need a new textbuffer for the output
 	text_buffer * output = text_buffer_new(0);
 	output->padding = 2;
-	// text_buffer * metadata = text_buffer_new(0);
 
-	// Temporary storage
-	text_buffer * buf = text_buffer_new(0);
 
 	// Lead in for nested structures
 	text_buffer * lead = text_buffer_new(0);
@@ -1162,8 +976,10 @@ cleanup:
 	free(x);
 
 	if (ret < 0) {
+		// Error
 		fprintf(stderr, "XML error parsing as HTML %d at EOF\n", ret);
 	} else {
+		// Success
 		source_buffer->len = 0;
 		text_buffer_append_text(source_buffer, output->text, output->len);
 
@@ -1171,7 +987,6 @@ cleanup:
 	}
 
 	text_buffer_free(output, 1);
-	text_buffer_free(buf, 1);
 	text_buffer_free(lead, 1);
 
 	return result;
