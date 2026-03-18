@@ -85,7 +85,7 @@ typedef struct {
 } attr_index;
 
 
-typedef yxml_ret_t (*xml_parse_func)(text_buffer *, text_buffer *, char **, yxml_t *);
+typedef yxml_ret_t (*xml_parse_func)(text_buffer *, text_buffer *, char **, yxml_t *, const char *, int);
 typedef void (*custom_func)(text_buffer *, text_buffer *, text_buffer *, text_buffer *, attr_index *, yxml_t *);
 
 
@@ -112,14 +112,17 @@ enum link_type {
 
 
 enum content_actions {
-	CONTENT_IGNORE	= 1 << 0,
-	CONTENT_LEAD	= 1 << 1,
+	CONTENT_IGNORE			= 1 << 0,
+	CONTENT_IGNORE_CHILDREN	= 1 << 1,
+	CONTENT_LEAD			= 1 << 2,
 };
 
 
-static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
+static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
 
-static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
+static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
+static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
+
 // static yxml_ret_t parse_meta(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 // static yxml_ret_t parse_ol(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 // static yxml_ret_t parse_ul(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
@@ -142,14 +145,14 @@ static html_element elements[] = {
 	{ "h4",			3,	"#### ",	0,				" ####",	0,	NULL,		NULL,		NULL },
 	{ "h5",			3,	"##### ",	0,				" #####",	0,	NULL,		NULL,		NULL },
 	{ "h6",			3,	"###### ",	0,				" ######",	0,	NULL,		NULL,		NULL },
-	{ "p",			2,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
+	{ "p",			2,	NULL,		0,				NULL,		1,	NULL,		NULL,		NULL },
 	{ "blockquote",	2,	"> ",		CONTENT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
 	{ "pre",		2,	"\t",		CONTENT_LEAD,	NULL,		0,	"\t",		NULL,		NULL },
 	{ "hr",			2,	NULL,		0,				"***",		0,	NULL,		NULL,		NULL },
 	{ "ul",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "ol",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "li",			1,	NULL,		0,				NULL,		0,	"\t",		NULL,		NULL },
-	{ "a",			0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_link },
+	{ "li",			1,	NULL,		0,				NULL,		0,	"\t",		&parse_li,	NULL },
+	{ "a",			0,	NULL,		CONTENT_IGNORE | CONTENT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_link },
 	{ "strong",		0,	"**",		0,				"**",		0,	NULL,		NULL,		NULL },
 	{ "em",			0,	"*",		0,				"*",		0,	NULL,		NULL,		NULL },
 	{ "code",		0,	"`",		CONTENT_LEAD,	"`",		0,	NULL,		NULL,		NULL },
@@ -314,7 +317,9 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 
 
 /// Ignore this element (and its children)
-static yxml_ret_t parse_ignore(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+static yxml_ret_t parse_ignore(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent) {
+	if (0 && parent) {}
+
 	char * ch = *source;
 	yxml_ret_t ret = 0;
 
@@ -332,7 +337,7 @@ static yxml_ret_t parse_ignore(text_buffer * out, text_buffer * lead, char ** so
 
 			case YXML_ELEMSTART:
 				ch++;
-				ret = parse_ignore(out, lead, &ch, x);
+				ret = parse_ignore(out, lead, &ch, x, NULL);
 
 				if (ret < 0) {
 					goto exit;
@@ -361,6 +366,10 @@ static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** 
 	size_t lead_len = lead->len;
 	text_buffer_append_text(lead, "\t", 1);
 
+	const char * self = x->elem;
+
+	int c = 0;
+
 	text_buffer * content = text_buffer_new(0);
 
 	char marker = '\0';
@@ -383,8 +392,6 @@ static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** 
 			break;
 	}
 
-	int c = 1;
-
 	while (*ch != '\0') {
 		ret = yxml_parse(x, *ch);
 
@@ -395,17 +402,17 @@ static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** 
 		switch (ret) {
 			case YXML_ELEMSTART:
 				ch++;
+				c++;
 
 				if (type == TYPE_GLOSSARY) {
-					c++;
 					text_buffer_append_printf(out, "[%c TODO: Fix this (parse li special)%s]: ", marker, content->text);
 				} else {
-					text_buffer_append_printf(out, "[%c%d]: ", marker, c++);
+					text_buffer_append_printf(out, "[%c%d]: ", marker, c);
 				}
 
 				out->padding = 2;
 
-				ret = xml_parse_elem(out, lead, &ch, x);
+				ret = xml_parse_elem(out, lead, &ch, x, self, c);
 
 				if (ret < 0) {
 					goto exit;
@@ -441,10 +448,15 @@ exit:
 }
 
 
-static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx) {
+	if (0 && parent && idx) {}
+
 	char * ch = *source;
 	yxml_ret_t ret = 0;
 	size_t lead_len = lead->len;
+
+	const char * self = x->elem;
+	int c = 0;
 
 	text_buffer * buf = text_buffer_new(0);
 
@@ -471,15 +483,15 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 							// TODO: Refactor this
 							ret = parse_endnotes(out, lead, &ch, x, type);
 
-							// ret = parse_ignore(out, lead, &ch, x);
+							// ret = parse_ignore(out, lead, &ch, x, self);
 						} else {
-							ret = parse_ignore(out, lead, &ch, x);
+							ret = parse_ignore(out, lead, &ch, x, self);
 						}
 
 						break;
 
 					default:
-						ret = xml_parse_elem(out, lead, &ch, x);
+						ret = xml_parse_elem(out, lead, &ch, x, self, ++c);
 						break;
 				}
 
@@ -502,7 +514,7 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 					if (!strcmp(buf->text, "TOC")) {
 						ch++;
 						// Ignore everything inside this <div>
-						ret = parse_ignore(out, lead, &ch, x);
+						ret = parse_ignore(out, lead, &ch, x, self);
 						lead_pad(out, lead, 2);
 						text_buffer_append_text(out, "{{TOC}}", 7);
 						out->padding = 0;
@@ -553,6 +565,101 @@ leave:
 exit:
 	lead->len = lead_len;
 	text_buffer_free(buf, 1);
+	*source = ch;
+	return ret;
+}
+
+
+static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx) {
+	if (0 && parent && idx) {}
+
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
+
+	const char * self = x->elem;
+	int i = match_element(self);
+
+	int c = 0;
+
+	text_buffer * content = text_buffer_new(0);
+
+	// Customize prefix
+	if (!strcmp("ol", parent)) {
+		text_buffer_append_printf(out, "%d. ", idx);
+	} else {
+		text_buffer_append_printf(out, "* ");
+	}
+
+	out->padding = 2;
+
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
+
+		if (ret < 0) {
+			goto exit;
+		}
+
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
+				ret = xml_parse_elem(out, lead, &ch, x, self, ++c);
+
+				if (ret < 0) {
+					goto exit;
+				}
+
+				break;
+
+			case YXML_CONTENT:
+
+				// May be one or several characters
+				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE)) {
+					// Store for possible use
+					text_buffer_append_printf(content, "%s", x->data);
+				} else if (elements[i].handle_content & CONTENT_LEAD) {
+					text_buffer_append_printf(out, "%s", x->data);
+
+					if (x->data[0] == '\n') {
+						text_buffer_append_text(out, lead->text, lead->len);
+					}
+				} else {
+					if (x->data[0] != '\n') {
+						out->padding = 0;
+					}
+
+					append_content(out, lead, x);
+				}
+
+				break;
+
+			case YXML_ELEMEND:
+				out->padding = 0;
+
+				if (i >= 0) {
+					if (elements[i].suffix) {
+						text_buffer_append_printf(out, "%s", elements[i].suffix);
+					}
+
+					// text_buffer_pad(out, elements[i].post_pad);
+					lead_pad(out, lead, elements[i].post_pad);
+				}
+
+				// text_buffer_append_printf(out, "</>");
+
+				goto exit;
+				break;
+
+			default:
+				break;
+		}
+
+		ch++;
+	}
+
+exit:
+	lead->len = lead_len;
+	text_buffer_free(content, 1);
 	*source = ch;
 	return ret;
 }
@@ -743,13 +850,17 @@ exit:
 // }
 
 
-static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
+static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx) {
+	if (0 && parent) {}
+
 	char * ch = *source;
 	yxml_ret_t ret = 0;
 	size_t lead_len = lead->len;
 
-	int i = match_element(x->elem);
+	const char * self = x->elem;
+	int i = match_element(self);
 
+	int c = 0;
 
 	if (i >= 0) {
 		lead_pad(out, lead, elements[i].pre_pad);
@@ -766,13 +877,14 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 		}
 
 		if (elements[i].parse) {
-			ret = elements[i].parse(out, lead, &ch, x);
+			ret = elements[i].parse(out, lead, &ch, x, parent, idx);
 
 			if (elements[i].suffix) {
 				text_buffer_append_printf(out, "%s", elements[i].suffix);
 			}
 
-			text_buffer_pad(out, elements[i].post_pad);
+			// text_buffer_pad(out, elements[i].post_pad);
+			lead_pad(out, lead, elements[i].post_pad);
 
 			lead->len = lead_len;
 			*source = ch;
@@ -798,7 +910,12 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 		switch (ret) {
 			case YXML_ELEMSTART:
 				ch++;
-				ret = xml_parse_elem(out, lead, &ch, x);
+
+				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE_CHILDREN)) {
+					ret = xml_parse_elem(content, lead, &ch, x, self, ++c);
+				} else {
+					ret = xml_parse_elem(out, lead, &ch, x, self, ++c);
+				}
 
 				if (ret < 0) {
 					goto exit;
@@ -850,7 +967,7 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE)) {
 					// Store for possible use
 					text_buffer_append_printf(content, "%s", x->data);
-				} else if (elements[i].handle_content & CONTENT_LEAD) {
+				} else if (i >= 0 && (elements[i].handle_content & CONTENT_LEAD)) {
 					text_buffer_append_printf(out, "%s", x->data);
 
 					if (x->data[0] == '\n') {
@@ -877,7 +994,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 							text_buffer_append_printf(out, "%s", elements[i].suffix);
 						}
 
-						text_buffer_pad(out, elements[i].post_pad);
+						// text_buffer_pad(out, elements[i].post_pad);
+						lead_pad(out, lead, elements[i].post_pad);
 					}
 				}
 
@@ -905,6 +1023,8 @@ exit:
 int mmd_import_html(text_buffer * source_buffer) {
 	char * ch = NULL;
 	int result = 0;
+
+	int c = 0;
 
 	// Prepare to parse XML
 	yxml_ret_t ret;
@@ -954,7 +1074,7 @@ int mmd_import_html(text_buffer * source_buffer) {
 			switch (ret) {
 				case YXML_ELEMSTART:
 					ch++;
-					ret = xml_parse_elem(output, lead, &ch, x);
+					ret = xml_parse_elem(output, lead, &ch, x, NULL, ++c);
 
 					if (ret < 0) {
 						goto cleanup;
