@@ -59,9 +59,9 @@ latexconfig:	article
 '
 	* (16) 0:1	'
 '
-* (102) 85:59	'![*foo*](http://foo.bar/ "foo" width="40px" height="20px")
+* (102) 85:59	'![*foo*](http://foo.bar/ "bat" width="40px" height="20px")
 '
-	* (33) 0:59	'![*foo*](http://foo.bar/ "foo" width="40px" height="20px")
+	* (33) 0:59	'![*foo*](http://foo.bar/ "bat" width="40px" height="20px")
 '
 	- (181) 0:2	'!['
 		+ (192) 2:1	'*'
@@ -73,7 +73,7 @@ latexconfig:	article
 		+ (144) 13:1	':'
 		+ (131) 14:11	'//foo.bar/ '
 		+ (185) 25:1	'"'
-			+ (131) 26:3	'foo'
+			+ (131) 26:3	'bat'
 		+ (157) 29:1	'"'
 		+ (131) 30:7	' width='
 		+ (185) 37:1	'"'
@@ -90,9 +90,9 @@ latexconfig:	article
 '
 	* (16) 0:1	'
 '
-* (102) 145:45	'![*foo*](http://foo.bar/ "foo" width="40px")
+* (102) 145:45	'![*foo*](http://foo.bar/ "bat" width="40px")
 '
-	* (33) 0:45	'![*foo*](http://foo.bar/ "foo" width="40px")
+	* (33) 0:45	'![*foo*](http://foo.bar/ "bat" width="40px")
 '
 	- (181) 0:2	'!['
 		+ (192) 2:1	'*'
@@ -104,7 +104,7 @@ latexconfig:	article
 		+ (144) 13:1	':'
 		+ (131) 14:11	'//foo.bar/ '
 		+ (185) 25:1	'"'
-			+ (131) 26:3	'foo'
+			+ (131) 26:3	'bat'
 		+ (157) 29:1	'"'
 		+ (131) 30:7	' width='
 		+ (185) 37:1	'"'
@@ -117,9 +117,9 @@ latexconfig:	article
 '
 	* (16) 0:1	'
 '
-* (71) 191:56	'[foo]: http://foo.bar/	"foo" width="40px" height="20px"
+* (71) 191:56	'[foo]: http://foo.bar/	"bat" width="40px" height="20px"
 '
-	* (14) 0:56	'[foo]: http://foo.bar/	"foo" width="40px" height="20px"
+	* (14) 0:56	'[foo]: http://foo.bar/	"bat" width="40px" height="20px"
 '
 * (74) 247:1	'
 '

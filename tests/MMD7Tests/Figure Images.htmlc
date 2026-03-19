@@ -7,11 +7,11 @@ latexconfig: article</p>
 
 <p>![<em>bar</em>][foo] bar</p>
 
-<p>![<em>foo</em>](http://foo.bar/ &quot;foo&quot; width=&quot;40px&quot; height=&quot;20px&quot;)</p>
+<p>![<em>foo</em>](http://foo.bar/ &quot;bat&quot; width=&quot;40px&quot; height=&quot;20px&quot;)</p>
 
-<p>![<em>foo</em>](http://foo.bar/ &quot;foo&quot; width=&quot;40px&quot;)</p>
+<p>![<em>foo</em>](http://foo.bar/ &quot;bat&quot; width=&quot;40px&quot;)</p>
 
-<p>[foo]: http://foo.bar/ &quot;foo&quot; width=&quot;40px&quot; height=&quot;20px&quot;</p>
+<p>[foo]: http://foo.bar/ &quot;bat&quot; width=&quot;40px&quot; height=&quot;20px&quot;</p>
 
 <p>5</p>
 
