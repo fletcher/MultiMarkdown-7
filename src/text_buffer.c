@@ -391,3 +391,24 @@ void text_buffer_trim_trailing_newline(text_buffer * b) {
 		}
 	}
 }
+
+
+/// Replace occurences of target with replacement
+void text_buffer_replace_string(text_buffer * b, const char * target, const char * replacement) {
+	if (b && target && replacement) {
+		size_t offset = 0;
+		size_t t_len = strlen(target);
+		size_t r_len = strlen(replacement);
+
+		char * needle = strstr(&b->text[offset], target);
+
+		while (needle) {
+			offset = needle - b->text;
+			text_buffer_replace_range(b, offset, t_len, replacement, r_len);
+			offset += r_len - t_len;
+			needle = strstr(&b->text[offset], target);
+		}
+	}
+}
+
+

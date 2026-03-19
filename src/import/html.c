@@ -131,11 +131,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
 static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
 
-// static yxml_ret_t parse_meta(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
-// static yxml_ret_t parse_ol(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
-// static yxml_ret_t parse_ul(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
-// static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
-// static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
+static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
+
 
 static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
@@ -156,7 +153,7 @@ static html_element elements[] = {
 	{ "h6",			3,	"###### ",	0,				" ######",	0,	NULL,		NULL,		NULL },
 	{ "p",			2,	NULL,		0,				NULL,		1,	NULL,		NULL,		NULL },
 	{ "blockquote",	2,	"> ",		OPT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
-	{ "pre",		2,	"\t",		OPT_LEAD,	NULL,		0,	"\t",		NULL,		NULL },
+	{ "pre",		2,	"\t",		OPT_LEAD,	NULL,		0,	"\t",		&parse_pre,		NULL },
 	{ "hr",			2,	NULL,		0,				"***",		0,	NULL,		NULL,		NULL },
 	{ "ul",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "ol",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
@@ -752,62 +749,64 @@ exit:
 }
 
 
-// static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x) {
-// 	char * ch = *source;
-// 	yxml_ret_t ret = 0;
-// 	size_t lead_len = lead->len;
+static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx) {
+	if (0 && idx) {}
 
-// 	text_buffer * buf = text_buffer_new(0);
+	char * ch = *source;
+	yxml_ret_t ret = 0;
+	size_t lead_len = lead->len;
 
-// 	while (*ch != '\0') {
-// 		ret = yxml_parse(x, *ch);
+	text_buffer * buf = text_buffer_new(0);
 
-// 		if (ret < 0) {
-// 			goto exit;
-// 		}
+	while (*ch != '\0') {
+		ret = yxml_parse(x, *ch);
 
-// 		switch (ret) {
-// 			case YXML_ELEMSTART:
-// 				ch++;
-// 				ret = parse_pre(out, lead, &ch, x);
+		if (ret < 0) {
+			goto exit;
+		}
 
-// 				if (ret < 0) {
-// 					goto exit;
-// 				}
+		switch (ret) {
+			case YXML_ELEMSTART:
+				ch++;
+				ret = parse_pre(out, lead, &ch, x, parent, 0);
 
-// 				break;
+				if (ret < 0) {
+					goto exit;
+				}
 
-// 			case YXML_CONTENT:
+				break;
 
-// 				// May be one or several characters
-// 				text_buffer_append_printf(out, "%s", x->data);
+			case YXML_CONTENT:
 
-// 				if (x->data[0] == '\n') {
-// 					text_buffer_append_text(out, lead->text, lead->len);
-// 				}
+				// May be one or several characters
+				text_buffer_append_printf(out, "%s", x->data);
 
-// 				break;
+				if (x->data[0] == '\n') {
+					text_buffer_append_text(out, lead->text, lead->len);
+				}
 
-// 			case YXML_ELEMEND:
-// 				goto leave;
-// 				break;
+				break;
 
-// 			default:
-// 				break;
-// 		}
+			case YXML_ELEMEND:
+				goto leave;
+				break;
 
-// 		ch++;
-// 	}
+			default:
+				break;
+		}
 
-// leave:
+		ch++;
+	}
 
-// exit:
-// 	out->padding = 1;
-// 	lead->len = lead_len;
-// 	text_buffer_free(buf, 1);
-// 	*source = ch;
-// 	return ret;
-// }
+leave:
+
+exit:
+	out->padding = 1;
+	lead->len = lead_len;
+	text_buffer_free(buf, 1);
+	*source = ch;
+	return ret;
+}
 
 
 static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx) {
@@ -1089,6 +1088,38 @@ int mmd_import_html(text_buffer * source_buffer) {
 		}
 
 		ch++;
+	}
+
+	// HTML is not as strict as XML -- fix a couple of things in the source if needed
+	text_buffer_replace_string(source_buffer, "<br>", "<br/>");
+	text_buffer_replace_string(source_buffer, "<hr>", "<hr/>");
+
+	char * meta = strstr(source_buffer->text, "<meta");
+
+	while (meta) {
+		size_t offset = meta - source_buffer->text;
+
+		while (meta && *meta) {
+			switch (*meta) {
+				case '>':
+					offset = meta - source_buffer->text;
+
+					if (source_buffer->text[offset - 1] != '/') {
+						fprintf(stderr, "Fix meta\n");
+						text_buffer_replace_range(source_buffer, offset, 0, "/", 1);
+					}
+
+					meta = strstr(&source_buffer->text[offset], "<meta");
+					break;
+
+				default:
+					break;
+			}
+
+			if (meta) {
+				meta++;
+			}
+		}
 	}
 
 	// Now, process the actual source text

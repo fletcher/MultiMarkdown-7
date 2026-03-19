@@ -91,4 +91,7 @@ void text_buffer_fix_trailing_newline(text_buffer * b);
 /// Remove trailing CR or LF
 void text_buffer_trim_trailing_newline(text_buffer * b);
 
+/// Replace occurences of target with replacement
+void text_buffer_replace_string(text_buffer * b, const char * target, const char * replacement);
+
 #endif
