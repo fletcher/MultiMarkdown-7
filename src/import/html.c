@@ -65,6 +65,9 @@
 #define kYXML_BUFSIZE 4096
 
 typedef struct {
+	size_t		alt;
+	size_t		alt_len;
+
 	size_t		class;
 	size_t		class_len;
 
@@ -79,6 +82,9 @@ typedef struct {
 
 	size_t		name;
 	size_t		name_len;
+
+	size_t		src;
+	size_t		src_len;
 
 	size_t		title;
 	size_t		title_len;
@@ -111,10 +117,11 @@ enum link_type {
 };
 
 
-enum content_actions {
-	CONTENT_IGNORE			= 1 << 0,
-	CONTENT_IGNORE_CHILDREN	= 1 << 1,
-	CONTENT_LEAD			= 1 << 2,
+enum options {
+	OPT_IGNORE			= 1 << 0,
+	OPT_IGNORE_CHILDREN	= 1 << 1,
+	OPT_LEAD			= 1 << 2,
+	OPT_FLATTEN			= 1 << 3,
 };
 
 
@@ -130,14 +137,15 @@ static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source
 // static yxml_ret_t parse_a(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x);
 
 static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
+static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 
 static html_element elements[] = {
-	{ "html",		0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "head",		0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "html",		0,	NULL,		OPT_IGNORE,	NULL,		2,	NULL,		NULL,		NULL },
+	{ "head",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "title",		1,	"title:\t",	0,				"  ",		0,	NULL,		NULL,		NULL },
-	{ "meta",		1,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL, 		&custom_meta },
-	{ "body",		2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "meta",		1,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL, 		&custom_meta },
+	{ "body",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "div",		2,	NULL,		0,				NULL,		0,	NULL,		&parse_div,	NULL },
 	{ "h1",			3,	"# ",		0,				" #",		0,	NULL,		NULL,		NULL },
 	{ "h2",			3,	"## ",		0,				" ##",		0,	NULL,		NULL,		NULL },
@@ -146,26 +154,29 @@ static html_element elements[] = {
 	{ "h5",			3,	"##### ",	0,				" #####",	0,	NULL,		NULL,		NULL },
 	{ "h6",			3,	"###### ",	0,				" ######",	0,	NULL,		NULL,		NULL },
 	{ "p",			2,	NULL,		0,				NULL,		1,	NULL,		NULL,		NULL },
-	{ "blockquote",	2,	"> ",		CONTENT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
-	{ "pre",		2,	"\t",		CONTENT_LEAD,	NULL,		0,	"\t",		NULL,		NULL },
+	{ "blockquote",	2,	"> ",		OPT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
+	{ "pre",		2,	"\t",		OPT_LEAD,	NULL,		0,	"\t",		NULL,		NULL },
 	{ "hr",			2,	NULL,		0,				"***",		0,	NULL,		NULL,		NULL },
-	{ "ul",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "ol",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "ul",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "ol",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "li",			1,	NULL,		0,				NULL,		0,	"\t",		&parse_li,	NULL },
-	{ "a",			0,	NULL,		CONTENT_IGNORE | CONTENT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_link },
+	{ "a",			0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_link },
+	{ "img",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_img },
+	{ "figure",		2,	NULL,		OPT_IGNORE | OPT_FLATTEN,	NULL,		0,	NULL,		NULL,		&custom_img },
+	{ "figcaption",	1,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
 	{ "strong",		0,	"**",		0,				"**",		0,	NULL,		NULL,		NULL },
 	{ "em",			0,	"*",		0,				"*",		0,	NULL,		NULL,		NULL },
-	{ "code",		0,	"`",		CONTENT_LEAD,	"`",		0,	NULL,		NULL,		NULL },
+	{ "code",		0,	"`",		OPT_LEAD,	"`",		0,	NULL,		NULL,		NULL },
 	{ "ins",		0,	"{++",		0,				"++}",		0,	NULL,		NULL,		NULL },
 	{ "del",		0,	"{--",		0,				"--}",		0,	NULL,		NULL,		NULL },
 	{ "mark",		0,	"{==",		0,				"==}",		0,	NULL,		NULL,		NULL },
 	{ "br",			0,	NULL,		0,				"\\",		0,	NULL,		NULL,		NULL },
-	{ "table",		2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "tbody",		0,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "tr",			1,	NULL,		CONTENT_IGNORE,	" |  ",		0,	NULL,		NULL,		NULL },
+	{ "table",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "tbody",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "tr",			1,	NULL,		OPT_IGNORE,	" |  ",		0,	NULL,		NULL,		NULL },
 	{ "th",			0,	"| ",		0,				NULL,		0,	NULL,		NULL,		NULL },
 	{ "td",			0,	"| ",		0,				NULL,		0,	NULL,		NULL,		NULL },
-	{ "dl",			2,	NULL,		CONTENT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "dl",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "dt",			1,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
 	{ "dd",			1,	":\t",		0,				NULL,		0,	"\t",		NULL,		NULL },
 };
@@ -248,6 +259,8 @@ static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * att
 static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
 	if (0 && lead && x) {}
 
+	out->padding = 0;
+
 	// What sort of link are we dealing with?
 	enum link_type type = TYPE_PLAIN;
 
@@ -313,6 +326,28 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 
 			break;
 	}
+}
+
+
+static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
+	if (0 && lead && x && content) {}
+
+	out->padding = 0;
+
+	// TODO: If there is an `id` attribute in a MMD generated image, then it was a reference style image with `id` as the label
+	// We could reverse this if desired...
+
+	if (content->len) {
+		text_buffer_append_printf(out, "![%.*s](%.*s ", content->len, content->text, index->src_len, &attr->text[index->src]);
+	} else {
+		text_buffer_append_printf(out, "![%.*s](%.*s ", index->alt_len, &attr->text[index->alt], index->src_len, &attr->text[index->src]);
+	}
+
+	if (index->title_len) {
+		text_buffer_append_printf(out, "title=\"%.*s\" ", index->title_len, &attr->text[index->title]);
+	}
+
+	text_buffer_append_printf(out, ")");
 }
 
 
@@ -614,10 +649,10 @@ static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source
 			case YXML_CONTENT:
 
 				// May be one or several characters
-				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE)) {
+				if (i >= 0 && (elements[i].handle_content & OPT_IGNORE)) {
 					// Store for possible use
 					text_buffer_append_printf(content, "%s", x->data);
-				} else if (elements[i].handle_content & CONTENT_LEAD) {
+				} else if (elements[i].handle_content & OPT_LEAD) {
 					text_buffer_append_printf(out, "%s", x->data);
 
 					if (x->data[0] == '\n') {
@@ -860,7 +895,11 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 	const char * self = x->elem;
 	int i = match_element(self);
 
+	// Count children
 	int c = 0;
+
+	// Count depth
+	int d = 0;
 
 	if (i >= 0) {
 		lead_pad(out, lead, elements[i].pre_pad);
@@ -909,12 +948,28 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 
 		switch (ret) {
 			case YXML_ELEMSTART:
-				ch++;
+				if (i >= 0 && (elements[i].handle_content & OPT_FLATTEN)) {
+					// We keep parsing here rather than descending
+					d++;
+					self = x->elem;
 
-				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE_CHILDREN)) {
-					ret = xml_parse_elem(content, lead, &ch, x, self, ++c);
+					// Add prefix
+					int i = match_element(self);
+
+					if (i >= 0) {
+						if (elements[i].prefix) {
+							text_buffer_append_printf(content, "%s", elements[i].prefix);
+							content->padding = 2;
+						}
+					}
 				} else {
-					ret = xml_parse_elem(out, lead, &ch, x, self, ++c);
+					ch++;
+
+					if (i >= 0 && (elements[i].handle_content & OPT_IGNORE_CHILDREN)) {
+						ret = xml_parse_elem(content, lead, &ch, x, self, ++c);
+					} else {
+						ret = xml_parse_elem(out, lead, &ch, x, self, ++c);
+					}
 				}
 
 				if (ret < 0) {
@@ -926,6 +981,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 			case YXML_ATTRSTART:
 				if (!strcmp(x->attr, "href")) {
 					index.href = attr->len;
+				} else if (!strcmp(x->attr, "alt")) {
+					index.alt = attr->len;
 				} else if (!strcmp(x->attr, "title")) {
 					index.title = attr->len;
 				} else if (!strcmp(x->attr, "id")) {
@@ -934,6 +991,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 					index.class = attr->len;
 				} else if (!strcmp(x->attr, "name")) {
 					index.name = attr->len;
+				} else if (!strcmp(x->attr, "src")) {
+					index.src = attr->len;
 				} else if (!strcmp(x->attr, "content")) {
 					index.content = attr->len;
 				}
@@ -947,6 +1006,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 			case YXML_ATTREND:
 				if (!strcmp(x->attr, "href")) {
 					index.href_len = attr->len - index.href;
+				} else if (!strcmp(x->attr, "alt")) {
+					index.alt_len = attr->len - index.alt;
 				} else if (!strcmp(x->attr, "title")) {
 					index.title_len = attr->len - index.title;
 				} else if (!strcmp(x->attr, "id")) {
@@ -955,6 +1016,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 					index.class_len = attr->len - index.class;
 				} else if (!strcmp(x->attr, "name")) {
 					index.name_len = attr->len - index.name;
+				} else if (!strcmp(x->attr, "src")) {
+					index.src_len = attr->len - index.src;
 				} else if (!strcmp(x->attr, "content")) {
 					index.content_len = attr->len - index.content;
 				}
@@ -964,26 +1027,65 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 			case YXML_CONTENT:
 
 				// May be one or several characters
-				if (i >= 0 && (elements[i].handle_content & CONTENT_IGNORE)) {
-					// Store for possible use
-					text_buffer_append_printf(content, "%s", x->data);
-				} else if (i >= 0 && (elements[i].handle_content & CONTENT_LEAD)) {
-					text_buffer_append_printf(out, "%s", x->data);
+				if (i >= 0 && (elements[i].handle_content & OPT_FLATTEN)) {
+					int i = match_element(self);
 
-					if (x->data[0] == '\n') {
-						text_buffer_append_text(out, lead->text, lead->len);
+					if (i >= 0 && (elements[i].handle_content & OPT_IGNORE)) {
+						// Now we ignore it for real
+					} else if (i >= 0 && (elements[i].handle_content & OPT_LEAD)) {
+						text_buffer_append_printf(content, "%s", x->data);
+
+						if (x->data[0] == '\n') {
+							text_buffer_append_text(content, lead->text, lead->len);
+						}
+					} else {
+						if (x->data[0] != '\n') {
+							content->padding = 0;
+						}
+
+						append_content(content, lead, x);
 					}
 				} else {
-					if (x->data[0] != '\n') {
-						out->padding = 0;
-					}
+					if (i >= 0 && (elements[i].handle_content & OPT_IGNORE)) {
+						// Store for possible use
+						text_buffer_append_printf(content, "%s", x->data);
+					} else if (i >= 0 && (elements[i].handle_content & OPT_LEAD)) {
+						text_buffer_append_printf(out, "%s", x->data);
 
-					append_content(out, lead, x);
+						if (x->data[0] == '\n') {
+							text_buffer_append_text(out, lead->text, lead->len);
+						}
+					} else {
+						if (x->data[0] != '\n') {
+							out->padding = 0;
+						}
+
+						append_content(out, lead, x);
+					}
 				}
 
 				break;
 
 			case YXML_ELEMEND:
+				if (i >= 0 && (elements[i].handle_content & OPT_FLATTEN)) {
+					if (d) {
+						d--;
+
+						// Add suffix
+						int i = match_element(self);
+						self = x->elem;
+
+						if (i >= 0) {
+							if (elements[i].suffix) {
+								text_buffer_append_printf(content, "%s", elements[i].suffix);
+								content->padding = 2;
+							}
+						}
+
+						break;
+					}
+				}
+
 				if (i >= 0 && elements[i].custom_out) {
 					elements[i].custom_out(out, lead, attr, content, &index, x);
 				} else {
