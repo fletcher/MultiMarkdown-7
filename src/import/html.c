@@ -1174,7 +1174,6 @@ void html_cleanup(text_buffer * source) {
 
 					if (strstr(voids, buffer)) {
 						// This is a void element -- ensure it is self-closing
-						fprintf(stderr, "'%s' is void\n", buffer);
 
 						while (source->text[offset] != '\0') {
 							if (source->text[offset] == '>') {
