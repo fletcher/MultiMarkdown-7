@@ -38,13 +38,16 @@
 \usepackage[utf8]{inputenc}			% For UTF-8 support
 \usepackage{xcolor}					% Allow for color (annotations)
 \usepackage{listings}				% Allow for source code highlighting
+\usepackage{lipsum}					% For generating sample text for testing
 
 % NOTE: Loading natbib with these options silences warnings for basic MMD citations
 % If you are using BibTeX, you'll need to change this
 \@ifclassloaded{tufte-handout}{}{
 	\@ifclassloaded{tufte-book}{}{
 		\@ifclassloaded{letter}{}{
-			\usepackage[sort&compress,numbers]{natbib}	% Better bibliography support
+			\@ifclassloaded{ltx-talk}{}{
+				\usepackage[sort&compress,numbers]{natbib}	% Better bibliography support
+			}
 		}
 	}
 }

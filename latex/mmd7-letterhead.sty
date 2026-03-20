@@ -78,7 +78,7 @@
 
 
 % Adjust document margins
-\usepackage[left=1in,right=1in,top=1.0in,bottom=1.0in]{geometry}
+\usepackage[left=1.0in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
 \def\firstpagetopmargin{1.5in}
 
 % Default spacing
@@ -112,8 +112,12 @@
 \fi
 
 
-\def\recipient{Some Recipient}
-\def\recipientaddress{123 Some Street \\ Some City, USA 54321}
+\ifx\recipient\undefined
+	\def\recipient{Some Recipient}
+\fi
+\ifx\recipientaddress\undefined
+	\def\recipientaddress{123 Some Street \\ Some City, USA 54321}
+\fi
 
 % %
 % %	Provide basic implementation for missing features to support MultiMarkdown
@@ -194,7 +198,7 @@
 	% Change topmargin for first page
 	\ifx\firstpagetopmargin\undefined
 	\else
-		\newgeometry{top=\firstpagetopmargin}
+		\newgeometry{top=\firstpagetopmargin,left=1.0in,right=1.0in,bottom=1.0in}
 	\fi
 	\begin{letter}{\recipient \\ \recipientaddress}
 	% Use coverpage content if specified

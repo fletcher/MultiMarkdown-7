@@ -1084,10 +1084,10 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 
 					if (strncmp(&text[n->start], "{=", 2) == 0) {
 						if (raw_filter_matches_format(&text[n->start], FORMAT_LATEX)) {
-							// Raw text that should be included for HTML format
+							// Raw text that should be included for LaTeX format
 
 							if ((*t)->child) {
-								export_latex_raw_text(&text[(*t)->child->start], (*t)->child->tail->start + (*t)->child->tail->len - (*t)->child->start, out);
+								text_buffer_append_text(out, &text[(*t)->child->start], (*t)->child->tail->start + (*t)->child->tail->len - (*t)->child->start);
 							}
 
 						}
