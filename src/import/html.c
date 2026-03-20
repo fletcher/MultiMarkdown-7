@@ -144,6 +144,7 @@ static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * att
 static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
+static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 
 static html_element elements[] = {
 	{ "html",		0,	NULL,		OPT_IGNORE,	NULL,		2,	NULL,		NULL,		NULL },
@@ -186,6 +187,7 @@ static html_element elements[] = {
 	{ "dt",			1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
 	{ "dd",			1,	":\t",		0,			NULL,		0,	"\t",		NULL,		NULL },
 	{ "span",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_span },
+	{ "abbr",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_abbr },
 };
 
 
@@ -385,6 +387,26 @@ static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * att
 }
 
 
+static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
+	if (0 && lead && x && content) {}
+
+	if (content->len && index->title_len) {
+		if (content->text[0] == '(') {
+			// This was the first usage of an abbreviation
+			if (!strncmp(&attr->text[index->title], &out->text[out->len - index->title_len - 1], index->title_len)) {
+				text_buffer_replace_range(out, out->len - index->title_len - 1, index->title_len, NULL, 0);
+				text_buffer_append_printf(out, "[>(%.*s) %.*s]", content->len - 2, &content->text[1], index->title_len, &attr->text[index->title]);
+				return;
+			}
+		} else {
+			// This was a subsequent usage
+		}
+	}
+
+	text_buffer_append_printf(out, "%.*s", content->len, content->text);
+}
+
+
 static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
 	if (0 && lead && x && content && attr && index) {}
 
@@ -572,7 +594,25 @@ static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** 
 				c++;
 
 				if (type == TYPE_GLOSSARY) {
-					text_buffer_append_printf(out, "[%c TODO: Fix this (parse li special)%s]: ", marker, content->text);
+					text_buffer_append_printf(out, "[%c", marker);
+					// Look ahead for term
+					char * cur = ch;
+
+					while (*cur != '>') {
+						cur++;
+					}
+
+					cur++;
+
+					while (char_is_whitespace_or_line_ending(*cur)) {
+						cur++;
+					}
+
+					while (*cur != ':') {
+						text_buffer_append_c(out, *cur++);
+					}
+
+					text_buffer_append_text(out, "]: ", 3);
 				} else {
 					text_buffer_append_printf(out, "[%c%d]: ", marker, c);
 				}
