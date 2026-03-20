@@ -72,6 +72,9 @@ typedef struct {
 	size_t		class;
 	size_t		class_len;
 
+	size_t		colspan;
+	size_t		colspan_len;
+
 	size_t		content;
 	size_t		content_len;
 
@@ -139,6 +142,7 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
+static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 
 static html_element elements[] = {
 	{ "html",		0,	NULL,		OPT_IGNORE,	NULL,		2,	NULL,		NULL,		NULL },
@@ -173,9 +177,10 @@ static html_element elements[] = {
 	{ "br",			0,	NULL,		0,			"\\",		0,	NULL,		NULL,		NULL },
 	{ "table",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "tbody",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "tr",			1,	NULL,		OPT_IGNORE,	" |  ",		0,	NULL,		NULL,		NULL },
-	{ "th",			0,	"| ",		0,			NULL,		0,	NULL,		NULL,		NULL },
-	{ "td",			0,	"| ",		0,			NULL,		0,	NULL,		NULL,		NULL },
+	{ "thead",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "tr",			1,	"| ",		OPT_IGNORE,	"  ",		0,	NULL,		NULL,		NULL },
+	{ "th",			0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_td },
+	{ "td",			0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_td },
 	{ "dl",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "dt",			1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
 	{ "dd",			1,	":\t",		0,			NULL,		0,	"\t",		NULL,		NULL },
@@ -375,6 +380,25 @@ static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * att
 			// TODO: I might need to process this text further for special characters
 			text_buffer_append_printf(out, "%.*s", content->len, content->text);
 		}
+	}
+}
+
+
+static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
+	if (0 && lead && x && content) {}
+
+	text_buffer_append_printf(out, "%.*s", content->len, content->text);
+
+	if (index->colspan_len) {
+		char buffer[10] = {0};
+		strncat(buffer, &attr->text[index->colspan], index->colspan_len);
+		int c = atoi(buffer);
+
+		F(i, c) {
+			text_buffer_append_c(out, '|');
+		}
+	} else {
+		text_buffer_append_c(out, '|');
 	}
 }
 
@@ -945,6 +969,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 					index.id = attr->len;
 				} else if (!strcmp(x->attr, "class")) {
 					index.class = attr->len;
+				} else if (!strcmp(x->attr, "colspan")) {
+					index.colspan = attr->len;
 				} else if (!strcmp(x->attr, "name")) {
 					index.name = attr->len;
 				} else if (!strcmp(x->attr, "src")) {
@@ -970,6 +996,8 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 					index.id_len = attr->len - index.id;
 				} else if (!strcmp(x->attr, "class")) {
 					index.class_len = attr->len - index.class;
+				} else if (!strcmp(x->attr, "colspan")) {
+					index.colspan_len = attr->len - index.colspan;
 				} else if (!strcmp(x->attr, "name")) {
 					index.name_len = attr->len - index.name;
 				} else if (!strcmp(x->attr, "src")) {
