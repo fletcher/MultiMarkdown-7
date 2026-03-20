@@ -142,6 +142,7 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
+static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 
 static html_element elements[] = {
@@ -177,7 +178,7 @@ static html_element elements[] = {
 	{ "br",			0,	NULL,		0,			"\\",		0,	NULL,		NULL,		NULL },
 	{ "table",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "tbody",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "thead",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
+	{ "thead",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_thead },
 	{ "tr",			1,	"| ",		OPT_IGNORE,	"  ",		0,	NULL,		NULL,		NULL },
 	{ "th",			0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_td },
 	{ "td",			0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_td },
@@ -380,6 +381,35 @@ static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * att
 			// TODO: I might need to process this text further for special characters
 			text_buffer_append_printf(out, "%.*s", content->len, content->text);
 		}
+	}
+}
+
+
+static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
+	if (0 && lead && x && content && attr && index) {}
+
+	text_buffer_append_printf(out, "%.*s", content->len, content->text);
+
+	size_t offset = 0;
+
+	while (offset < content->len) {
+		switch (content->text[offset]) {
+			case '\n':
+			case '\r':
+				break;
+
+			case ' ':
+			case '\t':
+			case '|':
+				text_buffer_append_c(out, content->text[offset]);
+				break;
+
+			default:
+				text_buffer_append_c(out, '-');
+				break;
+		}
+
+		offset++;
 	}
 }
 
