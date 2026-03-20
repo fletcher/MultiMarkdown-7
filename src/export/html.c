@@ -586,11 +586,16 @@ static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_tex
 				export_html_raw_text(a->expansion, a->expansion_len, out);
 			}
 
-			mmd_print_const(out, " (<abbr title=\"");
+			mmd_print_const(out, " <abbr title=\"");
 		}
 
 		export_html_raw_text(a->expansion, a->expansion_len, out);
-		mmd_print_const(out, "\">");
+
+		if (a->used) {
+			mmd_print_const(out, "\">");
+		} else {
+			mmd_print_const(out, "\">(");
+		}
 
 		if (key_token) {
 			export_html_tokens(key_token, link_text, link_text_len, out, r, w, options);
@@ -601,7 +606,7 @@ static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_tex
 		if (a->used) {
 			mmd_print_const(out, "</abbr>");
 		} else {
-			mmd_print_const(out, "</abbr>)");
+			mmd_print_const(out, ")</abbr>");
 		}
 
 		*first = !a->used;
