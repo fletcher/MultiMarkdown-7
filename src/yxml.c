@@ -348,11 +348,30 @@ static yxml_ret_t yxml_refend(yxml_t * x, yxml_ret_t ret) {
 			i == INTFROM5CHARS('g', 't', 0,  0, 0) ? '>' :
 			i == INTFROM5CHARS('a', 'm', 'p', 0, 0) ? '&' :
 			i == INTFROM5CHARS('a', 'p', 'o', 's', 0) ? '\'' :
-			// Changed by FTP to allow any named entity since I want to parse HTML as well.
-			// Since I am not particularly concerned about validity, this should be OK
-			// and shouldn't interfere with parsing OPML or ITMZ (XML not HTML)
-			// i == INTFROM5CHARS('q', 'u', 'o', 't', 0) ? '"' : 0;
-			i == INTFROM5CHARS('q', 'u', 'o', 't', 0) ? '"' : '&';
+			i == INTFROM5CHARS('q', 'u', 'o', 't', 0) ? '"' : 0;
+
+		// Changed by FTP to allow any named entity since I want to parse HTML as well.
+		// Since I am not particularly concerned about validity, this should be OK
+		// and shouldn't interfere with parsing OPML or ITMZ (XML not HTML)
+		if (ch == 0) {
+			for (int i = 5; i > 0; i--) {
+				r[i] = r[i - 1];
+			}
+
+			// We need to leave the '&' intact
+			r[0] = '&';
+
+			for (int i = 0; i < 7; i++) {
+				if (r[i] == 0) {
+					r[i] = ';';
+					r[i + 1] = '\0';
+					return ret;
+				}
+			}
+
+			// And we need the ';'
+			return ret;
+		}
 	}
 
 	/* Codepoints not allowed in the XML 1.1 definition of a Char */
