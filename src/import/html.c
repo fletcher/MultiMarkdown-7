@@ -138,46 +138,48 @@ static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** sourc
 static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
+static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
 
 static html_element elements[] = {
 	{ "html",		0,	NULL,		OPT_IGNORE,	NULL,		2,	NULL,		NULL,		NULL },
 	{ "head",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "title",		1,	"title:\t",	0,				"  ",		0,	NULL,		NULL,		NULL },
+	{ "title",		1,	"title:\t",	0,			"  ",		0,	NULL,		NULL,		NULL },
 	{ "meta",		1,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL, 		&custom_meta },
 	{ "body",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "div",		2,	NULL,		0,				NULL,		0,	NULL,		&parse_div,	NULL },
-	{ "h1",			3,	"# ",		0,				" #",		0,	NULL,		NULL,		NULL },
-	{ "h2",			3,	"## ",		0,				" ##",		0,	NULL,		NULL,		NULL },
-	{ "h3",			3,	"### ",		0,				" ###",		0,	NULL,		NULL,		NULL },
-	{ "h4",			3,	"#### ",	0,				" ####",	0,	NULL,		NULL,		NULL },
-	{ "h5",			3,	"##### ",	0,				" #####",	0,	NULL,		NULL,		NULL },
-	{ "h6",			3,	"###### ",	0,				" ######",	0,	NULL,		NULL,		NULL },
-	{ "p",			2,	NULL,		0,				NULL,		1,	NULL,		NULL,		NULL },
+	{ "div",		2,	NULL,		0,			NULL,		0,	NULL,		&parse_div,	NULL },
+	{ "h1",			3,	"# ",		0,			" #",		0,	NULL,		NULL,		NULL },
+	{ "h2",			3,	"## ",		0,			" ##",		0,	NULL,		NULL,		NULL },
+	{ "h3",			3,	"### ",		0,			" ###",		0,	NULL,		NULL,		NULL },
+	{ "h4",			3,	"#### ",	0,			" ####",	0,	NULL,		NULL,		NULL },
+	{ "h5",			3,	"##### ",	0,			" #####",	0,	NULL,		NULL,		NULL },
+	{ "h6",			3,	"###### ",	0,			" ######",	0,	NULL,		NULL,		NULL },
+	{ "p",			2,	NULL,		0,			NULL,		1,	NULL,		NULL,		NULL },
 	{ "blockquote",	2,	"> ",		OPT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
-	{ "pre",		2,	"\t",		OPT_LEAD,	NULL,		0,	"\t",		&parse_pre,		NULL },
-	{ "hr",			2,	NULL,		0,				"***",		0,	NULL,		NULL,		NULL },
+	{ "pre",		2,	"\t",		OPT_LEAD,	NULL,		0,	"\t",		&parse_pre,	NULL },
+	{ "hr",			2,	NULL,		0,			"***",		0,	NULL,		NULL,		NULL },
 	{ "ul",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "ol",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "li",			1,	NULL,		0,				NULL,		0,	"\t",		&parse_li,	NULL },
+	{ "li",			1,	NULL,		0,			NULL,		0,	"\t",		&parse_li,	NULL },
 	{ "a",			0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_link },
 	{ "img",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_img },
 	{ "figure",		2,	NULL,		OPT_IGNORE | OPT_FLATTEN,	NULL,		0,	NULL,		NULL,		&custom_img },
-	{ "figcaption",	1,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
-	{ "strong",		0,	"**",		0,				"**",		0,	NULL,		NULL,		NULL },
-	{ "em",			0,	"*",		0,				"*",		0,	NULL,		NULL,		NULL },
+	{ "figcaption",	1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
+	{ "strong",		0,	"**",		0,			"**",		0,	NULL,		NULL,		NULL },
+	{ "em",			0,	"*",		0,			"*",		0,	NULL,		NULL,		NULL },
 	{ "code",		0,	"`",		OPT_LEAD,	"`",		0,	NULL,		NULL,		NULL },
-	{ "ins",		0,	"{++",		0,				"++}",		0,	NULL,		NULL,		NULL },
-	{ "del",		0,	"{--",		0,				"--}",		0,	NULL,		NULL,		NULL },
-	{ "mark",		0,	"{==",		0,				"==}",		0,	NULL,		NULL,		NULL },
-	{ "br",			0,	NULL,		0,				"\\",		0,	NULL,		NULL,		NULL },
+	{ "ins",		0,	"{++",		0,			"++}",		0,	NULL,		NULL,		NULL },
+	{ "del",		0,	"{--",		0,			"--}",		0,	NULL,		NULL,		NULL },
+	{ "mark",		0,	"{==",		0,			"==}",		0,	NULL,		NULL,		NULL },
+	{ "br",			0,	NULL,		0,			"\\",		0,	NULL,		NULL,		NULL },
 	{ "table",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "tbody",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "tr",			1,	NULL,		OPT_IGNORE,	" |  ",		0,	NULL,		NULL,		NULL },
-	{ "th",			0,	"| ",		0,				NULL,		0,	NULL,		NULL,		NULL },
-	{ "td",			0,	"| ",		0,				NULL,		0,	NULL,		NULL,		NULL },
+	{ "th",			0,	"| ",		0,			NULL,		0,	NULL,		NULL,		NULL },
+	{ "td",			0,	"| ",		0,			NULL,		0,	NULL,		NULL,		NULL },
 	{ "dl",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "dt",			1,	NULL,		0,				NULL,		0,	NULL,		NULL,		NULL },
-	{ "dd",			1,	":\t",		0,				NULL,		0,	"\t",		NULL,		NULL },
+	{ "dt",			1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
+	{ "dd",			1,	":\t",		0,			NULL,		0,	"\t",		NULL,		NULL },
+	{ "span",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_span },
 };
 
 
@@ -222,12 +224,19 @@ static void append_content(text_buffer * out, text_buffer * lead, yxml_t * x) {
 		}
 	} else {
 		switch (x->data[0]) {
+			case '\\':
+				text_buffer_append_c(out, '\\');
+				text_buffer_append_c(out, x->data[0]);
+				break;
+
 			case '[':
 			case ']':
-			case '\\':
 			case '*':
 			case '_':
-				text_buffer_append_c(out, '\\');
+				if (out->text[out->len] != '\\') {
+					text_buffer_append_c(out, '\\');
+				}
+
 				text_buffer_append_c(out, x->data[0]);
 				break;
 
@@ -347,6 +356,26 @@ static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr
 	}
 
 	text_buffer_append_printf(out, ")");
+}
+
+
+static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
+	if (0 && lead && x && content) {}
+
+	if (index->class_len) {
+		if (!strcmp("math", &attr->text[index->class])) {
+			text_buffer_append_text(out, "\\", 1);
+			text_buffer_append_printf(out, "%.*s", content->len, content->text);
+			text_buffer_replace_range(out, out->len - 1, 0, "\\", 1);
+		} else if (!strcmp("critic comment", &attr->text[index->class])) {
+			text_buffer_append_text(out, "{>>", 3);
+			text_buffer_append_printf(out, "%.*s", content->len, content->text);
+			text_buffer_append_text(out, "<<}", 3);
+		} else {
+			// TODO: I might need to process this text further for special characters
+			text_buffer_append_printf(out, "%.*s", content->len, content->text);
+		}
+	}
 }
 
 
