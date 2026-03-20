@@ -45,5 +45,7 @@
 /// If the source text is HTML, convert to MultiMarkdown text and replace the buffer
 int mmd_import_html(text_buffer * source_buffer);
 
+/// Perform some basic cleaning of HTML source to improve ability to parse it
+void html_cleanup(text_buffer * source);
 
 #endif

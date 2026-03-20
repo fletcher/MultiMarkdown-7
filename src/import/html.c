@@ -45,6 +45,7 @@
 */
 
 
+#include <ctype.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1090,37 +1091,8 @@ int mmd_import_html(text_buffer * source_buffer) {
 		ch++;
 	}
 
-	// HTML is not as strict as XML -- fix a couple of things in the source if needed
-	text_buffer_replace_string(source_buffer, "<br>", "<br/>");
-	text_buffer_replace_string(source_buffer, "<hr>", "<hr/>");
-
-	char * meta = strstr(source_buffer->text, "<meta");
-
-	while (meta) {
-		size_t offset = meta - source_buffer->text;
-
-		while (meta && *meta) {
-			switch (*meta) {
-				case '>':
-					offset = meta - source_buffer->text;
-
-					if (source_buffer->text[offset - 1] != '/') {
-						fprintf(stderr, "Fix meta\n");
-						text_buffer_replace_range(source_buffer, offset, 0, "/", 1);
-					}
-
-					meta = strstr(&source_buffer->text[offset], "<meta");
-					break;
-
-				default:
-					break;
-			}
-
-			if (meta) {
-				meta++;
-			}
-		}
-	}
+	// Try to clean things up (HTML is not as strict as XML/XHTML)
+	html_cleanup(source_buffer);
 
 	// Now, process the actual source text
 	ch = source_buffer->text;
@@ -1172,3 +1144,78 @@ cleanup:
 	return result;
 }
 
+static const char * voids = " area, base, br, col, embed, hr, img, input, link, meta, source, track, wbr,";
+
+/// Perform some basic cleaning of HTML source to improve ability to parse it
+void html_cleanup(text_buffer * source) {
+	size_t offset = 0;
+
+	char buffer[128] = {0};
+
+	while (offset < source->len) {
+		switch (source->text[offset]) {
+			case '<': {
+				// Ensure lowercase tags for consistency
+				size_t tag_start = ++offset;
+
+				buffer[0] = ' ';	// Start with space
+				buffer[1] = '\0';
+
+				// Lowercase start tags to ensure consistency
+				while (char_is_alphanumeric(source->text[offset])) {
+					source->text[offset] = tolower(source->text[offset]);
+					strncat(buffer, &source->text[offset], 1);
+					offset++;
+				}
+
+				if ((offset - tag_start)) {
+					// Append
+					strncat(buffer, ",", 1);	// End with comma
+
+					if (strstr(voids, buffer)) {
+						// This is a void element -- ensure it is self-closing
+						fprintf(stderr, "'%s' is void\n", buffer);
+
+						while (source->text[offset] != '\0') {
+							if (source->text[offset] == '>') {
+								if (source->text[offset - 1] != '/') {
+									// Insert solidus
+									text_buffer_replace_range(source, offset, 0, "/", 1);
+									offset++;
+								}
+
+								break;
+							}
+
+							offset++;
+						}
+					}
+				} else {
+					switch (source->text[offset]) {
+						case '/':
+							++offset;
+
+							// Lowercase end tags to ensure consistency
+							while (char_is_alphanumeric(source->text[offset])) {
+								source->text[offset] = tolower(source->text[offset]);
+								strncat(buffer, &source->text[offset], 1);
+								offset++;
+							}
+
+							break;
+
+						default:
+							break;
+					}
+				}
+			}
+
+			break;
+
+			default:
+				break;
+		}
+
+		offset++;
+	}
+}
