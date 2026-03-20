@@ -273,7 +273,7 @@ void text_buffer_append_printf(text_buffer * b, const char * format, ...) {
 
 /// Replace a section of existing string with new string
 void text_buffer_replace_range(text_buffer * b, size_t pos, size_t len, const char * replacement, size_t replacement_len) {
-	if (b && replacement && (len || replacement_len)) {
+	if (b && (replacement || !replacement_len) && (len || replacement_len)) {
 		text_buffer_ensure_capacity(b, b->len + replacement_len - len);
 
 		// Shift "tail" portion of existing string after the excised portion
