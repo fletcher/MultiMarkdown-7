@@ -184,12 +184,6 @@ int main(int argc, char * const argv[]) {
 		}
 	}
 
-	// Initialization stuff
-	custom_seed_rand();
-#ifdef USE_CURL
-	curl_global_init(CURL_GLOBAL_ALL);
-#endif
-
 	// Read short options
 	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARCSHIOx:")) != -1) {
 		switch (option) {
@@ -414,6 +408,22 @@ int main(int argc, char * const argv[]) {
 
 #endif
 
+	// Initialization stuff
+	custom_seed_rand();
+
+#ifdef USE_CURL
+
+	// This has a slight performance hit, so avoid if we can
+	if (action == 'u'
+			|| options & MMD_OPTION_DOWNLOAD_ASSETS
+			|| MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB
+			|| MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTBUNDLE
+			|| MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTPACK
+	   ) {
+		curl_global_init(CURL_GLOBAL_ALL);
+	}
+
+#endif
 
 	if (err) {
 		// Error
