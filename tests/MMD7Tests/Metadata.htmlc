@@ -1,8 +1,8 @@
 <p>title: <em>foo</em> &quot;bar&quot;
 empty:
 css: http://foo.com/bar.css
-htmlheader: &lt;script type=&quot;text/javascript&quot;
-src=&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;&gt;
+htmlheader: <script type="text/javascript"
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 latexleader: mmd7-article-leader
 latexbegin: mmd7-article-begin

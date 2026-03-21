@@ -103,10 +103,10 @@ int mmd_token_scan(Scanner * s, uint32_t options) {
 		bool_attr						= 'autoplay' | 'controls' | 'loop' | 'muted' | 'allowfullscreen';
 		value							= (quoted_d | quoted_s | unquoted);
 		attr							= s* name '=' s* value;
-		attributes						= ((s* bool_attr) | attr)+;
+		attributes						= ((s | eol)* (bool_attr | attr))+;
 		tag_name						= [A-Za-z] [A-Za-z0-9\-]*;
-		tag_start						= '<' tag_name attributes? s* '>';
-		tag_empty						= '<' tag_name attributes? s* '/>';
+		tag_start						= '<' tag_name attributes? (s | eol)* '>';
+		tag_empty						= '<' tag_name attributes? (s | eol)* '/>';
 		tag_end							= '</' tag_name s* '>';
 		// We limit comments to exclude '>' character to minimize backtracking
 		comment_old						= [^>\-\x00] [^>\x00]*;
