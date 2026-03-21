@@ -513,7 +513,7 @@ char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t optio
 }
 #else
 char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
-	if (0 && url && out && options && search_path && source_path) {}
+	if (0 && url && out_len && options && search_path && source_path) {}
 
 	fprintf(stderr, "libcurl is not available.  Unable to download content.\n");
 	return NULL;
