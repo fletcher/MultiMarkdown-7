@@ -1210,6 +1210,8 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						if (walker && walker->type == TOKEN_PAREN_RIGHT) {
 							walker = walker->next;
 						}
+					} else if (walker && walker->type == TOKEN_PAIR_BRACKET_EMPTY) {
+						walker = walker->next;
 					}
 
 					if (walker && ((walker->type == TOKEN_NL) || (walker->type == TOKEN_LINEBREAK))) {
