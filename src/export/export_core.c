@@ -124,14 +124,14 @@ void url_encode_text(const char * text, size_t len, text_buffer * out) {
 
 	while (text < stop) {
 		switch (*text) {
-			// case '&':
-			// 	if (strncmp("&amp;", text, 5) == 0) {
-			// 		text += 4;
-			// 	}
+			case '&':
+				if (strncmp("&amp;", text, 5) == 0) {
+					text += 4;
+				}
 
-			// 	mmd_print_const(out, "&amp;");
+				mmd_print_const(out, "&amp;");
 
-			// 	break;
+				break;
 
 			case '<':
 				mmd_print_const(out, "&lt;");
