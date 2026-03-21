@@ -192,7 +192,7 @@ static html_element elements[] = {
 
 
 static void yxml_error(yxml_ret_t ret, yxml_t * x) {
-	fprintf(stderr, "Error %d parsing HTML at line %u byte %llu.\n", ret, x->line, x->byte);
+	fprintf(stderr, "Error %d parsing HTML at line %u byte %" PRIu64 ".\n", ret, x->line, x->byte);
 }
 
 
