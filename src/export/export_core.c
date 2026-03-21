@@ -124,6 +124,11 @@ void url_encode_text(const char * text, size_t len, text_buffer * out) {
 
 	while (text < stop) {
 		switch (*text) {
+			case '\n':
+			case '\r':
+				// ignore these
+				break;
+
 			case '&':
 				if (strncmp("&amp;", text, 5) == 0) {
 					text += 4;
