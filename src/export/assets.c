@@ -139,7 +139,6 @@ static size_t write_memory(void * contents, size_t size, size_t nmemb, void * us
 /// Store asset data using curl
 int asset_load_with_curl(asset * a) {
 	if (a && a->data == NULL) {
-		curl_global_init(CURL_GLOBAL_ALL);
 		CURL * curl = curl_easy_init();
 
 		text_buffer * buffer = text_buffer_new(0);
@@ -162,6 +161,8 @@ int asset_load_with_curl(asset * a) {
 		} else {
 			text_buffer_free(buffer, 1);
 		}
+
+		curl_easy_cleanup(curl);
 	}
 
 	return 0;
@@ -173,7 +174,6 @@ mz_bool archive_asset_with_curl(mz_zip_archive * pZip, const char * destination,
 	mz_bool status = 0;
 
 	if (pZip && destination && url) {
-		curl_global_init(CURL_GLOBAL_ALL);
 		CURL * curl = curl_easy_init();
 
 		text_buffer * buffer = text_buffer_new(0);
@@ -195,6 +195,7 @@ mz_bool archive_asset_with_curl(mz_zip_archive * pZip, const char * destination,
 		}
 
 		text_buffer_free(buffer, 1);
+		curl_easy_cleanup(curl);
 	}
 
 	return status;

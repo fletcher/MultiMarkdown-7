@@ -191,6 +191,11 @@ static html_element elements[] = {
 };
 
 
+static void yxml_error(yxml_ret_t ret, yxml_t * x) {
+	fprintf(stderr, "Error %d parsing HTML at line %u byte %llu.\n", ret, x->line, x->byte);
+}
+
+
 static int match_element(const char * e) {
 	F(i, (int) (sizeof(elements) / sizeof(elements[0]))) {
 		if (!strcmp(elements[i].element, e)) {
@@ -469,6 +474,7 @@ static yxml_ret_t parse_ignore(text_buffer * out, text_buffer * lead, char ** so
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -516,6 +522,7 @@ static yxml_ret_t parse_skip(text_buffer * out, text_buffer * lead, char ** sour
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -585,6 +592,7 @@ static yxml_ret_t parse_endnotes(text_buffer * out, text_buffer * lead, char ** 
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -679,6 +687,7 @@ static yxml_ret_t parse_div(text_buffer * out, text_buffer * lead, char ** sourc
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -808,6 +817,7 @@ static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -889,6 +899,7 @@ static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** sourc
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -994,6 +1005,7 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			goto exit;
 		}
 
@@ -1200,7 +1212,7 @@ int mmd_import_html(text_buffer * source_buffer) {
 	text_buffer * lead = text_buffer_new(0);
 
 	// Does this look like HTML?
-	if (strncmp("<!DOCTYPE html>", source_buffer->text, 15)) {
+	if (strncmp("<!DOCTYPE html", source_buffer->text, 14)) {
 		fprintf(stderr, "Error: Source text does not begin with '<!DOCTYPE html>'\n");
 		goto cleanup;
 	}
@@ -1215,6 +1227,7 @@ int mmd_import_html(text_buffer * source_buffer) {
 		if (ret < 0) {
 			// This should not happen
 			fprintf(stderr, "preamble error\n");
+			yxml_error(ret, x);
 			goto cleanup;
 		}
 
@@ -1231,6 +1244,7 @@ int mmd_import_html(text_buffer * source_buffer) {
 		ret = yxml_parse(x, *ch);
 
 		if (ret < 0) {
+			yxml_error(ret, x);
 			break;
 		} else {
 			switch (ret) {

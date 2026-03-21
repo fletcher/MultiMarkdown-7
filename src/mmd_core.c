@@ -77,6 +77,10 @@
 #include "import/outline.h"
 #include "yxml.h"
 
+#ifdef USE_CURL
+	#include <curl/curl.h>
+#endif
+
 #ifdef TEST
 	#include "CuTest.h"
 #endif
@@ -203,6 +207,56 @@ void mmd_process_str_len(const char * text, size_t len, FILE * out, uint32_t opt
 	text_buffer_free(source_buffer, 1);
 	text_buffer_free(out_buffer, 1);
 }
+
+
+#ifdef USE_CURL
+// Use dynamic buffer for downloading files in memory
+// Based on https://curl.haxx.se/libcurl/c/getinmemory.html
+
+static size_t write_memory(void * contents, size_t size, size_t nmemb, void * userp) {
+	text_buffer * buffer = (text_buffer *) userp;
+	size_t startlen = buffer->len;
+
+	text_buffer_append_text(buffer, contents, (size * nmemb));
+
+	return buffer->len - startlen;
+}
+
+
+void mmd_process_url(const char * url, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+	CURL * curl = curl_easy_init();
+
+	text_buffer * source_buffer = text_buffer_new(0);
+
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) source_buffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	CURLcode res = curl_easy_perform(curl);
+
+	if (res == CURLE_OK) {
+		// We got it
+		text_buffer * out_buffer = text_buffer_new(0);
+
+		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+
+		fwrite(out_buffer->text, out_buffer->len, 1, out);
+
+		text_buffer_free(out_buffer, 1);
+	} else {
+		fprintf(stderr, "There was an error downloading '%s'\n", url);
+	}
+
+	text_buffer_free(source_buffer, 1);
+	curl_easy_cleanup(curl);
+}
+#else
+void mmd_process_url(const char * url, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+	fprintf(stderr, "libcurl is not available.  Unable to download content.\n");
+}
+#endif
+
 
 
 static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, read_ctx * c, text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path) {
@@ -420,6 +474,47 @@ char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, 
 
 	return result;
 }
+
+
+#ifdef USE_CURL
+char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+	char * result = NULL;
+	CURL * curl = curl_easy_init();
+
+	text_buffer * source_buffer = text_buffer_new(0);
+
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) source_buffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	CURLcode res = curl_easy_perform(curl);
+
+	if (res == CURLE_OK) {
+		// We got it
+		text_buffer * out_buffer = text_buffer_new(0);
+
+		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+
+		result = out_buffer->text;
+		*out_len = out_buffer->len;
+
+		text_buffer_free(out_buffer, 0);
+	} else {
+		fprintf(stderr, "There was an error downloading '%s'\n", url);
+	}
+
+	text_buffer_free(source_buffer, 1);
+	curl_easy_cleanup(curl);
+
+	return result;
+}
+#else
+char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+	fprintf(stderr, "libcurl is not available.  Unable to download content.\n");
+	return NULL;
+}
+#endif
 
 
 /// Process MultiMarkdown text into AST and output it to

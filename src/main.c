@@ -56,6 +56,9 @@
 #include "version.h"
 #include "zip.h"
 
+#ifdef USE_CURL
+	#include <curl/curl.h>
+#endif
 
 #define F(i,n) for(int i= 0;i<n;i++)
 
@@ -181,7 +184,11 @@ int main(int argc, char * const argv[]) {
 		}
 	}
 
+	// Initialization stuff
 	custom_seed_rand();
+#ifdef USE_CURL
+	curl_global_init(CURL_GLOBAL_ALL);
+#endif
 
 	// Read short options
 	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARCSHIOx:")) != -1) {
@@ -380,6 +387,8 @@ int main(int argc, char * const argv[]) {
 			action = 'p';
 			options &= (~MMD_OUT_FORMAT_MASK);
 			options |= FORMAT_HASH;
+		} else if (strcmp(argv[1], "url") == 0) {
+			action = 'u';
 		} else {
 			// If no action is specified, default to parse and treat this as argument
 			action = 'p';
@@ -537,6 +546,21 @@ int main(int argc, char * const argv[]) {
 						mmd_process_file(stdin, out, options, wd, NULL);
 					} else {
 						mmd_process_file(stdin, out, options, source_path, source_path);
+					}
+				}
+
+				break;
+
+			case 'u':
+
+				// Parse from the specified URL
+				if (optind + offset < argc) {
+					for (optind += offset; optind < argc; optind++) {
+						if (source_path[0] == '\0') {
+							mmd_process_url(argv[optind], stdout, options, NULL, NULL);
+						} else {
+							mmd_process_url(argv[optind], stdout, options, NULL, NULL);
+						}
 					}
 				}
 

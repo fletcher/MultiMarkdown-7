@@ -6,6 +6,10 @@
 
 	@brief
 
+		If you are using libcurl, then you need to call the following once,
+		to initialize the environment:
+
+			curl_global_init(CURL_GLOBAL_ALL);
 
 	@author	Fletcher T. Penney
 	@bug
@@ -79,6 +83,7 @@ void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * sear
 void mmd_process_filename(const char * fname, FILE * out, uint32_t options, const char * search_path);
 void mmd_process_str(const char * text, FILE * out, uint32_t options, const char * search_path, const char * source_path);
 void mmd_process_str_len(const char * text, size_t in_len, FILE * out, uint32_t options, const char * search_path, const char * source_path);
+void mmd_process_url(const char * url, FILE * out, uint32_t options, const char * search_path, const char * source_path);
 
 
 /// Returns text string (or binary data) -- will need to be freed
@@ -87,6 +92,7 @@ char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, co
 char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_t options, const char * search_path);
 char * mmd_process_str_to_str(const char * text, size_t * out_len, uint32_t options, const char * search_path, const char * source_path);
 char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out_len, uint32_t options, const char * search_path, const char * source_path);
+char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t options, const char * search_path, const char * source_path);
 
 
 /// Parse MultiMarkdown text into AST
