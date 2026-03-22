@@ -52,6 +52,7 @@
 #include "mmd_scanner.h"
 #include "mmd_token_scanner.h"
 #include "export_core.h"
+#include "mmd_utilities.h"
 
 
 #ifdef TEST
@@ -176,12 +177,12 @@ void url_encode_text(const char * text, size_t len, text_buffer * out) {
 
 link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uint32_t options) {
 	mmd_node * link_text = (*t)->child;
-	mmd_node * link_url;
+	mmd_node * link_url = NULL;
 
 	if (link_text) {
 		link_url = (*t)->next->next;
 	} else {
-		// Empty content [](#...)
+		// Empty content [](...)
 		link_url = (*t)->next;
 
 		if (link_url->type == TOKEN_BRACKET_RIGHT) {
@@ -193,28 +194,27 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 		return NULL;
 	}
 
+	// Extract link definition
 	link_def * l = calloc(1, sizeof(link_def));
 
-	// Skip '('
 	const char * cur = &text[link_url->start + 1];
 	const char * stop = &text[link_url->next->start];
 
-	// Skip leading whitespace and line endings
+	// Extract url
+	text_buffer * url = text_buffer_new(128);
+
+	// Skip leading whitespace
 	while (cur < stop && char_is_whitespace_or_line_ending(*cur)) {
 		cur++;
 	}
 
-	// Is this [...](...) or [...](<...>)
-	char end = ')';
-
+	// Start url
 	if (*cur == '<') {
-		end = '>';
 		cur++;
 	}
 
-	text_buffer * url = text_buffer_new(128);
-
-	while (cur < stop && !char_is_whitespace(*cur) && *cur != end) {
+	// Build sanitized url
+	while (cur < stop && !char_is_whitespace_or_line_ending(*cur) && *cur != '>') {
 		switch (*cur) {
 			case '\\':
 
@@ -246,56 +246,44 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 		cur++;
 	}
 
-	// Skip end marker
-	if (*cur != ')') {
-		cur++;
-	}
-
-	// We grabbed the url itself
 	l->url = url->text;
 	l->url_len = url->len;
-	text_buffer_free(url, false);
+	text_buffer_free(url, 0);
 
-	// Now, grab the title (if any)
-	text_buffer * title = text_buffer_new(128);
-
-	while (cur < stop && char_is_whitespace(*cur)) {
+	if (*cur == '>') {
 		cur++;
 	}
 
-	// Export title
-	end = '\0';
 
-	switch (*cur) {
-		case '"':
-		case '\'':
-			end = *cur;
-			break;
+	// Extract title
 
-		case '(':
-			end = ')';
-			break;
+	// Skip leading whitespace
+	while (cur < stop && char_is_whitespace_or_line_ending(*cur)) {
+		cur++;
 	}
 
-	if (end) {
-		cur++;
+	// Find the corresponding node
+	mmd_node * title = link_url->child;
 
-		if (*cur != end) {
-			while (cur < stop && *cur != end) {
-				text_buffer_append_c(title, *cur);
-				cur++;
-			}
+	while (title && title->next && (title->next->start <= (size_t)(cur - text))) {
+		title = title->next;
+	}
+
+	if (title && title->next && title->start == (size_t)(cur - text)) {
+		switch (title->type) {
+			case TOKEN_PAIR_QUOTE_DOUBLE:
+			case TOKEN_PAIR_QUOTE_SINGLE:
+			case TOKEN_PAIR_PAREN:
+				l->title_len = title->next->start - title->start - 1;
+				l->title = my_strndup(&text[title->start + 1], l->title_len);
+				cur = &text[title->next->start + 1];
+				break;
 		}
-
-		cur++;
 	}
 
-	l->title = title->text;
-	l->title_len = title->len;
 
-	text_buffer_free(title, false);
-
-	if (!(options  & MMD_OPTION_COMPATIBILITY)) {
+	// Extract attributes
+	if (!(options & MMD_OPTION_COMPATIBILITY)) {
 		size_t scanned = 0;
 		l->attributes = scan_link_attributes(cur, text + len - cur, &scanned);
 

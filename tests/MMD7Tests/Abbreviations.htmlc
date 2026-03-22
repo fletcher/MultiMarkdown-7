@@ -67,7 +67,7 @@ bar</p>
 <li>foo</li>
 </ul>
 
-<p>Ab <a href="Abbr">&gt;A</a> [&gt;a].</p>
+<p>Ab <a href="Abbr">&gt;A</a> <a href="Abbr">&gt;a</a>.</p>
 
 <p>Abc abc Ab.</p>
 

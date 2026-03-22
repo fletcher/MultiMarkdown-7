@@ -866,9 +866,6 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 				break;
 
 			case TOKEN_QUOTE_SINGLE:
-				if (options & MMD_OPTION_COMPATIBILITY) {
-					break;
-				}
 
 				// Skip if not being handled this pass
 				if (!pairings[n->type].mate_type) {
@@ -898,9 +895,6 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 			// Cascade into standard checks
 			case TOKEN_QUOTE_DOUBLE:
 			case TOKEN_QUOTE_DOUBLE_ALT:
-				if (options & MMD_OPTION_COMPATIBILITY) {
-					break;
-				}
 
 				// Skip if not being handled this pass
 				if (!pairings[n->type].mate_type) {
@@ -1264,7 +1258,7 @@ endnote_def * mmd_parse_tokens_endnote(mmd_node * b, const char * text, size_t l
 
 
 /// Used to create HTML compatible id (no spaces)
-char * html_id_from_text(const char * text, size_t len, bool require_odd_count) {
+char * disabled_html_id_from_text(const char * text, size_t len, bool require_odd_count) {
 	text_buffer * label = text_buffer_new(len);
 
 	// If text contains [...] use that
@@ -1349,9 +1343,60 @@ char * html_id_from_text(const char * text, size_t len, bool require_odd_count) 
 }
 
 
+/// Used to create HTML compatible id (no spaces)
+char * html_id_from_text(const char * text, size_t len, bool require_odd_count) {
+	if (0 && require_odd_count) {}
+
+	text_buffer * label = text_buffer_new(len);
+
+	const char * stop = text + len;
+	const char * next = text + 1;
+
+	while (text < stop) {
+
+		if ((next < stop) && ((*next & 0xC0) == 0x80)) {
+			// Allow multibyte characters
+			text_buffer_append_c(label, *text);
+
+			while ((next < stop) && ((*next & 0xC0) == 0x80)) {
+				text++;
+				text_buffer_append_c(label, *text);
+				next++;
+			}
+		} else {
+			switch (*text) {
+				case '.':
+				case '_':
+				case '-':
+				case ':':
+					// Allowed symbols
+					text_buffer_append_c(label, *text);
+					break;
+
+				default:
+					if (char_is_alphanumeric(*text)) {
+						// Allow letters and digits
+						text_buffer_append_c(label, tolower(*text));
+					}
+
+					break;
+			}
+		}
+
+		text++;
+		next++;
+	}
+
+	char * result = label->text;
+	text_buffer_free(label, 0);
+	return result;
+}
+
+
 /// Create a Markdown id (e.g. for reference links, images, etc.)
 /// Spaces are allowed (but collapse multiple spaces into a single space)
 /// Trim leading and trailing whitespace
+/// Lower case (except for abbreviations)
 char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 	text_buffer * label = text_buffer_new(len);
 
@@ -1444,10 +1489,12 @@ char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 
 				case ' ':
 				case '\t':
-					// Collapse consecutive spaces
+				case '\n':
+				case '\r':
+					// Collapse consecutive whitespace
 					text_buffer_append_c(label, ' ');
 
-					while ((next < stop) && (cur[1] == ' ' || cur[1] == '\t')) {
+					while ((next < stop) && char_is_whitespace_or_line_ending(cur[1])) {
 						cur++;
 						next++;
 					}
@@ -1457,7 +1504,12 @@ char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 				default:
 					if (char_is_alphanumeric(*cur) || char_is_punctuation(*cur)) {
 						// Allow letters and digits as well as punctuation
-						text_buffer_append_c(label, *cur);
+						// but lower case
+						if (*text == '>') {
+							text_buffer_append_c(label, *cur);
+						} else {
+							text_buffer_append_c(label, tolower(*cur));
+						}
 					}
 
 					break;

@@ -1560,7 +1560,7 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 
 			// Is there a caption?
 			if (table_has_caption(b)) {
-				char * id = html_id_from_text(&text[b->next->start], b->next->len, false);
+				char * id = table_label(b, text);
 
 				mmd_node * label = b->next->content->next;
 

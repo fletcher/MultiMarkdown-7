@@ -39,6 +39,7 @@
 */
 
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -345,14 +346,28 @@ link_def * read_ctx_get_link(read_ctx * c, char * key) {
 	}
 
 	if (!l) {
-		// If `FOO BAR` didn't work, try `foobar` as a backup
-		char * id = html_id_from_text(key, strlen(key), true);
+		// Try case insensitive
+		char * id = key;
 
-		if (c && id && c->link_def_hash) {
-			HASH_FIND_STR(c->link_def_hash, id, l);
+		while (*id != '\0') {
+			*id = tolower(*id);
+			id++;
 		}
 
-		free(id);
+		if (c && key && c->link_def_hash) {
+			HASH_FIND_STR(c->link_def_hash, key, l);
+		}
+
+		if (!l) {
+			// If `FOO BAR` didn't work, try `foo bar` as a backup
+			id = html_id_from_text(key, strlen(key), true);
+
+			if (c && id && c->link_def_hash) {
+				HASH_FIND_STR(c->link_def_hash, id, l);
+			}
+
+			free(id);
+		}
 	}
 
 	return l;

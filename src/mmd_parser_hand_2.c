@@ -69,7 +69,7 @@
 static mmd_node * recursive_indent_parse(mmd_line_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
 static mmd_node * recursive_blockquote_parse(mmd_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
 static mmd_node * recursive_endnote_parse(endnote_def ** e, mmd_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
-static mmd_node * mask_manual_label_token(mmd_node * b, const char * text, size_t len);
+static mmd_node * mask_manual_label_token(mmd_node * b);
 
 
 static mmd_line_node * scanner_next_line(Scanner * s, uint32_t options) {
@@ -1024,8 +1024,18 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 					c_len--;
 				}
 
-				if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
-					// Use normal id
+				mmd_node * label = mask_manual_label_token(b);
+
+				if (label) {
+					// Use manually specified label
+					char * key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+
+					read_ctx_store_internal_link_key(c, key, strlen(key));
+					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
+
+					free(key);
+				} else if (!(options & MMD_OPTION_RANDOM_HEADER_ID)) {
+					// Use automatic label
 					if (b->content->next) {
 						char * key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
 
@@ -1183,11 +1193,13 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 		switch (b->type) {
 			case BLOCK_PARA: {
 				if (last && last->type == BLOCK_TABLE) {
-					// Check for table caption
-					if (table_has_caption(last)) {
-						// This para is a table caption -- store a link
-						read_ctx_store_internal_link(c, &text[b->start], b->len, false);
+					char * label = table_label(last, text);
+
+					if (label) {
+						read_ctx_store_internal_link(c, label, strlen(label), false);
 					}
+
+					free(label);
 				}
 
 				if (!(options & MMD_OPTION_COMPATIBILITY) && (b->content && b->content->type == TOKEN_PAIR_BRACKET_IMAGE)) {
@@ -1234,8 +1246,18 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						c_len--;
 					}
 
-					if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
-						// Use normal id
+					mmd_node * label = mask_manual_label_token(b);
+
+					if (label) {
+						// Use manually specified label
+						char * key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+
+						read_ctx_store_internal_link_key(c, key, strlen(key));
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
+
+						free(key);
+					} else if (!(options & MMD_OPTION_RANDOM_HEADER_ID)) {
+						// Use automatic label
 						char * key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
@@ -1916,71 +1938,51 @@ mmd_node * mmd_parse_metadata(const char * text, size_t len, vector_line_node * 
 }
 
 
-static mmd_node * mask_manual_label_token(mmd_node * b, const char * text, size_t len) {
+static mmd_node * mask_manual_label_token(mmd_node * b) {
 	mmd_node * walker = b->content;
-	const char * end = text + len;
 	int count = 0;
+	mmd_node * candidate = NULL;
 
 	while (walker) {
-		if (walker->type == TOKEN_PAIR_BRACKET) {
-			count++;
+		switch (walker->type) {
+			case TOKEN_PAIR_BRACKET:
+				count++;
 
-			char * c = (char *) &text[walker->next->start + walker->next->len];
-			int stop = 0;
-
-			while (!stop && (c < end)) {
-				switch (*c) {
-					case '\n':
-					case '\r':
-					case '\0':
-						stop = 1;
-						break;
-
-					case ' ':
-					case '\t':
-					case '#':
-						c++;
-						break;
-
-					default:
-						stop = 1;
-						break;
+				if (count % 2) {
+					candidate = walker;
+				} else {
+					candidate = NULL;
 				}
-			}
 
-			switch (*c) {
-				case '\n':
-				case '\r':
-				case '\0':
-					if (count % 2) {
-						// [...][...] is a link, not a manual label
-						walker->type = TOKEN_MANUAL_LABEL;
-						walker->next->type = TOKEN_MANUAL_LABEL;
+				walker = walker->next;
+				break;
 
-						return walker;
-					}
+			case TOKEN_ATX_MARKER:
+			case TOKEN_NL:
+			case TOKEN_TEXT_WHITESPACE:
+				break;
 
-					return NULL;
-			}
+			case TOKEN_TEXT:
+				if (walker->len) {
+					count = 0;
+					candidate = NULL;
+				}
 
-			// If text doesn't end in '\0', we need to catch that
-			if ((c == end) && (count % 2)) {
-				// [...][...] is a link, not a manual label
-				walker->type = TOKEN_MANUAL_LABEL;
-				walker->next->type = TOKEN_MANUAL_LABEL;
+				break;
 
-				return walker;
-			}
-
-			// Skip closing bracket
-			walker = walker->next;
-		} else {
-			count = 0;
+			default:
+				count = 0;
+				candidate = NULL;
+				break;
 		}
 
 		walker = walker->next;
 	}
 
-	return NULL;
-}
+	if (candidate) {
+		candidate->type = TOKEN_MANUAL_LABEL;
+		candidate->next->type = TOKEN_MANUAL_LABEL;
+	}
 
+	return candidate;
+}

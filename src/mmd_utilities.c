@@ -54,31 +54,61 @@
 
 #include "libMultiMarkdown7.h"
 
+#include "mmd_node_pool.h"
+#include "read_ctx.h"
+#include "mmd_span_parser.h"
 #include "mmd_utilities.h"
 
 
 int table_has_caption(mmd_node * t) {
 	if (t && t->next && t->next->type == BLOCK_PARA) {
+		int result = 1;
 		t = t->next->content;
 
 		if (t && t->type == TOKEN_PAIR_BRACKET) {
 			t = t->next->next;
 
 			if (t && t->type == TOKEN_PAIR_BRACKET) {
+				result++;
 				t = t->next->next;
 			}
 
 			if (t == NULL) {
-				return 1;
+				return result;
 			}
 
 			if (t && ((t->type == TOKEN_NL) || (t->type == TOKEN_LINEBREAK))) {
-				return 1;
+				return result;
 			}
 		}
 	}
 
 	return 0;
+}
+
+
+char * table_label(mmd_node * t, const char * text) {
+	if (t) {
+		mmd_node * b = t->next;
+
+		switch (table_has_caption(t)) {
+			case 2:
+
+				// This table has a caption and a label -- use label
+				if (b->content && b->content->next && b->content->next->next) {
+					return html_id_from_text(&text[b->start + b->content->next->next->start], b->len - b->content->next->next->start, false);
+				}
+
+			case 1:
+				// This table has a caption -- use caption
+				return html_id_from_text(&text[t->next->start], t->next->len, false);
+
+			default:
+				break;
+		}
+	}
+
+	return NULL;
 }
 
 

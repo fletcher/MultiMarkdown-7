@@ -43,6 +43,8 @@
 #define MMD_UTILITIES_LIBMULTIMARKDOWN7_H
 
 int table_has_caption(mmd_node * t);
+char * table_label(mmd_node * t, const char * text);
+
 void custom_seed_rand(void);
 uint16_t xorshift16(uint16_t x);
 

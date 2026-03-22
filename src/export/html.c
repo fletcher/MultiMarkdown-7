@@ -887,16 +887,30 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 			break;
 
 		case TOKEN_PAIR_QUOTE_DOUBLE:
-			text_buffer_append_text(out, double_quotes[(int)r->quotes_language].opener, double_quotes[(int)r->quotes_language].opener_len);
-			export_html_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, double_quotes[(int)r->quotes_language].closer, double_quotes[(int)r->quotes_language].closer_len);
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				mmd_print_const(out, "&quot;");
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "&quot;");
+			} else {
+				text_buffer_append_text(out, double_quotes[(int)r->quotes_language].opener, double_quotes[(int)r->quotes_language].opener_len);
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				text_buffer_append_text(out, double_quotes[(int)r->quotes_language].closer, double_quotes[(int)r->quotes_language].closer_len);
+			}
+
 			(*t) = (*t)->next;
 			break;
 
 		case TOKEN_PAIR_QUOTE_SINGLE:
-			text_buffer_append_text(out, single_quotes[(int)r->quotes_language].opener, single_quotes[(int)r->quotes_language].opener_len);
-			export_html_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, single_quotes[(int)r->quotes_language].closer, single_quotes[(int)r->quotes_language].closer_len);
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				text_buffer_append_c(out, '\'');
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				text_buffer_append_c(out, '\'');
+			} else {
+				text_buffer_append_text(out, single_quotes[(int)r->quotes_language].opener, single_quotes[(int)r->quotes_language].opener_len);
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				text_buffer_append_text(out, single_quotes[(int)r->quotes_language].closer, single_quotes[(int)r->quotes_language].closer_len);
+			}
+
 			(*t) = (*t)->next;
 			break;
 
@@ -1362,14 +1376,17 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 			mmd_print_const(out, "<table");
 
 			// Is there a caption?
-			if (table_has_caption(b)) {
-				char * id = html_id_from_text(&text[b->next->start], b->next->len, false);
-				text_buffer_append_printf(out, " id=\"%s\">\n<caption style=\"caption-side: bottom;\">", id);
-				free(id);
-				export_html_tokens(b->next->content->child, &text[b->next->start], b->next->len, out, r, w, options);
-				mmd_print_const(out, "</caption>\n");
-			} else {
-				mmd_print_const(out, ">\n");
+			{
+				char * id = table_label(b, text);
+
+				if (id) {
+					text_buffer_append_printf(out, " id=\"%s\">\n<caption style=\"caption-side: bottom;\">", id);
+					free(id);
+					export_html_tokens(b->next->content->child, &text[b->next->start], b->next->len, out, r, w, options);
+					mmd_print_const(out, "</caption>\n");
+				} else {
+					mmd_print_const(out, ">\n");
+				}
 			}
 
 			// Handle column setup and alignment
