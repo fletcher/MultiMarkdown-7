@@ -181,6 +181,14 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 
 	if (link_text) {
 		link_url = (*t)->next->next;
+
+		// Allow a single line break between the [link text] and the ()
+		// Because line wrapping frequently hits us here
+		if (link_url && link_url->type == TOKEN_NL) {
+			if (link_url->next && link_url->next->type == TOKEN_PAIR_PAREN) {
+				link_url = link_url->next;
+			}
+		}
 	} else {
 		// Empty content [](...)
 		link_url = (*t)->next;
@@ -829,6 +837,14 @@ int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer 
 	// Is this [...], [...][...], or [...](...)
 	if (next_node && next_node->next) {
 		next_type = next_node->next->type;
+
+		// Allow a single line break between the [link text] and the ()
+		// Because line wrapping frequently hits us here
+		if (next_type == TOKEN_NL) {
+			if (next_node->next->next && next_node->next->next->type == TOKEN_PAIR_PAREN) {
+				next_type = TOKEN_PAIR_PAREN;
+			}
+		}
 	}
 
 	int result = 1;
