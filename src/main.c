@@ -95,6 +95,7 @@ static format formats[] = {
 	[FORMAT_EPUB] = { "epub", ".epub" },
 	[FORMAT_LATEX] = { "latex", ".tex" },
 	[FORMAT_BEAMER] = { "beamer", ".tex" },
+	[FORMAT_LTX_TALK] = { "ltx-talk", ".tex" },
 	[FORMAT_TEXTBUNDLE] = { "textbundle", ".textbundle" },
 	[FORMAT_TEXTPACK] = { "textpack", ".textpack" },
 	[FORMAT_OPML] = { "opml", ".opml" },

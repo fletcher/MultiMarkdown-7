@@ -174,6 +174,14 @@ static smart_quote headers[][6] = {
 		{ "\\emph{", "}", 0, 0 },
 		{ "\\emph{", "}", 0, 0 },
 	},
+	[FORMAT_LTX_TALK]			= {
+		{ "\\part{", "}", 0, 0 },
+		{ "\\section{", "}", 0, 0 },
+		{ "\\subsection{", "}", 0, 0 },
+		{ "\\begin{frame}{", "}", 0, 0 },
+		{ "\\emph{", "}", 0, 0 },
+		{ "\\emph{", "}", 0, 0 },
+	},
 };
 
 
@@ -1427,7 +1435,7 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 
 			int level = b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_LATEX);
 
-			if (g_format == FORMAT_BEAMER) {
+			if ((g_format == FORMAT_BEAMER) || (g_format == FORMAT_LTX_TALK)) {
 				if (g_in_frame) {
 					if (level < 5) {
 						mmd_print_const(out, "\\end{frame}\n\n");
@@ -1481,7 +1489,7 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 
 			int level = b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_LATEX);
 
-			if (g_format == FORMAT_BEAMER) {
+			if ((g_format == FORMAT_BEAMER) || (g_format == FORMAT_LTX_TALK)) {
 				if (g_in_frame) {
 					if (level < 5) {
 						mmd_print_const(out, "\\end{frame}\n\n");
@@ -1832,6 +1840,12 @@ static void export_metadata_text(text_buffer * out, const char * text, int len) 
 static void export_latex_header(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	meta * m;
 
+	m = read_ctx_get_meta(r, "documentmetadata");
+
+	if (m) {
+		text_buffer_append_printf(out, "\\DocumentMetadata{%s}\n", m->value);
+	}
+
 	m = read_ctx_get_meta(r, "latexleader");
 
 	if (m) {
@@ -2130,6 +2144,13 @@ static void export_latex_bibliography(text_buffer * out, read_ctx * r, write_ctx
 	if (w->used_cite_stack->size) {
 		pad(out, 2, w);
 
+		if (g_format == FORMAT_LTX_TALK) {
+			mmd_print_const(out, "\\makereferences");
+			w->padding = 0;
+			w->in_endnote = 0;
+			return;
+		}
+
 		if (g_format == FORMAT_BEAMER) {
 			mmd_print_const(out, "\\begin{frame}[allowframebreaks]\n" \
 							"\\frametitle{Bibliography}\n" \
@@ -2180,6 +2201,7 @@ void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx *
 
 	precalculate_quotes(headers[FORMAT_LATEX], sizeof(headers[FORMAT_LATEX]) / sizeof(headers[FORMAT_LATEX][0]));
 	precalculate_quotes(headers[FORMAT_BEAMER], sizeof(headers[FORMAT_BEAMER]) / sizeof(headers[FORMAT_BEAMER][0]));
+	precalculate_quotes(headers[FORMAT_LTX_TALK], sizeof(headers[FORMAT_LTX_TALK]) / sizeof(headers[FORMAT_LTX_TALK][0]));
 
 	write_ctx * w = write_ctx_new();
 
@@ -2189,7 +2211,7 @@ void export_latex(mmd_node * b, const char * text, text_buffer * out, read_ctx *
 
 	export_latex_blocks(b, text, out, r, w, options);
 
-	if (g_format == FORMAT_BEAMER) {
+	if ((g_format == FORMAT_BEAMER) || (g_format == FORMAT_LTX_TALK)) {
 		if (g_in_frame) {
 			pad(out, 1, w);
 			mmd_print_const(out, "\\end{frame}\n\n");

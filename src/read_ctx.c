@@ -616,8 +616,11 @@ int read_ctx_get_header_level(read_ctx * c, int format) {
 			break;
 
 		case FORMAT_BEAMER:
-			if (c->latex_header_level != MMD_HEADER_LEVEL_DISABLED) {
+		case FORMAT_LTX_TALK:
+			if (c->beamer_header_level != MMD_HEADER_LEVEL_DISABLED) {
 				r = c->beamer_header_level - 1;
+			} else if (c->latex_header_level != MMD_HEADER_LEVEL_DISABLED) {
+				r = c->latex_header_level - 1;
 			}
 
 			break;

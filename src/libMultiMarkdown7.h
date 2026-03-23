@@ -162,6 +162,7 @@ enum output_format {
 	FORMAT_ITMZ,								//!< iThoughts Mind Mapping document
 	FORMAT_LATEX,								//!< LaTeX to generate PDF
 	FORMAT_BEAMER,								//!< Beamer (slide presentations in LaTeX)
+	FORMAT_LTX_TALK,							//!< ltx-talk (modern slide presentations in LaTeX)
 	FORMAT_MMD,									//!< Raw MultiMarkdown source text
 	FORMAT_OPML,								//!< Outline Processor Markup Language for outliners or mind-mapping programs
 	FORMAT_TEXTBUNDLE,							//!< TextBundle is a package file format for macOS/iOS

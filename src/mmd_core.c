@@ -336,6 +336,10 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_BEAMER);
 			break;
 
+		case FORMAT_LTX_TALK:
+			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_LTX_TALK);
+			break;
+
 		case FORMAT_LATEX:
 			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_LATEX);
 			break;

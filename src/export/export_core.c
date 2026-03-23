@@ -1191,6 +1191,7 @@ int raw_filter_matches_format(const char * pattern, int format) {
 				break;
 
 			case FORMAT_BEAMER:
+			case FORMAT_LTX_TALK:
 			case FORMAT_LATEX:
 				if (strncmp("{=latex}", pattern, 7) == 0) {
 					return 1;
