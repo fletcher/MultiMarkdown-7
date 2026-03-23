@@ -96,7 +96,7 @@ typedef struct {
 
 
 typedef yxml_ret_t (*xml_parse_func)(text_buffer *, text_buffer *, char **, yxml_t *, const char *, int);
-typedef void (*custom_func)(text_buffer *, text_buffer *, text_buffer *, text_buffer *, attr_index *, yxml_t *);
+typedef void (*custom_func)(text_buffer *, text_buffer *, text_buffer *, text_buffer *, attr_index *, yxml_t *, const char *);
 
 
 typedef struct {
@@ -138,13 +138,15 @@ static yxml_ret_t parse_li(text_buffer * out, text_buffer * lead, char ** source
 static yxml_ret_t parse_pre(text_buffer * out, text_buffer * lead, char ** source, yxml_t * x, const char * parent, int idx);
 
 
-static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
-static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
-static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
-static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
-static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
-static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
-static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x);
+static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+static void custom_hx(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self);
+
 
 static html_element elements[] = {
 	{ "html",		0,	NULL,		OPT_IGNORE,	NULL,		2,	NULL,		NULL,		NULL },
@@ -153,12 +155,12 @@ static html_element elements[] = {
 	{ "meta",		1,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL, 		&custom_meta },
 	{ "body",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "div",		2,	NULL,		0,			NULL,		0,	NULL,		&parse_div,	NULL },
-	{ "h1",			3,	"# ",		0,			" #",		0,	NULL,		NULL,		NULL },
-	{ "h2",			3,	"## ",		0,			" ##",		0,	NULL,		NULL,		NULL },
-	{ "h3",			3,	"### ",		0,			" ###",		0,	NULL,		NULL,		NULL },
-	{ "h4",			3,	"#### ",	0,			" ####",	0,	NULL,		NULL,		NULL },
-	{ "h5",			3,	"##### ",	0,			" #####",	0,	NULL,		NULL,		NULL },
-	{ "h6",			3,	"###### ",	0,			" ######",	0,	NULL,		NULL,		NULL },
+	{ "h1",			3,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_hx },
+	{ "h2",			3,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_hx },
+	{ "h3",			3,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_hx },
+	{ "h4",			3,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_hx },
+	{ "h5",			3,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_hx },
+	{ "h6",			3,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_hx },
 	{ "p",			2,	NULL,		0,			NULL,		1,	NULL,		NULL,		NULL },
 	{ "blockquote",	2,	"> ",		OPT_IGNORE,	NULL,		0,	"> ",		NULL,		NULL },
 	{ "pre",		2,	"\t",		OPT_LEAD,	NULL,		0,	"\t",		&parse_pre,	NULL },
@@ -166,9 +168,9 @@ static html_element elements[] = {
 	{ "ul",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "ol",			2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "li",			1,	NULL,		0,			NULL,		0,	"\t",		&parse_li,	NULL },
-	{ "a",			0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_link },
-	{ "img",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_img },
-	{ "figure",		2,	NULL,		OPT_IGNORE | OPT_FLATTEN,	NULL,		0,	NULL,		NULL,		&custom_img },
+	{ "a",			0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_link },
+	{ "img",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_img },
+	{ "figure",		2,	NULL,		OPT_IGNORE | OPT_FLATTEN,	NULL,	0,	NULL,	NULL,	&custom_img },
 	{ "figcaption",	1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
 	{ "strong",		0,	"**",		0,			"**",		0,	NULL,		NULL,		NULL },
 	{ "em",			0,	"*",		0,			"*",		0,	NULL,		NULL,		NULL },
@@ -179,7 +181,7 @@ static html_element elements[] = {
 	{ "br",			0,	NULL,		0,			"\\",		0,	NULL,		NULL,		NULL },
 	{ "table",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "tbody",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
-	{ "thead",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_thead },
+	{ "thead",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_thead },
 	{ "tr",			1,	"| ",		OPT_IGNORE,	"  ",		0,	NULL,		NULL,		NULL },
 	{ "th",			0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_td },
 	{ "td",			0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_td },
@@ -187,7 +189,7 @@ static html_element elements[] = {
 	{ "dt",			1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
 	{ "dd",			1,	":\t",		0,			NULL,		0,	"\t",		NULL,		NULL },
 	{ "span",		0,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		&custom_span },
-	{ "abbr",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,		0,	NULL,		NULL,		&custom_abbr },
+	{ "abbr",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_abbr },
 };
 
 
@@ -265,8 +267,8 @@ static void append_content(text_buffer * out, text_buffer * lead, yxml_t * x) {
 }
 
 
-static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && content && x) {}
+static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && content && x && self) {}
 
 	if (index->name_len) {
 		text_buffer_append_printf(out, "%.*s:\t", index->name_len, &attr->text[index->name]);
@@ -277,8 +279,72 @@ static void custom_meta(text_buffer * out, text_buffer * lead, text_buffer * att
 }
 
 
-static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && x) {}
+static int add_label(text_buffer * out, text_buffer * content, const char * id, size_t id_len) {
+	int result = 0;
+
+	if (id_len) {
+		char * html_id = html_id_from_text(content->text, content->len, false);
+
+		if (strncmp(id, html_id, id_len)) {
+			text_buffer_append_printf(out, " [%.*s]", id_len, id);
+
+			result = 1;
+		}
+
+		free(html_id);
+	}
+
+	return result;
+}
+
+
+static void custom_hx(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && content && index && x && out && attr && self) {}
+
+	// If there is a newline, this must be a Setext header
+	// Otherwise default to ATX
+	int nl = 0;
+	F(i, (int)content->len) {
+		if (char_is_line_ending(content->text[i])) {
+			nl = 1;
+			break;
+		}
+	}
+
+	if (nl) {
+		text_buffer_append_text(out, content->text, content->len);
+
+		add_label(out, content, &attr->text[index->id], index->id_len);
+
+		if (!strcmp(self, "h1")) {
+			text_buffer_append_text(out, "\n========", 9);
+		} else {
+			text_buffer_append_text(out, "\n--------", 9);
+		}
+	} else {
+		F(i, (int)(self[1] - '0')) {
+			text_buffer_append_c(out, '#');
+		}
+
+		text_buffer_append_c(out, ' ');
+
+		text_buffer_append_text(out, content->text, content->len);
+
+		add_label(out, content, &attr->text[index->id], index->id_len);
+
+		text_buffer_append_c(out, ' ');
+
+		F(i, (int)(self[1] - '0')) {
+			text_buffer_append_c(out, '#');
+		}
+	}
+
+	out->padding = 0;
+}
+
+
+static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && x && self) {}
 
 	out->padding = 0;
 
@@ -350,8 +416,8 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 }
 
 
-static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && x && content) {}
+static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && x && content && self) {}
 
 	out->padding = 0;
 
@@ -372,8 +438,8 @@ static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr
 }
 
 
-static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && x && content) {}
+static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && x && content && self) {}
 
 	if (index->class_len) {
 		if (!strcmp("math", &attr->text[index->class])) {
@@ -392,8 +458,8 @@ static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * att
 }
 
 
-static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && x && content) {}
+static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && x && content && self) {}
 
 	if (content->len && index->title_len) {
 		if (content->text[0] == '(') {
@@ -412,8 +478,8 @@ static void custom_abbr(text_buffer * out, text_buffer * lead, text_buffer * att
 }
 
 
-static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && x && content && attr && index) {}
+static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && x && content && attr && index && self) {}
 
 	text_buffer_append_printf(out, "%.*s", content->len, content->text);
 
@@ -444,8 +510,8 @@ static void custom_thead(text_buffer * out, text_buffer * lead, text_buffer * at
 }
 
 
-static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x) {
-	if (0 && lead && x && content) {}
+static void custom_td(text_buffer * out, text_buffer * lead, text_buffer * attr, text_buffer * content, attr_index * index, yxml_t * x, const char * self) {
+	if (0 && lead && x && content && self) {}
 
 	text_buffer_append_printf(out, "%.*s", content->len, content->text);
 
@@ -1156,7 +1222,7 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 				}
 
 				if (i >= 0 && elements[i].custom_out) {
-					elements[i].custom_out(out, lead, attr, content, &index, x);
+					elements[i].custom_out(out, lead, attr, content, &index, x, self);
 				} else {
 					out->padding = 0;
 
