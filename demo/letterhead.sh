@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/letter.mmd ../tests/MMD7Tests/Integrated.text)
-# files=(src/letter.mmd)
+files=(src/letter.txt ../tests/MMD7Tests/Integrated.text)
+# files=(src/letter.txt)
 packages=(mmd7-letterhead)
 options=("" "[printed]")
 # options=("")

@@ -1,5 +1,7 @@
 %
-%	Beamer LaTeX package for MultiMarkdown 7
+%	stage-talk LaTeX package for MultiMarkdown 7
+%		includes support for stage-talk theme from Beamer Atelier
+%		https://beameratelier.com/ltx-talk.html
 %
 
 % Options:
@@ -14,9 +16,15 @@
 %	\mykeywords
 %	\subtitle
 %	\affiliation
-%	\theme			% Use a Beamer theme
 
-\ProvidesPackage{mmd7-beamer}
+\ProvidesPackage{mmd7-stage-talk}
+
+% This needs to come early so that title page spacing is correct
+% This provides some exta commands as well:
+%	\makeoutline
+%	\makethankyou
+%	\makereferences
+\usepackage{Stage-talk}
 
 \PassOptionsToPackage{showtoc}{mmd7-core}
 \RequirePackageWithOptions{mmd7-core}
@@ -26,11 +34,21 @@
 \usepackage{mmd7-core}
 
 
-% Use chosen theme
-\ifx\theme\undefined
-\else
-	\usetheme{\theme}
-\fi
+% Show thank you slide
+\DeclareOption{showthanks}{
+	\AtEndDocument{
+		\makethankyou
+	}
+}
+
+
+% Show references slide
+\DeclareOption{showreferences}{
+	\AtEndDocument{
+		\makereferences
+	}
+}
+
 
 % Ignore other options
 \DeclareOption*{}
@@ -38,7 +56,7 @@
 \ProcessOptions
 
 
-% Special commands for beamer
+% Special commands for ltx-talk
 \ifx\mysubtitle\undefined
 \else
 	\subtitle{\mysubtitle}
@@ -49,7 +67,6 @@
 	\institute{\affiliation}
 \fi
 
-
 % Start with a title
 \AtBeginDocument{
 	\maketitle
@@ -57,32 +74,6 @@
 	% Include outline slide at the beginning of the deck
 	\ifx\showtoc\undefined
 	\else
-		\begin{frame}
-			\frametitle{Outline}
-			\tableofcontents
-		\end{frame}
+		\makeoutline
 	\fi
 }
-
-% Show an outline for each part
-\AtBeginPart {
-	\begin{frame}
-		\partpage
-	\end{frame}
-
-	\begin{frame}
-		\frametitle{Outline}
-		\tableofcontents
-	\end{frame}
-}
-
-% For each section, show an outline highlighting where we are
-\AtBeginSection[] {
-	\begin{frame}
-		\frametitle{Outline}
-		\tableofcontents[currentsection,currentsubsection]
-	\end{frame}
-}
-
-% Include space between paragraphs
-\addtolength{\parskip}{\baselineskip}

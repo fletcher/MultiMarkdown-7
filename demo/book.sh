@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/integration.mmd ../tests/MMD7Tests/Integrated.text)
+files=(src/integration.txt ../tests/MMD7Tests/Integrated.text)
 packages=(mmd7-core)
 options=("")
 

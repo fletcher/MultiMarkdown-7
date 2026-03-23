@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Generates each combination of the below
-files=(src/letter.mmd src/integration.mmd ../tests/MMD7Tests/Integrated.text)
-# files=(src/integration.mmd)
+files=(src/letter.txt src/integration.txt ../tests/MMD7Tests/Integrated.text)
+# files=(src/integration.txt)
 
 
 classes=("article" "[oneside,article]memoir" "tufte-handout")

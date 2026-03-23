@@ -34,7 +34,11 @@
 \usepackage{graphicx}				% Enable images
 \usepackage{booktabs}				% Better tables
 \usepackage{tabulary}				% Support longer table cells
-\usepackage[T1]{fontenc}			% Use T1 font encoding for accented characters (e.g. <> in verbatim)
+
+\@ifclassloaded{ltx-talk}{}{		% Seems to interfere with font selection in ltx-talk
+	\usepackage[T1]{fontenc}		% Use T1 font encoding for accented characters (e.g. <> in verbatim)
+}
+
 \usepackage[utf8]{inputenc}			% For UTF-8 support
 \usepackage{xcolor}					% Allow for color (annotations)
 \usepackage{listings}				% Allow for source code highlighting
@@ -117,93 +121,53 @@
 	\def\notoc{true}
 }
 
+\DeclareOption*{}
+
 \ProcessOptions
 
 
-\@ifclassloaded{beamer}{
-	% Special commands for beamer
-	\ifx\mysubtitle\undefined
-	\else
-		\subtitle{\mysubtitle}
-	\fi
+\@ifclassloaded{ltx-talk}{}{
+	\@ifclassloaded{beamer}{}{
+		% Special commands for other classes besides Beamer and ltx-talk
 
-	\ifx\affiliation\undefined
-	\else
-		\institute{\affiliation}
-	\fi
-
-	% Start with a title
-	\AtBeginDocument{
-		\maketitle
-
-		% Include outline slide at the beginning of the deck
-		\ifx\showtoc\undefined
-		\else
-			\begin{frame}
-				\frametitle{Outline}
-				\tableofcontents
-			\end{frame}
-		\fi
-	}
-
-	% Show an outline for each part
-	\AtBeginPart {
-		\begin{frame}
-			\partpage
-		\end{frame}
-
-		\begin{frame}
-			\frametitle{Outline}
-			\tableofcontents
-		\end{frame}
-	}
-
-	% For each section, show an outline highlighting where we are
-	\AtBeginSection[] {
-		\begin{frame}
-			\frametitle{Outline}
-			\tableofcontents[currentsection,currentsubsection]
-		\end{frame}
-	}
-
-	% Include space between paragraphs
-	\addtolength{\parskip}{\baselineskip}
-}{
-	% Special commands for other classes besides Beamer
-
-	% Use document metadata to configure hyperref (Beamer already does this)
-	\@ifclassloaded{sffms}{}{
-		\hypersetup{
-			plainpages=false,
-			pdfpagelabels,
-			pdftitle={\mytitle},
-			pagebackref,
-			pdfauthor={\myauthor},
-			pdfkeywords={\mykeywords}	
+		% Use document metadata to configure hyperref (Beamer already does this)
+		\@ifclassloaded{sffms}{
+			% This doesn't work with sffms
+		}{
+			\hypersetup{
+				plainpages=false,
+				pdfpagelabels,
+				pdftitle={\mytitle},
+				pagebackref,
+				pdfauthor={\myauthor},
+				pdfkeywords={\mykeywords}	
+			}
 		}
-	}
 
-	\@ifclassloaded{letter}{
-		% These don't work with letters
-	}{
-		\@ifclassloaded{sffms}{}{
-			% Start with a title
-			\AtBeginDocument{
-				\maketitle
+		\@ifclassloaded{letter}{
+			% These don't work with letters
+		}{
+			\@ifclassloaded{sffms}{
+			% Or sffms
+			}{
+				% Start with a title
+				\AtBeginDocument{
+					\maketitle
 
-				% Show table of contents at the beginning of the document
-				\ifx\showtoc\undefined
-				\else
-					\ifx\notoc\undefined
-						\tableofcontents
-						\ifboolexpr{
-							test {\@ifclassloaded{tufte-book}}
-								% or
-						}{
-							\clearpage
-						}{}
+					% Show table of contents at the beginning of the document
+					\ifx\showtoc\undefined
+					\else
+						\ifx\notoc\undefined
+							\tableofcontents
+							\ifboolexpr{
+								test {\@ifclassloaded{tufte-book}}
+									% or
+							}{
+								\clearpage
+							}{}
+						\fi
 					\fi
-				\fi
+				}
 			}
 		}
 	}

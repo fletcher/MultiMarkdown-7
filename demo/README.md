@@ -7,20 +7,20 @@ These files contain basically the same minimal contact, but have different
 ranges of headers.  Some make use of the `base header level` metadata to
 control how things work :
 
-* src/deep.mmd		-- Contains h1 - h4
-* src/medium.mmd	-- Contains h1 - h3
-* src/shallow.mmd	-- Contains h1 - h2
+* src/deep.txt		-- Contains h1 - h4
+* src/medium.txt	-- Contains h1 - h3
+* src/shallow.txt	-- Contains h1 - h2
 
 This file integrates most MultiMarkdown features in a shallow document:
 
-* src/integration.mmd -- Contains h1 - h2
+* src/integration.txt -- Contains h1 - h2
 
 Another is an old introduction to MultiMarkdown.  The content is dated, but it
 demonstrates various functions:
 
-* src/flat.mmd		-- Contains h1 only
+* src/flat.txt		-- Contains h1 only
 
-Lastly, `letter.mmd` has no headers, just lorem ipsum text.
+Lastly, `letter.txt` has no headers, just lorem ipsum text.
 
 Finally, some scripts also use the Integrated test suite file to include a
 fairly extensive collection of MultiMarkdown features for testing various

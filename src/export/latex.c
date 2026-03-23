@@ -178,6 +178,7 @@ static smart_quote headers[][6] = {
 		{ "\\part{", "}", 0, 0 },
 		{ "\\section{", "}", 0, 0 },
 		{ "\\subsection{", "}", 0, 0 },
+		// { "\\begin{frame}\n\\frametitle{", "}", 0, 0 },
 		{ "\\begin{frame}{", "}", 0, 0 },
 		{ "\\emph{", "}", 0, 0 },
 		{ "\\emph{", "}", 0, 0 },

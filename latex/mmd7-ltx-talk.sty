@@ -1,5 +1,5 @@
 %
-%	Beamer LaTeX package for MultiMarkdown 7
+%	ltx-talk LaTeX package for MultiMarkdown 7
 %
 
 % Options:
@@ -14,9 +14,8 @@
 %	\mykeywords
 %	\subtitle
 %	\affiliation
-%	\theme			% Use a Beamer theme
 
-\ProvidesPackage{mmd7-beamer}
+\ProvidesPackage{mmd7-ltx-talk}
 
 \PassOptionsToPackage{showtoc}{mmd7-core}
 \RequirePackageWithOptions{mmd7-core}
@@ -26,19 +25,13 @@
 \usepackage{mmd7-core}
 
 
-% Use chosen theme
-\ifx\theme\undefined
-\else
-	\usetheme{\theme}
-\fi
-
 % Ignore other options
 \DeclareOption*{}
 
 \ProcessOptions
 
 
-% Special commands for beamer
+% Special commands for ltx-talk
 \ifx\mysubtitle\undefined
 \else
 	\subtitle{\mysubtitle}
@@ -48,7 +41,6 @@
 \else
 	\institute{\affiliation}
 \fi
-
 
 % Start with a title
 \AtBeginDocument{
@@ -63,26 +55,3 @@
 		\end{frame}
 	\fi
 }
-
-% Show an outline for each part
-\AtBeginPart {
-	\begin{frame}
-		\partpage
-	\end{frame}
-
-	\begin{frame}
-		\frametitle{Outline}
-		\tableofcontents
-	\end{frame}
-}
-
-% For each section, show an outline highlighting where we are
-\AtBeginSection[] {
-	\begin{frame}
-		\frametitle{Outline}
-		\tableofcontents[currentsection,currentsubsection]
-	\end{frame}
-}
-
-% Include space between paragraphs
-\addtolength{\parskip}{\baselineskip}
