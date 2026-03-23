@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opml version="1.0">
+	<head><title>Integrated Test</title></head>
+	<body>
+		<outline text="&gt;&gt;Preamble&lt;&lt;" _note="&#10;This file is a designed as a single test that incorporates most of&#10;the *commonly* used MultiMarkdown features. This allows a single test file to&#10;identify common structures that are not supported yet -- particularly useful&#10;when developing a new output format.&#10;&#10;&#10;"/>
+		<outline text="Core Markdown Features" _note="&#10;">
+			<outline text="Basic Block Level Elements" _note="&#10;">
+				<outline text="Paragraphs" _note="&#10;Normal paragraphs consist of plain text.&#10;&#10;They are separated by empty lines.&#10;&#10;Long lines of text will wrap naturally as needed to ensure that they fit in the available space.  This will vary by format, of course.&#10;&#10;By including two spaces at the end of a line  &#10;a linebreak is inserted.&#10;&#10;MultiMarkdown adds the ability to use\&#10;an &quot;escaped newline&quot; for this as well.&#10;&#10;&#10;"/>
+				<outline text="Headers" _note="&#10;ATX headers and Setext headers are used in this document&#10;&#10;&#9;## ATX Header 2 ##&#10;&#10;&#9;Setext Header 1&#10;&#9;===============&#10;&#10;&#9;Setext Header 2&#10;&#9;---------------&#10;&#10;&#10;"/>
+				<outline text="Blockquotes" _note="&#10;This is a normal paragraph.&#10;&#10;&gt; This is a blockquote.&#10;&gt;&#10;&gt; With two paragraphs.&#10;&gt;&#10;&gt;&gt; And a nested blockquote.&#10;&gt;&gt; (Which doesn&apos;t work well in Beamer.)&#10;&#10;&#10;"/>
+				<outline text="Unordered Lists" _note="&#10;Lists can be &quot;tight&quot; or &quot;loose&quot;.&#10;&#10;Unordered/tight:&#10;&#10;* foo&#10;* bar&#10;* bat&#10;&#10;Unordered/loose:&#10;&#10;* foo&#10;&#10;* bar&#10;&#10;* bat&#10;&#10;&#10;"/>
+				<outline text="Ordered Lists" _note="&#10;Lists can be &quot;tight&quot; or &quot;loose&quot;.&#10;&#10;Ordered/tight:&#10;&#10;1. foo&#10;2. bar&#10;3. bat&#10;&#10;Ordered/loose:&#10;&#10;1. foo&#10;&#10;2. bar&#10;&#10;3. bat&#10;&#10;&#10;"/>
+				<outline text="Complex Lists" _note="&#10;Lists can contain other elements&#10;&#10;*&#9;A list item.&#10;&#10;&#9;With a second paragraph.&#10;&#10;*&#9;An item.&#10;&#10;&#9;1. With&#10;&#9;2. a&#10;&#9;3. sublist&#10;&#10;&#10;"/>
+				<outline text="Code Blocks" _note="&#10;Code blocks are indented with 4 spaces or 1 tab.&#10;&#10;    This is a code block.&#10;&#10;&#9;As is this.&#10;&#10;&#10;"/>
+				<outline text="Horizontal Rules" _note="&#10;You can include horizontal rules&#10;&#10;***&#10;&#10;between paragraphs and other elements.&#10;&#10;&#10;"/>
+				<outline text="HTML Blocks" _note="&#10;HTML blocks can be included, but will work differently when not exporting to HTML, of course.&#10;&#10;&lt;div&gt;*foo*&lt;/div&gt;&#10;&#10;&lt;div&gt;&#10;&#10;*bar*&#10;&#10;&lt;/div&gt;&#10;&#10;&#10;"/>
+			</outline>
+			<outline text="Basic Span Level Elements" _note="&#10;">
+				<outline text="Links" _note="&#10;Links can be [inline](http://example.com/inline &quot;Inline Link&quot;), or [reference].&#10;&#10;[reference]: http://example.com/reference&#10;&#9;&quot;Reference Link&quot;&#10;&#10;You can also use automatic links &lt;http://example.com/auto&gt;&#10;and email &lt;auto@example.com&gt;.&#10;&#10;&#10;"/>
+				<outline text="Emphasis" _note="&#10;Text can be *emphasized*, **strong**, or ***both***.&#10;&#10;&#10;"/>
+				<outline text="Code" _note="&#10;You can include `code()` in the middle of other text.&#10;&#10;&#10;"/>
+				<outline text="Images" _note="&#10;Images are similar to links, but with a leading `!`.&#10;&#10;![image]\ &#10;&#10;[image]: test-image.png &quot;Image title&quot;&#10;&#10;&#10;"/>
+				<outline text="Backslash Escapes" _note="&#10;\*This is not emphasized.\*&#10;&#10;\[This is not a link\]\[\].&#10;&#10;\* This is not a list item&#10;&#10;&#10;"/>
+				<outline text="Inline HTML" _note="&#10;HTML can be included within other blocks.&#10;&#10;(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)&#10;&#10;This is text with &lt;foo&gt;*bar*&lt;/foo&gt; HTML.&#10;&#10;&#10;"/>
+			</outline>
+		</outline>
+		<outline text="MultiMarkdown Features" _note="&#10;">
+			<outline text="Extended Block Level Elements" _note="&#10;">
+				<outline text="Metadata" _note="&#10;Metadata can be included at the top of a document.&#10;&#10;&#9;Title:&#9;&#9;Integrated Test  &#10;&#9;Subtitle:&#9;MultiMarkdown test suite  &#10;&#9;Author:&#9;&#9;Fletcher T. Penney  &#10;&#10;It can be referenced with `[%title]` to insert the meta value - [%title].&#10;&#10;"/>
+				<outline text="Header Cross-References" _note="&#10;MultiMarkdown automatically generates anchors for headers, to allow for navigation,&#10;such as jumping back to the previous [Metadata][] section.&#10;&#10;&#10;"/>
+				<outline text="Table of Contents" _note="&#10;MultiMarkdown can generate a TOC from the header structure.&#10;&#10;{{TOC}}&#10;&#10;&#10;"/>
+				<outline text="Fenced Code Blocks" _note="&#10;```&#10;Fenced code blocks are easier in some circumstances.&#10;```&#10;&#10;&#10;"/>
+				<outline text="Definition Lists" _note="&#10;Term 1&#10;Term 2&#10;:&#9;Definition 1&#10;:&#9;Definition 2&#10;&#10;&#10;"/>
+				<outline text="Tables" _note="&#10;| foo&#9;| bar&#9;|  &#10; -----+ | :--:+&#9;|  &#10;| *foo*&#9;| *bar*&#9;|  &#10;| **foo bar**&#9;||  &#10;&#10;&#10;"/>
+				<outline text="Figures" _note="&#10;An image in a paragraph by itself becomes a figure.&#10;&#10;![image2]&#10;&#10;&#10;&#10;"/>
+			</outline>
+			<outline text="Extended Span Level Elements" _note="&#10;">
+				<outline text="Footnotes" _note="&#10;Foo.[^This is an inline footnote]&#10;&#10;Bar.[^foot]&#10;&#10;[^foot]: And a reference footnote.&#10;&#10;&#10;"/>
+				<outline text="Citations" _note="&#10;An inline citation.[#Inline Citation]&#10;&#10;A reference citation.[#foo]&#10;&#10;[#foo]: bar&#10;&#10;&#10;"/>
+				<outline text="Glossaries" _note="&#10;[?term]&#10;&#10;[?term]: A term to be defined.&#10;&#10;&#10;"/>
+				<outline text="Abbreviations" _note="&#10;[&gt;MMD] and [&gt;MMD].&#10;&#10;[&gt;MMD]: MultiMarkdown&#10;&#10;&#10;"/>
+				<outline text="Image attributes" _note="&#10;Images can have attributes.&#10;&#10;![image2]\ &#10;&#10;[image2]: test-image.png &quot;Image title&quot; width=40px&#10;&#10;&#10;"/>
+				<outline text="Math" _note="&#10;foo \\({e}^{i\pi }+1=0\\) bar&#10;&#10;\\[ {x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a} \\]&#10;&#10;foo ${e}^{i\pi }+1=0$ bar&#10;&#10;foo ${e}^{i\pi }+1=0$, bar&#10;&#10;$${x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}$$&#10;&#10;&#10;"/>
+				<outline text="Smart Quotes" _note="&#10;&quot;foo&quot; and &apos;bar&apos; -- with --- dashes...&#10;&#10;&#10;"/>
+				<outline text="CriticMarkup" _note="&#10;{++Insert++}&#10;&#10;{--Delete--}&#10;&#10;{~~Old~&gt;New~~}&#10;&#10;{&gt;&gt;Comment&lt;&lt;}&#10;&#10;{==Highlighted==}&#10;"/>
+			</outline>
+		</outline>
+		<outline text="&gt;&gt;Metadata&lt;&lt;">
+			<outline text="title" _note="Integrated Test"/>
+			<outline text="subtitle" _note="MultiMarkdown test suite"/>
+			<outline text="author" _note="Fletcher T. Penney"/>
+		</outline>
+	</body>
+</opml>

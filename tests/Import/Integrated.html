@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Integrated Test</title>
+	<meta name="subtitle" content="MultiMarkdown test suite"/>
+	<meta name="author" content="Fletcher T. Penney"/>
+</head>
+<body>
+<p>This file is a designed as a single test that incorporates most of
+the <em>commonly</em> used MultiMarkdown features. This allows a single test file to
+identify common structures that are not supported yet &#8211; particularly useful
+when developing a new output format.</p>
+
+<h1 id="coremarkdownfeatures">Core Markdown Features</h1>
+
+<h2 id="basicblocklevelelements">Basic Block Level Elements</h2>
+
+<h3 id="paragraphs">Paragraphs</h3>
+
+<p>Normal paragraphs consist of plain text.</p>
+
+<p>They are separated by empty lines.</p>
+
+<p>Long lines of text will wrap naturally as needed to ensure that they fit in the available space. This will vary by format, of course.</p>
+
+<p>By including two spaces at the end of a line<br />
+a linebreak is inserted.</p>
+
+<p>MultiMarkdown adds the ability to use<br />
+an &#8220;escaped newline&#8221; for this as well.</p>
+
+<h3 id="headers">Headers</h3>
+
+<p>ATX headers and Setext headers are used in this document</p>
+
+<pre><code>## ATX Header 2 ##
+
+Setext Header 1
+===============
+
+Setext Header 2
+---------------
+</code></pre>
+
+<h3 id="blockquotes">Blockquotes</h3>
+
+<p>This is a normal paragraph.</p>
+
+<blockquote>
+<p>This is a blockquote.</p>
+
+<p>With two paragraphs.</p>
+
+<blockquote>
+<p>And a nested blockquote.
+(Which doesn&#8217;t work well in Beamer.)</p>
+</blockquote>
+</blockquote>
+
+<h3 id="unorderedlists">Unordered Lists</h3>
+
+<p>Lists can be &#8220;tight&#8221; or &#8220;loose&#8221;.</p>
+
+<p>Unordered/tight:</p>
+
+<ul>
+<li>foo</li>
+<li>bar</li>
+<li>bat</li>
+</ul>
+
+<p>Unordered/loose:</p>
+
+<ul>
+<li><p>foo</p></li>
+<li><p>bar</p></li>
+<li><p>bat</p></li>
+</ul>
+
+<h3 id="orderedlists">Ordered Lists</h3>
+
+<p>Lists can be &#8220;tight&#8221; or &#8220;loose&#8221;.</p>
+
+<p>Ordered/tight:</p>
+
+<ol>
+<li>foo</li>
+<li>bar</li>
+<li>bat</li>
+</ol>
+
+<p>Ordered/loose:</p>
+
+<ol>
+<li><p>foo</p></li>
+<li><p>bar</p></li>
+<li><p>bat</p></li>
+</ol>
+
+<h3 id="complexlists">Complex Lists</h3>
+
+<p>Lists can contain other elements</p>
+
+<ul>
+<li><p>A list item.</p>
+
+<p>With a second paragraph.</p></li>
+<li><p>An item.</p>
+
+<ol>
+<li>With</li>
+<li>a</li>
+<li>sublist</li>
+</ol></li>
+</ul>
+
+<h3 id="codeblocks">Code Blocks</h3>
+
+<p>Code blocks are indented with 4 spaces or 1 tab.</p>
+
+<pre><code>This is a code block.
+
+As is this.
+</code></pre>
+
+<h3 id="horizontalrules">Horizontal Rules</h3>
+
+<p>You can include horizontal rules</p>
+
+<hr />
+
+<p>between paragraphs and other elements.</p>
+
+<h3 id="htmlblocks">HTML Blocks</h3>
+
+<p>HTML blocks can be included, but will work differently when not exporting to HTML, of course.</p>
+
+<div>*foo*</div>
+
+<div>
+
+<p><em>bar</em></p>
+
+</div>
+
+<h2 id="basicspanlevelelements">Basic Span Level Elements</h2>
+
+<h3 id="links">Links</h3>
+
+<p>Links can be <a href="http://example.com/inline" title="Inline Link">inline</a>, or <a href="http://example.com/reference" title="Reference Link">reference</a>.</p>
+
+<p>You can also use automatic links <a href="http://example.com/auto">http://example.com/auto</a>
+and email <a href="mailto:auto@example.com">auto@example.com</a>.</p>
+
+<h3 id="emphasis">Emphasis</h3>
+
+<p>Text can be <em>emphasized</em>, <strong>strong</strong>, or <strong><em>both</em></strong>.</p>
+
+<h3 id="code">Code</h3>
+
+<p>You can include <code>code()</code> in the middle of other text.</p>
+
+<h3 id="images">Images</h3>
+
+<p>Images are similar to links, but with a leading <code>!</code>.</p>
+
+<p><img src="test-image.png" alt="image" id="image" title="Image title" />&nbsp;</p>
+
+<h3 id="backslashescapes">Backslash Escapes</h3>
+
+<p>*This is not emphasized.*</p>
+
+<p>[This is not a link][].</p>
+
+<p>* This is not a list item</p>
+
+<h3 id="inlinehtml">Inline HTML</h3>
+
+<p>HTML can be included within other blocks.</p>
+
+<p>(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)</p>
+
+<p>This is text with <foo><em>bar</em></foo> HTML.</p>
+
+<h1 id="multimarkdownfeatures">MultiMarkdown Features</h1>
+
+<h2 id="extendedblocklevelelements">Extended Block Level Elements</h2>
+
+<h3 id="metadata">Metadata</h3>
+
+<p>Metadata can be included at the top of a document.</p>
+
+<pre><code>Title:		Integrated Test  
+Subtitle:	MultiMarkdown test suite  
+Author:		Fletcher T. Penney  
+</code></pre>
+
+<p>It can be referenced with <code>[%title]</code> to insert the meta value - Integrated Test.</p>
+
+<h3 id="headercross-references">Header Cross-References</h3>
+
+<p>MultiMarkdown automatically generates anchors for headers, to allow for navigation,
+such as jumping back to the previous <a href="#metadata">Metadata</a> section.</p>
+
+<h3 id="tableofcontents">Table of Contents</h3>
+
+<p>MultiMarkdown can generate a TOC from the header structure.</p>
+
+<div class="TOC">
+
+<ul>
+<li><a href="#coremarkdownfeatures">Core Markdown Features</a>
+<ul>
+<li><a href="#basicblocklevelelements">Basic Block Level Elements</a>
+<ul>
+<li><a href="#paragraphs">Paragraphs</a></li>
+<li><a href="#headers">Headers</a></li>
+<li><a href="#blockquotes">Blockquotes</a></li>
+<li><a href="#unorderedlists">Unordered Lists</a></li>
+<li><a href="#orderedlists">Ordered Lists</a></li>
+<li><a href="#complexlists">Complex Lists</a></li>
+<li><a href="#codeblocks">Code Blocks</a></li>
+<li><a href="#horizontalrules">Horizontal Rules</a></li>
+<li><a href="#htmlblocks">HTML Blocks</a></li>
+</ul>
+</li>
+<li><a href="#basicspanlevelelements">Basic Span Level Elements</a>
+<ul>
+<li><a href="#links">Links</a></li>
+<li><a href="#emphasis">Emphasis</a></li>
+<li><a href="#code">Code</a></li>
+<li><a href="#images">Images</a></li>
+<li><a href="#backslashescapes">Backslash Escapes</a></li>
+<li><a href="#inlinehtml">Inline HTML</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#multimarkdownfeatures">MultiMarkdown Features</a>
+<ul>
+<li><a href="#extendedblocklevelelements">Extended Block Level Elements</a>
+<ul>
+<li><a href="#metadata">Metadata</a></li>
+<li><a href="#headercross-references">Header Cross-References</a></li>
+<li><a href="#tableofcontents">Table of Contents</a></li>
+<li><a href="#fencedcodeblocks">Fenced Code Blocks</a></li>
+<li><a href="#definitionlists">Definition Lists</a></li>
+<li><a href="#tables">Tables</a></li>
+<li><a href="#figures">Figures</a></li>
+</ul>
+</li>
+<li><a href="#extendedspanlevelelements">Extended Span Level Elements</a>
+<ul>
+<li><a href="#footnotes">Footnotes</a></li>
+<li><a href="#citations">Citations</a></li>
+<li><a href="#glossaries">Glossaries</a></li>
+<li><a href="#abbreviations">Abbreviations</a></li>
+<li><a href="#imageattributes">Image attributes</a></li>
+<li><a href="#math">Math</a></li>
+<li><a href="#smartquotes">Smart Quotes</a></li>
+<li><a href="#criticmarkup">CriticMarkup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h3 id="fencedcodeblocks">Fenced Code Blocks</h3>
+
+<pre><code>Fenced code blocks are easier in some circumstances.
+</code></pre>
+
+<h3 id="definitionlists">Definition Lists</h3>
+
+<dl>
+<dt>Term 1</dt>
+<dt>Term 2</dt>
+<dd>Definition 1</dd>
+<dd>Definition 2</dd>
+</dl>
+
+<h3 id="tables">Tables</h3>
+
+<table>
+<colgroup>
+<col style="text-align:left;" class="extended"/>
+<col style="text-align:center;" class="extended"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th> foo </th>
+	<th style="text-align:center;"> bar </th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td> <em>foo</em> </td>
+	<td style="text-align:center;"> <em>bar</em> </td>
+</tr>
+<tr>
+	<td colspan="2"> <strong>foo bar</strong> </td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="figures">Figures</h3>
+
+<p>An image in a paragraph by itself becomes a figure.</p>
+
+<figure>
+<img src="test-image.png" alt="image2" id="image2" title="Image title" width="40" />
+<figcaption>image2</figcaption>
+</figure>
+
+<h2 id="extendedspanlevelelements">Extended Span Level Elements</h2>
+
+<h3 id="footnotes">Footnotes</h3>
+
+<p>Foo.<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote"><sup>1</sup></a></p>
+
+<p>Bar.<a href="#fn:2" id="fnref:2" title="see footnote" class="footnote"><sup>2</sup></a></p>
+
+<h3 id="citations">Citations</h3>
+
+<p>An inline citation.<a href="#cn:1" id="cnref:1" title="see citation" class="citation">(1)</a></p>
+
+<p>A reference citation.<a href="#cn:2" id="cnref:2" title="see citation" class="citation">(2)</a></p>
+
+<h3 id="glossaries">Glossaries</h3>
+
+<p><a href="#gn:1" id="gnref:1" title="see glossary" class="glossary">term</a></p>
+
+<h3 id="abbreviations">Abbreviations</h3>
+
+<p>MultiMarkdown <abbr title="MultiMarkdown">(MMD)</abbr> and <abbr title="MultiMarkdown">MMD</abbr>.</p>
+
+<h3 id="imageattributes">Image attributes</h3>
+
+<p>Images can have attributes.</p>
+
+<p><img src="test-image.png" alt="image2" id="image2" title="Image title" width="40" />&nbsp;</p>
+
+<h3 id="math">Math</h3>
+
+<p>foo <span class="math">\({e}^{i\pi }+1=0\)</span> bar</p>
+
+<p><span class="math">\[ {x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a} \]</span></p>
+
+<p>foo <span class="math">\({e}^{i\pi }+1=0\)</span> bar</p>
+
+<p>foo <span class="math">\({e}^{i\pi }+1=0\)</span>, bar</p>
+
+<p><span class="math">\[{x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}\]</span></p>
+
+<h3 id="smartquotes">Smart Quotes</h3>
+
+<p>&#8220;foo&#8221; and &#8216;bar&#8217; &#8211; with &#8212; dashes&#8230;</p>
+
+<h3 id="criticmarkup">CriticMarkup</h3>
+
+<p><ins>Insert</ins></p>
+
+<p><del>Delete</del></p>
+
+<p><del>Old</del><ins>New</ins></p>
+
+<p><span class="critic comment">Comment</span></p>
+
+<p><mark>Highlighted</mark></p>
+
+<div class="footnotes">
+<hr />
+<ol>
+
+<li id="fn:1">
+<p>This is an inline footnote <a href="#fnref:1" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:2">
+<p>And a reference footnote. <a href="#fnref:2" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+</ol>
+</div>
+
+<div class="glossary">
+<hr />
+<ol>
+
+<li id="gn:1">
+term: <p>A term to be defined. <a href="#gnref:1" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+</ol>
+</div>
+
+<div class="citations">
+<hr />
+<ol>
+
+<li id="cn:1">
+<p>Inline Citation <a href="#cnref:1" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:2">
+<p>bar <a href="#cnref:2" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+</ol>
+</div>
+</body>
+</html>
