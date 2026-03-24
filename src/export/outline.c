@@ -242,6 +242,7 @@ static int header_is_valid(header * h) {
 	switch (*peek) {
 		case '\t':
 		case '>':
+		case ' ':
 			return 0;
 	}
 
