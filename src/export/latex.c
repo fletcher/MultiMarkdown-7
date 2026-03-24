@@ -691,25 +691,30 @@ static int export_endnote_def(unsigned char type, endnote_def * e, const char * 
 			break;
 
 			case TOKEN_PAIR_BRACKET_FOOTNOTE:
-				mmd_print_const(out, "\\footnote{");
-				w->padding = 2;
 
-				w->in_endnote = 1;
+				// Don't allow nested footnotes -- can lead to infinite loop
+				if (w->in_endnote == 0) {
+					mmd_print_const(out, "\\footnote{");
+					w->padding = 2;
 
-				if (!e->is_inline) {
-					w->skip_endnote_label = true;
+					w->in_endnote = 1;
+
+					if (!e->is_inline) {
+						w->skip_endnote_label = true;
+					}
+
+					if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
+						export_latex_blocks(e->content_node, e->text, out, r, w, options);
+					} else {
+						export_latex_tokens(e->content_node, e->text, e->len, out, r, w, options);
+					}
+
+					mmd_print_const(out, "}");
+
+					w->in_endnote = 0;
+					w->skip_endnote_label = false;
 				}
 
-				if (e->content_node && MMD_NODE_IS_BLOCK(e->content_node)) {
-					export_latex_blocks(e->content_node, e->text, out, r, w, options);
-				} else {
-					export_latex_tokens(e->content_node, e->text, e->len, out, r, w, options);
-				}
-
-				mmd_print_const(out, "}");
-
-				w->in_endnote = 0;
-				w->skip_endnote_label = false;
 				break;
 
 			case TOKEN_PAIR_BRACKET_GLOSSARY: {
