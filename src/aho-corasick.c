@@ -610,10 +610,10 @@ size_t ac_step(size_t s, ac * a, int options, unsigned char c, size_t * len, uns
 	while (temp_s) {
 		if (a->node[temp_s].type) {
 			// This is a match
-			if (*len != -1) {
+			if (*len !=  (size_t) -1) {
 				if (options & AC_LONGEST) {
 					// Is this longer than the current match?
-					if (*len == a->node[temp_s].len) {
+					if (*len == (size_t) a->node[temp_s].len) {
 						// Update existing match
 						*len = a->node[temp_s].len;
 						*type = a->node[temp_s].type;
@@ -662,15 +662,19 @@ void Test_ac_step(CuTest * tc) {
 		F(j, (int) sizeof(haystack)) {
 			s = ac_step(s, a, options[i], (unsigned char) haystack[j], &len, &type);
 			CuAssertIntEquals(tc, step_result[i][j], type);
-			switch(type) {
+
+			switch (type) {
 				case 0:
 					break;
+
 				case 42:
 					CuAssertIntEquals(tc, 3, (int) len);
 					break;
+
 				case 43:
 					CuAssertIntEquals(tc, 3, (int) len);
 					break;
+
 				case 44:
 					CuAssertIntEquals(tc, 6, (int) len);
 					break;
