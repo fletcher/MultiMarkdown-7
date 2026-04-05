@@ -91,6 +91,10 @@ void ac_prepare(ac * a, int options);
 match * ac_search(ac * a, int options, const unsigned char * source, size_t start, size_t len);
 
 
+/// Monitor one character at a time for matches
+size_t ac_step(size_t s, ac * a, int options, unsigned char c, size_t * len, unsigned char * type);
+
+
 /// Free linked list of matches
 void match_free(match * m);
 

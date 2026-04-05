@@ -61,7 +61,7 @@
 
 /// Node used to build Aho-Corasick search trie
 typedef struct {
-	char			c;
+	unsigned char	c;
 	unsigned char	type;
 	int				len;
 
@@ -490,25 +490,29 @@ int options[] = {
 char * haystack[] = {
 	"footbally",
 	"ufootbally",
-	"footbal"
+	"footbal",
+	"föot"
 };
 
 
-char * results[3][3] = {
+char * results[3][4] = {
 	{
 		"foot\notb\nfootball\nball\nally\n",
 		"ufo\nfoot\notb\nfootball\nball\nally\n",
-		"foot\notb\n"
+		"foot\notb\n",
+		"föot\n"
 	},
 	{
 		"foot\nfootball\n",
 		"ufo\notb\nally\n",
-		"foot\n"
+		"foot\n",
+		"föot\n"
 	},
 	{
 		"football\n",
 		"ufo\notb\nally\n",
-		"foot\n"
+		"foot\n",
+		"föot\n"
 	}
 };
 
@@ -559,6 +563,7 @@ void Test_ac_search(CuTest * tc) {
 	ac_insert(a, "ally", 39);
 	ac_insert(a, "ufo", 38);
 	ac_insert(a, "otb", 37);
+	ac_insert(a, "föot", 69);
 
 	F(i, (int) (sizeof(options) / sizeof(options[0]))) {
 		// Prepare AC trie with new options
@@ -577,6 +582,99 @@ void Test_ac_search(CuTest * tc) {
 
 			match_free(m);
 			text_buffer_free(buf, true);
+		}
+	}
+
+	ac_free(a);
+}
+
+#endif
+
+
+/// Monitor one character at a time for matches
+size_t ac_step(size_t s, ac * a, int options, unsigned char c, size_t * len, unsigned char * type) {
+	*len = -1;
+	*type = '\0';
+
+	// Check for path that allows us to match next character
+	while (s && a->node[s].child[c] == 0) {
+		s = a->node[s].ac_fail;
+	}
+
+	// Accept next character
+	s = a->node[s].child[c];
+
+	// Do we have a match
+	size_t temp_s = s;
+
+	while (temp_s) {
+		if (a->node[temp_s].type) {
+			// This is a match
+			if (*len != -1) {
+				if (options & AC_LONGEST) {
+					// Is this longer than the current match?
+					if (*len == a->node[temp_s].len) {
+						// Update existing match
+						*len = a->node[temp_s].len;
+						*type = a->node[temp_s].type;
+					} else {
+						// Ignore this match
+					}
+				} else {
+					// Ignore this match
+				}
+			} else {
+				*len = a->node[temp_s].len;
+				*type = a->node[temp_s].type;
+			}
+		}
+
+		temp_s = a->node[temp_s].ac_fail;
+	}
+
+	return s;
+}
+
+
+#ifdef TEST
+
+unsigned char step_result[3][6] = {
+	{ 0, 0, 42, 0, 0, 44 },
+	{ 0, 0, 42, 0, 0, 44 },
+	{ 0, 0, 42, 0, 0, 44 }
+};
+
+void Test_ac_step(CuTest * tc) {
+	ac * a = ac_new(0);
+
+	ac_insert(a, "foo", 42);
+	ac_insert(a, "bar", 43);
+	ac_insert(a, "foobar", 44);
+
+	char * haystack = "foobar";
+
+	F(i, (int) (sizeof(options) / sizeof(options[0]))) {
+		ac_prepare(a, options[i]);
+		size_t s = 0;
+		size_t len = 0;
+		unsigned char type = 0;
+
+		F(j, (int) sizeof(haystack)) {
+			s = ac_step(s, a, options[i], (unsigned char) haystack[j], &len, &type);
+			CuAssertIntEquals(tc, step_result[i][j], type);
+			switch(type) {
+				case 0:
+					break;
+				case 42:
+					CuAssertIntEquals(tc, 3, (int) len);
+					break;
+				case 43:
+					CuAssertIntEquals(tc, 3, (int) len);
+					break;
+				case 44:
+					CuAssertIntEquals(tc, 6, (int) len);
+					break;
+			}
 		}
 	}
 
@@ -616,4 +714,3 @@ void ac_to_graphviz(ac * a, FILE * out) {
 
 	fprintf(out, "}\n");
 }
-
