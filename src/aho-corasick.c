@@ -610,7 +610,7 @@ size_t ac_step(size_t s, ac * a, int options, unsigned char c, size_t * len, uns
 	while (temp_s) {
 		if (a->node[temp_s].type) {
 			// This is a match
-			if (*len !=  (size_t) -1) {
+			if (*len != (size_t) -1) {
 				if (options & AC_LONGEST) {
 					// Is this longer than the current match?
 					if (*len == (size_t) a->node[temp_s].len) {
