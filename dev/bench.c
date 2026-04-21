@@ -55,7 +55,7 @@
 
 
 char * commands[][2] = {
-	"multimarkdown ", "mmd6",								// Basic MMD 6 parsing to HTML
+	"multimarkdown6 ", "mmd6",								// Basic MMD 6 parsing to HTML
 	"../build/multimarkdown parse ", "mmd7",				// Basic MMD 7 parsing to HTML
 	"../build/multimarkdown parse -c ", "mmd7-c",			// MMD 7 HTML compatibility mode
 	"../build/multimarkdown parse -t latex ", "mmd7-l",		// MMD 7 LaTeX parsing
