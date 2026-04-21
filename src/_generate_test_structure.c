@@ -8,26 +8,26 @@
 
 
 	@author	Fletcher T. Penney
-	@bug	
+	@bug
 
 **/
 
 /*
 
 	MIT License
-	
+
 	Copyright (c) 2024-2026 Fletcher T. Penney
-	
+
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
 	in the Software without restriction, including without limitation the rights
 	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 	copies of the Software, and to permit persons to whom the Software is
 	furnished to do so, subject to the following conditions:
-	
+
 	The above copyright notice and this permission notice shall be included in all
 	copies or substantial portions of the Software.
-	
+
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -81,17 +81,15 @@ int increment_array(int * arr, int start, int end, int s) {
 
 /// Cycle through n "digit" number consisting of "s" symbols (like an odometer)
 void cycle_array(int n, int s, void * y, void * z, void(*cb)(void * y, void * z, int * arr, int size)) {
-	int temp[n];
-
-	F(i, n) {
-		temp[i] = 0;
-	}
+	int * temp = calloc(n, sizeof(int));
 
 	cb(y, z, temp, n);
 
 	while (increment_array(temp, 0, n, s)) {
 		cb(y, z, temp, n);
 	}
+
+	free(temp);
 }
 
 
@@ -116,7 +114,7 @@ int main(int argc, char * const argv[]) {
 	int n = 3;
 	int s = sizeof(line) / sizeof(line[0]);
 
-	switch(argc) {
+	switch (argc) {
 		case 2:
 			n = atoi(argv[1]);
 			break;
