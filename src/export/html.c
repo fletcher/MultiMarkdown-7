@@ -1347,7 +1347,7 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 				if (b->child->type == BLOCK_PARA) {
 					export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
 				} else {
-					export_html_blocks(b->child, &text[b->start], out, r, w, options);
+					export_html_block(b->child, &text[b->start], out, r, w, options);
 				}
 			} else {
 				export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);

@@ -1550,7 +1550,7 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 				if (b->child->type == BLOCK_PARA) {
 					export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
 				} else {
-					export_latex_blocks(b->child, &text[b->start], out, r, w, options);
+					export_latex_block(b->child, &text[b->start], out, r, w, options);
 				}
 			} else {
 				export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
