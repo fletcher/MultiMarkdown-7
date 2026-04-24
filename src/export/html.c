@@ -1342,7 +1342,17 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 			pad(out, 1, w);
 			mmd_print_const(out, "<li>");
 			w->padding = 2;
-			export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+
+			if (MMD_NODE_IS_BLOCK(b->child)) {
+				if (b->child->type == BLOCK_PARA) {
+					export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+				} else {
+					export_html_blocks(b->child, &text[b->start], out, r, w, options);
+				}
+			} else {
+				export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+			}
+
 			w->padding = 0;
 			export_html_blocks(b->child->next, &text[b->start], out, r, w, options);
 			mmd_print_const(out, "</li>");

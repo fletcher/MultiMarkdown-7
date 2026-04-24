@@ -55,6 +55,14 @@ char * line[] = {
 	"	Indented line",
 	"> Blockquote line",
 	"---",
+
+	"	# Indented Header 1 #",
+	"	* Indented Bulleted item",
+	"	1. Indented Enumerated item",
+	"	=========",
+	"	---------",
+	"	> Indented Blockquote line",
+
 	""
 };
 

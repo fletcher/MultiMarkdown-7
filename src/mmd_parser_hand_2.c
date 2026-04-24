@@ -1670,7 +1670,12 @@ static mmd_node * recursive_indent_parse(mmd_line_node * l, mmd_node_pool * p, c
 		s = mmd_scanner(&text[line->general.start + line->c_start], line->c_len);
 		line->general.type = mmd_line_scan(&s, options);
 		line->c_start = (s.c_start - text) - line->general.start;
-		line->c_len = s.cur - s.c_start;
+
+		if (s.c_end) {
+			line->c_len = s.c_end - s.c_start;
+		} else {
+			line->c_len = s.cur - s.c_start;
+		}
 
 		line = (mmd_line_node *) line->general.next;
 	}

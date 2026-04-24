@@ -1545,7 +1545,17 @@ static void export_latex_block(mmd_node * b, const char * text, text_buffer * ou
 			pad(out, 1, w);
 			mmd_print_const(out, "\\item ");
 			w->padding = 2;
-			export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+
+			if (MMD_NODE_IS_BLOCK(b->child)) {
+				if (b->child->type == BLOCK_PARA) {
+					export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+				} else {
+					export_latex_blocks(b->child, &text[b->start], out, r, w, options);
+				}
+			} else {
+				export_latex_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+			}
+
 			w->padding = 0;
 			export_latex_blocks(b->child->next, &text[b->start], out, r, w, options);
 			w->padding = 0;
