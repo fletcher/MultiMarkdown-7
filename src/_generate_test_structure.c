@@ -103,6 +103,72 @@ void cycle_array(int n, int s, void * y, void * z, void(*cb)(void * y, void * z,
 
 /// Example callback function to print the array permutation/combination (y and z ignored)
 void print_array_cb(void * y, void * z, int * arr, int size) {
+	// Certain combinations, at least for now, are not considered invalid
+	switch (size) {
+		case 3: {
+			switch (arr[0]) {
+				case 2:
+				case 3: {
+					switch (arr[1]) {
+						case 9:
+						case 12:
+						case 13: {
+							switch (arr[2]) {
+								case 1:
+								case 4:
+								case 6:
+								case 12:
+									return;
+							}
+						}
+					}
+				}
+			}
+		}
+		break;
+
+		case 4: {
+			switch (arr[1]) {
+				case 2:
+				case 3: {
+					switch (arr[2]) {
+						case 9:
+						case 12:
+						case 13: {
+							switch (arr[3]) {
+								case 1:
+								case 4:
+								case 6:
+								case 12:
+									return;
+							}
+						}
+					}
+				}
+			}
+
+			switch (arr[0]) {
+				case 2:
+				case 3: {
+					switch (arr[1]) {
+						case 9:
+						case 12:
+						case 13: {
+							switch (arr[2]) {
+								case 1:
+								case 4:
+								case 6:
+								case 12:
+									return;
+							}
+						}
+					}
+				}
+			}
+		}
+
+	}
+
 	F(i, size) {
 		printf("%d%c", arr[i], (i == size - 1) ? '\n' : '-');
 	}
