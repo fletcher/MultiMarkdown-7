@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Reference Test</title>
+</head>
+<body>
+<p><img src="*foo*" alt="foo" id="foo" />
+<a href="*foo*"><a href="#gn:1" id="gnref:1" title="see glossary" class="glossary">foo</a></a>
+<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote"><sup>1</sup></a>
+<a href="#cn:1" id="cnref:1" title="see citation" class="citation">(1)</a>
+*foo* <abbr title="*foo*">(foo)</abbr>
+<a href="#gn:1" title="see glossary" class="glossary">foo</a></p>
+
+<p><img src="*bar*" alt="bar" id="bar" title="Title bar 1" />
+<a href="*bar*" title="Title bar 1"><a href="#gn:2" id="gnref:2" title="see glossary" class="glossary">bar</a></a>
+<a href="#fn:2" id="fnref:2" title="see footnote" class="footnote"><sup>2</sup></a>
+<a href="#cn:2" id="cnref:2" title="see citation" class="citation">(2)</a>
+*bar* &quot;Title bar 4&quot; <abbr title="*bar* &quot;Title bar 4&quot;">(bar)</abbr>
+<a href="#gn:2" title="see glossary" class="glossary">bar</a></p>
+
+<p><img src="*bat*" alt="bat" id="bat" />
+<a href="*bat*"><a href="#gn:3" id="gnref:3" title="see glossary" class="glossary">bat</a></a>
+<a href="#fn:3" id="fnref:3" title="see footnote" class="footnote"><sup>3</sup></a>
+<a href="#cn:3" id="cnref:3" title="see citation" class="citation">(3)</a>
+*bat* <abbr title="*bat*">(bat)</abbr>
+<a href="#gn:3" title="see glossary" class="glossary">bat</a></p>
+
+<p><img src="*baz*" alt="baz" id="baz" title="Title baz 1" />
+<a href="*baz*" title="Title baz 1"><a href="#gn:4" id="gnref:4" title="see glossary" class="glossary">baz</a></a>
+<a href="#fn:4" id="fnref:4" title="see footnote" class="footnote"><sup>4</sup></a>
+<a href="#cn:4" id="cnref:4" title="see citation" class="citation">(4)</a>
+*baz* &quot;Title baz 4&quot; <abbr title="*baz* &quot;Title baz 4&quot;">(baz)</abbr>
+<a href="#gn:4" title="see glossary" class="glossary">baz</a></p>
+
+<p><a href="**foo1**">**foo1** <abbr title="**foo1**">( foo1)</abbr></a>
+<a href="**foo1**"><a href="#gn:5" id="gnref:5" title="see glossary" class="glossary">foo1</a> </a>
+<a href="**foo1**"><abbr title="**foo1**"> foo1</abbr> </a></p>
+
+<p><a href="#fn:5" id="fnref:5" title="see footnote" class="footnote"><sup>5</sup></a>
+<a href="#fn:5" title="see footnote" class="footnote"><sup>5</sup></a>
+<a href="#fn:5" title="see footnote" class="footnote"><sup>5</sup></a></p>
+
+<p><a href="#cn:5" id="cnref:5" title="see citation" class="citation">(5)</a>
+<a href="#cn:5" title="see citation" class="citation">(5)</a>
+<a href="#cn:5" title="see citation" class="citation">(5)</a></p>
+
+<p>[> foo1]
+[>foo1 ]
+[> foo1 ]</p>
+
+<p><a href="#gn:5" title="see glossary" class="glossary"> foo1</a>
+<a href="#gn:5" title="see glossary" class="glossary">foo1 </a>
+<a href="#gn:5" title="see glossary" class="glossary"> foo1 </a></p>
+
+<p><a href="**bar1**"> <a href="#gn:6" id="gnref:6" title="see glossary" class="glossary">bar1</a></a>
+<a href="**bar1**"><a href="#gn:6" title="see glossary" class="glossary">bar1</a> </a>
+<a href="**bar1**"> <a href="#gn:6" title="see glossary" class="glossary">bar1</a> </a></p>
+
+<p><a href="#fn:6" id="fnref:6" title="see footnote" class="footnote"><sup>6</sup></a>
+<a href="#fn:6" title="see footnote" class="footnote"><sup>6</sup></a>
+<a href="#fn:6" title="see footnote" class="footnote"><sup>6</sup></a></p>
+
+<p><a href="#cn:6" id="cnref:6" title="see citation" class="citation">(6)</a>
+<a href="#cn:6" title="see citation" class="citation">(6)</a>
+<a href="#cn:6" title="see citation" class="citation">(6)</a></p>
+
+<p>**bar1** <abbr title="**bar1**">( bar1)</abbr>
+<abbr title="**bar1**">bar1 </abbr>
+<abbr title="**bar1**"> bar1 </abbr></p>
+
+<p><a href="#gn:6" title="see glossary" class="glossary"> bar1</a>
+<a href="#gn:6" title="see glossary" class="glossary">bar1 </a>
+<a href="#gn:6" title="see glossary" class="glossary"> bar1 </a></p>
+
+<p><a href="**bat1**">**bat1** <abbr title="**bat1**">( bat1)</abbr></a>
+<a href="**bat1**"><a href="#gn:7" id="gnref:7" title="see glossary" class="glossary">bat1</a> </a>
+<a href="**bat1**"><abbr title="**bat1**"> bat1</abbr> </a></p>
+
+<p><a href="#fn:7" id="fnref:7" title="see footnote" class="footnote"><sup>7</sup></a>
+<a href="#fn:7" title="see footnote" class="footnote"><sup>7</sup></a>
+<a href="#fn:7" title="see footnote" class="footnote"><sup>7</sup></a></p>
+
+<p><a href="#cn:7" id="cnref:7" title="see citation" class="citation">(7)</a>
+<a href="#cn:7" title="see citation" class="citation">(7)</a>
+<a href="#cn:7" title="see citation" class="citation">(7)</a></p>
+
+<p>[> bat1]
+[>bat1 ]
+[> bat1 ]</p>
+
+<p><a href="#gn:7" title="see glossary" class="glossary"> bat1</a>
+<a href="#gn:7" title="see glossary" class="glossary">bat1 </a>
+<a href="#gn:7" title="see glossary" class="glossary"> bat1 </a></p>
+
+<p>[ baz1]
+[baz1 ]
+[ baz1 ]</p>
+
+<p><a href="#fn:8" id="fnref:8" title="see footnote" class="footnote"><sup>8</sup></a>
+<a href="#fn:9" id="fnref:9" title="see footnote" class="footnote"><sup>9</sup></a>
+<a href="#fn:10" id="fnref:10" title="see footnote" class="footnote"><sup>10</sup></a></p>
+
+<p><a href="#cn:8" id="cnref:8" title="see citation" class="citation">(8)</a>
+<a href="#cn:9" id="cnref:9" title="see citation" class="citation">(9)</a>
+<a href="#cn:10" id="cnref:10" title="see citation" class="citation">(10)</a></p>
+
+<p>[> baz1]
+[>baz1 ]
+[> baz1 ]</p>
+
+<p>[? baz1]
+[?baz1 ]
+[? baz1 ]</p>
+
+<div class="footnotes">
+<hr />
+<ol>
+
+<li id="fn:1">
+<p><em>foo</em> <a href="#fnref:1" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:2">
+<p><em>bar</em> &#8220;Title bar 2&#8221; <a href="#fnref:2" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:3">
+<p><em>bat</em> <a href="#fnref:3" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:4">
+<p><em>baz</em> &#8220;Title baz 2&#8221; <a href="#fnref:4" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:5">
+<p><strong>foo1</strong> <a href="#fnref:5" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:6">
+<p><strong>bar1</strong> <a href="#fnref:6" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:7">
+<p><strong>bat1</strong> <a href="#fnref:7" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:8">
+<p> baz1 <a href="#fnref:8" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:9">
+<p>baz1  <a href="#fnref:9" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="fn:10">
+<p> baz1  <a href="#fnref:10" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+</ol>
+</div>
+
+<div class="glossary">
+<hr />
+<ol>
+
+<li id="gn:1">
+foo: <p><em>foo</em> <a href="#gnref:1" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="gn:2">
+bar: <p><em>bar</em> &#8220;Title bar 5&#8221; <a href="#gnref:2" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="gn:3">
+bat: <p><em>bat</em> <a href="#gnref:3" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="gn:4">
+baz: <p><em>baz</em> &#8220;Title baz 5&#8221; <a href="#gnref:4" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="gn:5">
+ foo1: <p><strong>foo1</strong> <a href="#gnref:5" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="gn:6">
+bar1 : <p><strong>bar1</strong> <a href="#gnref:6" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="gn:7">
+ bat1 : <p><strong>bat1</strong> <a href="#gnref:7" title="return to body" class="reverseglossary">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+</ol>
+</div>
+
+<div class="citations">
+<hr />
+<ol>
+
+<li id="cn:1">
+<p><em>foo</em> <a href="#cnref:1" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:2">
+<p><em>bar</em> &#8220;Title bar 3&#8221; <a href="#cnref:2" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:3">
+<p><em>bat</em> <a href="#cnref:3" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:4">
+<p><em>baz</em> &#8220;Title baz 3&#8221; <a href="#cnref:4" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:5">
+<p><strong>foo1</strong> <a href="#cnref:5" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:6">
+<p><strong>bar1</strong> <a href="#cnref:6" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:7">
+<p><strong>bat1</strong> <a href="#cnref:7" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:8">
+<p> baz1 <a href="#cnref:8" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:9">
+<p>baz1  <a href="#cnref:9" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+<li id="cn:10">
+<p> baz1  <a href="#cnref:10" title="return to body" class="reversecitation">&#160;&#8617;&#xfe0e;</a></p>
+</li>
+
+</ol>
+</div>
+</body>
+</html>

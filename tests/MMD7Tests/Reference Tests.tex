@@ -1,0 +1,160 @@
+\input{mmd7-article-leader}
+\def\mytitle{Reference Test}
+\longnewglossaryentry{bar}{name=bar}{\emph{bar} ``Title bar 5''}
+\longnewglossaryentry{bar1}{name=bar1 }{\textbf{bar1}}
+\longnewglossaryentry{bat}{name=bat}{\emph{bat}}
+\longnewglossaryentry{bat1}{name= bat1 }{\textbf{bat1}}
+\longnewglossaryentry{baz}{name=baz}{\emph{baz} ``Title baz 5''}
+\longnewglossaryentry{foo}{name=foo}{\emph{foo}}
+\longnewglossaryentry{foo1}{name= foo1}{\textbf{foo1}}
+\newacronym{ bat1}{ bat1}{**bat1**}
+\newacronym{ foo1}{ foo1}{**foo1**}
+\newacronym{bar}{bar}{*bar* "Title bar 4"}
+\newacronym{bar1}{bar1}{**bar1**}
+\newacronym{bat}{bat}{*bat*}
+\newacronym{baz}{baz}{*baz* "Title baz 4"}
+\newacronym{foo}{foo}{*foo*}
+\input{mmd7-article-begin}
+
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{*foo*}
+\href{*foo*}{\gls{foo}}\footnote{\href{*foo*}{*foo*}}
+\footnote{\emph{foo}}
+~\citep{foo}
+\gls{foo}
+\gls{foo}
+
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{*bar*}
+\href{*bar*}{\gls{bar}}\footnote{\href{*bar*}{*bar*}}
+\footnote{\emph{bar} ``Title bar 2''}
+~\citep{bar}
+\gls{bar}
+\gls{bar}
+
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{*bat*}
+\href{*bat*}{\gls{bat}}\footnote{\href{*bat*}{*bat*}}
+\footnote{\emph{bat}}
+~\citep{bat}
+\gls{bat}
+\gls{bat}
+
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{*baz*}
+\href{*baz*}{\gls{baz}}\footnote{\href{*baz*}{*baz*}}
+\footnote{\emph{baz} ``Title baz 2''}
+~\citep{baz}
+\gls{baz}
+\gls{baz}
+
+\href{**foo1**}{\gls{ foo1}}\footnote{\href{**foo1**}{**foo1**}}
+\href{**foo1**}{\gls{foo1} }\footnote{\href{**foo1**}{**foo1**}}
+\href{**foo1**}{\gls{ foo1} }\footnote{\href{**foo1**}{**foo1**}}
+
+\footnote{\textbf{foo1}}
+\footnote{\textbf{foo1}}
+\footnote{\textbf{foo1}}
+
+~\citep{foo1}
+~\citep{foo1}
+~\citep{foo1}
+
+[> foo1]
+[>foo1 ]
+[> foo1 ]
+
+\gls{ foo1}
+\gls{foo1 }
+\gls{ foo1 }
+
+\href{**bar1**}{ \gls{bar1}}\footnote{\href{**bar1**}{**bar1**}}
+\href{**bar1**}{\gls{bar1} }\footnote{\href{**bar1**}{**bar1**}}
+\href{**bar1**}{ \gls{bar1} }\footnote{\href{**bar1**}{**bar1**}}
+
+\footnote{\textbf{bar1}}
+\footnote{\textbf{bar1}}
+\footnote{\textbf{bar1}}
+
+~\citep{bar1}
+~\citep{bar1}
+~\citep{bar1}
+
+\gls{bar1}
+\gls{bar1}
+\gls{bar1}
+
+\gls{ bar1}
+\gls{bar1 }
+\gls{ bar1 }
+
+\href{**bat1**}{\gls{ bat1}}\footnote{\href{**bat1**}{**bat1**}}
+\href{**bat1**}{\gls{bat1} }\footnote{\href{**bat1**}{**bat1**}}
+\href{**bat1**}{\gls{ bat1} }\footnote{\href{**bat1**}{**bat1**}}
+
+\footnote{\textbf{bat1}}
+\footnote{\textbf{bat1}}
+\footnote{\textbf{bat1}}
+
+~\citep{bat1}
+~\citep{bat1}
+~\citep{bat1}
+
+[> bat1]
+[>bat1 ]
+[> bat1 ]
+
+\gls{ bat1}
+\gls{bat1 }
+\gls{ bat1 }
+
+[ baz1]
+[baz1 ]
+[ baz1 ]
+
+\footnote{ baz1}
+\footnote{baz1 }
+\footnote{ baz1 }
+
+~\citep{baz1}
+~\citep{baz1}
+~\citep{baz1}
+
+[> baz1]
+[>baz1 ]
+[> baz1 ]
+
+[? baz1]
+[?baz1 ]
+[? baz1 ]
+
+\begin{thebibliography}{0}
+\bibitem{foo}
+\emph{foo}
+
+\bibitem{bar}
+\emph{bar} ``Title bar 3''
+
+\bibitem{bat}
+\emph{bat}
+
+\bibitem{baz}
+\emph{baz} ``Title baz 3''
+
+\bibitem{foo1}
+\textbf{foo1}
+
+\bibitem{bar1}
+\textbf{bar1}
+
+\bibitem{bat1}
+\textbf{bat1}
+
+\bibitem{baz1}
+ baz1
+
+\bibitem{baz1}
+baz1 
+
+\bibitem{baz1}
+ baz1 
+
+\end{thebibliography}
+\input{mmd7-article-footer}
+\end{document}

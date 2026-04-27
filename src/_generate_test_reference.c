@@ -52,12 +52,14 @@ char * s[] = {
 
 
 char * marker[] = {
-	"![",
-	"[",
-	"[>",
-	"[#",
-	"[^",
-	"[?",
+	"![",		// Matches CommonMark
+	"[",		// Matches CommonMark
+
+	"[^",		// Matches MultiMarkdown v6
+	"[#",		// Matches MultiMarkdown v6
+
+	"[>",		// Changed from MultiMarkdown v6
+	"[?",		// Changed from MultiMarkdown v6
 };
 
 

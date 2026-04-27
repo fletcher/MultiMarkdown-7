@@ -1,0 +1,157 @@
+title:  Reference Test
+latexconfig:    article
+
+![foo]
+[foo]
+[^foo]
+[#foo]
+[>foo]
+[?foo]
+
+![bar]
+[bar]
+[^bar]
+[#bar]
+[>bar]
+[?bar]
+
+![bat]
+[bat]
+[^bat]
+[#bat]
+[>bat]
+[?bat]
+
+![baz]
+[baz]
+[^baz]
+[#baz]
+[>baz]
+[?baz]
+
+
+[foo]: *foo*
+[^foo]: *foo*
+[#foo]: *foo*
+[>foo]: *foo*
+[?foo]: *foo*
+[bar]: *bar* "Title bar 1"
+[^bar]: *bar* "Title bar 2"
+[#bar]: *bar* "Title bar 3"
+[>bar]: *bar* "Title bar 4"
+[?bar]: *bar* "Title bar 5"
+[bat]: *bat*
+
+[^bat]: *bat*
+
+[#bat]: *bat*
+
+[>bat]: *bat*
+
+[?bat]: *bat*
+
+[baz]: *baz* "Title baz 1"
+
+[^baz]: *baz* "Title baz 2"
+
+[#baz]: *baz* "Title baz 3"
+
+[>baz]: *baz* "Title baz 4"
+
+[?baz]: *baz* "Title baz 5"
+
+[ foo1]
+[foo1 ]
+[ foo1 ]
+
+[^ foo1]
+[^foo1 ]
+[^ foo1 ]
+
+[# foo1]
+[#foo1 ]
+[# foo1 ]
+
+[> foo1]
+[>foo1 ]
+[> foo1 ]
+
+[? foo1]
+[?foo1 ]
+[? foo1 ]
+
+[ bar1]
+[bar1 ]
+[ bar1 ]
+
+[^ bar1]
+[^bar1 ]
+[^ bar1 ]
+
+[# bar1]
+[#bar1 ]
+[# bar1 ]
+
+[> bar1]
+[>bar1 ]
+[> bar1 ]
+
+[? bar1]
+[?bar1 ]
+[? bar1 ]
+
+[ bat1]
+[bat1 ]
+[ bat1 ]
+
+[^ bat1]
+[^bat1 ]
+[^ bat1 ]
+
+[# bat1]
+[#bat1 ]
+[# bat1 ]
+
+[> bat1]
+[>bat1 ]
+[> bat1 ]
+
+[? bat1]
+[?bat1 ]
+[? bat1 ]
+
+[ baz1]
+[baz1 ]
+[ baz1 ]
+
+[^ baz1]
+[^baz1 ]
+[^ baz1 ]
+
+[# baz1]
+[#baz1 ]
+[# baz1 ]
+
+[> baz1]
+[>baz1 ]
+[> baz1 ]
+
+[? baz1]
+[?baz1 ]
+[? baz1 ]
+
+[ foo1]: **foo1**
+[^ foo1]: **foo1**
+[# foo1]: **foo1**
+[> foo1]: **foo1**
+[? foo1]: **foo1**
+[bar1 ]: **bar1**
+[^bar1 ]: **bar1**
+[#bar1 ]: **bar1**
+[>bar1 ]: **bar1**
+[?bar1 ]: **bar1**
+[ bat1 ]: **bat1**
+[^ bat1 ]: **bat1**
+[# bat1 ]: **bat1**
+[> bat1 ]: **bat1**
+[? bat1 ]: **bat1**
