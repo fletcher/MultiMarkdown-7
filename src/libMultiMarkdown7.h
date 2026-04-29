@@ -133,6 +133,14 @@ read_ctx * mmd_metadata_str(const char * text, uint32_t options);
 read_ctx * mmd_metadata_str_len(const char * text, size_t in_len, uint32_t options);
 
 
+/// Process MultiMarkdown text for tags
+/// read_ctx will need to be freed when finished
+read_ctx * mmd_tags_filename(const char * fname, uint32_t options);
+read_ctx * mmd_tags_file(FILE * in, uint32_t options);
+read_ctx * mmd_tags_str(const char * text, uint32_t options);
+read_ctx * mmd_tags_str_len(const char * text, size_t in_len, uint32_t options);
+
+
 /// Utility functions
 
 void mmd_node_free(mmd_node * n);

@@ -374,6 +374,8 @@ int main(int argc, char * const argv[]) {
 			action = 'b';
 		} else if (strcmp(argv[1], "meta") == 0) {
 			action = 'm';
+		} else if (strcmp(argv[1], "tags") == 0) {
+			action = 't';
 		} else if (strcmp(argv[1], "ast") == 0) {
 			action = 'p';
 			options &= (~MMD_OUT_FORMAT_MASK);
@@ -614,6 +616,35 @@ int main(int argc, char * const argv[]) {
 						if (m) {
 							fprintf(stdout, "%s\n", m->value);
 						}
+					}
+
+					read_ctx_free(r);
+				}
+
+				break;
+
+			case 't':
+
+				// Parse the specified document(s) or input in stdin and export the tags on stdout
+				if (optind + offset < argc) {
+					for (optind += offset; optind < argc; optind++) {
+						read_ctx *r = mmd_tags_filename(argv[optind], options);
+						fprintf(stdout, "%s\n", argv[optind]);
+
+						tag * t, * t_tmp;
+
+						HASH_ITER(hh, r->tag_hash, t, t_tmp) {
+							fprintf(stdout, "%s\n", t->key);
+						}
+
+						read_ctx_free(r);
+					}
+				} else {
+					read_ctx * r = mmd_tags_file(stdin, options);
+					tag * t, * t_tmp;
+
+					HASH_ITER(hh, r->tag_hash, t, t_tmp) {
+						fprintf(stdout, "'%s'\n", t->key);
 					}
 
 					read_ctx_free(r);

@@ -779,3 +779,89 @@ read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options) {
 	return r;
 }
 
+
+read_ctx * mmd_tags_filename(const char * fname, uint32_t options) {
+	FILE * in = flex_fopen(fname);
+
+	read_ctx * r = NULL;
+
+	if (in) {
+		r = mmd_tags_file(in, options);
+		fclose(in);
+	}
+
+	return r;
+}
+
+
+read_ctx * mmd_tags_file(FILE * in, uint32_t options) {
+	text_buffer * buffer = buffer_file(in, kDEFAULTCAPACITY);
+
+	read_ctx * r = mmd_tags_buffer(buffer, options);
+
+	text_buffer_free(buffer, 1);
+
+	return r;
+}
+
+
+read_ctx * mmd_tags_str(const char * text, uint32_t options) {
+	size_t len = strlen(text);
+	return mmd_tags_str_len(text, len, options);
+}
+
+
+read_ctx * mmd_tags_str_len(const char * text, size_t in_len, uint32_t options) {
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
+
+	read_ctx * r = mmd_tags_buffer(buffer, options);
+
+	text_buffer_free(buffer, 1);
+
+	return r;
+}
+
+
+read_ctx * mmd_tags_buffer(text_buffer * buffer, uint32_t options) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	// Track time
+	struct timespec start, mid, end;
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+#endif
+
+	vector_line_node * vl = vector_line_node_new(0);
+	mmd_node_pool * vn = mmd_node_pool_new(0);
+	read_ctx * r = read_ctx_new(options);
+
+	mmd_parse_text(buffer->text, buffer->len, vl, vn, r, options);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
+#endif
+
+	vector_line_node_free(vl);
+	mmd_node_pool_free(vn);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+#endif
+
+	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+		int64_t diff_mid = difftimespec_us(mid, start);
+		fprintf(stderr, "%.6f seconds to parse.\n", ((double)diff_mid / (double)1000000));
+
+		int64_t diff_full = difftimespec_us(end, start);
+		fprintf(stderr, "%.6f seconds in total.\n", ((double)diff_full / (double)1000000));
+#endif
+	}
+
+	return r;
+}

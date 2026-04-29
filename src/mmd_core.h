@@ -49,6 +49,7 @@ mmd_node * mmd_parse_buffer(text_buffer * buffer, read_ctx * c, uint32_t options
 void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options);
 void mmd_hash_buffer(text_buffer * buffer, FILE *out, uint32_t options);
 read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options);
+read_ctx * mmd_tags_buffer(text_buffer * buffer, uint32_t options);
 
 
 #endif
