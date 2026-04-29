@@ -74,6 +74,14 @@ typedef struct {
 } meta;
 
 
+/// Extracted tags
+typedef struct {
+	char *				key;
+
+	UT_hash_handle		hh;
+} tag;
+
+
 /// Extracted link reference definitions
 struct attr {
 	char *				key;
@@ -185,6 +193,7 @@ struct read_ctx {
 	uint16_t			random_header_seed;
 
 	meta 	*			meta_hash;
+	tag		*			tag_hash;
 	link_def 	*		link_def_hash;
 	abbr_def 	*		abbr_def_hash;
 
@@ -214,6 +223,7 @@ void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node
 void read_ctx_store_abbr(read_ctx * c, abbr_def * l);
 void read_ctx_store_link(read_ctx * c, link_def * l);
 void read_ctx_store_meta(read_ctx * c, meta * m);
+void read_ctx_store_tag(read_ctx * c, const char * tag, size_t tag_len);
 
 int read_ctx_store_cite(read_ctx * c, endnote_def * e);
 int read_ctx_store_glos(read_ctx * c, endnote_def * e);
@@ -223,6 +233,7 @@ int read_ctx_store_note(read_ctx * c, endnote_def * e);
 abbr_def * read_ctx_get_abbr(read_ctx * c, char * key);
 link_def * read_ctx_get_link(read_ctx * c, char * key);
 meta * read_ctx_get_meta(read_ctx * c, char * key);
+tag * read_ctx_get_tag(read_ctx * c, char * key);
 
 endnote_def * read_ctx_get_cite(read_ctx * c, char * key);
 endnote_def * read_ctx_get_glos(read_ctx * c, char * key);

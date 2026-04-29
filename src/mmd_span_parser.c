@@ -402,6 +402,12 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 								// Citation
 								o->type = TOKEN_PAIR_BRACKET_CITATION;
 								mmd_node_split(p, o->child, 1);
+
+								// This is no longer a TOKEN_TAG
+								if (o->child->next && o->child->next->type == TOKEN_TAG) {
+									o->child->next->type = TOKEN_TEXT;
+								}
+
 								o->child->type = TOKEN_CITATION_MARKER;
 
 								if (prev == o->child && o->child->next != n) {
@@ -1013,6 +1019,10 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_n
 		mmd_node * t = chain;
 
 		while (t) {
+			if (t->type == TOKEN_TAG) {
+				read_ctx_store_tag(c, &text[t->start], t->len);
+			}
+
 			t->next = mmd_tokenizer_accept_token(z, p, options);
 
 			// TODO: Debugging only
@@ -1176,6 +1186,10 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_n
 			l->next = NULL;
 
 			while (t) {
+				if (t->type == TOKEN_TAG) {
+					read_ctx_store_tag(c, &text[t->start], t->len);
+				}
+
 				t->next = mmd_tokenizer_accept_token(z, p, options);
 				t = t->next;
 			}

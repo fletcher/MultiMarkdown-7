@@ -128,6 +128,7 @@ int mmd_token_scan(Scanner * s, uint32_t options) {
 		@t1 "&" [A-Za-z0-9]+ [;]		{ ret TOKEN_HTML_ENTITY; }
 		@t1 [&]							{ ret TOKEN_AMPERSAND; }
 
+		@t1 [#][A-Za-z0-9][A-Za-z0-9_\-]+	{ ret TOKEN_TAG; }
 		@t1 [#]+						{ ret TOKEN_HASH; }
 
 		@t1 [*]							{ ret TOKEN_STAR; }

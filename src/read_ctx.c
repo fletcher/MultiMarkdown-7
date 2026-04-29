@@ -103,6 +103,14 @@ void meta_free(meta * m) {
 }
 
 
+void tag_free(tag * t) {
+	if (t) {
+		free(t->key);
+		free(t);
+	}
+}
+
+
 void link_def_free(link_def * l) {
 	if (l) {
 		free(l->key);
@@ -166,6 +174,13 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 		HASH_ITER(hh, c->meta_hash, m, m_tmp) {
 			HASH_DEL(c->meta_hash, m);
 			meta_free(m);
+		}
+
+		tag * t, * t_tmp;
+
+		HASH_ITER(hh, c->tag_hash, t, t_tmp) {
+			HASH_DEL(c->tag_hash, t);
+			tag_free(t);
 		}
 
 		link_def * l, * l_tmp;
@@ -463,6 +478,40 @@ meta * read_ctx_get_meta(read_ctx * c, char * key) {
 	}
 
 	return m;
+}
+
+
+void read_ctx_store_tag(read_ctx * c, const char * key, size_t tag_len) {
+	if (c && key) {
+		if (key[0] == '#') {
+			key++;
+			tag_len--;
+		}
+
+		if (tag_len > 0) {
+			tag * temp;
+
+			HASH_FIND(hh, c->tag_hash, key, tag_len, temp);
+
+			// Don't replace existing tag with same key
+			if (!temp) {
+				tag * tt = malloc(sizeof(tag));
+				tt->key = my_strndup(key, tag_len);
+				HASH_ADD_KEYPTR(hh, c->tag_hash, tt->key, tag_len, tt);
+			}
+		}
+	}
+}
+
+
+tag * read_ctx_get_tag(read_ctx * c, char * key) {
+	tag * t = NULL;
+
+	if (c && key && c->tag_hash) {
+		HASH_FIND_STR(c->tag_hash, key, t);
+	}
+
+	return t;
 }
 
 

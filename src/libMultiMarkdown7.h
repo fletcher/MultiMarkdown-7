@@ -485,6 +485,8 @@ enum node_types {
 
 	TOKEN_MANUAL_LABEL,
 
+	TOKEN_TAG,
+
 	OBJECT_REPLACEMENT_CHARACTER,   // This must be the last type
 };
 

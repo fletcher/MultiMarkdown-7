@@ -988,6 +988,11 @@ static void export_latex_token(mmd_node ** t, const char * text, size_t len, tex
 			}
 			break;
 
+		case TOKEN_TAG:
+			mmd_print_const(out, "\\");
+			text_buffer_append_text(out, &text[(*t)->start], (*t)->len);
+			break;
+
 		case TOKEN_LINEBREAK:
 			if ((*t)->next) {
 				mmd_print_const(out, "\\\\\n");
