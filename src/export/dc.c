@@ -50,6 +50,8 @@ static char * dc_term[] = {
 	[DC_IDENTIFIER]		= "identifier",
 	[DC_LANGUAGE]		= "language",
 	[DC_TITLE]			= "title",
+	[DC_PUBLISHER]		= "publisher",
+	[DC_DATE]			= "date",
 };
 
 

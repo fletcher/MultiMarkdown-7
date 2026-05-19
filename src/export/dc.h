@@ -50,6 +50,8 @@ enum dc_metadata {
 	DC_IDENTIFIER,
 	DC_LANGUAGE,
 	DC_TITLE,
+	DC_PUBLISHER,
+	DC_DATE,
 };
 
 

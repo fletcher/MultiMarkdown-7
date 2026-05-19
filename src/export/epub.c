@@ -137,6 +137,36 @@ static char * epub_package(read_ctx * r) {
 	}
 
 
+	// Series
+	m = read_ctx_get_meta(r, "series");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<meta name=\"calibre:series\" content=\"%s\"/>\n", m->value);
+	}
+
+	m = read_ctx_get_meta(r, "seriesindex");
+
+	if (m) {
+		text_buffer_append_printf(buffer, "<meta name=\"calibre:series_index\" content=\"%s\"/>\n", m->value);
+	}
+
+
+	// Publisher
+	m = read_ctx_get_meta(r, "publisher");
+
+	if (m) {
+		dc_write_term(buffer, DC_PUBLISHER, m->value, NULL);
+	}
+
+
+	// Published Date
+	m = read_ctx_get_meta(r, "published");
+
+	if (m) {
+		dc_write_term(buffer, DC_DATE, m->value, NULL);
+	}
+
+
 	// Language
 	m = read_ctx_get_meta(r, "language");
 
@@ -177,10 +207,10 @@ static char * epub_package(read_ctx * r) {
 	HASH_ITER(hh, r->asset_hash, a, a_tmp) {
 		if (m && !strcmp(m->value, a->url)) {
 			text_buffer_append_printf(buffer, "<item id=\"%s\" properties=\"cover-image\" href=\"assets/%s.%s\" media-type=\"%s\"/>\n",
-				a->uuid, a->uuid, media_ext[a->type], media_type_string[a->type]);
+									  a->uuid, a->uuid, media_ext[a->type], media_type_string[a->type]);
 		} else {
 			text_buffer_append_printf(buffer, "<item id=\"%s\" href=\"assets/%s.%s\" media-type=\"%s\"/>\n",
-				a->uuid, a->uuid, media_ext[a->type], media_type_string[a->type]);
+									  a->uuid, a->uuid, media_ext[a->type], media_type_string[a->type]);
 		}
 	}
 
