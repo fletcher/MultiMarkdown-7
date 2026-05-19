@@ -210,7 +210,7 @@ mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * 
 		asset * a, * a_tmp;
 
 		HASH_ITER(hh, r->asset_hash, a, a_tmp) {
-			char * target = concatenate_paths(destination, a->uuid, false);
+			char * target = concatenate_paths_ext(destination, a->uuid, media_ext[a->type], false);
 
 			if (options & MMD_OPTION_DOWNLOAD_ASSETS) {
 				if (!archive_asset_with_curl(pZip, target, a->url)) {

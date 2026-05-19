@@ -512,6 +512,10 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 		if (a) {
 			mmd_print_const(out, "assets/");
 			text_buffer_append_text(out, a->uuid, 36);
+
+			if (media_ext[a->type]) {
+				text_buffer_append_printf(out, ".%s", media_ext[a->type]);
+			}
 		} else {
 			url_encode_text(l->url, l->url_len, out);
 		}
@@ -1622,6 +1626,10 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 						if (a) {
 							mmd_print_const(out, "assets/");
 							text_buffer_append_text(out, a->uuid, 36);
+
+							if (media_ext[a->type]) {
+								text_buffer_append_printf(out, ".%s", media_ext[a->type]);
+							}
 						} else {
 							url_encode_text(m->value, m->value_len, out);
 						}

@@ -163,6 +163,37 @@ char * concatenate_paths(const char * dir, const char * path, int resolve) {
 }
 
 
+char * concatenate_paths_ext(const char * dir, const char * path, const char * ext, int resolve) {
+	int len = (int) (strlen(dir) + 1 + strlen(path) + 1 + strlen(ext) + 1);
+
+	char * temp = malloc(sizeof(char) * len);
+
+	if (is_separator(dir[strlen(dir) - 1])) {
+		if (ext[0] == '\0') {
+			snprintf(temp, len, "%s%s", dir, path);
+		} else {
+			snprintf(temp, len, "%s%s.%s", dir, path, ext);
+		}
+	} else {
+		if (ext[0] == '\0') {
+			snprintf(temp, len, "%s%c%s", dir, separator_char, path);
+		} else {
+			snprintf(temp, len, "%s%c%s.%s", dir, separator_char, path, ext);
+		}
+	}
+
+
+
+	if (resolve) {
+		char * r = realpath(temp, NULL);
+		free(temp);
+		return r;
+	} else {
+		return temp;
+	}
+}
+
+
 read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path, stack * parsed) {
 	stack_push(parsed, (void *) source_path);
 

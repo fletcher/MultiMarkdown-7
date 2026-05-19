@@ -150,6 +150,13 @@ enum media_type {
 };
 
 
+static char * media_ext[] = {
+	[textCSS] = "css",
+	[imageJPEG] = "jpg",
+	[imagePNG] = "png",
+};
+
+
 /// Assets (e.g. files that should be stored in zipfile formats -- images, CSS)
 struct asset {
 	char *					url;
