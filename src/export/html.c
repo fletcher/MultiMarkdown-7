@@ -1632,6 +1632,14 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 					mmd_print_const(out, "\"/>\n");
 
 					continue;
+				} else if (strcmp(m->key, "cover") == 0) {
+					if (options & MMD_OPTION_STORE_ASSETS) {
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path);
+
+						if (a && a->len) {
+							continue;
+						}
+					}
 				}
 
 				break;

@@ -125,6 +125,18 @@ static char * epub_package(read_ctx * r) {
 	}
 
 
+	// Cover
+	m = read_ctx_get_meta(r, "cover");
+
+	if (m) {
+		asset * a = read_ctx_get_asset(r, m->value);
+
+		if (a) {
+			text_buffer_append_printf(buffer, "<meta name=\"cover\" content=\"assets/%s\"/>\n", a->uuid);
+		}
+	}
+
+
 	// Language
 	m = read_ctx_get_meta(r, "language");
 
@@ -160,8 +172,14 @@ static char * epub_package(read_ctx * r) {
 
 	asset * a, * a_tmp;
 
+	m = read_ctx_get_meta(r, "cover");
+
 	HASH_ITER(hh, r->asset_hash, a, a_tmp) {
-		text_buffer_append_printf(buffer, "<item id=\"%s\" href=\"assets/%s\" media-type=\"%s\"/>\n", a->uuid, a->uuid, media_type_string[a->type]);
+		if (m && !strcmp(m->value, a->url)) {
+			text_buffer_append_printf(buffer, "<item id=\"%s\" properties=\"cover-image\" href=\"assets/%s\" media-type=\"%s\"/>\n", a->uuid, a->uuid, media_type_string[a->type]);
+		} else {
+			text_buffer_append_printf(buffer, "<item id=\"%s\" href=\"assets/%s\" media-type=\"%s\"/>\n", a->uuid, a->uuid, media_type_string[a->type]);
+		}
 	}
 
 

@@ -10,6 +10,7 @@ Core Features:
 	- Intraword '*' support @done
 	- Link definition names - letters, numbers, spaces, punctuation, but case *in*sensitive @done
 	- an empty last list item triggers a loose list, even if the rest is tight.  This doesn't play well with a live HTML preview. @done
+	- Option to split HTML file along TOC when outputing to EPUB
 
 MultiMarkdown Features:
 	- Metadata @done
