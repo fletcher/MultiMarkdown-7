@@ -173,7 +173,9 @@ static html_element elements[] = {
 	{ "figure",		2,	NULL,		OPT_IGNORE | OPT_FLATTEN,	NULL,	0,	NULL,	NULL,	&custom_img },
 	{ "figcaption",	1,	NULL,		0,			NULL,		0,	NULL,		NULL,		NULL },
 	{ "strong",		0,	"**",		0,			"**",		0,	NULL,		NULL,		NULL },
+	{ "b",			0,	"**",		0,			"**",		0,	NULL,		NULL,		NULL },
 	{ "em",			0,	"*",		0,			"*",		0,	NULL,		NULL,		NULL },
+	{ "i",			0,	"*",		0,			"*",		0,	NULL,		NULL,		NULL },
 	{ "code",		0,	"`",		OPT_LEAD,	"`",		0,	NULL,		NULL,		NULL },
 	{ "ins",		0,	"{++",		0,			"++}",		0,	NULL,		NULL,		NULL },
 	{ "del",		0,	"{--",		0,			"--}",		0,	NULL,		NULL,		NULL },
@@ -236,6 +238,31 @@ static void append_content(text_buffer * out, text_buffer * lead, yxml_t * x) {
 			text_buffer_append_text(out, "...", 3);
 		} else {
 			text_buffer_append_printf(out, "%s", x->data);
+		}
+	} else if (char_is_continuation_byte(x->data[0])) {
+		text_buffer_append_printf(out, "%s", x->data);
+
+		// We want to strip smart quotes
+		switch (x->data[0]) {
+			default:
+				if (!strncmp(&out->text[out->len - 3], "“", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "\"", 1);
+				} else if (!strncmp(&out->text[out->len - 3], "”", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "\"", 1);
+				} else if (!strncmp(&out->text[out->len - 3], "’", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "'", 1);
+				} else if (!strncmp(&out->text[out->len - 3], "‘", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "'", 1);
+				} else if (!strncmp(&out->text[out->len - 3], "–", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "--", 2);
+				} else if (!strncmp(&out->text[out->len - 3], "—", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "---", 3);
+				} else if (!strncmp(&out->text[out->len - 3], "…", 3)) {
+					text_buffer_replace_range(out, out->len - 3, 3, "...", 3);
+				}
+
+				// Do nothing
+				break;
 		}
 	} else {
 		switch (x->data[0]) {
@@ -390,7 +417,9 @@ static void custom_link(text_buffer * out, text_buffer * lead, text_buffer * att
 				text_buffer_append_printf(out, "[%.*s](%.*s \"%.*s\")", content->len, content->text,
 										  index->href_len, &attr->text[index->href], index->title_len, &attr->text[index->title]);
 			} else {
-				if (!strncmp(content->text, &attr->text[index->href], index->href_len)) {
+				if (index->href_len == 0) {
+					// Nothing to do
+				} else if (!strncmp(content->text, &attr->text[index->href], index->href_len)) {
 					// Automatic link
 					text_buffer_append_printf(out, "<%.*s>", content->len, content->text);
 				} else if (!strncmp(&attr->text[index->href], "mailto:", 7) && !strncmp(content->text, &attr->text[index->href + 7], content->len)) {
@@ -425,13 +454,13 @@ static void custom_img(text_buffer * out, text_buffer * lead, text_buffer * attr
 	// We could reverse this if desired...
 
 	if (content->len) {
-		text_buffer_append_printf(out, "![%.*s](%.*s ", content->len, content->text, index->src_len, &attr->text[index->src]);
+		text_buffer_append_printf(out, "![%.*s](%.*s", content->len, content->text, index->src_len, &attr->text[index->src]);
 	} else {
-		text_buffer_append_printf(out, "![%.*s](%.*s ", index->alt_len, &attr->text[index->alt], index->src_len, &attr->text[index->src]);
+		text_buffer_append_printf(out, "![%.*s](%.*s", index->alt_len, &attr->text[index->alt], index->src_len, &attr->text[index->src]);
 	}
 
 	if (index->title_len) {
-		text_buffer_append_printf(out, "title=\"%.*s\" ", index->title_len, &attr->text[index->title]);
+		text_buffer_append_printf(out, " title=\"%.*s\"", index->title_len, &attr->text[index->title]);
 	}
 
 	text_buffer_append_printf(out, ")");
@@ -453,6 +482,7 @@ static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * att
 		} else {
 			// TODO: I might need to process this text further for special characters
 			text_buffer_append_printf(out, "%.*s", content->len, content->text);
+			out->padding = 0;
 		}
 	}
 }
