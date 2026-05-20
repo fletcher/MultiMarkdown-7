@@ -150,13 +150,6 @@ enum media_type {
 };
 
 
-static char * media_ext[] = {
-	[textCSS] = "css",
-	[imageJPEG] = "jpg",
-	[imagePNG] = "png",
-};
-
-
 /// Assets (e.g. files that should be stored in zipfile formats -- images, CSS)
 struct asset {
 	char *					url;
@@ -256,5 +249,7 @@ void endnote_def_free(endnote_def * e);
 
 asset * read_ctx_get_asset(read_ctx * c, char * url);
 asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path);
+
+char * media_extension(enum media_type type);
 
 #endif

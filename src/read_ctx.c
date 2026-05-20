@@ -747,3 +747,16 @@ asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t 
 		return NULL;
 	}
 }
+
+
+static char * media_ext[] = {
+	[textCSS] = "css",
+	[imageJPEG] = "jpg",
+	[imagePNG] = "png",
+};
+
+
+char * media_extension(enum media_type type) {
+	return media_ext[type];
+}
+
