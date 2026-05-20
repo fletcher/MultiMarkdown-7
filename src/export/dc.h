@@ -55,7 +55,7 @@ enum dc_metadata {
 };
 
 
-void dc_write_term(text_buffer * out, enum dc_metadata term, const char * value, const char * id);
+void dc_write_term(text_buffer * out, enum dc_metadata term, const char * value, const char * id, const char * lead);
 
 void dc_write_language(text_buffer * out, enum language lang);
 

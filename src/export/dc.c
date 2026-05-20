@@ -55,11 +55,19 @@ static char * dc_term[] = {
 };
 
 
-void dc_write_term(text_buffer * out, enum dc_metadata term, const char * value, const char * id) {
+void dc_write_term(text_buffer * out, enum dc_metadata term, const char * value, const char * id, const char * lead) {
 	if (id) {
-		text_buffer_append_printf(out, "<dc:%s id=\"%s\">%s</dc:%s>\n", dc_term[term], id, value, dc_term[term]);
+		if (lead) {
+			text_buffer_append_printf(out, "<dc:%s id=\"%s\">%s%s</dc:%s>\n", dc_term[term], id, lead, value, dc_term[term]);
+		} else {
+			text_buffer_append_printf(out, "<dc:%s id=\"%s\">%s</dc:%s>\n", dc_term[term], id, value, dc_term[term]);
+		}
 	} else {
-		text_buffer_append_printf(out, "<dc:%s>%s</dc:%s>\n", dc_term[term], value, dc_term[term]);
+		if (lead) {
+			text_buffer_append_printf(out, "<dc:%s>%s%s</dc:%s>\n", dc_term[term], lead, value, dc_term[term]);
+		} else {
+			text_buffer_append_printf(out, "<dc:%s>%s</dc:%s>\n", dc_term[term], value, dc_term[term]);
+		}
 	}
 }
 
@@ -75,6 +83,6 @@ static char * language_code[] = {
 };
 
 void dc_write_language(text_buffer * out, enum language lang) {
-	dc_write_term(out, DC_LANGUAGE, language_code[lang], NULL);
+	dc_write_term(out, DC_LANGUAGE, language_code[lang], NULL, NULL);
 }
 

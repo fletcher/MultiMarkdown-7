@@ -95,14 +95,24 @@ static char * epub_package(read_ctx * r) {
 							  "<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
 							 );
 
-	// Identifier
+	// Identifier(s)
+	m = read_ctx_get_meta(r, "isbn");
+
+	if (m) {
+		dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id", "urn:isbn:");
+	} else {
+		char * uuid = uuid_new();
+		dc_write_term(buffer, DC_IDENTIFIER, uuid, NULL, NULL);
+		free(uuid);
+	}
+
 	m = read_ctx_get_meta(r, "uuid");
 
 	if (m) {
-		dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id");
+		dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id", NULL);
 	} else {
 		char * uuid = uuid_new();
-		dc_write_term(buffer, DC_IDENTIFIER, uuid, NULL);
+		dc_write_term(buffer, DC_IDENTIFIER, uuid, NULL, NULL);
 		free(uuid);
 	}
 
@@ -111,9 +121,9 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "title");
 
 	if (m) {
-		dc_write_term(buffer, DC_TITLE, m->value, NULL);
+		dc_write_term(buffer, DC_TITLE, m->value, NULL, NULL);
 	} else {
-		dc_write_term(buffer, DC_TITLE, "Untitled", NULL);
+		dc_write_term(buffer, DC_TITLE, "Untitled", NULL, NULL);
 	}
 
 
@@ -121,7 +131,7 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "author");
 
 	if (m) {
-		dc_write_term(buffer, DC_CREATOR, m->value, NULL);
+		dc_write_term(buffer, DC_CREATOR, m->value, NULL, NULL);
 	}
 
 
@@ -155,7 +165,7 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "publisher");
 
 	if (m) {
-		dc_write_term(buffer, DC_PUBLISHER, m->value, NULL);
+		dc_write_term(buffer, DC_PUBLISHER, m->value, NULL, NULL);
 	}
 
 
@@ -163,7 +173,7 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "published");
 
 	if (m) {
-		dc_write_term(buffer, DC_DATE, m->value, NULL);
+		dc_write_term(buffer, DC_DATE, m->value, NULL, NULL);
 	}
 
 
@@ -171,7 +181,7 @@ static char * epub_package(read_ctx * r) {
 	m = read_ctx_get_meta(r, "language");
 
 	if (m) {
-		dc_write_term(buffer, DC_LANGUAGE, m->value, NULL);
+		dc_write_term(buffer, DC_LANGUAGE, m->value, NULL, NULL);
 	} else {
 		dc_write_language(buffer, r->language);
 	}
