@@ -302,7 +302,7 @@ void text_buffer_prepend_text(text_buffer * b, const char * text, size_t text_le
 void text_buffer_delete_range(text_buffer * b, size_t pos, size_t len) {
 	if (b && len) {
 		// Shift "tail" portion of existing string
-		if (len == -1) {
+		if (len == (size_t) -1) {
 			len = b->len - pos;
 		}
 
