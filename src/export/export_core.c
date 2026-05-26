@@ -120,6 +120,73 @@ void precalculate_quotes(smart_quote * quotes, int n) {
 }
 
 
+static void export_plain(mmd_node ** n, const char * text, text_buffer * out) {
+	if (MMD_NODE_IS_BLOCK((*n))) {
+		text_buffer_pad(out, 2);
+		export_plain_text((*n)->child, &text[(*n)->start], out);
+	} else {
+		switch ((*n)->type) {
+			default:
+				if ((*n)->child) {
+					switch ((*n)->type) {
+						case TOKEN_MANUAL_LABEL:
+							(*n) = (*n)->next;
+							break;
+
+						case TOKEN_PAIR_EMPH:
+						case TOKEN_PAIR_STRONG:
+						case TOKEN_PAIR_STAR:
+						case TOKEN_PAIR_STAR_USED:
+							export_plain_text((*n)->child, text, out);
+							(*n) = (*n)->next;
+							break;
+
+						case TOKEN_PAIR_QUOTE_DOUBLE:
+							text_buffer_append_c(out, '"');
+							export_plain_text((*n)->child, text, out);
+							text_buffer_append_c(out, '"');
+							(*n) = (*n)->next;
+							break;
+
+						case TOKEN_PAIR_QUOTE_SINGLE:
+							text_buffer_append_c(out, '\'');
+							export_plain_text((*n)->child, text, out);
+							text_buffer_append_c(out, '\'');
+							(*n) = (*n)->next;
+							break;
+
+						default:
+							export_plain_text((*n)->child, text, out);
+							break;
+					}
+				} else {
+					switch ((*n)->type) {
+						case TOKEN_ATX_MARKER:
+						case TOKEN_HASH:
+							break;
+
+						default:
+							text_buffer_append_text(out, &text[(*n)->start], (*n)->len);
+							break;
+					}
+				}
+
+				break;
+		}
+	}
+}
+
+
+/// Export mmd_node tree to plain text (without MMD markup)
+void export_plain_text(mmd_node * n, const char * text, text_buffer * out) {
+	while (n) {
+		export_plain(&n, text, out);
+
+		n = n->next;
+	}
+}
+
+
 void url_encode_text(const char * text, size_t len, text_buffer * out) {
 	const char * stop = text + len;
 

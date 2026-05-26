@@ -74,6 +74,7 @@
 typedef struct mmd_node mmd_node;
 typedef struct read_ctx read_ctx;
 typedef struct stack stack;
+typedef struct toc_node toc_node;
 
 
 /// Process MultiMarkdown text into another format
@@ -141,10 +142,21 @@ read_ctx * mmd_tags_str(const char * text, uint32_t options);
 read_ctx * mmd_tags_str_len(const char * text, size_t in_len, uint32_t options);
 
 
+/// Process MultiMarkdown text for TOC structure
+toc_node * mmd_toc_filename(const char * fname, uint32_t options);
+toc_node * mmd_toc_file(FILE * in, uint32_t options);
+toc_node * mmd_toc_str(const char * text, uint32_t options);
+toc_node * mmd_toc_str_len(const char * text, size_t in_len, uint32_t options);
+
+
 /// Utility functions
 
 void mmd_node_free(mmd_node * n);
 void mmd_node_tree_free(mmd_node * n);
+
+void toc_node_free(toc_node * n);
+void toc_mode_tree_free(toc_node * t);
+
 
 /// Calculate hash values for AST (and return overall hash value)
 uint32_t mmd_hash_node_tree(mmd_node * n);
@@ -268,6 +280,19 @@ struct mmd_line_node {
 };
 
 typedef struct mmd_line_node mmd_line_node;
+
+
+/// TOC nodes are used for extracting structure from the document
+struct toc_node {
+	char *				title;
+	char *				label;
+
+	size_t				start;
+	size_t				end;
+
+	struct toc_node *	next;
+	struct toc_node *	child;
+};
 
 
 /// Macros to determine node class based on type value

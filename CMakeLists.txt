@@ -42,6 +42,7 @@ set(src_files
 	src/mmd_node_pool.c
 	src/criticmarkup.c
 	src/transclude.c
+	src/toc_node.c
 
 	src/base64.c
 	src/char.c
@@ -93,6 +94,7 @@ set(private_headers
 	src/mmd_node_pool.h
 	src/criticmarkup.h
 	src/transclude.h
+	src/toc_node.h
 
 	src/base64.h
 	src/char.h

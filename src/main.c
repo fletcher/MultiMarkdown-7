@@ -155,6 +155,19 @@ FILE * flex_out_open(const char * path, uint32_t options) {
 }
 
 
+void print_toc(int level, toc_node * t) {
+	while (t) {
+		fprintf(stdout, "* (%d) (%lu:%lu) '%s' => '%s'\n", level, t->start, t->end, t->label, t->title);
+
+		if (t->child) {
+			print_toc(level + 1, t->child);
+		}
+
+		t = t->next;
+	}
+}
+
+
 int main(int argc, char * const argv[]) {
 	if (OBJECT_REPLACEMENT_CHARACTER > 250) {
 		// Adding too many token types...
@@ -376,6 +389,8 @@ int main(int argc, char * const argv[]) {
 			action = 'm';
 		} else if (strcmp(argv[1], "tags") == 0) {
 			action = 't';
+		} else if (strcmp(argv[1], "toc") == 0) {
+			action = 'o';
 		} else if (strcmp(argv[1], "ast") == 0) {
 			action = 'p';
 			options &= (~MMD_OUT_FORMAT_MASK);
@@ -648,6 +663,23 @@ int main(int argc, char * const argv[]) {
 					}
 
 					read_ctx_free(r);
+				}
+
+				break;
+
+			case 'o':
+
+				// Parse the specified document(s) or input in stdin and export the TOC on stdout
+				if (optind + offset < argc) {
+					for (optind += offset; optind < argc; optind++) {
+						toc_node * t = mmd_toc_filename(argv[optind], options);
+						print_toc(1, t);
+						toc_mode_tree_free(t);
+					}
+				} else {
+					toc_node * t = mmd_toc_file(stdin, options);
+					print_toc(1, t);
+					toc_mode_tree_free(t);
 				}
 
 				break;

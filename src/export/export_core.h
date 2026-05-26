@@ -102,6 +102,8 @@ void precalculate_quotes(smart_quote * quotes, int n);
 
 link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uint32_t options);
 
+void export_plain_text(mmd_node * n, const char * text, text_buffer * out);
+
 void url_encode_text(const char * text, size_t len, text_buffer * out);
 
 /// Interpret meaning of a [...] based on next token and content (e.g. link, image, abbreviation, citation, footnote, glossary, variable)
