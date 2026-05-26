@@ -674,12 +674,12 @@ int main(int argc, char * const argv[]) {
 					for (optind += offset; optind < argc; optind++) {
 						toc_node * t = mmd_toc_filename(argv[optind], options);
 						print_toc(1, t);
-						toc_mode_tree_free(t);
+						toc_node_tree_free(t);
 					}
 				} else {
 					toc_node * t = mmd_toc_file(stdin, options);
 					print_toc(1, t);
-					toc_mode_tree_free(t);
+					toc_node_tree_free(t);
 				}
 
 				break;

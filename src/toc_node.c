@@ -159,6 +159,7 @@ toc_node * mmd_toc_buffer(text_buffer * buffer, uint32_t options) {
 
 	vector_line_node_free(vl);
 	mmd_node_pool_free(vn);
+	read_ctx_free(r);
 
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
@@ -298,15 +299,20 @@ void toc_node_free(toc_node * t) {
 		free(t->label);
 
 		if (t->child) {
-			toc_mode_tree_free(t->child);
+			toc_node_tree_free(t->child);
 		}
+
+		free(t);
 	}
 }
 
 
-void toc_mode_tree_free(toc_node * t) {
+void toc_node_tree_free(toc_node * t) {
+	toc_node * next;
+
 	while (t) {
+		next = t->next;
 		toc_node_free(t);
-		t = t->next;
+		t = next;
 	}
 }

@@ -155,7 +155,7 @@ void mmd_node_free(mmd_node * n);
 void mmd_node_tree_free(mmd_node * n);
 
 void toc_node_free(toc_node * n);
-void toc_mode_tree_free(toc_node * t);
+void toc_node_tree_free(toc_node * t);
 
 
 /// Calculate hash values for AST (and return overall hash value)
