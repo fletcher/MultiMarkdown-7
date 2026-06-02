@@ -531,7 +531,14 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 	if (!(options & MMD_OPTION_COMPATIBILITY) && l->key) {
 		mmd_print_const(out, "\" id=\"");
 		// Need html_id instead of md_id
-		char * id = html_id_from_text(l->key, strlen(l->key), false);
+		char * id;
+
+		if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+			id = html_clean_id_from_text(l->key, strlen(l->key), false);
+		} else {
+			id = html_id_from_text(l->key, strlen(l->key), false);
+		}
+
 		export_html_raw_text(id, strlen(id), out);
 		free(id);
 	}
@@ -1281,7 +1288,14 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 				if (h) {
 					export_html_raw_text(h->key, strlen(h->key), out);
 				} else {
-					char * id = html_id_from_text(&text[b->start], b->len, true);
+					char * id;
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+						id = html_clean_id_from_text(&text[b->start], b->len, true);
+					} else {
+						id = html_id_from_text(&text[b->start], b->len, true);
+					}
+
 					export_html_raw_text(id, strlen(id), out);
 					free(id);
 				}
@@ -1321,7 +1335,14 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 				if (h) {
 					export_html_raw_text(h->key, strlen(h->key), out);
 				} else {
-					char * id = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					char * id;
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+						id = html_clean_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					} else {
+						id = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					}
+
 					export_html_raw_text(id, strlen(id), out);
 					free(id);
 				}

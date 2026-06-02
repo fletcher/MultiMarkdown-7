@@ -96,6 +96,7 @@ typedef struct {
 
 
 char * html_id_from_text(const char * text, size_t len, bool require_odd_count);
+char * html_clean_id_from_text(const char * text, size_t len, bool require_odd_count);
 char * md_id_from_text(const char * text, size_t len, bool require_odd_count);
 char * definition_name_from_text(const char * text, size_t len);
 

@@ -100,20 +100,22 @@ static char * epub_package(read_ctx * r) {
 
 	if (m) {
 		dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id", "urn:isbn:");
-	} else {
-		char * uuid = uuid_new();
-		dc_write_term(buffer, DC_IDENTIFIER, uuid, NULL, NULL);
-		free(uuid);
-	}
 
-	m = read_ctx_get_meta(r, "uuid");
+		m = read_ctx_get_meta(r, "uuid");
 
-	if (m) {
-		dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id", NULL);
+		if (m) {
+			dc_write_term(buffer, DC_IDENTIFIER, m->value, NULL, "uuid:");
+		}
 	} else {
-		char * uuid = uuid_new();
-		dc_write_term(buffer, DC_IDENTIFIER, uuid, NULL, NULL);
-		free(uuid);
+		m = read_ctx_get_meta(r, "uuid");
+
+		if (m) {
+			dc_write_term(buffer, DC_IDENTIFIER, m->value, "pub-id", NULL);
+		} else {
+			char * uuid = uuid_new();
+			dc_write_term(buffer, DC_IDENTIFIER, uuid, "pub-id", "uuid:");
+			free(uuid);
+		}
 	}
 
 
@@ -142,7 +144,7 @@ static char * epub_package(read_ctx * r) {
 		asset * a = read_ctx_get_asset(r, m->value);
 
 		if (a) {
-			text_buffer_append_printf(buffer, "<meta name=\"cover\" content=\"assets/%s.%s\"/>\n", a->uuid, media_extension(a->type));
+			text_buffer_append_printf(buffer, "<meta name=\"cover\" content=\"%s\"/>\n", a->uuid);
 		}
 	}
 
@@ -309,9 +311,24 @@ static char * epub_nav(read_ctx * r, write_ctx * w, uint32_t options) {
 							  "<h2>Table of Contents</h2>\n"
 							 );
 
+	// Configure TOC
+	int toc_min = 0;
+	int toc_max = 6;
+
+	m = read_ctx_get_meta(r, "tocmin");
+
+	if (m) {
+		toc_min = atoi(m->value);
+	}
+
+	m = read_ctx_get_meta(r, "tocmax");
+
+	if (m) {
+		toc_max = atoi(m->value);
+	}
 
 	size_t counter = 0;
-	export_toc_entry(buffer, &counter, 0, 0, 6, r, w, options);
+	export_toc_entry(buffer, &counter, 0, toc_min, toc_max, r, w, options);
 
 	text_buffer_append_printf(buffer, "</nav>\n</body>\n</html>\n");
 

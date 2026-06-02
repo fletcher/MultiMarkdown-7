@@ -1417,6 +1417,57 @@ char * html_id_from_text(const char * text, size_t len, bool require_odd_count) 
 }
 
 
+/// Used to create HTML compatible id (no spaces)
+/// Requires first character to be a letter, no multibyte characters
+char * html_clean_id_from_text(const char * text, size_t len, bool require_odd_count) {
+	if (0 && require_odd_count) {}
+
+	text_buffer * label = text_buffer_new(len);
+
+	const char * stop = text + len;
+	const char * next = text + 1;
+
+	while (text < stop) {
+
+		if ((next < stop) && ((*next & 0xC0) == 0x80)) {
+			// Skip multibyte characters
+
+			while ((next < stop) && ((*next & 0xC0) == 0x80)) {
+				text++;
+				next++;
+			}
+		} else {
+			switch (*text) {
+				case '_':
+				case '-':
+					// Allowed symbols
+					text_buffer_append_c(label, *text);
+					break;
+
+				default:
+					if (char_is_alphanumeric(*text)) {
+						// Allow letters and digits
+						if ((label->len == 0) && char_is_digit(*text)) {
+							text_buffer_append_c(label, 'X');
+						}
+
+						text_buffer_append_c(label, tolower(*text));
+					}
+
+					break;
+			}
+		}
+
+		text++;
+		next++;
+	}
+
+	char * result = label->text;
+	text_buffer_free(label, 0);
+	return result;
+}
+
+
 /// Create a Markdown id (e.g. for reference links, images, etc.)
 /// Spaces are allowed (but collapse multiple spaces into a single space)
 /// Trim leading and trailing whitespace

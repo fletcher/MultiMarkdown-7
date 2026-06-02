@@ -1028,7 +1028,13 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 
 				if (label) {
 					// Use manually specified label
-					char * key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+					char * key;
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+						key = html_clean_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+					} else {
+						key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+					}
 
 					read_ctx_store_internal_link_key(c, key, strlen(key));
 					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
@@ -1037,7 +1043,13 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 				} else if (!(options & MMD_OPTION_RANDOM_HEADER_ID)) {
 					// Use automatic label
 					if (b->content->next) {
-						char * key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
+						char * key;
+
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+							key = html_clean_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
+						} else {
+							key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
+						}
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
@@ -1250,7 +1262,13 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 
 					if (label) {
 						// Use manually specified label
-						char * key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+						char * key;
+
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+							key = html_clean_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+						} else {
+							key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+						}
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
@@ -1258,7 +1276,13 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						free(key);
 					} else if (!(options & MMD_OPTION_RANDOM_HEADER_ID)) {
 						// Use automatic label
-						char * key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+						char * key;
+
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+							key = html_clean_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+						} else {
+							key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+						}
 
 						read_ctx_store_internal_link_key(c, key, strlen(key));
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);

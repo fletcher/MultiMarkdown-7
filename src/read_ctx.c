@@ -701,6 +701,13 @@ static asset * asset_new(char * url, size_t url_len, enum media_type type) {
 	if (a) {
 		a->url = my_strndup(url, url_len);
 		a->uuid = uuid_new();
+
+		// EPUB id require first character to be a letter
+		while (a->uuid[0] >= '0' && a->uuid[0] <= '9') {
+			free(a->uuid);
+			a->uuid = uuid_new();
+		}
+
 		a->stored = 0;
 		a->type = type;
 		a->data = NULL;
@@ -730,6 +737,8 @@ asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t 
 			} else if (!strncmp(extension, ".png", 4)) {
 				type = imagePNG;
 			} else if (!strncmp(extension, ".jpg", 4)) {
+				type = imageJPEG;
+			} else if (!strncmp(extension, ".jpeg", 4)) {
 				type = imageJPEG;
 			}
 
