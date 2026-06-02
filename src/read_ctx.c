@@ -695,17 +695,23 @@ asset * read_ctx_get_asset(read_ctx * c, char * url) {
 }
 
 
-static asset * asset_new(char * url, size_t url_len, enum media_type type) {
+static asset * asset_new(char * url, size_t url_len, enum media_type type, const char * id) {
 	asset * a = malloc(sizeof(asset));
 
 	if (a) {
 		a->url = my_strndup(url, url_len);
 		a->uuid = uuid_new();
 
-		// EPUB id require first character to be a letter
-		while (a->uuid[0] >= '0' && a->uuid[0] <= '9') {
-			free(a->uuid);
-			a->uuid = uuid_new();
+		// EPUB ids require first character to be a letter
+		if (id) {
+			a->id = my_strdup(id);
+		} else {
+			a->id = NULL;
+
+			while (a->uuid[0] >= '0' && a->uuid[0] <= '9') {
+				free(a->uuid);
+				a->uuid = uuid_new();
+			}
 		}
 
 		a->stored = 0;
@@ -718,7 +724,7 @@ static asset * asset_new(char * url, size_t url_len, enum media_type type) {
 }
 
 
-asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path) {
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path, const char * id) {
 	if (c && url && url_len) {
 		asset * a = read_ctx_get_asset(c, url);
 
@@ -742,7 +748,7 @@ asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t 
 				type = imageJPEG;
 			}
 
-			a = asset_new(url, url_len, type);
+			a = asset_new(url, url_len, type, id);
 			HASH_ADD_KEYPTR(hh, c->asset_hash, a->url, url_len, a);
 
 			if (options & (MMD_OPTION_EMBED_ASSETS | MMD_OPTION_STORE_ASSETS | MMD_OPTION_DOWNLOAD_ASSETS)) {

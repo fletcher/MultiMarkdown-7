@@ -154,6 +154,7 @@ enum media_type {
 struct asset {
 	char *					url;
 	char *					uuid;
+	char *					id;
 	char 					stored;
 	enum media_type 		type;
 	void *					data;
@@ -248,7 +249,7 @@ void abbr_def_free(abbr_def * a);
 void endnote_def_free(endnote_def * e);
 
 asset * read_ctx_get_asset(read_ctx * c, char * url);
-asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path);
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path, const char * id);
 
 char * media_extension(enum media_type type);
 

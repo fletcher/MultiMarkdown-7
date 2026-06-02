@@ -493,7 +493,7 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 	mmd_print_const(out, "<img src=\"");
 
 	if (options & MMD_OPTION_EMBED_ASSETS) {
-		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path);
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path, l->key);
 
 		if (a && a->len > 0) {
 			// Embed image binary data directly (Base64 encoded)
@@ -507,7 +507,7 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 			url_encode_text(l->url, l->url_len, out);
 		}
 	} else if (options & MMD_OPTION_STORE_ASSETS) {
-		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path);
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path, l->key);
 
 		if (a) {
 			mmd_print_const(out, "assets/");
@@ -1629,7 +1629,7 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 			case 'c':
 				if (strcmp(m->key, "css") == 0) {
 					if (options & MMD_OPTION_EMBED_ASSETS) {
-						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path);
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path, "css");
 
 						if (a && a->len) {
 							mmd_print_const(out, "\t<style>\n");
@@ -1642,7 +1642,7 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 					mmd_print_const(out, "\t<link type=\"text/css\" rel=\"stylesheet\" href=\"");
 
 					if (options & MMD_OPTION_STORE_ASSETS) {
-						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path);
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path, "css");
 
 						if (a) {
 							mmd_print_const(out, "assets/");
@@ -1663,7 +1663,7 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, u
 					continue;
 				} else if (strcmp(m->key, "cover") == 0) {
 					if (options & MMD_OPTION_STORE_ASSETS) {
-						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path);
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path, "cover-image");
 
 						if (a && a->len) {
 							continue;
