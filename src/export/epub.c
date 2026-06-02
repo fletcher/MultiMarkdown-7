@@ -91,7 +91,7 @@ static char * epub_package(read_ctx * r) {
 
 	text_buffer_append_printf(buffer,
 							  "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n" \
-							  "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"pub-id\">\n" \
+							  "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.3\" unique-identifier=\"pub-id\">\n" \
 							  "<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
 							 );
 
