@@ -77,6 +77,8 @@
 #include "import/outline.h"
 #include "yxml.h"
 
+#include "version.h"
+
 #ifdef USE_CURL
 	#include <curl/curl.h>
 #endif
@@ -100,6 +102,18 @@ static int64_t difftimespec_us(const struct timespec after, const struct timespe
 		   + ((int64_t)after.tv_nsec - (int64_t)before.tv_nsec) / 1000;
 }
 #endif
+
+
+/// Return string containing MMD version
+char * mmd_version(void) {
+	char * result = NULL;
+
+#ifndef TEST
+	result = my_strdup(LIBMULTIMARKDOWN7_VERSION);
+#endif
+
+	return result;
+}
 
 
 /// Parse MultiMarkdown text into AST
@@ -379,19 +393,26 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 #endif
+	int finished = 0;
 
 	// Are we starting from OPML or ITMZ?
-	if (options & MMD_OPTION_PARSE_OPML) {
-		mmd_import_outline(source_buffer, OUTLINE_OPML);
+	if (!finished && options & MMD_OPTION_PARSE_OPML) {
+		if (mmd_import_outline(source_buffer, OUTLINE_OPML)) {
+			finished = 1;
+		}
 	}
 
-	if (options & MMD_OPTION_PARSE_ITMZ) {
-		mmd_import_outline(source_buffer, OUTLINE_ITMZ);
+	if (!finished && options & MMD_OPTION_PARSE_ITMZ) {
+		if (mmd_import_outline(source_buffer, OUTLINE_ITMZ)) {
+			finished = 1;
+		}
 	}
 
 	// Or HTML
-	if (options & MMD_OPTION_PARSE_HTML) {
-		mmd_import_html(source_buffer);
+	if (!finished && options & MMD_OPTION_PARSE_HTML) {
+		if (mmd_import_html(source_buffer)) {
+			finished = 1;
+		}
 	}
 
 	// Create structures used for parsing

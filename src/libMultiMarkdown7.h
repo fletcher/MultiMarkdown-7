@@ -76,6 +76,9 @@ typedef struct read_ctx read_ctx;
 typedef struct stack stack;
 typedef struct toc_node toc_node;
 
+/// Return string containing MMD version
+char * mmd_version(void);
+
 
 /// Process MultiMarkdown text into another format
 /// Output is sent to designated file stream (e.g. stdout)
