@@ -120,9 +120,9 @@ char * mmd_version(void) {
 void mmd_initialize(void) {
 	custom_seed_rand();
 
-//#ifdef USE_CURL
+#ifdef USE_CURL
 	curl_global_init(CURL_GLOBAL_ALL);
-//#endif
+#endif
 }
 
 
