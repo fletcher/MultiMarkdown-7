@@ -116,6 +116,16 @@ char * mmd_version(void) {
 }
 
 
+/// Initialize random number generation and libcurl (if used)
+void mmd_initialize(void) {
+	custom_seed_rand();
+
+//#ifdef USE_CURL
+	curl_global_init(CURL_GLOBAL_ALL);
+//#endif
+}
+
+
 /// Parse MultiMarkdown text into AST
 /// Returns tree of mmd_nodes -- will need to be freed
 mmd_node * mmd_parse_filename(const char * fname, read_ctx * c, uint32_t options) {
@@ -245,6 +255,8 @@ void mmd_process_url(const char * url, FILE * out, uint32_t options, const char 
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) source_buffer);
 	curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	CURLcode res = curl_easy_perform(curl);

@@ -146,6 +146,8 @@ int asset_load_with_curl(asset * a) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) buffer);
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 		curl_easy_setopt(curl, CURLOPT_URL, a->url);
 		CURLcode res = curl_easy_perform(curl);
@@ -181,6 +183,8 @@ mz_bool archive_asset_with_curl(mz_zip_archive * pZip, const char * destination,
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) buffer);
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		CURLcode res = curl_easy_perform(curl);

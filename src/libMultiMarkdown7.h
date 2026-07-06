@@ -80,6 +80,10 @@ typedef struct toc_node toc_node;
 char * mmd_version(void);
 
 
+/// Initialize random number generation and libcurl (if used)
+void mmd_initialize(void);
+
+
 /// Process MultiMarkdown text into another format
 /// Output is sent to designated file stream (e.g. stdout)
 /// search_path and source_path are used for file transclusion, can be nil to disable
