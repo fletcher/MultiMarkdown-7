@@ -423,6 +423,11 @@ static int export_inline_link(const char * text, size_t len, mmd_node ** t, text
 				default:
 					(*t) = (*t)->next;
 					(*t) = (*t)->next;
+
+					if ((*t)->type == TOKEN_NL) {
+						(*t) = (*t)->next;
+					}
+
 					(*t) = (*t)->next;
 					break;
 			}
