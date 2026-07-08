@@ -39,6 +39,7 @@
 */
 
 
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,6 +113,12 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 	if (in) {
 		r = buffer_file(in, capacity);
 		fclose(in);
+	} else {
+		if (errno == EPERM || errno == EACCES) {
+			fprintf(stderr, "No permission to access %s.\n", fname);
+		} else {
+			fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+		}
 	}
 
 	free(wstr);
@@ -121,6 +128,12 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 	if (in) {
 		r = buffer_file(in, capacity);
 		fclose(in);
+	} else {
+		if (errno == EPERM || errno == EACCES) {
+			fprintf(stderr, "No permission to access %s.\n", fname);
+		} else {
+			fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+		}
 	}
 
 #endif

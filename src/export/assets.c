@@ -74,18 +74,20 @@ mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination,
 	if (pZip && destination && fname && directory) {
 		char * path = concatenate_paths(directory, fname, true);
 
-		FILE * in = flex_fopen(path);
+		if (path) {
+			FILE * in = flex_fopen(path);
 
-		free(path);
+			free(path);
 
-		if (in) {
-			text_buffer * buffer = buffer_file(in, 8192);
+			if (in) {
+				text_buffer * buffer = buffer_file(in, 8192);
 
-			status = mz_zip_writer_add_mem(pZip, destination, buffer->text, buffer->len, MZ_BEST_COMPRESSION);
+				status = mz_zip_writer_add_mem(pZip, destination, buffer->text, buffer->len, MZ_BEST_COMPRESSION);
 
-			text_buffer_free(buffer, true);
+				text_buffer_free(buffer, true);
 
-			fclose(in);
+				fclose(in);
+			}
 		}
 	}
 
@@ -97,24 +99,26 @@ int asset_load_local(asset * a, const char * source_path) {
 	if (a && source_path) {
 		char * path = concatenate_paths(source_path, a->url, true);
 
-		FILE * in = flex_fopen(path);
+		if (path) {
+			FILE * in = flex_fopen(path);
 
-		free(path);
+			free(path);
 
-		if (in) {
-			text_buffer * buffer = buffer_file(in, 8192);
+			if (in) {
+				text_buffer * buffer = buffer_file(in, 8192);
 
-			if (buffer) {
-				a->data = buffer->text;
-				a->len = buffer->len;
-				text_buffer_free(buffer, 0);
-				a->stored = 1;
+				if (buffer) {
+					a->data = buffer->text;
+					a->len = buffer->len;
+					text_buffer_free(buffer, 0);
+					a->stored = 1;
+				}
+
+				fclose(in);
 			}
 
-			fclose(in);
+			return a->stored;
 		}
-
-		return a->stored;
 	}
 
 	return 0;

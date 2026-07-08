@@ -39,6 +39,7 @@
 */
 
 
+#include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -265,6 +266,14 @@ FILE * flex_fopen(const char * fname) {
 #else
 	in = fopen(fname, "r");
 #endif
+
+	if (!in) {
+		if (errno == EPERM || errno == EACCES) {
+			fprintf(stderr, "No permission to access %s.\n", fname);
+		} else {
+			fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+		}
+	}
 
 	return in;
 }
