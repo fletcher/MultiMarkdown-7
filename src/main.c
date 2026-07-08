@@ -524,7 +524,7 @@ int main(int argc, char * const argv[]) {
 
 						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTBUNDLE) {
 							size_t len;
-							char * data = mmd_process_filename_to_str(argv[optind], &len, options, NULL);
+							char * data = mmd_process_filename_to_str(argv[optind], &len, options, NULL, NULL);
 
 							zip_binary_extract_to_path(data, len, new_file);
 							free(data);
@@ -532,7 +532,7 @@ int main(int argc, char * const argv[]) {
 							FILE * out = flex_out_open(new_file, options);
 
 							if (out) {
-								mmd_process_filename(argv[optind], out, options, NULL);
+								mmd_process_filename(argv[optind], out, options, NULL, NULL);
 
 								fclose(out);
 							}
@@ -551,7 +551,7 @@ int main(int argc, char * const argv[]) {
 				// Parse the specified document(s) or input on stdin and export on stdout
 				if (optind + offset < argc) {
 					for (optind += offset; optind < argc; optind++) {
-						mmd_process_filename(argv[optind], stdout, options, NULL);
+						mmd_process_filename(argv[optind], stdout, options, NULL, NULL);
 					}
 				} else {
 					char buf[1024] = {0};
@@ -571,9 +571,9 @@ int main(int argc, char * const argv[]) {
 					}
 
 					if (source_path[0] == '\0') {
-						mmd_process_file(stdin, out, options, wd, NULL);
+						mmd_process_file(stdin, out, options, wd, NULL, NULL);
 					} else {
-						mmd_process_file(stdin, out, options, source_path, source_path);
+						mmd_process_file(stdin, out, options, source_path, source_path, NULL);
 					}
 				}
 
