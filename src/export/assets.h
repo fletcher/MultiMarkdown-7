@@ -51,6 +51,6 @@ mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * 
 
 
 /// Store asset data
-void asset_store_data(asset * a, uint32_t options, const char * source_path);
+void asset_store_data(asset * a, uint32_t options, const char * source_path, read_ctx * r);
 
 #endif

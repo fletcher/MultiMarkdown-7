@@ -39,6 +39,7 @@
 */
 
 
+#include <errno.h>
 #include <stdlib.h>
 
 #include "libMultiMarkdown7.h"
@@ -95,14 +96,12 @@ mz_bool archive_asset_from_file(mz_zip_archive * pZip, const char * destination,
 }
 
 
-int asset_load_local(asset * a, const char * source_path) {
+int asset_load_local(asset * a, const char * source_path, read_ctx * r) {
 	if (a && source_path) {
 		char * path = concatenate_paths(source_path, a->url, true);
 
 		if (path) {
 			FILE * in = flex_fopen(path);
-
-			free(path);
 
 			if (in) {
 				text_buffer * buffer = buffer_file(in, 8192);
@@ -115,7 +114,13 @@ int asset_load_local(asset * a, const char * source_path) {
 				}
 
 				fclose(in);
+			} else {
+				if (errno == EPERM || errno == EACCES) {
+					read_ctx_store_failed_file(r, path);
+				}
 			}
+
+			free(path);
 
 			return a->stored;
 		}
@@ -290,7 +295,7 @@ mz_bool archive_assets_to_zip(mz_zip_archive * pZip, read_ctx * r, const char * 
 
 
 /// Store asset data
-void asset_store_data(asset * a, uint32_t options, const char * source_path) {
+void asset_store_data(asset * a, uint32_t options, const char * source_path, read_ctx * r) {
 	if (a->stored) {
 		// Already done
 		return;
@@ -308,5 +313,5 @@ void asset_store_data(asset * a, uint32_t options, const char * source_path) {
 	}
 
 	// Look for local file
-	asset_load_local(a, source_path);
+	asset_load_local(a, source_path, r);
 }

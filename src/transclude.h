@@ -44,7 +44,7 @@
 
 void mmd_add_mmd_header_footer(text_buffer * buffer, uint32_t options);
 
-void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path);
+void mmd_transclude(text_buffer * buffer, uint32_t options, read_ctx * c, const char * search_path, const char * source_path);
 
 char * concatenate_paths(const char * dir, const char * path, int resolve);
 char * concatenate_paths_ext(const char * dir, const char * path, const char * ext, int resolve);

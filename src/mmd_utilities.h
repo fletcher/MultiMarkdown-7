@@ -70,4 +70,8 @@ char * mmd_dirname(const char * path);
 /// Check text for a specified char
 int text_contains_char(const char * text, size_t len, char target);
 
+
+/// Find the length of the longest common prefix for two paths
+size_t longest_common_prefix(const char * path1, size_t len1, const char * path2, size_t len2);
+
 #endif

@@ -165,6 +165,15 @@ struct asset {
 typedef struct asset asset;
 
 
+/// File paths
+struct file_path {
+	char *					path;
+	struct UT_hash_handle	hh;
+};
+
+typedef struct file_path file_path;
+
+
 /// Structured information from parsing process
 struct read_ctx {
 	char				allow_meta;
@@ -207,6 +216,7 @@ struct read_ctx {
 	int					note_used;
 
 	asset *				asset_hash;
+	file_path *			failed_file_hash;
 };
 
 
@@ -250,6 +260,9 @@ void endnote_def_free(endnote_def * e);
 
 asset * read_ctx_get_asset(read_ctx * c, char * url);
 asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path, const char * id);
+
+file_path * read_ctx_get_failed_file(read_ctx * c, const char * path);
+void read_ctx_store_failed_file(read_ctx * c, const char * path);
 
 char * media_extension(enum media_type type);
 

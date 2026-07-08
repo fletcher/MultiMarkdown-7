@@ -39,6 +39,7 @@
 */
 
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -194,7 +195,7 @@ char * concatenate_paths_ext(const char * dir, const char * path, const char * e
 }
 
 
-read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path, stack * parsed) {
+read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, read_ctx * c, const char * search_path, const char * source_path, stack * parsed) {
 	stack_push(parsed, (void *) source_path);
 
 	char * start, * stop;
@@ -305,7 +306,7 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 			// Strip BOM
 			text_buffer_delete_bom(buf);
 
-			read_ctx * rr = mmd_transclude_recursive(buf, options, search_path, clean_path, parsed);
+			read_ctx * rr = mmd_transclude_recursive(buf, options, c, search_path, clean_path, parsed);
 
 			// We don't want to insert metadata from transcluded file
 			text_buffer_delete_range(buf, 0, rr->meta_end);
@@ -317,6 +318,10 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 
 			text_buffer_free(buf, 1);
 			read_ctx_free(rr);
+		} else {
+			if (errno == EPERM || errno == EACCES) {
+				read_ctx_store_failed_file(c, clean_path);
+			}
 		}
 
 finish_match:
@@ -336,7 +341,7 @@ finish_match:
 }
 
 
-void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_transclude(text_buffer * buffer, uint32_t options, read_ctx * c, const char * search_path, const char * source_path) {
 	// Ensure source_path is an absolute path
 	char * absolute_source_path = NULL;
 	char * absolute_search_path = NULL;
@@ -360,7 +365,7 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 	if (absolute_search_path) {
 		stack * s = stack_new(0);
 
-		read_ctx * r = mmd_transclude_recursive(buffer, options, absolute_search_path, absolute_source_path, s);
+		read_ctx * r = mmd_transclude_recursive(buffer, options, c, absolute_search_path, absolute_source_path, s);
 
 		read_ctx_free(r);
 		stack_free(s);

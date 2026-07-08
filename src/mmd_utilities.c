@@ -267,13 +267,13 @@ FILE * flex_fopen(const char * fname) {
 	in = fopen(fname, "r");
 #endif
 
-	if (!in) {
-		if (errno == EPERM || errno == EACCES) {
-			fprintf(stderr, "No permission to access %s.\n", fname);
-		} else {
-			fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
-		}
-	}
+	// if (!in) {
+	// 	if (errno == EPERM || errno == EACCES) {
+	// 		fprintf(stderr, "No permission to access %s.\n", fname);
+	// 	} else {
+	// 		fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+	// 	}
+	// }
 
 	return in;
 }
@@ -315,4 +315,22 @@ int text_contains_char(const char * text, size_t len, char target) {
 	}
 
 	return 0;
+}
+
+
+/// Find the length of the longest common prefix for two paths
+size_t longest_common_prefix(const char * path1, size_t len1, const char * path2, size_t len2) {
+	size_t i = 0;
+	size_t len = 0;
+	size_t max = (len1 < len2) ? len1 : len2;
+
+	while (i < max && path1[i] && path1[i] == path2[i]) {
+		if (path1[i] == '/' || path1[i] == '\\') {
+			len = i;
+		}
+
+		i++;
+	}
+
+	return len;
 }

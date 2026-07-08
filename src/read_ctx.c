@@ -163,6 +163,15 @@ static void asset_free(asset * a) {
 }
 
 
+static void file_path_free(file_path * f) {
+	if (f) {
+		free(f->path);
+
+		free(f);
+	}
+}
+
+
 void read_ctx_reset(read_ctx * c, uint32_t options) {
 	if (c) {
 		while (c->header_stack->size) {
@@ -219,6 +228,13 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 		HASH_ITER(hh, c->asset_hash, s, s_tmp) {
 			HASH_DEL(c->asset_hash, s);
 			asset_free(s);
+		}
+
+		file_path * f, * f_tmp;
+
+		HASH_ITER(hh, c->failed_file_hash, f, f_tmp) {
+			HASH_DEL(c->failed_file_hash, f);
+			file_path_free(f);
 		}
 
 		stack_free(c->header_stack);
@@ -752,7 +768,7 @@ asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t 
 			HASH_ADD_KEYPTR(hh, c->asset_hash, a->url, url_len, a);
 
 			if (options & (MMD_OPTION_EMBED_ASSETS | MMD_OPTION_STORE_ASSETS | MMD_OPTION_DOWNLOAD_ASSETS)) {
-				asset_store_data(a, options, source_path);
+				asset_store_data(a, options, source_path, c);
 			}
 
 		}
@@ -775,3 +791,35 @@ char * media_extension(enum media_type type) {
 	return media_ext[type];
 }
 
+
+file_path * read_ctx_get_failed_file(read_ctx * c, const char * path) {
+	file_path * f = NULL;
+
+	HASH_FIND_STR(c->failed_file_hash, path, f);
+
+	return f;
+}
+
+
+static file_path * file_path_new(const char * path) {
+	file_path * f = malloc(sizeof(file_path));
+
+	if (f) {
+		f->path = my_strdup(path);
+	}
+
+	return f;
+}
+
+
+void read_ctx_store_failed_file(read_ctx * c, const char * path) {
+	if (c && path) {
+		file_path * f = read_ctx_get_failed_file(c, path);
+
+		if (!f) {
+			// File path not found, store it
+			f = file_path_new(path);
+			HASH_ADD_KEYPTR(hh, c->failed_file_hash, f->path, strlen(f->path), f);
+		}
+	}
+}

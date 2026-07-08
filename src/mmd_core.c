@@ -187,22 +187,22 @@ mmd_node * mmd_parse_buffer(text_buffer * buffer, read_ctx * c, uint32_t options
 
 /// Parse MultiMarkdown text into AST, and then convert AST into output format
 /// Print output to designated FILE stream
-void mmd_process_filename(const char * fname, FILE * out, uint32_t options, const char * search_path) {
+void mmd_process_filename(const char * fname, FILE * out, uint32_t options, const char * search_path, char ** failed_path) {
 	FILE * in = flex_fopen(fname);
 
 	if (in) {
-		mmd_process_file(in, out, options, search_path, fname);
+		mmd_process_file(in, out, options, search_path, fname, failed_path);
 		fclose(in);
 	}
 }
 
 
-void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	text_buffer * source_buffer = buffer_file(in, kDEFAULTCAPACITY);
 
 	text_buffer * out_buffer = text_buffer_new(0);
 
-	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, failed_path);
 
 	fwrite(out_buffer->text, out_buffer->len, 1, out);
 
@@ -211,20 +211,20 @@ void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * sear
 }
 
 
-void mmd_process_str(const char * text, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_str(const char * text, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	size_t len = strlen(text);
-	mmd_process_str_len(text, len, out, options, search_path, source_path);
+	mmd_process_str_len(text, len, out, options, search_path, source_path, failed_path);
 }
 
 
-void mmd_process_str_len(const char * text, size_t len, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_str_len(const char * text, size_t len, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	// Copy text in case we modify it (e.g. transclusion)
 	text_buffer * source_buffer = text_buffer_new(len);
 	text_buffer_append_text(source_buffer, text, len);
 
 	text_buffer * out_buffer = text_buffer_new(0);
 
-	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, failed_path);
 
 	fwrite(out_buffer->text, out_buffer->len, 1, out);
 
@@ -265,7 +265,7 @@ void mmd_process_url(const char * url, FILE * out, uint32_t options, const char 
 		// We got it
 		text_buffer * out_buffer = text_buffer_new(0);
 
-		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, NULL);
 
 		fwrite(out_buffer->text, out_buffer->len, 1, out);
 
@@ -305,7 +305,7 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 		// Handle transclusion
 		if (options & MMD_OPTION_TRANSCLUDE) {
-			mmd_transclude(source_buffer, options, search_path, source_path);
+			mmd_transclude(source_buffer, options, c, search_path, source_path);
 		}
 
 		// Accept CriticMarkup
@@ -397,7 +397,7 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 
 /// All roads lead to Rome....
-void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	// Track time
@@ -436,6 +436,26 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 	// Parse the text and export it
 	mmd_process_buffer_core(vl, vn, c, source_buffer, out_buffer, options, search_path, source_path);
 
+	// Report files we failed to access
+	if (failed_path && c->failed_file_hash) {
+		file_path * f, * f_tmp;
+		size_t len = -1;
+		char * first = NULL;
+
+		HASH_ITER(hh, c->failed_file_hash, f, f_tmp) {
+			if (len == (size_t) -1) {
+				first = f->path;
+				len = strlen(f->path);
+			} else {
+				len = longest_common_prefix(first, len, f->path, len);
+			}
+
+			// fprintf(stderr, "Failed to obtain access for '%s'\n", f->path);
+		}
+
+		*failed_path = my_strndup(first, len);
+	}
+
 	// Free structures used for parsing
 	vector_line_node_free(vl);
 	mmd_node_pool_free(vn);
@@ -458,12 +478,12 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 /// Parse MultiMarkdown text into AST, and then convert AST into output format
 /// Returns text string (or binary data) -- will need to be freed
-char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_t options, const char * search_path) {
+char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_t options, const char * search_path, char ** failed_path) {
 	char * out = NULL;
 	FILE * in = flex_fopen(fname);
 
 	if (in) {
-		out = mmd_process_file_to_str(in, out_len, options, search_path, fname);
+		out = mmd_process_file_to_str(in, out_len, options, search_path, fname, failed_path);
 		fclose(in);
 	}
 
@@ -471,10 +491,10 @@ char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_
 }
 
 
-char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	text_buffer * buffer = buffer_file(in, kDEFAULTCAPACITY);
 
-	char * out = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path);
+	char * out = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path, failed_path);
 
 	text_buffer_free(buffer, 1);
 
@@ -482,18 +502,18 @@ char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, co
 }
 
 
-char * mmd_process_str_to_str(const char * text, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_str_to_str(const char * text, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	size_t len = strlen(text);
-	return mmd_process_str_len_to_str(text, len, out_len, options, search_path, source_path);
+	return mmd_process_str_len_to_str(text, len, out_len, options, search_path, source_path, failed_path);
 }
 
 
-char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	/// Copy text in case we modify it (e.g. transclusion)
 	text_buffer * buffer = text_buffer_new(in_len);
 	text_buffer_append_text(buffer, text, in_len);
 
-	char * r = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path);
+	char * r = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path, failed_path);
 
 	text_buffer_free(buffer, 1);
 
@@ -501,10 +521,10 @@ char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out
 }
 
 
-char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	text_buffer * out_buffer = text_buffer_new(0);
 
-	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, failed_path);
 
 	char * result = out_buffer->text;
 	*out_len = out_buffer->len;
@@ -533,7 +553,7 @@ char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t optio
 		// We got it
 		text_buffer * out_buffer = text_buffer_new(0);
 
-		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, NULL);
 
 		result = out_buffer->text;
 		*out_len = out_buffer->len;
