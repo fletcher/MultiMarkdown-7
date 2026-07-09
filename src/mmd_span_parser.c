@@ -648,7 +648,7 @@ static void pair_emphasis_tokens(mmd_node * n) {
 
 	if ((n->type == TOKEN_PAIR_STAR) || (n->type == TOKEN_PAIR_UL)) {
 		if (n->child && n->child->type == n->type) {
-			if (n->next->type == n->child->tail->type) {
+			if (n->child->tail && n->next->type == n->child->tail->type) {
 				n->type = TOKEN_PAIR_STRONG;
 
 				if (n->child->child) {

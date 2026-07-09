@@ -94,6 +94,8 @@ text_buffer * buffer_file(FILE * in, size_t capacity) {
 		buffer->len = size;
 		buffer->capacity = capacity;
 		buffer->text[size] = '\0';
+	} else {
+		free(text);
 	}
 
 	return buffer;
