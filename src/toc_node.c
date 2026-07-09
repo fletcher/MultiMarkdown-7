@@ -68,13 +68,6 @@
 #endif
 
 
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest* tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-#endif
-
 
 #define kDEFAULTCAPACITY (4096 * 8)		// How big should file_buffer start?
 

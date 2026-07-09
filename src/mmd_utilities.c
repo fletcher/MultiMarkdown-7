@@ -281,6 +281,10 @@ FILE * flex_fopen(const char * fname) {
 
 /// Cross-platform dirname()
 char * mmd_dirname(const char * path) {
+	if (path == NULL) {
+		return NULL;
+	}
+
 	struct stat status;
 
 	// We already have a directory

@@ -39,7 +39,7 @@ int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size) {
 		// Test each set of options by writing straight to /dev/null
 		F(i, sizeof(options) / sizeof(options[0])) {
 			FILE *out = fopen("/dev/null", "w");
-			mmd_process_str_len((const char *) data, size, out, options[i], NULL, NULL);
+			mmd_process_str_len((const char *) data, size, out, options[i], NULL, NULL, NULL);
 			fclose(out);
 		}
 	}
@@ -68,7 +68,7 @@ int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size) {
 		// between all of the API methods...
 		F(i, sizeof(options) / sizeof(options[0])) {
 			size_t out_len;
-			char * out = mmd_process_str_len_to_str((const char *) data, size, &out_len, options[i], NULL, NULL);
+			char * out = mmd_process_str_len_to_str((const char *) data, size, &out_len, options[i], NULL, NULL, NULL);
 			free(out);
 		}
 	}

@@ -1021,8 +1021,9 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_n
 		while (t) {
 			if (t->type == TOKEN_TAG) {
 				if (
-					(text[t->start - 1] != '[') &&
-					(text[t->start - 1] != '(')
+					(t->start == 0) ||
+					((text[t->start - 1] != '[') &&
+					(text[t->start - 1] != '('))
 				) {
 					read_ctx_store_tag(c, &text[t->start], t->len);
 				}
