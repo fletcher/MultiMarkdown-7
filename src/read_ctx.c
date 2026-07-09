@@ -280,7 +280,7 @@ void read_ctx_store_abbr(read_ctx * c, abbr_def * a) {
 }
 
 
-void read_ctx_store_link(read_ctx * c, link_def * l) {
+void read_ctx_store_link(read_ctx * c, link_def * l, bool auto_generated) {
 	if (c && l) {
 		link_def * temp;
 
@@ -288,11 +288,18 @@ void read_ctx_store_link(read_ctx * c, link_def * l) {
 		if (l->key && l->key[0] != '\0') {
 			HASH_FIND_STR(c->link_def_hash, l->key, temp);
 
-			// Don't replace existing link with same key
 			if (!temp) {
+				// No prior link with same key
 				HASH_ADD_KEYPTR(hh, c->link_def_hash, l->key, strlen(l->key), l);
 			} else {
-				link_def_free(l);
+				if (temp->auto_generated && !auto_generated) {
+					// Replace auto_generated link with a non-auto_generated link
+					HASH_DEL(c->link_def_hash, temp);
+					link_def_free(temp);
+					HASH_ADD_KEYPTR(hh, c->link_def_hash, l->key, strlen(l->key), l);
+				} else {
+					link_def_free(l);
+				}
 			}
 		} else {
 			link_def_free(l);
@@ -301,7 +308,7 @@ void read_ctx_store_link(read_ctx * c, link_def * l) {
 }
 
 
-void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count) {
+void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count, bool auto_generated) {
 	if (c && text && len) {
 		link_def * l = calloc(1, sizeof(link_def));
 
@@ -312,12 +319,14 @@ void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, b
 		memcpy(&l->url[1], l->key, strlen(l->key) + 1);
 		l->url_len = strlen(l->url);
 
-		read_ctx_store_link(c, l);
+		l->auto_generated = auto_generated;
+
+		read_ctx_store_link(c, l, auto_generated);
 	}
 }
 
 
-void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len) {
+void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len, bool auto_generated) {
 	if (c && key && key_len) {
 		// Only if it doesn't exist already
 		link_def * temp;
@@ -332,7 +341,9 @@ void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key
 			memcpy(&l->url[1], l->key, key_len + 1);
 			l->url_len = key_len + 1;
 
-			read_ctx_store_link(c, l);
+			l->auto_generated = auto_generated;
+
+			read_ctx_store_link(c, l, auto_generated);
 		}
 	}
 }

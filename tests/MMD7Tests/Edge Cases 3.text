@@ -1,0 +1,19 @@
+title:	Edge Cases 3
+latexconfig:	article
+
+# foo #
+
+![foo]
+
+[foo]: image/foo.png
+
+What about [this][foo].
+
+![bar]
+
+Or [that][bar].
+
+[bar]: image/bar.png
+
+
+# bar #

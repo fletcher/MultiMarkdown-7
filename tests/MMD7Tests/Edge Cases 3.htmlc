@@ -1,0 +1,14 @@
+<p>title: Edge Cases 3
+latexconfig: article</p>
+
+<h1>foo</h1>
+
+<p><img src="image/foo.png" alt="foo" /></p>
+
+<p>What about <a href="image/foo.png">this</a>.</p>
+
+<p><img src="image/bar.png" alt="bar" /></p>
+
+<p>Or <a href="image/bar.png">that</a>.</p>
+
+<h1>bar</h1>

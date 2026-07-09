@@ -1036,7 +1036,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 						key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
 					}
 
-					read_ctx_store_internal_link_key(c, key, strlen(key));
+					read_ctx_store_internal_link_key(c, key, strlen(key), false);
 					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 
 					free(key);
@@ -1051,7 +1051,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 							key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
 						}
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
+						read_ctx_store_internal_link_key(c, key, strlen(key), true);
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 
 						free(key);
@@ -1061,7 +1061,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 					char key[6] = {0};
 					snprintf(key, 6, "%d", xorshift16(c->random_header_seed + c->header_stack->size));
 
-					read_ctx_store_internal_link_key(c, key, strlen(key));
+					read_ctx_store_internal_link_key(c, key, strlen(key), true);
 					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 				}
 			}
@@ -1080,7 +1080,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 
 		case LINE_DEF_LINK:
 			b = block_reference_def_a(l, p, options);
-			read_ctx_store_link(c, scan_ref_link(&text[b->start], b->len));
+			read_ctx_store_link(c, scan_ref_link(&text[b->start], b->len), false);
 			break;
 
 		case LINE_DEF_CITATION:
@@ -1208,7 +1208,7 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 					char * label = table_label(last, text);
 
 					if (label) {
-						read_ctx_store_internal_link(c, label, strlen(label), false);
+						read_ctx_store_internal_link(c, label, strlen(label), false, false);
 					}
 
 					free(label);
@@ -1270,7 +1270,7 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 							key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
 						}
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
+						read_ctx_store_internal_link_key(c, key, strlen(key), false);
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 
 						free(key);
@@ -1284,7 +1284,7 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 							key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
 						}
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
+						read_ctx_store_internal_link_key(c, key, strlen(key), true);
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 
 						free(key);
@@ -1293,7 +1293,7 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						char key[6] = {0};
 						snprintf(key, 6, "%d", xorshift16(c->random_header_seed + c->header_stack->size));
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
+						read_ctx_store_internal_link_key(c, key, strlen(key), true);
 						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 					}
 				}

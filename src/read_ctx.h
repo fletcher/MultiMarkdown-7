@@ -102,6 +102,8 @@ typedef struct {
 
 	attr *				attributes;
 
+	bool				auto_generated;
+
 	UT_hash_handle		hh;
 } link_def;
 
@@ -227,12 +229,12 @@ read_ctx * read_ctx_new(uint32_t options);
 void read_ctx_reset(read_ctx * c, uint32_t options);
 void read_ctx_free(read_ctx * c);
 
-void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count);
-void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len);
+void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count, bool auto_generated);
+void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len, bool auto_generated);
 void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len, size_t c_start, size_t c_len);
 
 void read_ctx_store_abbr(read_ctx * c, abbr_def * l);
-void read_ctx_store_link(read_ctx * c, link_def * l);
+void read_ctx_store_link(read_ctx * c, link_def * l, bool auto_generated);
 void read_ctx_store_meta(read_ctx * c, meta * m);
 void read_ctx_store_tag(read_ctx * c, const char * tag, size_t tag_len);
 
