@@ -132,6 +132,8 @@ int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 		}
 
 		ch = source_buffer->text;
+	} else {
+		goto cleanup;
 	}
 
 	// Remember last element type
@@ -157,7 +159,7 @@ int mmd_import_outline(text_buffer * source_buffer, enum outline_type type) {
 					break;
 
 				case YXML_ELEMEND:
-					if (!strcmp(level[type], last_e)) {
+					if (last_e && !strcmp(level[type], last_e)) {
 						depth--;
 					}
 
