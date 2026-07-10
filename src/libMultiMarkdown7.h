@@ -87,6 +87,7 @@ void mmd_initialize(void);
 /// Process MultiMarkdown text into another format
 /// Output is sent to designated file stream (e.g. stdout)
 /// search_path and source_path are used for file transclusion, can be nil to disable
+/// If failed_path is not NULL, then caller is responsible for free()'ing path if one is present
 void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path);
 void mmd_process_filename(const char * fname, FILE * out, uint32_t options, const char * search_path, char ** failed_path);
 void mmd_process_str(const char * text, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path);
@@ -96,6 +97,7 @@ void mmd_process_url(const char * url, FILE * out, uint32_t options, const char 
 
 /// Returns text string (or binary data) -- will need to be freed
 /// Length of output will be stored in out_len (especially needed for binary data formats)
+/// If failed_path is not NULL, then caller is responsible for free()'ing path if one is present
 char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path);
 char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_t options, const char * search_path, char ** failed_path);
 char * mmd_process_str_to_str(const char * text, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path);
