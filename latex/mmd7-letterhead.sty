@@ -81,6 +81,7 @@
 \usepackage[left=1.0in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
 \def\firstpagetopmargin{1.5in}
 
+
 % Default spacing
 \renewcommand{\baselinestretch}{1.3}
 \setlength{\parskip}{12pt}
@@ -195,23 +196,21 @@
 
 % Don't use empty lines -- they take up space in the document for some reason
 \AtBeginDocument{
-	% Change topmargin for first page
-	\ifx\firstpagetopmargin\undefined
-	\else
-		\newgeometry{top=\firstpagetopmargin,left=1.0in,right=1.0in,bottom=1.0in}
-	\fi
 	\begin{letter}{\recipient \\ \recipientaddress}
+
 	% Use coverpage content if specified
 	\ifx\enablecoverpage\undefined \else \ifx\coverpage\undefined \else \coverpage \fi \fi
+
+	% Changing margins after cover page caused undesired page breaks.  Skip down instead
+	\vspace{\dimeval{\firstpagetopmargin - 1.25in}}
 	\ifx\salutation\undefined \opening{\recipient,} \else \opening{\salutation} \fi
+
 	% Example for placing a logo
 	% \begin{tikzpicture}[remember picture, overlay]
 	% 	\node[anchor=north west, shift={(0.5in,-0.675in)}] at (current page.north west) {
 	% 		\resizebox{1.5in}{!}{\includegraphics[decodearray={0.2 0.5}]{logo.pdf}}
 	% 	};
 	% \end{tikzpicture}
-	% Restore original margins
-	\ifx\firstpagetopmargin\undefined \else \afterpage{\aftergroup\restoregeometry} \fi
 }
 
 
