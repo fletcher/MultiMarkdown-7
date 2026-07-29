@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@ typedef struct {
 	char 	*	text;
 	size_t		len;
 	size_t		capacity;
+	int			padding;
 } text_buffer;
 
 
@@ -78,7 +79,19 @@ text_buffer * buffer_filename(const char * fname, size_t capacity);
 void text_buffer_delete_range(text_buffer * b, size_t pos, size_t len);
 void text_buffer_delete_bom(text_buffer * b);
 
+/// Pad text with newlines
+void text_buffer_pad(text_buffer * b, short n);
+
 /// Remove trailing whitespace
 void text_buffer_trim_trailing_whitespace(text_buffer * b);
+
+/// Convert trailing CRLF to LF
+void text_buffer_fix_trailing_newline(text_buffer * b);
+
+/// Remove trailing CR or LF
+void text_buffer_trim_trailing_newline(text_buffer * b);
+
+/// Replace occurences of target with replacement
+void text_buffer_replace_string(text_buffer * b, const char * target, const char * replacement);
 
 #endif

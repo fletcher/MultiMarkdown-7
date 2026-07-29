@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -50,31 +50,32 @@ enum pairing_rules {
 	PAIR_HAS_SUBTYPES =					1 << 2,
 	PAIR_NO_MATCH_INTRAWORD =			1 << 3,
 	PAIR_LIMIT_MULTIPLE_3 =				1 << 4,
+	PAIR_NON_CONSECUTIVE =				1 << 5,
 
 
-	PAIR_OPEN_NO_WS_LE_LEFT =			1 << 5,
-	PAIR_OPEN_NO_PUNCT_LEFT =			1 << 6,
-	PAIR_OPEN_NO_ALPHA_NUM_LEFT = 		1 << 7,
-	PAIR_OPEN_IF_WS_LE_LEFT =			1 << 8,
-	PAIR_OPEN_IF_PUNCT_LEFT =			1 << 9,
+	PAIR_OPEN_NO_WS_LE_LEFT =			1 << 6,
+	PAIR_OPEN_NO_PUNCT_LEFT =			1 << 7,
+	PAIR_OPEN_NO_ALPHA_NUM_LEFT = 		1 << 8,
+	PAIR_OPEN_IF_WS_LE_LEFT =			1 << 9,
+	PAIR_OPEN_IF_PUNCT_LEFT =			1 << 10,
 
-	PAIR_OPEN_NO_WS_LE_RIGHT =			1 << 10,
-	PAIR_OPEN_NO_PUNCT_RIGHT =			1 << 11,
-	PAIR_OPEN_NO_ALPHA_NUM_RIGHT = 		1 << 12,
-	PAIR_OPEN_IF_WS_LE_RIGHT =			1 << 13,
-	PAIR_OPEN_IF_PUNCT_RIGHT =			1 << 14,
+	PAIR_OPEN_NO_WS_LE_RIGHT =			1 << 11,
+	PAIR_OPEN_NO_PUNCT_RIGHT =			1 << 12,
+	PAIR_OPEN_NO_ALPHA_NUM_RIGHT = 		1 << 13,
+	PAIR_OPEN_IF_WS_LE_RIGHT =			1 << 14,
+	PAIR_OPEN_IF_PUNCT_RIGHT =			1 << 15,
 
-	PAIR_CLOSE_NO_WS_LE_LEFT =			1 << 15,
-	PAIR_CLOSE_NO_PUNCT_LEFT =			1 << 16,
-	PAIR_CLOSE_NO_ALPHA_NUM_LEFT = 		1 << 17,
-	PAIR_CLOSE_IF_WS_LE_LEFT =			1 << 18,
-	PAIR_CLOSE_IF_PUNCT_LEFT =			1 << 19,
+	PAIR_CLOSE_NO_WS_LE_LEFT =			1 << 16,
+	PAIR_CLOSE_NO_PUNCT_LEFT =			1 << 17,
+	PAIR_CLOSE_NO_ALPHA_NUM_LEFT = 		1 << 18,
+	PAIR_CLOSE_IF_WS_LE_LEFT =			1 << 19,
+	PAIR_CLOSE_IF_PUNCT_LEFT =			1 << 20,
 
-	PAIR_CLOSE_NO_WS_LE_RIGHT =			1 << 20,
-	PAIR_CLOSE_NO_PUNCT_RIGHT =			1 << 21,
-	PAIR_CLOSE_NO_ALPHA_NUM_RIGHT = 	1 << 22,
-	PAIR_CLOSE_IF_WS_LE_RIGHT =			1 << 23,
-	PAIR_CLOSE_IF_PUNCT_RIGHT =			1 << 24,
+	PAIR_CLOSE_NO_WS_LE_RIGHT =			1 << 21,
+	PAIR_CLOSE_NO_PUNCT_RIGHT =			1 << 22,
+	PAIR_CLOSE_NO_ALPHA_NUM_RIGHT = 	1 << 23,
+	PAIR_CLOSE_IF_WS_LE_RIGHT =			1 << 24,
+	PAIR_CLOSE_IF_PUNCT_RIGHT =			1 << 25,
 
 
 
@@ -95,6 +96,7 @@ typedef struct {
 
 
 char * html_id_from_text(const char * text, size_t len, bool require_odd_count);
+char * html_clean_id_from_text(const char * text, size_t len, bool require_odd_count);
 char * md_id_from_text(const char * text, size_t len, bool require_odd_count);
 char * definition_name_from_text(const char * text, size_t len);
 

@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -39,18 +39,19 @@
 */
 
 
-#include <libgen.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "text_buffer.h"
 #include "mmd_core.h"
 #include "read_ctx.h"
 #include "transclude.h"
 #include "stack.h"
+#include "mmd_utilities.h"
 
 
 #ifdef TEST
@@ -63,7 +64,7 @@
 
 // Windows does not know realpath(), so we need a "windows port"
 // Fix by @f8ttyc8t (<https://github.com/f8ttyc8t>)
-#if (defined(_WIN32) || defined(__WIN32__))
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 // Let compiler know where to find GetFullPathName()
 #include <windows.h>
 
@@ -74,7 +75,7 @@ char * realpath(const char * path, char * resolved_path) {
 
 	if (resolved_path == NULL) {
 		// realpath allocates appropiate bytes if resolved_path is null. This is to mimic realpath behavior
-		dwBufSize = PATH_MAX; // Use windows PATH_MAX constant, because we are in Windows context now.
+		dwBufSize = MAX_PATH; // Use windows MAX_PATH constant, because we are in Windows context now.
 		buffer = (char *)malloc(dwBufSize);
 
 		if (buffer == NULL) {
@@ -96,22 +97,6 @@ char * realpath(const char * path, char * resolved_path) {
 }
 
 #endif
-
-
-/// strdup() not available on all platforms
-static char * my_strdup(const char * source) {
-	if (source == NULL) {
-		return NULL;
-	}
-
-	char * result = malloc(strlen(source) + 1);
-
-	if (result) {
-		strcpy(result, source);
-	}
-
-	return result;
-}
 
 
 /// Prepend `mmdheader` and append `mmdfooter` metadata to document content for processing
@@ -143,7 +128,7 @@ void mmd_add_mmd_header_footer(text_buffer * buffer, uint32_t options) {
 /// Windows can use either `\` or `/` as a separator -- thanks to t-beckmann on github
 ///	for suggesting a fix for this.
 int is_separator(char c) {
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	return c == '\\' || c == '/';
 #else
 	return c == '/';
@@ -151,14 +136,14 @@ int is_separator(char c) {
 }
 
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#define separator_char '\\'
 #else
 	#define separator_char '/'
 #endif
 
 
-char * concatenate_paths(const char * dir, const char * path) {
+char * concatenate_paths(const char * dir, const char * path, int resolve) {
 	int len = (int) (strlen(dir) + 1 + strlen(path) + 1);
 
 	char * temp = malloc(sizeof(char) * len);
@@ -169,13 +154,48 @@ char * concatenate_paths(const char * dir, const char * path) {
 		snprintf(temp, len, "%s%c%s", dir, separator_char, path);
 	}
 
-	char * r = realpath(temp, NULL);
-	free(temp);
-	return r;
+	if (resolve) {
+		char * r = realpath(temp, NULL);
+		free(temp);
+		return r;
+	} else {
+		return temp;
+	}
 }
 
 
-read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path, stack * parsed) {
+char * concatenate_paths_ext(const char * dir, const char * path, const char * ext, int resolve) {
+	int len = (int) (strlen(dir) + 1 + strlen(path) + 1 + strlen(ext) + 1);
+
+	char * temp = malloc(sizeof(char) * len);
+
+	if (is_separator(dir[strlen(dir) - 1])) {
+		if (ext[0] == '\0') {
+			snprintf(temp, len, "%s%s", dir, path);
+		} else {
+			snprintf(temp, len, "%s%s.%s", dir, path, ext);
+		}
+	} else {
+		if (ext[0] == '\0') {
+			snprintf(temp, len, "%s%c%s", dir, separator_char, path);
+		} else {
+			snprintf(temp, len, "%s%c%s.%s", dir, separator_char, path, ext);
+		}
+	}
+
+
+
+	if (resolve) {
+		char * r = realpath(temp, NULL);
+		free(temp);
+		return r;
+	} else {
+		return temp;
+	}
+}
+
+
+read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, read_ctx * c, const char * search_path, const char * source_path, stack * parsed) {
 	stack_push(parsed, (void *) source_path);
 
 	char * start, * stop;
@@ -197,7 +217,9 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 				search_path = m->value;
 			} else {
 				// Path is relative to the document
-				search_path = concatenate_paths(dirname((char *)source_path), m->value);
+				char * dir = mmd_dirname(source_path);
+				search_path = concatenate_paths(dir, m->value, true);
+				free(dir);
 				free_search = 1;
 			}
 		}
@@ -240,14 +262,13 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 
 			switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
 				case FORMAT_HTML:
-				case FORMAT_HTML_WITH_ASSETS:
 				case FORMAT_EPUB:
 					strcat(file_path, ".html");
 					break;
 
 				case FORMAT_LATEX:
 				case FORMAT_BEAMER:
-				case FORMAT_MEMOIR:
+				case FORMAT_LTX_TALK:
 					strcat(file_path, ".tex");
 					break;
 
@@ -285,7 +306,7 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 			// Strip BOM
 			text_buffer_delete_bom(buf);
 
-			read_ctx * rr = mmd_transclude_recursive(buf, options, search_path, clean_path, parsed);
+			read_ctx * rr = mmd_transclude_recursive(buf, options, c, search_path, clean_path, parsed);
 
 			// We don't want to insert metadata from transcluded file
 			text_buffer_delete_range(buf, 0, rr->meta_end);
@@ -297,6 +318,10 @@ read_ctx * mmd_transclude_recursive(text_buffer * buffer, uint32_t options, cons
 
 			text_buffer_free(buf, 1);
 			read_ctx_free(rr);
+		} else {
+			if (errno == EPERM || errno == EACCES) {
+				read_ctx_store_failed_file(c, clean_path);
+			}
 		}
 
 finish_match:
@@ -316,7 +341,7 @@ finish_match:
 }
 
 
-void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_transclude(text_buffer * buffer, uint32_t options, read_ctx * c, const char * search_path, const char * source_path) {
 	// Ensure source_path is an absolute path
 	char * absolute_source_path = NULL;
 	char * absolute_search_path = NULL;
@@ -328,7 +353,8 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 		if (!search_path) {
 			// Use source to infer search path
 			source_copy = realpath(source_path, NULL);
-			absolute_search_path = my_strdup(dirname(source_copy));
+
+			absolute_search_path = mmd_dirname(source_copy);
 		}
 	}
 
@@ -339,7 +365,7 @@ void mmd_transclude(text_buffer * buffer, uint32_t options, const char * search_
 	if (absolute_search_path) {
 		stack * s = stack_new(0);
 
-		read_ctx * r = mmd_transclude_recursive(buffer, options, absolute_search_path, absolute_source_path, s);
+		read_ctx * r = mmd_transclude_recursive(buffer, options, c, absolute_search_path, absolute_source_path, s);
 
 		read_ctx_free(r);
 		stack_free(s);

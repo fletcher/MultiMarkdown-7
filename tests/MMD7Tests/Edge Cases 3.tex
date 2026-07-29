@@ -1,0 +1,29 @@
+\input{mmd7-article-leader}
+\def\mytitle{Edge Cases 3}
+\input{mmd7-article-begin}
+
+\part{foo}
+\label{foo}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{image/foo.png}
+\caption{foo}
+\label{foo}
+\end{figure}
+
+What about \href{image/foo.png}{this}\footnote{\href{image/foo.png}{image/foo.png}}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[keepaspectratio,width=\textwidth,height=0.75\textheight]{image/bar.png}
+\caption{bar}
+\label{bar}
+\end{figure}
+
+Or \href{image/bar.png}{that}\footnote{\href{image/bar.png}{image/bar.png}}.
+
+\part{bar}
+\label{bar}
+\input{mmd7-article-footer}
+\end{document}

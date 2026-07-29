@@ -1,0 +1,45 @@
+* (91) 0:45	'title:	Inline Citations
+latexconfig:	article
+'
+	* (32) 0:24	'title:	Inline Citations
+'
+	* (32) 24:21	'latexconfig:	article
+'
+* (74) 45:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 46:126	'Inline. [#John Doe. *A Totally Fake Book 1*.  Vanity Press, 2006.]
+[#John Doe. *A Totally Fake Book 2*.  Vanity Press, 2006.]
+'
+	* (33) 0:67	'Inline. [#John Doe. *A Totally Fake Book 1*.  Vanity Press, 2006.]
+'
+	* (33) 67:59	'[#John Doe. *A Totally Fake Book 2*.  Vanity Press, 2006.]
+'
+	- (131) 0:8	'Inline. '
+	- (180) 8:1	'['
+		+ (152) 9:1	'#'
+		+ (131) 10:4	'John'
+		+ (131) 14:6	' Doe. '
+		+ (192) 20:1	'*'
+			+ (131) 21:21	'A Totally Fake Book 1'
+		+ (139) 42:1	'*'
+		+ (131) 43:1	'.'
+		+ (134) 44:2	'  '
+		+ (131) 46:19	'Vanity Press, 2006.'
+	- (166) 65:1	']'
+	- (129) 66:1	'
+'
+	- (180) 67:1	'['
+		+ (152) 68:1	'#'
+		+ (131) 69:4	'John'
+		+ (131) 73:6	' Doe. '
+		+ (192) 79:1	'*'
+			+ (131) 80:21	'A Totally Fake Book 2'
+		+ (139) 101:1	'*'
+		+ (131) 102:1	'.'
+		+ (134) 103:2	'  '
+		+ (131) 105:19	'Vanity Press, 2006.'
+	- (166) 124:1	']'
+	- (129) 125:1	'
+'

@@ -1,0 +1,88 @@
+\input{mmd7-beamer-leader}
+\def\mytitle{Sample Beamer Presentation}
+\def\mysubtitle{With a subtitle, no less!}
+\def\myauthor{Fletcher T. Penney}
+\def\affiliation{http://fletcherpenney.net/multimarkdown}
+\def\mycopyright{2026 Fletcher T. Penney This document is licensed under a Creative Commons License. http://creativecommons.org/licenses/by-sa/2.5/}
+\input{mmd7-beamer-begin}
+
+\part{Part 1}
+\label{part1}
+
+\section{Section A}
+\label{sectiona}
+
+\subsection{Subsection 1}
+\label{subsection1}
+
+\begin{frame}[fragile]
+\frametitle{MultiMarkdown}
+\label{multimarkdown}
+
+Foo.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{More MultiMarkdown}
+\label{moremultimarkdown}
+
+Foo.
+
+\end{frame}
+
+\subsection{Subsection 2}
+\label{subsection2}
+
+\begin{frame}[fragile]
+\frametitle{Still MultiMarkdown}
+\label{stillmultimarkdown}
+
+Foo.
+
+\end{frame}
+
+\section{Section B}
+\label{sectionb}
+
+\subsection{Subsection a}
+\label{subsectiona}
+
+\begin{frame}[fragile]
+\frametitle{Again}
+\label{again}
+
+Bar.
+
+\end{frame}
+
+\subsection{Subsection b}
+\label{subsectionb}
+
+\begin{frame}[fragile]
+\frametitle{Yet Again}
+\label{yetagain}
+
+Bar.
+
+\end{frame}
+
+\part{Part 2}
+\label{part2}
+
+\section{Section 2A}
+\label{section2a}
+
+\subsection{SubSection 2A}
+\label{subsection2a}
+
+\begin{frame}[fragile]
+\frametitle{Wrap it up}
+\label{wrapitup}
+
+Baz.
+\end{frame}
+
+\mode<all>
+\input{mmd7-beamer-footer}
+\end{document}\mode*

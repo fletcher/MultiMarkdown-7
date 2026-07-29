@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opml version="1.0">
+	<head><title>Endnotes</title></head>
+	<body>
+		<outline text="&gt;&gt;Preamble&lt;&lt;" _note="&#10;"/>
+		<outline text="Reference Style" _note="&#10;foo [^note].&#10;&#10;[^note]: This is a footnote.&#10;&#10;foo [#cite].&#10;&#10;[#cite]: This is a citation.&#10;&#10;foo [?*glossary*].&#10;&#10;[?*glossary*]: This is a glossary term.&#10;&#10;&#10;&#10;"/>
+		<outline text="Inline Style" _note="&#10;foo [^This is *another* footnote.].&#10;&#10;foo [#This is *another* citation.].&#10;&#10;foo [?(*gls*) This is *another* glossary term.]&#10;&#10;&#10;"/>
+		<outline text="Extended Reference Style" _note="&#10;foo [^note3].&#10;&#10;[^note3]: This is a footnote.&#10;&#10;&#9;&gt; With a *tail* block.&#10;&#10;foo [#cite3].&#10;&#10;[#cite3]: This is a citation.&#10;&#10;&#9;&gt; With a *tail* block.&#10;&#10;foo [?glossary3].&#10;&#10;[?glossary3]: This is a glossary term.&#10;&#10;&#9;&gt; With a *tail* block.&#10;"/>
+		<outline text="&gt;&gt;Metadata&lt;&lt;">
+			<outline text="title" _note="Endnotes"/>
+			<outline text="latexconfig" _note="article"/>
+		</outline>
+	</body>
+</opml>

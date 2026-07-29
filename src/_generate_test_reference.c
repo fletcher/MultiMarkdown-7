@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -52,12 +52,14 @@ char * s[] = {
 
 
 char * marker[] = {
-	"![",
-	"[",
-	"[>",
-	"[#",
-	"[^",
-	"[?",
+	"![",		// Matches CommonMark
+	"[",		// Matches CommonMark
+
+	"[^",		// Matches MultiMarkdown v6
+	"[#",		// Matches MultiMarkdown v6
+
+	"[>",		// Changed from MultiMarkdown v6
+	"[?",		// Changed from MultiMarkdown v6
 };
 
 

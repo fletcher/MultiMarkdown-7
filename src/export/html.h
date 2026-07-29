@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,8 @@
 #ifndef HTML_LIBMULTIMARKDOWN7_H
 #define HTML_LIBMULTIMARKDOWN7_H
 
-void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options);
+void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path);
+
+void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 
 #endif

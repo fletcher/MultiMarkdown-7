@@ -1,0 +1,2214 @@
+* (91) 0:93	'title:		Integrated Test  
+subtitle:	MultiMarkdown test suite  
+author:		Fletcher T. Penney  
+'
+	* (32) 0:26	'title:		Integrated Test  
+'
+	* (32) 26:37	'subtitle:	MultiMarkdown test suite  
+'
+	* (32) 63:30	'author:		Fletcher T. Penney  
+'
+* (74) 93:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 94:259	'This file is a designed as a single test that incorporates most of
+the *commonly* used MultiMarkdown features. This allows a single test file to
+identify common structures that are not supported yet -- particularly useful
+when developing a new output format.
+'
+	* (33) 0:67	'This file is a designed as a single test that incorporates most of
+'
+	* (33) 67:78	'the *commonly* used MultiMarkdown features. This allows a single test file to
+'
+	* (33) 145:77	'identify common structures that are not supported yet -- particularly useful
+'
+	* (33) 222:37	'when developing a new output format.
+'
+	- (131) 0:66	'This file is a designed as a single test that incorporates most of'
+	- (129) 66:1	'
+'
+	- (131) 67:4	'the '
+	- (192) 71:1	'*'
+		+ (131) 72:8	'commonly'
+	- (139) 80:1	'*'
+	- (131) 81:63	' used MultiMarkdown features. This allows a single test file to'
+	- (129) 144:1	'
+'
+	- (131) 145:54	'identify common structures that are not supported yet '
+	- (161) 199:2	'--'
+	- (131) 201:20	' particularly useful'
+	- (129) 221:1	'
+'
+	- (131) 222:36	'when developing a new output format.'
+	- (129) 258:1	'
+'
+* (74) 353:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (93) 355:46	'Core Markdown Features
+======================
+'
+	* (33) 0:23	'Core Markdown Features
+'
+	* (34) 23:23	'======================
+'
+	- (131) 0:22	'Core Markdown Features'
+	- (129) 22:1	'
+'
+* (74) 401:1	'
+'
+	* (16) 0:1	'
+'
+* (94) 402:54	'Basic Block Level Elements
+--------------------------
+'
+	* (33) 0:27	'Basic Block Level Elements
+'
+	* (35) 27:27	'--------------------------
+'
+	- (131) 0:26	'Basic Block Level Elements'
+	- (129) 26:1	'
+'
+* (74) 456:1	'
+'
+	* (16) 0:1	'
+'
+* (78) 457:19	'### Paragraphs ###
+'
+	* (3) 0:19	'### Paragraphs ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:10	'Paragraphs'
+	- (145) 15:3	'###'
+	- (129) 18:1	'
+'
+* (74) 476:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 477:41	'Normal paragraphs consist of plain text.
+'
+	* (33) 0:41	'Normal paragraphs consist of plain text.
+'
+	- (131) 0:40	'Normal paragraphs consist of plain text.'
+	- (129) 40:1	'
+'
+* (74) 518:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 519:35	'They are separated by empty lines.
+'
+	* (33) 0:35	'They are separated by empty lines.
+'
+	- (131) 0:34	'They are separated by empty lines.'
+	- (129) 34:1	'
+'
+* (74) 554:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 555:135	'Long lines of text will wrap naturally as needed to ensure that they fit in the available space.  This will vary by format, of course.
+'
+	* (33) 0:135	'Long lines of text will wrap naturally as needed to ensure that they fit in the available space.  This will vary by format, of course.
+'
+	- (131) 0:96	'Long lines of text will wrap naturally as needed to ensure that they fit in the available space.'
+	- (134) 96:2	'  '
+	- (131) 98:36	'This will vary by format, of course.'
+	- (129) 134:1	'
+'
+* (74) 690:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 691:72	'By including two spaces at the end of a line  
+a linebreak is inserted.
+'
+	* (33) 0:47	'By including two spaces at the end of a line  
+'
+	* (33) 47:25	'a linebreak is inserted.
+'
+	- (131) 0:44	'By including two spaces at the end of a line'
+	- (130) 44:3	'  
+'
+	- (131) 47:24	'a linebreak is inserted.'
+	- (129) 71:1	'
+'
+* (74) 763:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 764:78	'MultiMarkdown adds the ability to use\
+an "escaped newline" for this as well.
+'
+	* (33) 0:39	'MultiMarkdown adds the ability to use\
+'
+	* (33) 39:39	'an "escaped newline" for this as well.
+'
+	- (131) 0:37	'MultiMarkdown adds the ability to use'
+	- (130) 37:2	'\
+'
+	- (131) 39:3	'an '
+	- (185) 42:1	'"'
+		+ (131) 43:15	'escaped newline'
+	- (157) 58:1	'"'
+	- (131) 59:18	' for this as well.'
+	- (129) 77:1	'
+'
+* (74) 842:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 844:16	'### Headers ###
+'
+	* (3) 0:16	'### Headers ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:7	'Headers'
+	- (145) 12:3	'###'
+	- (129) 15:1	'
+'
+* (74) 860:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 861:57	'ATX headers and Setext headers are used in this document
+'
+	* (33) 0:57	'ATX headers and Setext headers are used in this document
+'
+	- (131) 0:56	'ATX headers and Setext headers are used in this document'
+	- (129) 56:1	'
+'
+* (74) 918:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 919:90	'	## ATX Header 2 ##
+
+	Setext Header 1
+	===============
+
+	Setext Header 2
+	---------------
+'
+	* (29) 0:20	'	## ATX Header 2 ##
+'
+	* (16) 20:1	'
+'
+	* (29) 21:17	'	Setext Header 1
+'
+	* (29) 38:17	'	===============
+'
+	* (16) 55:1	'
+'
+	* (29) 56:17	'	Setext Header 2
+'
+	* (29) 73:17	'	---------------
+'
+* (74) 1009:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 1011:20	'### Blockquotes ###
+'
+	* (3) 0:20	'### Blockquotes ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:11	'Blockquotes'
+	- (145) 16:3	'###'
+	- (129) 19:1	'
+'
+* (74) 1031:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1032:28	'This is a normal paragraph.
+'
+	* (33) 0:28	'This is a normal paragraph.
+'
+	- (131) 0:27	'This is a normal paragraph.'
+	- (129) 27:1	'
+'
+* (74) 1060:1	'
+'
+	* (16) 0:1	'
+'
+* (64) 1061:119	'> This is a blockquote.
+>
+> With two paragraphs.
+>
+>> And a nested blockquote.
+>> (Which doesn't work well in Beamer.)
+'
+	* (92) 0:24	'> This is a blockquote.
+'
+		* (33) 0:24	'> This is a blockquote.
+'
+		- (146) 0:1	'>'
+		- (131) 2:21	'This is a blockquote.'
+		- (129) 23:1	'
+'
+	* (74) 24:2	'>
+'
+		* (16) 0:2	'>
+'
+	* (92) 26:23	'> With two paragraphs.
+'
+		* (33) 0:23	'> With two paragraphs.
+'
+		- (146) 0:1	'>'
+		- (131) 2:20	'With two paragraphs.'
+		- (129) 22:1	'
+'
+	* (74) 49:2	'>
+'
+		* (16) 0:2	'>
+'
+	* (64) 51:68	'>> And a nested blockquote.
+>> (Which doesn't work well in Beamer.)
+'
+		* (92) 0:68	'>> And a nested blockquote.
+>> (Which doesn't work well in Beamer.)
+'
+			* (33) 0:28	'>> And a nested blockquote.
+'
+			* (33) 28:40	'>> (Which doesn't work well in Beamer.)
+'
+			- (146) 0:1	'>'
+			- (146) 1:1	'>'
+			- (131) 3:24	'And a nested blockquote.'
+			- (129) 27:1	'
+'
+			- (146) 28:1	'>'
+			- (146) 29:1	'>'
+			- (184) 31:1	'('
+				+ (131) 32:11	'Which doesn'
+				+ (155) 43:1	'''
+				+ (131) 44:22	't work well in Beamer.'
+			- (164) 66:1	')'
+			- (129) 67:1	'
+'
+* (74) 1180:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 1182:24	'### Unordered Lists ###
+'
+	* (3) 0:24	'### Unordered Lists ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:15	'Unordered Lists'
+	- (145) 20:3	'###'
+	- (129) 23:1	'
+'
+* (74) 1206:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1207:33	'Lists can be "tight" or "loose".
+'
+	* (33) 0:33	'Lists can be "tight" or "loose".
+'
+	- (131) 0:13	'Lists can be '
+	- (185) 13:1	'"'
+		+ (131) 14:5	'tight'
+	- (157) 19:1	'"'
+	- (131) 20:4	' or '
+	- (185) 24:1	'"'
+		+ (131) 25:5	'loose'
+	- (157) 30:1	'"'
+	- (131) 31:1	'.'
+	- (129) 32:1	'
+'
+* (74) 1240:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1241:17	'Unordered/tight:
+'
+	* (33) 0:17	'Unordered/tight:
+'
+	- (131) 0:15	'Unordered/tight'
+	- (144) 15:1	':'
+	- (129) 16:1	'
+'
+* (74) 1258:1	'
+'
+	* (16) 0:1	'
+'
+* (85) 1259:19	'* foo
+* bar
+* bat
+
+'
+	* (90) 0:6	'* foo
+'
+		* (92) 0:6	'* foo
+'
+			* (33) 0:6	'* foo
+'
+			- (148) 0:1	'*'
+			- (131) 2:3	'foo'
+			- (129) 5:1	'
+'
+	* (90) 6:6	'* bar
+'
+		* (92) 0:6	'* bar
+'
+			* (33) 0:6	'* bar
+'
+			- (148) 0:1	'*'
+			- (131) 2:3	'bar'
+			- (129) 5:1	'
+'
+	* (90) 12:6	'* bat
+'
+		* (92) 0:6	'* bat
+'
+			* (33) 0:6	'* bat
+'
+			- (148) 0:1	'*'
+			- (131) 2:3	'bat'
+			- (129) 5:1	'
+'
+	* (74) 18:1	'
+'
+		* (16) 0:1	'
+'
+* (92) 1278:17	'Unordered/loose:
+'
+	* (33) 0:17	'Unordered/loose:
+'
+	- (131) 0:15	'Unordered/loose'
+	- (144) 15:1	':'
+	- (129) 16:1	'
+'
+* (74) 1295:1	'
+'
+	* (16) 0:1	'
+'
+* (86) 1296:22	'* foo
+
+* bar
+
+* bat
+
+
+'
+	* (89) 0:6	'* foo
+'
+		* (92) 0:6	'* foo
+'
+			* (33) 0:6	'* foo
+'
+			- (148) 0:1	'*'
+			- (131) 2:3	'foo'
+			- (129) 5:1	'
+'
+	* (74) 6:1	'
+'
+		* (16) 0:1	'
+'
+	* (89) 7:6	'* bar
+'
+		* (92) 0:6	'* bar
+'
+			* (33) 0:6	'* bar
+'
+			- (148) 0:1	'*'
+			- (131) 2:3	'bar'
+			- (129) 5:1	'
+'
+	* (74) 13:1	'
+'
+		* (16) 0:1	'
+'
+	* (89) 14:6	'* bat
+'
+		* (92) 0:6	'* bat
+'
+			* (33) 0:6	'* bat
+'
+			- (148) 0:1	'*'
+			- (131) 2:3	'bat'
+			- (129) 5:1	'
+'
+	* (74) 20:2	'
+
+'
+		* (16) 0:1	'
+'
+		* (16) 1:1	'
+'
+* (78) 1318:22	'### Ordered Lists ###
+'
+	* (3) 0:22	'### Ordered Lists ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:13	'Ordered Lists'
+	- (145) 18:3	'###'
+	- (129) 21:1	'
+'
+* (74) 1340:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1341:33	'Lists can be "tight" or "loose".
+'
+	* (33) 0:33	'Lists can be "tight" or "loose".
+'
+	- (131) 0:13	'Lists can be '
+	- (185) 13:1	'"'
+		+ (131) 14:5	'tight'
+	- (157) 19:1	'"'
+	- (131) 20:4	' or '
+	- (185) 24:1	'"'
+		+ (131) 25:5	'loose'
+	- (157) 30:1	'"'
+	- (131) 31:1	'.'
+	- (129) 32:1	'
+'
+* (74) 1374:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1375:15	'Ordered/tight:
+'
+	* (33) 0:15	'Ordered/tight:
+'
+	- (131) 0:13	'Ordered/tight'
+	- (144) 13:1	':'
+	- (129) 14:1	'
+'
+* (74) 1390:1	'
+'
+	* (16) 0:1	'
+'
+* (87) 1391:22	'1. foo
+2. bar
+3. bat
+
+'
+	* (90) 0:7	'1. foo
+'
+		* (92) 0:7	'1. foo
+'
+			* (33) 0:7	'1. foo
+'
+			- (148) 0:2	'1.'
+			- (131) 3:3	'foo'
+			- (129) 6:1	'
+'
+	* (90) 7:7	'2. bar
+'
+		* (92) 0:7	'2. bar
+'
+			* (33) 0:7	'2. bar
+'
+			- (148) 0:2	'2.'
+			- (131) 3:3	'bar'
+			- (129) 6:1	'
+'
+	* (90) 14:7	'3. bat
+'
+		* (92) 0:7	'3. bat
+'
+			* (33) 0:7	'3. bat
+'
+			- (148) 0:2	'3.'
+			- (131) 3:3	'bat'
+			- (129) 6:1	'
+'
+	* (74) 21:1	'
+'
+		* (16) 0:1	'
+'
+* (92) 1413:15	'Ordered/loose:
+'
+	* (33) 0:15	'Ordered/loose:
+'
+	- (131) 0:13	'Ordered/loose'
+	- (144) 13:1	':'
+	- (129) 14:1	'
+'
+* (74) 1428:1	'
+'
+	* (16) 0:1	'
+'
+* (88) 1429:25	'1. foo
+
+2. bar
+
+3. bat
+
+
+'
+	* (89) 0:7	'1. foo
+'
+		* (92) 0:7	'1. foo
+'
+			* (33) 0:7	'1. foo
+'
+			- (148) 0:2	'1.'
+			- (131) 3:3	'foo'
+			- (129) 6:1	'
+'
+	* (74) 7:1	'
+'
+		* (16) 0:1	'
+'
+	* (89) 8:7	'2. bar
+'
+		* (92) 0:7	'2. bar
+'
+			* (33) 0:7	'2. bar
+'
+			- (148) 0:2	'2.'
+			- (131) 3:3	'bar'
+			- (129) 6:1	'
+'
+	* (74) 15:1	'
+'
+		* (16) 0:1	'
+'
+	* (89) 16:7	'3. bat
+'
+		* (92) 0:7	'3. bat
+'
+			* (33) 0:7	'3. bat
+'
+			- (148) 0:2	'3.'
+			- (131) 3:3	'bat'
+			- (129) 6:1	'
+'
+	* (74) 23:2	'
+
+'
+		* (16) 0:1	'
+'
+		* (16) 1:1	'
+'
+* (78) 1454:22	'### Complex Lists ###
+'
+	* (3) 0:22	'### Complex Lists ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:13	'Complex Lists'
+	- (145) 18:3	'###'
+	- (129) 21:1	'
+'
+* (74) 1476:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1477:33	'Lists can contain other elements
+'
+	* (33) 0:33	'Lists can contain other elements
+'
+	- (131) 0:32	'Lists can contain other elements'
+	- (129) 32:1	'
+'
+* (74) 1510:1	'
+'
+	* (16) 0:1	'
+'
+* (86) 1511:84	'*	A list item.
+
+	With a second paragraph.
+
+*	An item.
+
+	1. With
+	2. a
+	3. sublist
+
+
+'
+	* (89) 0:42	'*	A list item.
+
+	With a second paragraph.
+'
+		* (92) 0:15	'*	A list item.
+'
+			* (33) 0:15	'*	A list item.
+'
+			- (148) 0:1	'*'
+			- (131) 2:12	'A list item.'
+			- (129) 14:1	'
+'
+		* (74) 15:1	'
+'
+			* (16) 0:1	'
+'
+		* (92) 16:26	'	With a second paragraph.
+'
+			* (33) 0:26	'	With a second paragraph.
+'
+			- (131) 1:24	'With a second paragraph.'
+			- (129) 25:1	'
+'
+	* (74) 42:1	'
+'
+		* (16) 0:1	'
+'
+	* (89) 43:39	'*	An item.
+
+	1. With
+	2. a
+	3. sublist
+'
+		* (92) 0:11	'*	An item.
+'
+			* (33) 0:11	'*	An item.
+'
+			- (148) 0:1	'*'
+			- (131) 2:8	'An item.'
+			- (129) 10:1	'
+'
+		* (74) 11:1	'
+'
+			* (16) 0:1	'
+'
+		* (87) 12:27	'	1. With
+	2. a
+	3. sublist
+'
+			* (90) 0:9	'	1. With
+'
+				* (92) 0:9	'	1. With
+'
+					* (33) 0:9	'	1. With
+'
+					- (148) 1:2	'1.'
+					- (131) 4:4	'With'
+					- (129) 8:1	'
+'
+			* (90) 9:6	'	2. a
+'
+				* (92) 0:6	'	2. a
+'
+					* (33) 0:6	'	2. a
+'
+					- (148) 1:2	'2.'
+					- (131) 4:1	'a'
+					- (129) 5:1	'
+'
+			* (90) 15:12	'	3. sublist
+'
+				* (92) 0:12	'	3. sublist
+'
+					* (33) 0:12	'	3. sublist
+'
+					- (148) 1:2	'3.'
+					- (131) 4:7	'sublist'
+					- (129) 11:1	'
+'
+	* (74) 82:2	'
+
+'
+		* (16) 0:1	'
+'
+		* (16) 1:1	'
+'
+* (78) 1595:20	'### Code Blocks ###
+'
+	* (3) 0:20	'### Code Blocks ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:11	'Code Blocks'
+	- (145) 16:3	'###'
+	- (129) 19:1	'
+'
+* (74) 1615:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1616:49	'Code blocks are indented with 4 spaces or 1 tab.
+'
+	* (33) 0:49	'Code blocks are indented with 4 spaces or 1 tab.
+'
+	- (131) 0:48	'Code blocks are indented with 4 spaces or 1 tab.'
+	- (129) 48:1	'
+'
+* (74) 1665:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 1666:40	'    This is a code block.
+
+	As is this.
+'
+	* (28) 0:26	'    This is a code block.
+'
+	* (16) 26:1	'
+'
+	* (29) 27:13	'	As is this.
+'
+* (74) 1706:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 1708:25	'### Horizontal Rules ###
+'
+	* (3) 0:25	'### Horizontal Rules ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:16	'Horizontal Rules'
+	- (145) 21:3	'###'
+	- (129) 24:1	'
+'
+* (74) 1733:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1734:33	'You can include horizontal rules
+'
+	* (33) 0:33	'You can include horizontal rules
+'
+	- (131) 0:32	'You can include horizontal rules'
+	- (129) 32:1	'
+'
+* (74) 1767:1	'
+'
+	* (16) 0:1	'
+'
+* (83) 1768:4	'***
+'
+	* (24) 0:4	'***
+'
+	- (139) 0:1	'*'
+	- (139) 1:1	'*'
+	- (139) 2:1	'*'
+	- (129) 3:1	'
+'
+* (74) 1772:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1773:39	'between paragraphs and other elements.
+'
+	* (33) 0:39	'between paragraphs and other elements.
+'
+	- (131) 0:38	'between paragraphs and other elements.'
+	- (129) 38:1	'
+'
+* (74) 1812:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 1814:20	'### HTML Blocks ###
+'
+	* (3) 0:20	'### HTML Blocks ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:11	'HTML Blocks'
+	- (145) 16:3	'###'
+	- (129) 19:1	'
+'
+* (74) 1834:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1835:94	'HTML blocks can be included, but will work differently when not exporting to HTML, of course.
+'
+	* (33) 0:94	'HTML blocks can be included, but will work differently when not exporting to HTML, of course.
+'
+	- (131) 0:93	'HTML blocks can be included, but will work differently when not exporting to HTML, of course.'
+	- (129) 93:1	'
+'
+* (74) 1929:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 1930:17	'<div>*foo*</div>
+'
+	* (26) 0:17	'<div>*foo*</div>
+'
+* (74) 1947:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 1948:6	'<div>
+'
+	* (26) 0:6	'<div>
+'
+* (74) 1954:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1955:6	'*bar*
+'
+	* (33) 0:6	'*bar*
+'
+	- (192) 0:1	'*'
+		+ (131) 1:3	'bar'
+	- (139) 4:1	'*'
+	- (129) 5:1	'
+'
+* (74) 1961:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 1962:7	'</div>
+'
+	* (26) 0:7	'</div>
+'
+* (74) 1969:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (94) 1971:52	'Basic Span Level Elements
+-------------------------
+'
+	* (33) 0:26	'Basic Span Level Elements
+'
+	* (35) 26:26	'-------------------------
+'
+	- (131) 0:25	'Basic Span Level Elements'
+	- (129) 25:1	'
+'
+* (74) 2023:1	'
+'
+	* (16) 0:1	'
+'
+* (78) 2024:14	'### Links ###
+'
+	* (3) 0:14	'### Links ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:5	'Links'
+	- (145) 10:3	'###'
+	- (129) 13:1	'
+'
+* (74) 2038:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2039:80	'Links can be [inline](http://example.com/inline "Inline Link"), or [reference].
+'
+	* (33) 0:80	'Links can be [inline](http://example.com/inline "Inline Link"), or [reference].
+'
+	- (131) 0:13	'Links can be '
+	- (174) 13:1	'['
+		+ (131) 14:6	'inline'
+	- (166) 20:1	']'
+	- (184) 21:1	'('
+		+ (131) 22:4	'http'
+		+ (144) 26:1	':'
+		+ (131) 27:21	'//example.com/inline '
+		+ (185) 48:1	'"'
+			+ (131) 49:11	'Inline Link'
+		+ (157) 60:1	'"'
+	- (164) 61:1	')'
+	- (131) 62:5	', or '
+	- (174) 67:1	'['
+		+ (131) 68:9	'reference'
+	- (166) 77:1	']'
+	- (131) 78:1	'.'
+	- (129) 79:1	'
+'
+* (74) 2119:1	'
+'
+	* (16) 0:1	'
+'
+* (71) 2120:60	'[reference]: http://example.com/reference
+	"Reference Link"
+'
+	* (14) 0:42	'[reference]: http://example.com/reference
+'
+	* (29) 42:18	'	"Reference Link"
+'
+* (74) 2180:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2181:89	'You can also use automatic links <http://example.com/auto>
+and email <auto@example.com>.
+'
+	* (33) 0:59	'You can also use automatic links <http://example.com/auto>
+'
+	* (33) 59:30	'and email <auto@example.com>.
+'
+	- (131) 0:33	'You can also use automatic links '
+	- (171) 33:1	'<'
+		+ (131) 34:4	'http'
+		+ (144) 38:1	':'
+		+ (131) 39:18	'//example.com/auto'
+	- (168) 57:1	'>'
+	- (129) 58:1	'
+'
+	- (131) 59:10	'and email '
+	- (171) 69:1	'<'
+		+ (131) 70:16	'auto@example.com'
+	- (168) 86:1	'>'
+	- (131) 87:1	'.'
+	- (129) 88:1	'
+'
+* (74) 2270:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 2272:17	'### Emphasis ###
+'
+	* (3) 0:17	'### Emphasis ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:8	'Emphasis'
+	- (145) 13:3	'###'
+	- (129) 16:1	'
+'
+* (74) 2289:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2290:53	'Text can be *emphasized*, **strong**, or ***both***.
+'
+	* (33) 0:53	'Text can be *emphasized*, **strong**, or ***both***.
+'
+	- (131) 0:12	'Text can be '
+	- (192) 12:1	'*'
+		+ (131) 13:10	'emphasized'
+	- (139) 23:1	'*'
+	- (131) 24:2	', '
+	- (193) 26:1	'*'
+		+ (188) 27:1	'*'
+			+ (131) 28:6	'strong'
+		+ (139) 34:1	'*'
+	- (139) 35:1	'*'
+	- (131) 36:5	', or '
+	- (193) 41:1	'*'
+		+ (188) 42:1	'*'
+			+ (192) 43:1	'*'
+				+ (131) 44:4	'both'
+			+ (139) 48:1	'*'
+		+ (139) 49:1	'*'
+	- (139) 50:1	'*'
+	- (131) 51:1	'.'
+	- (129) 52:1	'
+'
+* (74) 2343:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 2345:13	'### Code ###
+'
+	* (3) 0:13	'### Code ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:4	'Code'
+	- (145) 9:3	'###'
+	- (129) 12:1	'
+'
+* (74) 2358:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2359:54	'You can include `code()` in the middle of other text.
+'
+	* (33) 0:54	'You can include `code()` in the middle of other text.
+'
+	- (131) 0:16	'You can include '
+	- (172) 16:1	'`'
+		+ (131) 17:4	'code'
+		+ (184) 21:1	'('
+		+ (164) 22:1	')'
+	- (154) 23:1	'`'
+	- (131) 24:29	' in the middle of other text.'
+	- (129) 53:1	'
+'
+* (74) 2413:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 2415:15	'### Images ###
+'
+	* (3) 0:15	'### Images ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:6	'Images'
+	- (145) 11:3	'###'
+	- (129) 14:1	'
+'
+* (74) 2430:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2431:53	'Images are similar to links, but with a leading `!`.
+'
+	* (33) 0:53	'Images are similar to links, but with a leading `!`.
+'
+	- (131) 0:48	'Images are similar to links, but with a leading '
+	- (172) 48:1	'`'
+		+ (131) 49:1	'!'
+	- (154) 50:1	'`'
+	- (131) 51:1	'.'
+	- (129) 52:1	'
+'
+* (74) 2484:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2485:11	'![image]\ 
+'
+	* (33) 0:11	'![image]\ 
+'
+	- (181) 0:2	'!['
+		+ (131) 2:5	'image'
+	- (166) 7:1	']'
+	- (195) 8:2	'\ '
+	- (129) 10:1	'
+'
+* (74) 2496:1	'
+'
+	* (16) 0:1	'
+'
+* (71) 2497:38	'[image]: test-image.png "Image title"
+'
+	* (14) 0:38	'[image]: test-image.png "Image title"
+'
+* (74) 2535:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 2537:26	'### Backslash Escapes ###
+'
+	* (3) 0:26	'### Backslash Escapes ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:17	'Backslash Escapes'
+	- (145) 22:3	'###'
+	- (129) 25:1	'
+'
+* (74) 2563:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2564:28	'\*This is not emphasized.\*
+'
+	* (33) 0:28	'\*This is not emphasized.\*
+'
+	- (194) 0:2	'\*'
+	- (131) 2:23	'This is not emphasized.'
+	- (194) 25:2	'\*'
+	- (129) 27:1	'
+'
+* (74) 2592:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2593:28	'\[This is not a link\]\[\].
+'
+	* (33) 0:28	'\[This is not a link\]\[\].
+'
+	- (194) 0:2	'\['
+	- (131) 2:18	'This is not a link'
+	- (194) 20:2	'\]'
+	- (194) 22:2	'\['
+	- (194) 24:2	'\]'
+	- (131) 26:1	'.'
+	- (129) 27:1	'
+'
+* (74) 2621:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2622:27	'\* This is not a list item
+'
+	* (33) 0:27	'\* This is not a list item
+'
+	- (194) 0:2	'\*'
+	- (131) 2:24	' This is not a list item'
+	- (129) 26:1	'
+'
+* (74) 2649:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 2651:20	'### Inline HTML ###
+'
+	* (3) 0:20	'### Inline HTML ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:11	'Inline HTML'
+	- (145) 16:3	'###'
+	- (129) 19:1	'
+'
+* (74) 2671:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2672:42	'HTML can be included within other blocks.
+'
+	* (33) 0:42	'HTML can be included within other blocks.
+'
+	- (131) 0:41	'HTML can be included within other blocks.'
+	- (129) 41:1	'
+'
+* (74) 2714:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2715:90	'(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)
+'
+	* (33) 0:90	'(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)
+'
+	- (184) 0:1	'('
+		+ (131) 1:87	'Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.'
+	- (164) 88:1	')'
+	- (129) 89:1	'
+'
+* (74) 2805:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2806:41	'This is text with <foo>*bar*</foo> HTML.
+'
+	* (33) 0:41	'This is text with <foo>*bar*</foo> HTML.
+'
+	- (131) 0:18	'This is text with '
+	- (171) 18:1	'<'
+		+ (131) 19:3	'foo'
+	- (168) 22:1	'>'
+	- (192) 23:1	'*'
+		+ (131) 24:3	'bar'
+	- (139) 27:1	'*'
+	- (171) 28:1	'<'
+		+ (131) 29:4	'/foo'
+	- (168) 33:1	'>'
+	- (131) 34:6	' HTML.'
+	- (129) 40:1	'
+'
+* (74) 2847:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (93) 2849:46	'MultiMarkdown Features
+======================
+'
+	* (33) 0:23	'MultiMarkdown Features
+'
+	* (34) 23:23	'======================
+'
+	- (131) 0:22	'MultiMarkdown Features'
+	- (129) 22:1	'
+'
+* (74) 2895:1	'
+'
+	* (16) 0:1	'
+'
+* (94) 2896:60	'Extended Block Level Elements
+-----------------------------
+'
+	* (33) 0:30	'Extended Block Level Elements
+'
+	* (35) 30:30	'-----------------------------
+'
+	- (131) 0:29	'Extended Block Level Elements'
+	- (129) 29:1	'
+'
+* (74) 2956:1	'
+'
+	* (16) 0:1	'
+'
+* (78) 2957:17	'### Metadata ###
+'
+	* (3) 0:17	'### Metadata ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:8	'Metadata'
+	- (145) 13:3	'###'
+	- (129) 16:1	'
+'
+* (74) 2974:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2975:51	'Metadata can be included at the top of a document.
+'
+	* (33) 0:51	'Metadata can be included at the top of a document.
+'
+	- (131) 0:50	'Metadata can be included at the top of a document.'
+	- (129) 50:1	'
+'
+* (74) 3026:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 3027:96	'	Title:		Integrated Test  
+	Subtitle:	MultiMarkdown test suite  
+	Author:		Fletcher T. Penney  
+'
+	* (29) 0:27	'	Title:		Integrated Test  
+'
+	* (29) 27:38	'	Subtitle:	MultiMarkdown test suite  
+'
+	* (29) 65:31	'	Author:		Fletcher T. Penney  
+'
+* (74) 3123:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3124:74	'It can be referenced with `[%title]` to insert the meta value - [%title].
+'
+	* (33) 0:74	'It can be referenced with `[%title]` to insert the meta value - [%title].
+'
+	- (131) 0:26	'It can be referenced with '
+	- (172) 26:1	'`'
+		+ (183) 27:1	'['
+			+ (153) 28:1	'%'
+			+ (131) 29:5	'title'
+		+ (166) 34:1	']'
+	- (154) 35:1	'`'
+	- (131) 36:26	' to insert the meta value '
+	- (141) 62:1	'-'
+	- (131) 63:1	' '
+	- (183) 64:1	'['
+		+ (153) 65:1	'%'
+		+ (131) 66:5	'title'
+	- (166) 71:1	']'
+	- (131) 72:1	'.'
+	- (129) 73:1	'
+'
+* (74) 3198:1	'
+'
+	* (16) 0:1	'
+'
+* (78) 3199:32	'### Header Cross-References ###
+'
+	* (3) 0:32	'### Header Cross-References ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:12	'Header Cross'
+	- (141) 16:1	'-'
+	- (131) 17:10	'References'
+	- (145) 28:3	'###'
+	- (129) 31:1	'
+'
+* (74) 3231:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3232:143	'MultiMarkdown automatically generates anchors for headers, to allow for navigation,
+such as jumping back to the previous [Metadata][] section.
+'
+	* (33) 0:84	'MultiMarkdown automatically generates anchors for headers, to allow for navigation,
+'
+	* (33) 84:59	'such as jumping back to the previous [Metadata][] section.
+'
+	- (131) 0:83	'MultiMarkdown automatically generates anchors for headers, to allow for navigation,'
+	- (129) 83:1	'
+'
+	- (131) 84:37	'such as jumping back to the previous '
+	- (174) 121:1	'['
+		+ (131) 122:8	'Metadata'
+	- (166) 130:1	']'
+	- (175) 131:2	'[]'
+	- (131) 133:9	' section.'
+	- (129) 142:1	'
+'
+* (74) 3375:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 3377:26	'### Table of Contents ###
+'
+	* (3) 0:26	'### Table of Contents ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:17	'Table of Contents'
+	- (145) 22:3	'###'
+	- (129) 25:1	'
+'
+* (74) 3403:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3404:60	'MultiMarkdown can generate a TOC from the header structure.
+'
+	* (33) 0:60	'MultiMarkdown can generate a TOC from the header structure.
+'
+	- (131) 0:59	'MultiMarkdown can generate a TOC from the header structure.'
+	- (129) 59:1	'
+'
+* (74) 3464:1	'
+'
+	* (16) 0:1	'
+'
+* (101) 3465:8	'{{TOC}}
+'
+	* (40) 0:8	'{{TOC}}
+'
+* (74) 3473:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 3475:27	'### Fenced Code Blocks ###
+'
+	* (3) 0:27	'### Fenced Code Blocks ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:18	'Fenced Code Blocks'
+	- (145) 23:3	'###'
+	- (129) 26:1	'
+'
+* (74) 3502:1	'
+'
+	* (16) 0:1	'
+'
+* (65) 3503:61	'```
+Fenced code blocks are easier in some circumstances.
+```
+'
+	* (63) 0:4	'```
+'
+	* (33) 4:53	'Fenced code blocks are easier in some circumstances.
+'
+	* (63) 57:4	'```
+'
+* (74) 3564:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 3566:25	'### Definition Lists ###
+'
+	* (3) 0:25	'### Definition Lists ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:16	'Definition Lists'
+	- (145) 21:3	'###'
+	- (129) 24:1	'
+'
+* (74) 3591:1	'
+'
+	* (16) 0:1	'
+'
+* (73) 3592:46	'Term 1
+Term 2
+:	Definition 1
+:	Definition 2
+
+
+'
+	* (100) 0:7	'Term 1
+'
+		* (33) 0:7	'Term 1
+'
+		- (131) 0:6	'Term 1'
+		- (129) 6:1	'
+'
+	* (100) 7:7	'Term 2
+'
+		* (33) 0:7	'Term 2
+'
+		- (131) 0:6	'Term 2'
+		- (129) 6:1	'
+'
+	* (72) 14:15	':	Definition 1
+'
+		* (92) 0:15	':	Definition 1
+'
+			* (33) 0:15	':	Definition 1
+'
+			- (147) 0:1	':'
+			- (131) 2:12	'Definition 1'
+			- (129) 14:1	'
+'
+	* (72) 29:15	':	Definition 2
+'
+		* (92) 0:15	':	Definition 2
+'
+			* (33) 0:15	':	Definition 2
+'
+			- (147) 0:1	':'
+			- (131) 2:12	'Definition 2'
+			- (129) 14:1	'
+'
+	* (74) 44:2	'
+
+'
+		* (16) 0:1	'
+'
+		* (16) 1:1	'
+'
+		- (129) 0:1	'
+'
+		- (129) 1:1	'
+'
+* (78) 3638:15	'### Tables ###
+'
+	* (3) 0:15	'### Tables ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:6	'Tables'
+	- (145) 11:3	'###'
+	- (129) 14:1	'
+'
+* (74) 3653:1	'
+'
+	* (16) 0:1	'
+'
+* (95) 3654:75	'| foo	| bar	|  
+ -----+ | :--:+	|  
+| *foo*	| *bar*	|  
+| **foo bar**	||  
+'
+	* (96) 0:36	'| foo	| bar	|  
+ -----+ | :--:+	|  
+'
+		* (98) 0:16	'| foo	| bar	|  
+'
+			* (38) 0:16	'| foo	| bar	|  
+'
+			- (229) 0:1	'|'
+			- (228) 1:4	' foo'
+				+ (131) 1:4	' foo'
+				+ (134) 5:1	'	'
+			- (229) 6:1	'|'
+			- (228) 7:4	' bar'
+				+ (131) 7:4	' bar'
+				+ (134) 11:1	'	'
+			- (229) 12:1	'|'
+			- (130) 13:3	'  
+'
+		* (99) 16:20	' -----+ | :--:+	|  
+'
+			* (39) 0:20	' -----+ | :--:+	|  
+'
+			- (228) 0:1	' '
+				+ (131) 0:1	' '
+				+ (160) 1:3	'---'
+				+ (161) 4:2	'--'
+				+ (140) 6:1	'+'
+				+ (131) 7:1	' '
+			- (229) 8:1	'|'
+			- (228) 9:1	' '
+				+ (131) 9:1	' '
+				+ (144) 10:1	':'
+				+ (161) 11:2	'--'
+				+ (144) 13:1	':'
+				+ (140) 14:1	'+'
+				+ (134) 15:1	'	'
+			- (229) 16:1	'|'
+			- (130) 17:3	'  
+'
+	* (97) 36:39	'| *foo*	| *bar*	|  
+| **foo bar**	||  
+'
+		* (98) 0:20	'| *foo*	| *bar*	|  
+'
+			* (38) 0:20	'| *foo*	| *bar*	|  
+'
+			- (229) 0:1	'|'
+			- (228) 1:1	' '
+				+ (131) 1:1	' '
+				+ (192) 2:1	'*'
+					+ (131) 3:3	'foo'
+				+ (139) 6:1	'*'
+				+ (134) 7:1	'	'
+			- (229) 8:1	'|'
+			- (228) 9:1	' '
+				+ (131) 9:1	' '
+				+ (192) 10:1	'*'
+					+ (131) 11:3	'bar'
+				+ (139) 14:1	'*'
+				+ (134) 15:1	'	'
+			- (229) 16:1	'|'
+			- (130) 17:3	'  
+'
+		* (98) 20:19	'| **foo bar**	||  
+'
+			* (38) 0:19	'| **foo bar**	||  
+'
+			- (229) 0:1	'|'
+			- (228) 1:1	' '
+				+ (131) 1:1	' '
+				+ (193) 2:1	'*'
+					+ (188) 3:1	'*'
+						+ (131) 4:7	'foo bar'
+					+ (139) 11:1	'*'
+				+ (139) 12:1	'*'
+				+ (134) 13:1	'	'
+			- (229) 14:2	'||'
+			- (130) 16:3	'  
+'
+* (74) 3729:1	'
+'
+	* (16) 0:1	'
+'
+* (74) 3730:1	'
+'
+	* (16) 0:1	'
+'
+* (78) 3731:16	'### Figures ###
+'
+	* (3) 0:16	'### Figures ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:7	'Figures'
+	- (145) 12:3	'###'
+	- (129) 15:1	'
+'
+* (74) 3747:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3748:52	'An image in a paragraph by itself becomes a figure.
+'
+	* (33) 0:52	'An image in a paragraph by itself becomes a figure.
+'
+	- (131) 0:51	'An image in a paragraph by itself becomes a figure.'
+	- (129) 51:1	'
+'
+* (74) 3800:1	'
+'
+	* (16) 0:1	'
+'
+* (102) 3801:10	'![image2]
+'
+	* (33) 0:10	'![image2]
+'
+	- (181) 0:2	'!['
+		+ (131) 2:6	'image2'
+	- (166) 8:1	']'
+	- (129) 9:1	'
+'
+* (74) 3811:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (94) 3814:58	'Extended Span Level Elements
+----------------------------
+'
+	* (33) 0:29	'Extended Span Level Elements
+'
+	* (35) 29:29	'----------------------------
+'
+	- (131) 0:28	'Extended Span Level Elements'
+	- (129) 28:1	'
+'
+* (74) 3872:1	'
+'
+	* (16) 0:1	'
+'
+* (78) 3873:18	'### Footnotes ###
+'
+	* (3) 0:18	'### Footnotes ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:9	'Footnotes'
+	- (145) 14:3	'###'
+	- (129) 17:1	'
+'
+* (74) 3891:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3892:34	'Foo.[^This is an inline footnote]
+'
+	* (33) 0:34	'Foo.[^This is an inline footnote]
+'
+	- (131) 0:4	'Foo.'
+	- (178) 4:1	'['
+		+ (150) 5:1	'^'
+		+ (131) 6:26	'This is an inline footnote'
+	- (166) 32:1	']'
+	- (129) 33:1	'
+'
+* (74) 3926:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3927:12	'Bar.[^foot]
+'
+	* (33) 0:12	'Bar.[^foot]
+'
+	- (131) 0:4	'Bar.'
+	- (178) 4:1	'['
+		+ (150) 5:1	'^'
+		+ (131) 6:4	'foot'
+	- (166) 10:1	']'
+	- (129) 11:1	'
+'
+* (74) 3939:1	'
+'
+	* (16) 0:1	'
+'
+* (69) 3940:35	'[^foot]: And a reference footnote.
+'
+	* (92) 0:35	'[^foot]: And a reference footnote.
+'
+		* (33) 0:35	'[^foot]: And a reference footnote.
+'
+		- (178) 0:1	'['
+			+ (150) 1:1	'^'
+			+ (131) 2:4	'foot'
+		- (166) 6:1	']'
+		- (147) 7:1	':'
+		- (131) 9:25	'And a reference footnote.'
+		- (129) 34:1	'
+'
+* (74) 3975:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 3977:18	'### Citations ###
+'
+	* (3) 0:18	'### Citations ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:9	'Citations'
+	- (145) 14:3	'###'
+	- (129) 17:1	'
+'
+* (74) 3995:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3996:38	'An inline citation.[#Inline Citation]
+'
+	* (33) 0:38	'An inline citation.[#Inline Citation]
+'
+	- (131) 0:19	'An inline citation.'
+	- (180) 19:1	'['
+		+ (152) 20:1	'#'
+		+ (131) 21:6	'Inline'
+		+ (131) 27:9	' Citation'
+	- (166) 36:1	']'
+	- (129) 37:1	'
+'
+* (74) 4034:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4035:28	'A reference citation.[#foo]
+'
+	* (33) 0:28	'A reference citation.[#foo]
+'
+	- (131) 0:21	'A reference citation.'
+	- (180) 21:1	'['
+		+ (152) 22:1	'#'
+		+ (131) 23:3	'foo'
+	- (166) 26:1	']'
+	- (129) 27:1	'
+'
+* (74) 4063:1	'
+'
+	* (16) 0:1	'
+'
+* (68) 4064:12	'[#foo]: bar
+'
+	* (92) 0:12	'[#foo]: bar
+'
+		* (33) 0:12	'[#foo]: bar
+'
+		- (180) 0:1	'['
+			+ (152) 1:1	'#'
+			+ (131) 2:3	'foo'
+		- (166) 5:1	']'
+		- (147) 6:1	':'
+		- (131) 8:3	'bar'
+		- (129) 11:1	'
+'
+* (74) 4076:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 4078:19	'### Glossaries ###
+'
+	* (3) 0:19	'### Glossaries ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:10	'Glossaries'
+	- (145) 15:3	'###'
+	- (129) 18:1	'
+'
+* (74) 4097:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4098:8	'[?term]
+'
+	* (33) 0:8	'[?term]
+'
+	- (179) 0:1	'['
+		+ (151) 1:1	'?'
+		+ (131) 2:4	'term'
+	- (166) 6:1	']'
+	- (129) 7:1	'
+'
+* (74) 4106:1	'
+'
+	* (16) 0:1	'
+'
+* (70) 4107:31	'[?term]: A term to be defined.
+'
+	* (92) 0:31	'[?term]: A term to be defined.
+'
+		* (33) 0:31	'[?term]: A term to be defined.
+'
+		- (179) 0:1	'['
+			+ (151) 1:1	'?'
+			+ (131) 2:4	'term'
+		- (166) 6:1	']'
+		- (147) 7:1	':'
+		- (131) 9:21	'A term to be defined.'
+		- (129) 30:1	'
+'
+* (74) 4138:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 4140:22	'### Abbreviations ###
+'
+	* (3) 0:22	'### Abbreviations ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:13	'Abbreviations'
+	- (145) 18:3	'###'
+	- (129) 21:1	'
+'
+* (74) 4162:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4163:19	'[>MMD] and [>MMD].
+'
+	* (33) 0:19	'[>MMD] and [>MMD].
+'
+	- (177) 0:1	'['
+		+ (149) 1:1	'>'
+		+ (131) 2:3	'MMD'
+	- (166) 5:1	']'
+	- (131) 6:5	' and '
+	- (177) 11:1	'['
+		+ (149) 12:1	'>'
+		+ (131) 13:3	'MMD'
+	- (166) 16:1	']'
+	- (131) 17:1	'.'
+	- (129) 18:1	'
+'
+* (74) 4182:1	'
+'
+	* (16) 0:1	'
+'
+* (67) 4183:22	'[>MMD]: MultiMarkdown
+'
+	* (10) 0:22	'[>MMD]: MultiMarkdown
+'
+* (74) 4205:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 4207:25	'### Image attributes ###
+'
+	* (3) 0:25	'### Image attributes ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:16	'Image attributes'
+	- (145) 21:3	'###'
+	- (129) 24:1	'
+'
+* (74) 4232:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4233:28	'Images can have attributes.
+'
+	* (33) 0:28	'Images can have attributes.
+'
+	- (131) 0:27	'Images can have attributes.'
+	- (129) 27:1	'
+'
+* (74) 4261:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4262:12	'![image2]\ 
+'
+	* (33) 0:12	'![image2]\ 
+'
+	- (181) 0:2	'!['
+		+ (131) 2:6	'image2'
+	- (166) 8:1	']'
+	- (195) 9:2	'\ '
+	- (129) 11:1	'
+'
+* (74) 4274:1	'
+'
+	* (16) 0:1	'
+'
+* (71) 4275:50	'[image2]: test-image.png "Image title" width=40px
+'
+	* (14) 0:50	'[image2]: test-image.png "Image title" width=40px
+'
+* (74) 4325:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 4327:13	'### Math ###
+'
+	* (3) 0:13	'### Math ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:4	'Math'
+	- (145) 9:3	'###'
+	- (129) 12:1	'
+'
+* (74) 4340:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4341:30	'foo \\({e}^{i\pi }+1=0\\) bar
+'
+	* (33) 0:30	'foo \\({e}^{i\pi }+1=0\\) bar
+'
+	- (131) 0:4	'foo '
+	- (224) 4:3	'\\('
+		+ (173) 7:1	'{'
+			+ (131) 8:1	'e'
+		+ (170) 9:1	'}'
+		+ (214) 10:1	'^'
+		+ (173) 11:1	'{'
+			+ (131) 12:1	'i'
+			+ (191) 13:1	'\'
+			+ (131) 14:3	'pi '
+		+ (170) 17:1	'}'
+		+ (140) 18:1	'+'
+		+ (131) 19:3	'1=0'
+	- (219) 22:3	'\\)'
+	- (131) 25:4	' bar'
+	- (129) 29:1	'
+'
+* (74) 4371:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4372:54	'\\[ {x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a} \\]
+'
+	* (33) 0:54	'\\[ {x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a} \\]
+'
+	- (225) 0:3	'\\['
+		+ (131) 3:1	' '
+		+ (173) 4:1	'{'
+			+ (131) 5:1	'x'
+		+ (170) 6:1	'}'
+		+ (143) 7:1	'_'
+		+ (173) 8:1	'{'
+			+ (131) 9:3	'1,2'
+		+ (170) 12:1	'}'
+		+ (131) 13:1	'='
+		+ (191) 14:1	'\'
+		+ (131) 15:4	'frac'
+		+ (173) 19:1	'{'
+			+ (141) 20:1	'-'
+			+ (131) 21:1	'b'
+			+ (191) 22:1	'\'
+			+ (131) 23:3	'pm '
+			+ (191) 26:1	'\'
+			+ (131) 27:4	'sqrt'
+			+ (173) 31:1	'{'
+				+ (173) 32:1	'{'
+					+ (131) 33:1	'b'
+				+ (170) 34:1	'}'
+				+ (214) 35:1	'^'
+				+ (173) 36:1	'{'
+					+ (131) 37:1	'2'
+				+ (170) 38:1	'}'
+				+ (141) 39:1	'-'
+				+ (131) 40:3	'4ac'
+			+ (170) 43:1	'}'
+		+ (170) 44:1	'}'
+		+ (173) 45:1	'{'
+			+ (131) 46:2	'2a'
+		+ (170) 48:1	'}'
+		+ (131) 49:1	' '
+	- (221) 50:3	'\\]'
+	- (129) 53:1	'
+'
+* (74) 4426:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4427:26	'foo ${e}^{i\pi }+1=0$ bar
+'
+	* (33) 0:26	'foo ${e}^{i\pi }+1=0$ bar
+'
+	- (131) 0:4	'foo '
+	- (226) 4:1	'$'
+		+ (173) 5:1	'{'
+			+ (131) 6:1	'e'
+		+ (170) 7:1	'}'
+		+ (214) 8:1	'^'
+		+ (173) 9:1	'{'
+			+ (131) 10:1	'i'
+			+ (191) 11:1	'\'
+			+ (131) 12:3	'pi '
+		+ (170) 15:1	'}'
+		+ (140) 16:1	'+'
+		+ (131) 17:3	'1=0'
+	- (222) 20:1	'$'
+	- (131) 21:4	' bar'
+	- (129) 25:1	'
+'
+* (74) 4453:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4454:27	'foo ${e}^{i\pi }+1=0$, bar
+'
+	* (33) 0:27	'foo ${e}^{i\pi }+1=0$, bar
+'
+	- (131) 0:4	'foo '
+	- (226) 4:1	'$'
+		+ (173) 5:1	'{'
+			+ (131) 6:1	'e'
+		+ (170) 7:1	'}'
+		+ (214) 8:1	'^'
+		+ (173) 9:1	'{'
+			+ (131) 10:1	'i'
+			+ (191) 11:1	'\'
+			+ (131) 12:3	'pi '
+		+ (170) 15:1	'}'
+		+ (140) 16:1	'+'
+		+ (131) 17:3	'1=0'
+	- (222) 20:1	'$'
+	- (131) 21:5	', bar'
+	- (129) 26:1	'
+'
+* (74) 4481:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4482:50	'$${x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}$$
+'
+	* (33) 0:50	'$${x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}$$
+'
+	- (227) 0:2	'$$'
+		+ (173) 2:1	'{'
+			+ (131) 3:1	'x'
+		+ (170) 4:1	'}'
+		+ (143) 5:1	'_'
+		+ (173) 6:1	'{'
+			+ (131) 7:3	'1,2'
+		+ (170) 10:1	'}'
+		+ (131) 11:1	'='
+		+ (191) 12:1	'\'
+		+ (131) 13:4	'frac'
+		+ (173) 17:1	'{'
+			+ (141) 18:1	'-'
+			+ (131) 19:1	'b'
+			+ (191) 20:1	'\'
+			+ (131) 21:3	'pm '
+			+ (191) 24:1	'\'
+			+ (131) 25:4	'sqrt'
+			+ (173) 29:1	'{'
+				+ (173) 30:1	'{'
+					+ (131) 31:1	'b'
+				+ (170) 32:1	'}'
+				+ (214) 33:1	'^'
+				+ (173) 34:1	'{'
+					+ (131) 35:1	'2'
+				+ (170) 36:1	'}'
+				+ (141) 37:1	'-'
+				+ (131) 38:3	'4ac'
+			+ (170) 41:1	'}'
+		+ (170) 42:1	'}'
+		+ (173) 43:1	'{'
+			+ (131) 44:2	'2a'
+		+ (170) 46:1	'}'
+	- (223) 47:2	'$$'
+	- (129) 49:1	'
+'
+* (74) 4532:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 4534:21	'### Smart Quotes ###
+'
+	* (3) 0:21	'### Smart Quotes ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:12	'Smart Quotes'
+	- (145) 17:3	'###'
+	- (129) 20:1	'
+'
+* (74) 4555:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4556:38	'"foo" and 'bar' -- with --- dashes...
+'
+	* (33) 0:38	'"foo" and 'bar' -- with --- dashes...
+'
+	- (185) 0:1	'"'
+		+ (131) 1:3	'foo'
+	- (157) 4:1	'"'
+	- (131) 5:5	' and '
+	- (186) 10:1	'''
+		+ (131) 11:3	'bar'
+	- (156) 14:1	'''
+	- (131) 15:1	' '
+	- (161) 16:2	'--'
+	- (131) 18:6	' with '
+	- (160) 24:3	'---'
+	- (131) 27:7	' dashes'
+	- (159) 34:3	'...'
+	- (129) 37:1	'
+'
+* (74) 4594:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (78) 4596:21	'### CriticMarkup ###
+'
+	* (3) 0:21	'### CriticMarkup ###
+'
+	- (145) 0:3	'###'
+	- (131) 4:12	'CriticMarkup'
+	- (145) 17:3	'###'
+	- (129) 20:1	'
+'
+* (74) 4617:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4618:13	'{++Insert++}
+'
+	* (33) 0:13	'{++Insert++}
+'
+	- (208) 0:3	'{++'
+		+ (131) 3:6	'Insert'
+	- (198) 9:3	'++}'
+	- (129) 12:1	'
+'
+* (74) 4631:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4632:13	'{--Delete--}
+'
+	* (33) 0:13	'{--Delete--}
+'
+	- (209) 0:3	'{--'
+		+ (131) 3:6	'Delete'
+	- (200) 9:3	'--}'
+	- (129) 12:1	'
+'
+* (74) 4645:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4646:15	'{~~Old~>New~~}
+'
+	* (33) 0:15	'{~~Old~>New~~}
+'
+	- (210) 0:3	'{~~'
+		+ (131) 3:3	'Old'
+	- (211) 6:2	'~>'
+		+ (131) 8:3	'New'
+	- (203) 11:3	'~~}'
+	- (129) 14:1	'
+'
+* (74) 4661:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4662:14	'{>>Comment<<}
+'
+	* (33) 0:14	'{>>Comment<<}
+'
+	- (212) 0:3	'{>>'
+		+ (131) 3:7	'Comment'
+	- (205) 10:3	'<<}'
+	- (129) 13:1	'
+'
+* (74) 4676:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4677:18	'{==Highlighted==}
+'
+	* (33) 0:18	'{==Highlighted==}
+'
+	- (213) 0:3	'{=='
+		+ (131) 3:11	'Highlighted'
+	- (207) 14:3	'==}'
+	- (129) 17:1	'
+'

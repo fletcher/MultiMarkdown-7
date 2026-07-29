@@ -1,0 +1,226 @@
+%
+%	Letterhead LaTeX package for MultiMarkdown 7
+%
+
+% Options:
+%	[printed] -- this letter will be printed on paper, needs an envelope
+%	[usecoverpage] -- Use commands in \coverpage to customize the first page
+%					(You must design this yourself.)
+
+% Useful "variables"
+
+%	Defined by MultiMarkdown metadata (or by LaTeX code):
+%	\myauthor
+%	\mydate
+%	\myaddress -- used for cover page and envelope
+%	\myreturnaddress -- if defined, used for envelope only (overrides \myaddress in this case)
+%	\recipient
+%	\recipientaddress
+%	\salutation
+
+
+\ProvidesPackage{mmd7-letterhead}
+
+%
+%	Provide basic implementation for missing features to support MultiMarkdown
+%
+
+% Support parts, chapters, sections, etc.
+\newcounter{part}
+\newcounter{chapter}[part]
+\newcounter{section}[chapter]
+\newcounter{subsection}[section]
+\newcounter{subsubsection}[subsection]
+
+\renewcommand{\thepart}{\arabic{part}}
+\renewcommand{\thechapter}{\ifnum\value{part}=0 \arabic{chapter}\else\thepart.\fi\arabic{chapter}}
+\renewcommand{\thesection}{\ifnum\value{chapter}=0 \arabic{section}\else\thechapter.\arabic{section}\fi}
+\renewcommand{\thesubsection}{\ifnum\value{section}=0 \arabic{subsection}\else\thesection.\arabic{subsection}\fi}
+\renewcommand{\thesubsubsection}{\ifnum\value{subsection}=0 \arabic{subsubsection}\else\thesubsection.\arabic{subsubsection}\fi}
+
+\newcommand{\part}[1]{\refstepcounter{part}\par\vspace{1ex}\noindent\textbf{\Huge \thepart
+#1}\par\vspace{0.5ex}}
+\newcommand{\chapter}[1]{\refstepcounter{chapter}\par\vspace{1ex}\noindent\textbf{\huge \thechapter ~ #1}\par\vspace{0.5ex}}
+\newcommand{\section}[1]{\refstepcounter{section}\par\vspace{1ex}\noindent\textbf{\Large \thesection ~ #1}\par\vspace{0.5ex}}
+\newcommand{\subsection}[1]{\refstepcounter{subsection}\par\vspace{0.5ex}\noindent\textbf{\large \thesubsection ~ #1}\par\vspace{0.5ex}}
+\newcommand{\subsubsection}[1]{\refstepcounter{subsubsection}\par\vspace{0.5ex}\noindent\textbf{\thesubsubsection ~ #1}\par\vspace{0.5ex}}
+\newcommand{\paragraph}[1]{#1}
+\newcommand{\citep}[1]{(Citations don't work in letters.)}
+
+\newcommand{\tableofcontents}{(Table of Contents not supported in letters.)}
+
+% Silence errors for missing environments and commands
+\newenvironment*{figure}[1][]{}{}
+\newenvironment*{table}[1][]{}{}
+
+\newenvironment{thebibliography}[1][]{}{}
+\newcommand{\ignoreopt}[2][]{#2}
+\let\caption\ignoreopt
+
+\newcommand{\ignore}[2][]{}
+\let\bibitem\ignore
+
+
+% Builds on the MultiMarkdown 7 core package
+\usepackage{mmd7-core}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{afterpage}
+
+
+\let\caption\ignoreopt
+
+% Support envelope generation (Modify this for different envelope size)
+\usepackage[businessenvelope,leftenvelopes]{envlab}
+
+% Adjust envelope positioning
+\setlength{\ToAddressTopMargin}{-0.0in}
+
+
+% Adjust document margins
+\usepackage[left=1.0in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
+\def\firstpagetopmargin{1.5in}
+
+
+% Default spacing
+\renewcommand{\baselinestretch}{1.3}
+\setlength{\parskip}{12pt}
+\huge
+
+
+% Indent signature block further
+\makeatletter \longindentation=4.0in \makeatother
+
+
+% Allow optional separate return address for cover page and envelope
+\ifx\myaddress\undefined
+	\ifx\myreturnaddress\undefined
+		% Neither address was defined
+		\address{\myauthor}
+	\else
+		% Only return address defined
+		\address{~}
+		\def\returnaddress{\myreturnaddress}
+	\fi
+\else
+	% We defined an address, use it for cover page
+	\address{\myauthor \\ \myaddress}
+	\ifx\myreturnaddress\undefined
+	\else
+		% Use return address when specified
+		\def\returnaddress{\myreturnaddress}
+	\fi
+\fi
+
+
+\ifx\recipient\undefined
+	\def\recipient{Some Recipient}
+\fi
+\ifx\recipientaddress\undefined
+	\def\recipientaddress{123 Some Street \\ Some City, USA 54321}
+\fi
+
+% %
+% %	Provide basic implementation for missing features to support MultiMarkdown
+% %
+
+% % Support parts, chapters, sections, etc.
+% \newcounter{part}
+% \newcounter{chapter}[part]
+% \newcounter{section}[chapter]
+% \newcounter{subsection}[section]
+% \newcounter{subsubsection}[subsection]
+
+% \renewcommand{\thepart}{\arabic{part}}
+% \renewcommand{\thechapter}{\ifnum\value{part}=0 \arabic{chapter}\else\thepart.\fi\arabic{chapter}}
+% \renewcommand{\thesection}{\ifnum\value{chapter}=0 \arabic{section}\else\thechapter.\arabic{section}\fi}
+% \renewcommand{\thesubsection}{\ifnum\value{section}=0 \arabic{subsection}\else\thesection.\arabic{subsection}\fi}
+% \renewcommand{\thesubsubsection}{\ifnum\value{subsection}=0 \arabic{subsubsection}\else\thesubsection.\arabic{subsubsection}\fi}
+
+% \newcommand{\part}[1]{\refstepcounter{part}\par\vspace{1ex}\noindent\textbf{\Huge \thepart
+% #1}\par\vspace{0.5ex}}
+% \newcommand{\chapter}[1]{\refstepcounter{chapter}\par\vspace{1ex}\noindent\textbf{\huge \thechapter ~ #1}\par\vspace{0.5ex}}
+% \newcommand{\section}[1]{\refstepcounter{section}\par\vspace{1ex}\noindent\textbf{\Large \thesection ~ #1}\par\vspace{0.5ex}}
+% \newcommand{\subsection}[1]{\refstepcounter{subsection}\par\vspace{0.5ex}\noindent\textbf{\large \thesubsection ~ #1}\par\vspace{0.5ex}}
+% \newcommand{\subsubsection}[1]{\refstepcounter{subsubsection}\par\vspace{0.5ex}\noindent\textbf{\thesubsubsection ~ #1}\par\vspace{0.5ex}}
+% \newcommand{\paragraph}[1]{#1}
+% % \newcommand{\citep}[1]{(Citations don't work in letters.)}
+
+% \newcommand{\tableofcontents}{(Table of Contents not supported in letters.)}
+
+% % Silence errors for missing environments and commands
+% \newenvironment*{figure}[1][]{}{}
+% \newenvironment*{table}[1][]{}{}
+
+% % \newenvironment{thebibliography}[1][]{}{}
+% \newcommand{\ignoreopt}[2][]{#2}
+% \let\caption\ignoreopt
+
+% \newcommand{\ignore}[2][]{}
+% \let\bibitem\ignore
+
+
+%
+%	Handle options
+%
+
+% Configure letter for printing, rather than PDF, and generate envelopes
+\DeclareOption{printed}{
+	\def\enableprintingenvelope{true}
+	% Change PDF page size to match envelope size
+	\AtBeginLabels{\eject \pdfpagewidth=\EnvelopeHeight \pdfpageheight=\EnvelopeWidth}
+}
+
+
+% Support additional instructions for a cover page
+\DeclareOption{usecoverpage}{
+	\def\enablecoverpage{true}
+}
+
+% Ignore other options
+\DeclareOption*{}
+
+\ProcessOptions
+
+
+% Generate envelope if appropriate	
+\ifx\enableprintingenvelope\undefined
+\else
+	\makelabels
+\fi
+
+
+%
+% Handle letter initialization and finalization
+%
+
+% Don't use empty lines -- they take up space in the document for some reason
+\AtBeginDocument{
+	\begin{letter}{\recipient \\ \recipientaddress}
+
+	% Use coverpage content if specified
+	\ifx\enablecoverpage\undefined \else \ifx\coverpage\undefined \else \coverpage \fi \fi
+
+	% Changing margins after cover page caused undesired page breaks.  Skip down instead
+	\vspace{\dimeval{\firstpagetopmargin - 1.25in}}
+	\ifx\salutation\undefined \opening{\recipient,} \else \opening{\salutation} \fi
+
+	% Example for placing a logo
+	% \begin{tikzpicture}[remember picture, overlay]
+	% 	\node[anchor=north west, shift={(0.5in,-0.675in)}] at (current page.north west) {
+	% 		\resizebox{1.5in}{!}{\includegraphics[decodearray={0.2 0.5}]{logo.pdf}}
+	% 	};
+	% \end{tikzpicture}
+}
+
+
+% Handle letter finalization
+\AtEndDocument{
+	\ifx\mysignature\undefined
+		\signature{\myauthor}
+	\else
+		\signature{\mysignature}
+	\fi
+	\closing{Sincerely,}
+	\end{letter}
+}

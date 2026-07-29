@@ -1,0 +1,82 @@
+* (91) 0:425	'title:	*foo* "bar"
+empty:
+css:	http://foo.com/bar.css
+htmlheader:	<script type="text/javascript"
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+latexleader:	mmd7-article-leader
+latexbegin:	mmd7-article-begin
+latexfooter:	mmd7-article-footer
+foo:	bar
+foo bar
+	foo bar
+foo:	*bar*
+htmlheader level: 2
+latexheader level: 2
+baseheader level: 3
+multiline: first line\
+	second line
+'
+	* (32) 0:19	'title:	*foo* "bar"
+'
+	* (33) 19:7	'empty:
+'
+	* (32) 26:28	'css:	http://foo.com/bar.css
+'
+	* (32) 54:43	'htmlheader:	<script type="text/javascript"
+'
+	* (29) 97:86	'	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+'
+	* (29) 183:11	'	</script>
+'
+	* (32) 194:33	'latexleader:	mmd7-article-leader
+'
+	* (32) 227:31	'latexbegin:	mmd7-article-begin
+'
+	* (32) 258:33	'latexfooter:	mmd7-article-footer
+'
+	* (32) 291:9	'foo:	bar
+'
+	* (33) 300:8	'foo bar
+'
+	* (29) 308:9	'	foo bar
+'
+	* (32) 317:11	'foo:	*bar*
+'
+	* (32) 328:20	'htmlheader level: 2
+'
+	* (32) 348:21	'latexheader level: 2
+'
+	* (32) 369:20	'baseheader level: 3
+'
+	* (32) 389:23	'multiline: first line\
+'
+	* (29) 412:13	'	second line
+'
+* (74) 425:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 426:9	'foo:	bar
+'
+	* (32) 0:9	'foo:	bar
+'
+	- (131) 0:3	'foo'
+	- (144) 3:1	':'
+	- (134) 4:1	'	'
+	- (131) 5:3	'bar'
+	- (129) 8:1	'
+'
+* (74) 435:1	'
+'
+	* (16) 0:1	'
+'
+* (76) 436:8	'# foo #
+'
+	* (1) 0:8	'# foo #
+'
+	- (145) 0:1	'#'
+	- (131) 2:3	'foo'
+	- (145) 6:1	'#'
+	- (129) 7:1	'
+'

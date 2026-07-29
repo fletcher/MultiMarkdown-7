@@ -1,0 +1,22 @@
+Title:	Outline Test Document
+Long Metadata:	This is
+	some long metadata.
+
+
+This is a *preamble*, before the first header.
+
+# Heading 1 [h1] #
+
+h1 content.
+
+Setext Header
+With 2 Lines
+============
+
+Setext content.
+
+Setext header
+level 2
+-------
+
+Final section content.

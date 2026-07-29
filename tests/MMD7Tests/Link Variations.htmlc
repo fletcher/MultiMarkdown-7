@@ -29,7 +29,7 @@ latexconfig: article</p>
 
 <p>Link to [Foo][foobar].</p>
 
-<p><a href="http://example.com/?bar=foo&foo=bar">&amp; link</a></p>
+<p><a href="http://example.com/?bar=foo&amp;foo=bar">&amp; link</a></p>
 
 <p><a href="http://example.com/%25%20link">'%' Link</a></p>
 
@@ -43,7 +43,7 @@ latexconfig: article</p>
 
 <p>Link to <a href="http://Bar-Foo/">Bar Foo</a>.</p>
 
-<p>Link to <a href="http://bar-foo/">bar foo</a>.</p>
+<p>Link to <a href="http://Bar-Foo/">bar foo</a>.</p>
 
 <p>Link to <a href="http://barfoo/">barfoo</a>.</p>
 
@@ -51,12 +51,12 @@ latexconfig: article</p>
 
 <p>20</p>
 
-<p>Link to <a href="http://bar-foo/">bar foo</a>.</p>
+<p>Link to <a href="http://Bar-Foo/">bar foo</a>.</p>
 
 <p>Link to <a href="http://barfoo/">barfoo</a>.</p>
 
 <p>Link to <a href="http://Bar-Foo/">Bar</a>.</p>
 
-<p>Link to <a href="http://bar-foo/">Bar</a>.</p>
+<p>Link to <a href="http://Bar-Foo/">Bar</a>.</p>
 
 <p>Link to <a href="http://barfoo/">Bar</a>.</p>

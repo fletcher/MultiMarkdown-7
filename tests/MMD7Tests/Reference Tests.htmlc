@@ -1,0 +1,110 @@
+<p>title: Reference Test
+latexconfig: article</p>
+
+<p><img src="*foo*" alt="foo" />
+<a href="*foo*">foo</a>
+<a href="*foo*">^foo</a>
+<a href="*foo*">#foo</a>
+<a href="*foo*">&gt;foo</a>
+<a href="*foo*">?foo</a></p>
+
+<p><img src="*bar*" alt="bar" title="Title bar 1" />
+<a href="*bar*" title="Title bar 1">bar</a>
+<a href="*bar*" title="Title bar 2">^bar</a>
+<a href="*bar*" title="Title bar 3">#bar</a>
+<a href="*bar*" title="Title bar 4">&gt;bar</a>
+<a href="*bar*" title="Title bar 5">?bar</a></p>
+
+<p><img src="*bat*" alt="bat" />
+<a href="*bat*">bat</a>
+<a href="*bat*">^bat</a>
+<a href="*bat*">#bat</a>
+<a href="*bat*">&gt;bat</a>
+<a href="*bat*">?bat</a></p>
+
+<p><img src="*baz*" alt="baz" title="Title baz 1" />
+<a href="*baz*" title="Title baz 1">baz</a>
+<a href="*baz*" title="Title baz 2">^baz</a>
+<a href="*baz*" title="Title baz 3">#baz</a>
+<a href="*baz*" title="Title baz 4">&gt;baz</a>
+<a href="*baz*" title="Title baz 5">?baz</a></p>
+
+<p><a href="**foo1**"> foo1</a>
+<a href="**foo1**">foo1 </a>
+<a href="**foo1**"> foo1 </a></p>
+
+<p><a href="**foo1**">^ foo1</a>
+<a href="**foo1**">^foo1 </a>
+<a href="**foo1**">^ foo1 </a></p>
+
+<p><a href="**foo1**"># foo1</a>
+<a href="**foo1**">#foo1 </a>
+<a href="**foo1**"># foo1 </a></p>
+
+<p><a href="**foo1**">&gt; foo1</a>
+<a href="**foo1**">&gt;foo1 </a>
+<a href="**foo1**">&gt; foo1 </a></p>
+
+<p><a href="**foo1**">? foo1</a>
+<a href="**foo1**">?foo1 </a>
+<a href="**foo1**">? foo1 </a></p>
+
+<p><a href="**bar1**"> bar1</a>
+<a href="**bar1**">bar1 </a>
+<a href="**bar1**"> bar1 </a></p>
+
+<p><a href="**bar1**">^ bar1</a>
+<a href="**bar1**">^bar1 </a>
+<a href="**bar1**">^ bar1 </a></p>
+
+<p><a href="**bar1**"># bar1</a>
+<a href="**bar1**">#bar1 </a>
+<a href="**bar1**"># bar1 </a></p>
+
+<p><a href="**bar1**">&gt; bar1</a>
+<a href="**bar1**">&gt;bar1 </a>
+<a href="**bar1**">&gt; bar1 </a></p>
+
+<p><a href="**bar1**">? bar1</a>
+<a href="**bar1**">?bar1 </a>
+<a href="**bar1**">? bar1 </a></p>
+
+<p><a href="**bat1**"> bat1</a>
+<a href="**bat1**">bat1 </a>
+<a href="**bat1**"> bat1 </a></p>
+
+<p><a href="**bat1**">^ bat1</a>
+<a href="**bat1**">^bat1 </a>
+<a href="**bat1**">^ bat1 </a></p>
+
+<p><a href="**bat1**"># bat1</a>
+<a href="**bat1**">#bat1 </a>
+<a href="**bat1**"># bat1 </a></p>
+
+<p><a href="**bat1**">&gt; bat1</a>
+<a href="**bat1**">&gt;bat1 </a>
+<a href="**bat1**">&gt; bat1 </a></p>
+
+<p><a href="**bat1**">? bat1</a>
+<a href="**bat1**">?bat1 </a>
+<a href="**bat1**">? bat1 </a></p>
+
+<p>[ baz1]
+[baz1 ]
+[ baz1 ]</p>
+
+<p>[^ baz1]
+[^baz1 ]
+[^ baz1 ]</p>
+
+<p>[# baz1]
+[#baz1 ]
+[# baz1 ]</p>
+
+<p>[&gt; baz1]
+[&gt;baz1 ]
+[&gt; baz1 ]</p>
+
+<p>[? baz1]
+[?baz1 ]
+[? baz1 ]</p>

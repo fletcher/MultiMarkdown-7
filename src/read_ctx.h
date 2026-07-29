@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,9 @@ typedef struct {
 
 	const char *		text;
 	size_t				text_len;
+
+	size_t				c_start;
+	size_t				c_len;
 } header;
 
 
@@ -64,10 +67,19 @@ typedef struct {
 	char 		*		key;
 
 	char 		*		value;
+	size_t				value_start;
 	size_t				value_len;
 
 	UT_hash_handle		hh;
 } meta;
+
+
+/// Extracted tags
+typedef struct {
+	char *				key;
+
+	UT_hash_handle		hh;
+} tag;
 
 
 /// Extracted link reference definitions
@@ -89,6 +101,8 @@ typedef struct {
 	size_t				title_len;
 
 	attr *				attributes;
+
+	bool				auto_generated;
 
 	UT_hash_handle		hh;
 } link_def;
@@ -131,6 +145,37 @@ typedef struct {
 } endnote_def;
 
 
+enum media_type {
+	textCSS,
+	imagePNG,
+	imageJPEG,
+};
+
+
+/// Assets (e.g. files that should be stored in zipfile formats -- images, CSS)
+struct asset {
+	char *					url;
+	char *					uuid;
+	char *					id;
+	char 					stored;
+	enum media_type 		type;
+	void *					data;
+	size_t					len;
+	struct UT_hash_handle	hh;
+};
+
+typedef struct asset asset;
+
+
+/// File paths
+struct file_path {
+	char *					path;
+	struct UT_hash_handle	hh;
+};
+
+typedef struct file_path file_path;
+
+
 /// Structured information from parsing process
 struct read_ctx {
 	char				allow_meta;
@@ -143,10 +188,8 @@ struct read_ctx {
 	int					base_header_level;
 	int					epub_header_level;
 	int					html_header_level;
-	int					xhtml_header_level;
 	int					latex_header_level;
-	int					odf_header_level;
-
+	int					beamer_header_level;
 
 	char				language;
 	char				quotes_language;
@@ -162,6 +205,7 @@ struct read_ctx {
 	uint16_t			random_header_seed;
 
 	meta 	*			meta_hash;
+	tag		*			tag_hash;
 	link_def 	*		link_def_hash;
 	abbr_def 	*		abbr_def_hash;
 
@@ -172,21 +216,27 @@ struct read_ctx {
 	int					cite_used;
 	int					glos_used;
 	int					note_used;
+
+	asset *				asset_hash;
+	file_path *			failed_file_hash;
 };
 
+
+#define MMD_HEADER_LEVEL_DISABLED -6
 
 
 read_ctx * read_ctx_new(uint32_t options);
 void read_ctx_reset(read_ctx * c, uint32_t options);
 void read_ctx_free(read_ctx * c);
 
-void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count);
-void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len);
-void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len);
+void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count, bool auto_generated);
+void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len, bool auto_generated);
+void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len, size_t c_start, size_t c_len);
 
 void read_ctx_store_abbr(read_ctx * c, abbr_def * l);
-void read_ctx_store_link(read_ctx * c, link_def * l);
+void read_ctx_store_link(read_ctx * c, link_def * l, bool auto_generated);
 void read_ctx_store_meta(read_ctx * c, meta * m);
+void read_ctx_store_tag(read_ctx * c, const char * tag, size_t tag_len);
 
 int read_ctx_store_cite(read_ctx * c, endnote_def * e);
 int read_ctx_store_glos(read_ctx * c, endnote_def * e);
@@ -196,6 +246,7 @@ int read_ctx_store_note(read_ctx * c, endnote_def * e);
 abbr_def * read_ctx_get_abbr(read_ctx * c, char * key);
 link_def * read_ctx_get_link(read_ctx * c, char * key);
 meta * read_ctx_get_meta(read_ctx * c, char * key);
+tag * read_ctx_get_tag(read_ctx * c, char * key);
 
 endnote_def * read_ctx_get_cite(read_ctx * c, char * key);
 endnote_def * read_ctx_get_glos(read_ctx * c, char * key);
@@ -208,5 +259,13 @@ void meta_free(meta * m);
 void link_def_free(link_def * l);
 void abbr_def_free(abbr_def * a);
 void endnote_def_free(endnote_def * e);
+
+asset * read_ctx_get_asset(read_ctx * c, char * url);
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path, const char * id);
+
+file_path * read_ctx_get_failed_file(read_ctx * c, const char * path);
+void read_ctx_store_failed_file(read_ctx * c, const char * path);
+
+char * media_extension(enum media_type type);
 
 #endif

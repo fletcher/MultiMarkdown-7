@@ -1,0 +1,188 @@
+%
+%	Configure LaTeX to produce a PDF presentation using the beamer class
+%
+
+
+% Default is 16:9 widescreen ratio
+\documentclass[ignorenonframetext,12pt,aspectratio=169]{beamer}
+
+
+% Create a handout with the slides on a page
+% \documentclass[handout]{beamer}
+% \usepackage{pgfpages}
+% \usepackage{handoutWithNotes}
+% % \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=5mm]
+% \pgfpagesuselayout{3 on 1 with notes}
+
+
+
+
+% Allow things like '<a>' in verbatim environments (fixes font encoding issue)
+\usepackage[T1]{fontenc}
+
+
+% Minimum required packages to suppport MMD features
+\usepackage[sort&compress]{natbib}
+
+
+% For each part, show a title page and an outline of that part
+\AtBeginPart
+{
+   \begin{frame}
+      \partpage
+   \end{frame}
+
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents
+   \end{frame}
+}
+
+% For each section, show an outline highlighting where we are
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection,currentsubsection]
+   \end{frame}
+}
+\def\mytitle{Sample Beamer Presentation}
+\def\mysubtitle{With a subtitle, no less!}
+\def\myauthor{Fletcher T. Penney}
+\def\affiliation{http://fletcherpenney.net/multimarkdown}
+\def\mycopyright{2026 Fletcher T. Penney This document is licensed under a Creative Commons License. http://creativecommons.org/licenses/by-sa/2.5/}
+%
+%	Get ready for the actual document
+%
+
+
+% Use default MMD metadata for beamer equivalents
+
+\ifx\mysubtitle\undefined
+\else
+	\subtitle{\mysubtitle}
+\fi
+
+\ifx\affiliation\undefined
+\else
+	\institute{\affiliation}
+\fi
+
+\ifx\mydate\undefined
+	\def\mydate{\today}
+\else
+	\date{\mydate}
+\fi
+
+
+% This does not look good in all themes
+\ifx\event\undefined
+\else
+	\date[\mydate]{\mydate~ / \event }
+\fi
+
+
+% Show "current/total" slide counter in footer
+% Works differently in different themes
+\title[\mytitle\hspace{2em}\insertframenumber/
+\inserttotalframenumber]{\mytitle}
+
+% Set author
+\author{\myauthor}
+
+% Include space between paragraphs
+\addtolength{\parskip}{\baselineskip}
+
+\ifx\theme\undefined
+\else
+	\usetheme{\theme}
+\fi
+
+\begin{document}
+
+\maketitle
+
+\part{Part 1}
+\label{part1}
+
+\section{Section A}
+\label{sectiona}
+
+\subsection{Subsection 1}
+\label{subsection1}
+
+\begin{frame}[fragile]
+\frametitle{MultiMarkdown}
+\label{multimarkdown}
+
+Foo.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{More MultiMarkdown}
+\label{moremultimarkdown}
+
+Foo.
+
+\end{frame}
+
+\subsection{Subsection 2}
+\label{subsection2}
+
+\begin{frame}[fragile]
+\frametitle{Still MultiMarkdown}
+\label{stillmultimarkdown}
+
+Foo.
+
+\end{frame}
+
+\section{Section B}
+\label{sectionb}
+
+\subsection{Subsection a}
+\label{subsectiona}
+
+\begin{frame}[fragile]
+\frametitle{Again}
+\label{again}
+
+Bar.
+
+\end{frame}
+
+\subsection{Subsection b}
+\label{subsectionb}
+
+\begin{frame}[fragile]
+\frametitle{Yet Again}
+\label{yetagain}
+
+Bar.
+
+\end{frame}
+
+\part{Part 2}
+\label{part2}
+
+\section{Section 2A}
+\label{section2a}
+
+\subsection{SubSection 2A}
+\label{subsection2a}
+
+\begin{frame}[fragile]
+\frametitle{Wrap it up}
+\label{wrapitup}
+
+Baz.
+\end{frame}
+
+\mode<all>
+% Durham Theme has a thank you slide
+\ifdefined\makethankyou
+\makethankyou
+%\makethankyou{Foo}{Bar}
+\fi
+\end{document}\mode*

@@ -1,0 +1,71 @@
+* (91) 0:233	'title:	MMD Header and Footer
+latexconfig:	article
+MMD Header:	{{header.txt}}
+MMD Footer:	{{footer.txt}}
+HTML Header: HTML <em>header</em>.
+HTML Footer: HTML <em>footer</em>.
+LaTeX Header: \LaTeX \emph{header}
+ODF Header: ODF header.
+'
+	* (32) 0:29	'title:	MMD Header and Footer
+'
+	* (32) 29:21	'latexconfig:	article
+'
+	* (32) 50:27	'MMD Header:	{{header.txt}}
+'
+	* (32) 77:27	'MMD Footer:	{{footer.txt}}
+'
+	* (32) 104:35	'HTML Header: HTML <em>header</em>.
+'
+	* (32) 139:35	'HTML Footer: HTML <em>footer</em>.
+'
+	* (32) 174:35	'LaTeX Header: \LaTeX \emph{header}
+'
+	* (32) 209:24	'ODF Header: ODF header.
+'
+* (74) 233:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 235:24	'MultiMarkdown *header*.
+'
+	* (33) 0:24	'MultiMarkdown *header*.
+'
+	- (131) 0:14	'MultiMarkdown '
+	- (192) 14:1	'*'
+		+ (131) 15:6	'header'
+	- (139) 21:1	'*'
+	- (131) 22:1	'.'
+	- (129) 23:1	'
+'
+* (74) 259:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 261:10	'Main Body
+'
+	* (33) 0:10	'Main Body
+'
+	- (131) 0:9	'Main Body'
+	- (129) 9:1	'
+'
+* (74) 271:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 273:23	'MultiMarkdown *footer*.'
+	* (33) 0:23	'MultiMarkdown *footer*.'
+	- (131) 0:14	'MultiMarkdown '
+	- (192) 14:1	'*'
+		+ (131) 15:6	'footer'
+	- (139) 21:1	'*'
+	- (131) 22:1	'.'

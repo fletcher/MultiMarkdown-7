@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 
 #include "text_buffer.h"
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "stack.h"
 #include "read_ctx.h"
 #include "mmd_scanner.h"
@@ -108,7 +108,7 @@ void write_ctx_get_table_alignments(write_ctx * c, mmd_node * t, const char * te
 	}
 
 	// Find separator line
-	while (walker && walker->type != LINE_TABLE_SEPARATOR) {
+	while (walker && walker->type != BLOCK_TABLE_SEPARATOR) {
 		walker = walker->next;
 	}
 

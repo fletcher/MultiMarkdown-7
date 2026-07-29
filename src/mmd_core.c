@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -47,13 +47,14 @@
 	#include <windows.h>
 #endif
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "text_buffer.h"
 
 #include "mmd_core.h"
 #include "mmd_scanner.h"
 #include "mmd_node.h"
 #include "mmd_line_scanner.h"
+#include "mmd_utilities.h"
 
 #include "criticmarkup.h"
 #include "transclude.h"
@@ -64,8 +65,39 @@
 #include "write_ctx.h"
 
 #include "export_core.h"
+#include "ast.h"
+#include "docx.h"
+#include "epub.h"
 #include "html.h"
 #include "latex.h"
+#include "outline.h"
+#include "textbundle.h"
+
+#include "import/html.h"
+#include "import/outline.h"
+#include "yxml.h"
+
+#include "version.h"
+
+
+#ifdef __APPLE__
+	#include "TargetConditionals.h"
+	#if TARGET_IPHONE_SIMULATOR
+		// iOS Simulator
+		#undef USE_CURL
+	#elif TARGET_OS_IPHONE
+		// iOS device
+		#undef USE_CURL
+	#elif TARGET_OS_MAC
+		// Other kinds of Mac OS
+	#else
+		#error "Unknown Apple platform"
+	#endif
+#endif
+
+#ifdef USE_CURL
+	#include <curl/curl.h>
+#endif
 
 
 #ifdef TEST
@@ -74,6 +106,9 @@
 
 
 #define kDEFAULTCAPACITY (4096 * 8)		// How big should file_buffer start?
+
+
+#define F(i,n) for(int i= 0;i<n;i++)
 
 
 // https://stackoverflow.com/questions/64893834/measuring-elapsed-time-using-clock-gettimeclock-monotonic
@@ -86,21 +121,25 @@ static int64_t difftimespec_us(const struct timespec after, const struct timespe
 #endif
 
 
-/// Open file for reading regardless of OS
-static FILE * flex_fopen(const char * fname) {
-	FILE * in = NULL;
+/// Return string containing MMD version
+char * mmd_version(void) {
+	char * result = NULL;
 
-#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
-	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
-	wchar_t wstr[wchars_num];
-	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
-
-	in = _wfopen(wstr, L"rb");
-#else
-	in = fopen(fname, "r");
+#ifndef TEST
+	result = my_strdup(LIBMULTIMARKDOWN7_VERSION);
 #endif
 
-	return in;
+	return result;
+}
+
+
+/// Initialize random number generation and libcurl (if used)
+void mmd_initialize(void) {
+	custom_seed_rand();
+
+#ifdef USE_CURL
+	curl_global_init(CURL_GLOBAL_ALL);
+#endif
 }
 
 
@@ -137,90 +176,153 @@ mmd_node * mmd_parse_str(const char * text, read_ctx * c, uint32_t options) {
 
 
 mmd_node * mmd_parse_str_len(const char * text, size_t in_len, read_ctx * c, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	mmd_node * n = mmd_parse_buffer(buffer, c, options);
 
-	// Don't free buffer->text, just the "wrapper"
-	free(buffer);
+	text_buffer_free(buffer, 1);
 
 	return n;
 }
 
 
 mmd_node * mmd_parse_buffer(text_buffer * buffer, read_ctx * c, uint32_t options) {
-	// TODO: How do we free these?  Pass it upstream from here?
 	vector_line_node * vl = vector_line_node_new(0);
 
 	// mmd_node_pool * vn = mmd_node_pool_new(0);
 	mmd_node_pool * vn = NULL;
 
-	return mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
+	mmd_node * n = mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
+
+	vector_line_node_free(vl);
+
+	return n;
 }
 
 
 /// Parse MultiMarkdown text into AST, and then convert AST into output format
 /// Print output to designated FILE stream
-void mmd_process_filename(const char * fname, FILE * out, uint32_t options, const char * search_path) {
+void mmd_process_filename(const char * fname, FILE * out, uint32_t options, const char * search_path, char ** failed_path) {
 	FILE * in = flex_fopen(fname);
 
 	if (in) {
-		mmd_process_file(in, out, options, search_path, fname);
+		mmd_process_file(in, out, options, search_path, fname, failed_path);
 		fclose(in);
 	}
 }
 
 
-void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_file(FILE * in, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	text_buffer * source_buffer = buffer_file(in, kDEFAULTCAPACITY);
 
 	text_buffer * out_buffer = text_buffer_new(0);
 
-	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, failed_path);
 
-	fprintf(out, "%.*s", (int)out_buffer->len, out_buffer->text);
+	fwrite(out_buffer->text, out_buffer->len, 1, out);
 
 	text_buffer_free(source_buffer, 1);
 	text_buffer_free(out_buffer, 1);
 }
 
 
-void mmd_process_str(const char * text, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_str(const char * text, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	size_t len = strlen(text);
-	mmd_process_str_len(text, len, out, options, search_path, source_path);
+	mmd_process_str_len(text, len, out, options, search_path, source_path, failed_path);
 }
 
 
-void mmd_process_str_len(const char * text, size_t len, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_str_len(const char * text, size_t len, FILE * out, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	// Copy text in case we modify it (e.g. transclusion)
 	text_buffer * source_buffer = text_buffer_new(len);
 	text_buffer_append_text(source_buffer, text, len);
 
 	text_buffer * out_buffer = text_buffer_new(0);
 
-	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, failed_path);
 
-	fprintf(out, "%.*s", (int)out_buffer->len, out_buffer->text);
+	fwrite(out_buffer->text, out_buffer->len, 1, out);
 
 	text_buffer_free(source_buffer, 1);
 	text_buffer_free(out_buffer, 1);
 }
 
 
+#ifdef USE_CURL
+// Use dynamic buffer for downloading files in memory
+// Based on https://curl.haxx.se/libcurl/c/getinmemory.html
+
+static size_t write_memory(void * contents, size_t size, size_t nmemb, void * userp) {
+	text_buffer * buffer = (text_buffer *) userp;
+	size_t startlen = buffer->len;
+
+	text_buffer_append_text(buffer, contents, (size * nmemb));
+
+	return buffer->len - startlen;
+}
+
+
+void mmd_process_url(const char * url, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+	CURL * curl = curl_easy_init();
+
+	text_buffer * source_buffer = text_buffer_new(0);
+
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) source_buffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	CURLcode res = curl_easy_perform(curl);
+
+	if (res == CURLE_OK) {
+		// We got it
+		text_buffer * out_buffer = text_buffer_new(0);
+
+		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, NULL);
+
+		fwrite(out_buffer->text, out_buffer->len, 1, out);
+
+		text_buffer_free(out_buffer, 1);
+	} else {
+		fprintf(stderr, "There was an error downloading '%s'\n", url);
+	}
+
+	text_buffer_free(source_buffer, 1);
+	curl_easy_cleanup(curl);
+}
+#else
+void mmd_process_url(const char * url, FILE * out, uint32_t options, const char * search_path, const char * source_path) {
+	if (0 && url && out && options && search_path && source_path) {}
+
+	fprintf(stderr, "libcurl is not available.  Unable to download content.\n");
+}
+#endif
+
+
+
 static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, read_ctx * c, text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path) {
 	if (!(options & MMD_OPTION_COMPATIBILITY)) {
 		// Insert `mmdheader` and `mmdfooter` if appropriate
 		if (options & MMD_OPTION_MMD_HEADER) {
-			mmd_add_mmd_header_footer(source_buffer, options);
+			switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+				case FORMAT_MMD:
+				case FORMAT_OPML:
+				case FORMAT_ITMZ:
+					break;
+
+				default:
+					mmd_add_mmd_header_footer(source_buffer, options);
+					break;
+			}
 		}
 
 		// Handle transclusion
 		if (options & MMD_OPTION_TRANSCLUDE) {
-			mmd_transclude(source_buffer, options, search_path, source_path);
+			mmd_transclude(source_buffer, options, c, search_path, source_path);
 		}
 
 		// Accept CriticMarkup
@@ -246,12 +348,52 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 
 	// Export AST to specified format
 	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_AST:
+			export_ast(n, source_buffer->text, out_buffer);
+			break;
+
+		case FORMAT_DOCX:
+			export_docx(n, source_buffer->text, out_buffer, c, options, source_path);
+			break;
+
+		case FORMAT_EPUB:
+			export_epub(n, source_buffer->text, out_buffer, c, options, source_path);
+			break;
+
+		case FORMAT_HASH: {
+			uint32_t hash = mmd_hash_node_tree(n);
+			export_hash(n, out_buffer);
+			text_buffer_append_printf(out_buffer, "Tree hash: %u\n", hash);
+		}
+		break;
+
 		case FORMAT_HTML:
-			export_html(n, source_buffer->text, out_buffer, c, options);
+			export_html(n, source_buffer->text, out_buffer, c, options, source_path);
+			break;
+
+		case FORMAT_ITMZ:
+			export_outline(n, source_buffer->text, source_buffer->len, out_buffer, c, options, FORMAT_ITMZ);
+			break;
+
+		case FORMAT_BEAMER:
+			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_BEAMER);
+			break;
+
+		case FORMAT_LTX_TALK:
+			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_LTX_TALK);
 			break;
 
 		case FORMAT_LATEX:
-			export_latex(n, source_buffer->text, out_buffer, c, options);
+			export_latex(n, source_buffer->text, out_buffer, c, options, FORMAT_LATEX);
+			break;
+
+		case FORMAT_OPML:
+			export_outline(n, source_buffer->text, source_buffer->len, out_buffer, c, options, FORMAT_OPML);
+			break;
+
+		case FORMAT_TEXTBUNDLE:
+		case FORMAT_TEXTPACK:
+			export_textbundle(n, source_buffer, out_buffer, c, options, source_path);
 			break;
 
 		default:
@@ -263,11 +405,16 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 		fprintf(stderr, "text_buffer %zu/%zu used\n", out_buffer->len, out_buffer->capacity);
 		fprintf(stderr, "text_buffer resized %zu times\n", (out_buffer->capacity) / (source_buffer->len * 2));
 	}
+
+	if (vn == NULL) {
+		// Free nodes if we don't use a node_pool
+		mmd_node_tree_free(n);
+	}
 }
 
 
 /// All roads lead to Rome....
-void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path) {
+void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 #if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 #else
 	// Track time
@@ -275,6 +422,27 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 #endif
+	int finished = 0;
+
+	// Are we starting from OPML or ITMZ?
+	if (!finished && options & MMD_OPTION_PARSE_OPML) {
+		if (mmd_import_outline(source_buffer, OUTLINE_OPML)) {
+			finished = 1;
+		}
+	}
+
+	if (!finished && options & MMD_OPTION_PARSE_ITMZ) {
+		if (mmd_import_outline(source_buffer, OUTLINE_ITMZ)) {
+			finished = 1;
+		}
+	}
+
+	// Or HTML
+	if (!finished && options & MMD_OPTION_PARSE_HTML) {
+		if (mmd_import_html(source_buffer)) {
+			finished = 1;
+		}
+	}
 
 	// Create structures used for parsing
 	vector_line_node * vl = vector_line_node_new(0);
@@ -284,6 +452,26 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 	// Parse the text and export it
 	mmd_process_buffer_core(vl, vn, c, source_buffer, out_buffer, options, search_path, source_path);
+
+	// Report files we failed to access
+	if (failed_path && c->failed_file_hash) {
+		file_path * f, * f_tmp;
+		size_t len = -1;
+		char * first = NULL;
+
+		HASH_ITER(hh, c->failed_file_hash, f, f_tmp) {
+			if (len == (size_t) -1) {
+				first = f->path;
+				len = strlen(f->path);
+			} else {
+				len = longest_common_prefix(first, len, f->path, len);
+			}
+
+			// fprintf(stderr, "Failed to obtain access for '%s'\n", f->path);
+		}
+
+		*failed_path = my_strndup(first, len);
+	}
 
 	// Free structures used for parsing
 	vector_line_node_free(vl);
@@ -307,12 +495,12 @@ void mmd_process_buffer(text_buffer * source_buffer, text_buffer * out_buffer, u
 
 /// Parse MultiMarkdown text into AST, and then convert AST into output format
 /// Returns text string (or binary data) -- will need to be freed
-char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_t options, const char * search_path) {
+char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_t options, const char * search_path, char ** failed_path) {
 	char * out = NULL;
 	FILE * in = flex_fopen(fname);
 
 	if (in) {
-		out = mmd_process_file_to_str(in, out_len, options, search_path, fname);
+		out = mmd_process_file_to_str(in, out_len, options, search_path, fname, failed_path);
 		fclose(in);
 	}
 
@@ -320,10 +508,10 @@ char * mmd_process_filename_to_str(const char * fname, size_t * out_len, uint32_
 }
 
 
-char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	text_buffer * buffer = buffer_file(in, kDEFAULTCAPACITY);
 
-	char * out = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path);
+	char * out = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path, failed_path);
 
 	text_buffer_free(buffer, 1);
 
@@ -331,18 +519,18 @@ char * mmd_process_file_to_str(FILE * in, size_t * out_len, uint32_t options, co
 }
 
 
-char * mmd_process_str_to_str(const char * text, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_str_to_str(const char * text, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	size_t len = strlen(text);
-	return mmd_process_str_len_to_str(text, len, out_len, options, search_path, source_path);
+	return mmd_process_str_len_to_str(text, len, out_len, options, search_path, source_path, failed_path);
 }
 
 
-char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	/// Copy text in case we modify it (e.g. transclusion)
 	text_buffer * buffer = text_buffer_new(in_len);
 	text_buffer_append_text(buffer, text, in_len);
 
-	char * r = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path);
+	char * r = mmd_process_buffer_to_str(buffer, out_len, options, search_path, source_path, failed_path);
 
 	text_buffer_free(buffer, 1);
 
@@ -350,10 +538,10 @@ char * mmd_process_str_len_to_str(const char * text, size_t in_len, size_t * out
 }
 
 
-char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, uint32_t options, const char * search_path, const char * source_path, char ** failed_path) {
 	text_buffer * out_buffer = text_buffer_new(0);
 
-	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path);
+	mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, failed_path);
 
 	char * result = out_buffer->text;
 	*out_len = out_buffer->len;
@@ -362,6 +550,49 @@ char * mmd_process_buffer_to_str(text_buffer * source_buffer, size_t * out_len, 
 
 	return result;
 }
+
+
+#ifdef USE_CURL
+char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+	char * result = NULL;
+	CURL * curl = curl_easy_init();
+
+	text_buffer * source_buffer = text_buffer_new(0);
+
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) source_buffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	CURLcode res = curl_easy_perform(curl);
+
+	if (res == CURLE_OK) {
+		// We got it
+		text_buffer * out_buffer = text_buffer_new(0);
+
+		mmd_process_buffer(source_buffer, out_buffer, options, search_path, source_path, NULL);
+
+		result = out_buffer->text;
+		*out_len = out_buffer->len;
+
+		text_buffer_free(out_buffer, 0);
+	} else {
+		fprintf(stderr, "There was an error downloading '%s'\n", url);
+	}
+
+	text_buffer_free(source_buffer, 1);
+	curl_easy_cleanup(curl);
+
+	return result;
+}
+#else
+char * mmd_process_url_to_str(const char * url, size_t * out_len, uint32_t options, const char * search_path, const char * source_path) {
+	if (0 && url && out_len && options && search_path && source_path) {}
+
+	fprintf(stderr, "libcurl is not available.  Unable to download content.\n");
+	return NULL;
+}
+#endif
 
 
 /// Process MultiMarkdown text into AST and output it to
@@ -393,15 +624,13 @@ void mmd_ast_str(const char * text, FILE * out, uint32_t options) {
 
 
 void mmd_ast_str_len(const char * text, size_t in_len, FILE * out, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	mmd_ast_buffer(buffer, out, options);
 
-	free(buffer);
+	text_buffer_free(buffer, 1);
 }
 
 
@@ -426,6 +655,91 @@ void mmd_ast_buffer(text_buffer * buffer, FILE *out, uint32_t options) {
 #endif
 
 	mmd_node_tree_describe(n, out, buffer->text, 0);
+
+	vector_line_node_free(vl);
+	mmd_node_pool_free(vn);
+	read_ctx_free(c);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+#endif
+
+	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+		int64_t diff_mid = difftimespec_us(mid, start);
+		fprintf(stderr, "%.6f seconds to parse.\n", ((double)diff_mid / (double)1000000));
+
+		int64_t diff_full = difftimespec_us(end, start);
+		fprintf(stderr, "%.6f seconds in total.\n", ((double)diff_full / (double)1000000));
+#endif
+	}
+}
+
+
+/// Process MultiMarkdown text into AST with hash values and output it to
+/// specified file stream
+void mmd_hash_filename(const char * fname, FILE * out, uint32_t options) {
+	FILE * in = flex_fopen(fname);
+
+	if (in) {
+		mmd_hash_file(in, out, options);
+		fclose(in);
+	}
+}
+
+
+void mmd_hash_file(FILE * in, FILE * out, uint32_t options) {
+	text_buffer * buffer = buffer_file(in, kDEFAULTCAPACITY);
+
+	mmd_hash_buffer(buffer, out, options);
+
+	text_buffer_free(buffer, 1);
+}
+
+
+void mmd_hash_str(const char * text, FILE * out, uint32_t options) {
+	size_t len = strlen(text);
+
+	mmd_hash_str_len(text, len, out, options);
+}
+
+
+void mmd_hash_str_len(const char * text, size_t in_len, FILE * out, uint32_t options) {
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
+
+	mmd_hash_buffer(buffer, out, options);
+
+	text_buffer_free(buffer, 1);
+}
+
+
+void mmd_hash_buffer(text_buffer * buffer, FILE * out, uint32_t options) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	// Track time
+	struct timespec start, mid, end;
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+#endif
+
+	vector_line_node * vl = vector_line_node_new(0);
+	mmd_node_pool * vn = mmd_node_pool_new(0);
+	read_ctx * c = read_ctx_new(options);
+
+	mmd_node * n = mmd_parse_text(buffer->text, buffer->len, vl, vn, c, options);
+	uint32_t hash = mmd_hash_node_tree(n);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
+#endif
+
+	mmd_node_tree_describe_hash(n, out);
+	fprintf(out, "Tree hash: %u\n", hash);
 
 	vector_line_node_free(vl);
 	mmd_node_pool_free(vn);
@@ -481,15 +795,13 @@ read_ctx * mmd_metadata_str(const char * text, uint32_t options) {
 
 
 read_ctx * mmd_metadata_str_len(const char * text, size_t in_len, uint32_t options) {
-	// Since we are not modifying text, we can just use it directly inside the text_buffer
-	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = (char *) text;
-	buffer->len = in_len;
-	buffer->capacity = buffer->len;
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
 
 	read_ctx * r = mmd_metadata_buffer(buffer, options);
 
-	free(buffer);
+	text_buffer_free(buffer, 1);
 
 	return r;
 }
@@ -537,3 +849,89 @@ read_ctx * mmd_metadata_buffer(text_buffer * buffer, uint32_t options) {
 	return r;
 }
 
+
+read_ctx * mmd_tags_filename(const char * fname, uint32_t options) {
+	FILE * in = flex_fopen(fname);
+
+	read_ctx * r = NULL;
+
+	if (in) {
+		r = mmd_tags_file(in, options);
+		fclose(in);
+	}
+
+	return r;
+}
+
+
+read_ctx * mmd_tags_file(FILE * in, uint32_t options) {
+	text_buffer * buffer = buffer_file(in, kDEFAULTCAPACITY);
+
+	read_ctx * r = mmd_tags_buffer(buffer, options);
+
+	text_buffer_free(buffer, 1);
+
+	return r;
+}
+
+
+read_ctx * mmd_tags_str(const char * text, uint32_t options) {
+	size_t len = strlen(text);
+	return mmd_tags_str_len(text, len, options);
+}
+
+
+read_ctx * mmd_tags_str_len(const char * text, size_t in_len, uint32_t options) {
+	// We need to ensure that the text is null-terminated
+	text_buffer * buffer = text_buffer_new(in_len + 1);
+	text_buffer_append_text(buffer, text, in_len);
+
+	read_ctx * r = mmd_tags_buffer(buffer, options);
+
+	text_buffer_free(buffer, 1);
+
+	return r;
+}
+
+
+read_ctx * mmd_tags_buffer(text_buffer * buffer, uint32_t options) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	// Track time
+	struct timespec start, mid, end;
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+#endif
+
+	vector_line_node * vl = vector_line_node_new(0);
+	mmd_node_pool * vn = mmd_node_pool_new(0);
+	read_ctx * r = read_ctx_new(options);
+
+	mmd_parse_text(buffer->text, buffer->len, vl, vn, r, options);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &mid);
+#endif
+
+	vector_line_node_free(vl);
+	mmd_node_pool_free(vn);
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+#endif
+
+	if (options & MMD_OPTION_STATS) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+#else
+		int64_t diff_mid = difftimespec_us(mid, start);
+		fprintf(stderr, "%.6f seconds to parse.\n", ((double)diff_mid / (double)1000000));
+
+		int64_t diff_full = difftimespec_us(end, start);
+		fprintf(stderr, "%.6f seconds in total.\n", ((double)diff_full / (double)1000000));
+#endif
+	}
+
+	return r;
+}

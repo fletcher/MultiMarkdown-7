@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -43,10 +43,35 @@
 #define MMD_UTILITIES_LIBMULTIMARKDOWN7_H
 
 int table_has_caption(mmd_node * t);
+char * table_label(mmd_node * t, const char * text);
+
 void custom_seed_rand(void);
 uint16_t xorshift16(uint16_t x);
 
+
+/// strdup() not available on all platforms
+char * my_strdup(const char * source);
+
+
 /// strndup not available on all platforms
 char * my_strndup(const char * source, size_t n);
+
+
+char * uuid_string_from_bits(unsigned char * raw);
+char * uuid_new(void);
+
+/// Open file for reading regardless of OS
+FILE * flex_fopen(const char * fname);
+
+/// Cross-platform dirname()
+char * mmd_dirname(const char * path);
+
+
+/// Check text for a specified char
+int text_contains_char(const char * text, size_t len, char target);
+
+
+/// Find the length of the longest common prefix for two paths
+size_t longest_common_prefix(const char * path1, size_t len1, const char * path2, size_t len2);
 
 #endif

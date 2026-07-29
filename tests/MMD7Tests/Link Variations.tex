@@ -1,6 +1,6 @@
-\input{mmd6-article-leader}
+\input{mmd7-article-leader}
 \def\mytitle{Link Variations}
-\input{mmd6-article-begin}
+\input{mmd7-article-begin}
 
 \chapter{Foo Bar}
 \label{foobar}
@@ -31,7 +31,7 @@ Link to Foo (\autoref{foobar}).
 
 Link to Foo (\autoref{foobar}).
 
-\href{http://example.com/?bar=foo&foo=bar}{\& link}\footnote{\href{http://example.com/?bar=foo&foo=bar}{http://example.com/?bar=foo\&foo=bar}}
+\href{http://example.com/?bar=foo&amp;foo=bar}{\& link}\footnote{\href{http://example.com/?bar=foo&amp;foo=bar}{http://example.com/?bar=foo\&foo=bar}}
 
 \href{http://example.com/%25%20link}{`\%' Link}\footnote{\href{http://example.com/%25%20link}{http://example.com/\%25\%20link}}
 
@@ -45,7 +45,7 @@ Link to Foo (\autoref{foobar}).
 
 Link to \href{http://Bar-Foo/}{Bar Foo}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
 
-Link to \href{http://bar-foo/}{bar foo}\footnote{\href{http://bar-foo/}{http://bar-foo/}}.
+Link to \href{http://Bar-Foo/}{bar foo}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
 
 Link to \href{http://barfoo/}{barfoo}\footnote{\href{http://barfoo/}{http://barfoo/}}.
 
@@ -53,14 +53,14 @@ Link to \href{http://Bar-Foo/}{Bar Foo}\footnote{\href{http://Bar-Foo/}{http://B
 
 20
 
-Link to \href{http://bar-foo/}{bar foo}\footnote{\href{http://bar-foo/}{http://bar-foo/}}.
+Link to \href{http://Bar-Foo/}{bar foo}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
 
 Link to \href{http://barfoo/}{barfoo}\footnote{\href{http://barfoo/}{http://barfoo/}}.
 
 Link to \href{http://Bar-Foo/}{Bar}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
 
-Link to \href{http://bar-foo/}{Bar}\footnote{\href{http://bar-foo/}{http://bar-foo/}}.
+Link to \href{http://Bar-Foo/}{Bar}\footnote{\href{http://Bar-Foo/}{http://Bar-Foo/}}.
 
 Link to \href{http://barfoo/}{Bar}\footnote{\href{http://barfoo/}{http://barfoo/}}.
-\input{mmd6-article-footer}
+\input{mmd7-article-footer}
 \end{document}

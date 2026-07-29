@@ -4,9 +4,9 @@ css:	http://foo.com/bar.css
 htmlheader:	<script type="text/javascript"
 	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 	</script>
-latexleader:	mmd6-article-leader
-latexbegin:	mmd6-article-begin
-latexfooter:	mmd6-article-footer
+latexleader:	mmd7-article-leader
+latexbegin:	mmd7-article-begin
+latexfooter:	mmd7-article-footer
 foo:	bar
 foo bar
 	foo bar

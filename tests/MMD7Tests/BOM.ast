@@ -1,0 +1,22 @@
+* (91) 3:32	'title:	BOM
+latexconfig:	article
+'
+	* (32) 0:11	'title:	BOM
+'
+	* (32) 11:21	'latexconfig:	article
+'
+* (74) 35:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 36:48	'This file leads with a Byte Order Marker (BOM).
+'
+	* (33) 0:48	'This file leads with a Byte Order Marker (BOM).
+'
+	- (131) 0:41	'This file leads with a Byte Order Marker '
+	- (184) 41:1	'('
+		+ (131) 42:3	'BOM'
+	- (164) 45:1	')'
+	- (131) 46:1	'.'
+	- (129) 47:1	'
+'

@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -51,20 +51,11 @@
 #endif
 
 
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest * tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-
-#endif
-
-
 #define F(i,n) for(int i= 0;i<n;i++)
 
 
 char * commands[][2] = {
-	"multimarkdown ", "mmd6",								// Basic MMD 6 parsing to HTML
+	"multimarkdown6 ", "mmd6",								// Basic MMD 6 parsing to HTML
 	"../build/multimarkdown parse ", "mmd7",				// Basic MMD 7 parsing to HTML
 	"../build/multimarkdown parse -c ", "mmd7-c",			// MMD 7 HTML compatibility mode
 	"../build/multimarkdown parse -t latex ", "mmd7-l",		// MMD 7 LaTeX parsing

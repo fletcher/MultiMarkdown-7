@@ -18,7 +18,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -89,6 +89,10 @@ void ac_prepare(ac * a, int options);
 
 /// Perform search - returned link list must be freed
 match * ac_search(ac * a, int options, const unsigned char * source, size_t start, size_t len);
+
+
+/// Monitor one character at a time for matches
+size_t ac_step(size_t s, ac * a, int options, unsigned char c, size_t * len, unsigned char * type);
 
 
 /// Free linked list of matches

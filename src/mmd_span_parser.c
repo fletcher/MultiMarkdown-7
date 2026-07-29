@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "char.h"
 #include "mmd_node.h"
@@ -93,8 +93,8 @@ static PairRule pairings4[OBJECT_REPLACEMENT_CHARACTER] = {
 	[TOKEN_STAR] = 			{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_SKIP_IDENTICAL_TOKENS | PAIR_LIMIT_MULTIPLE_3,	TOKEN_STAR,	TOKEN_PAIR_STAR	},
 	[TOKEN_UL] = 			{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_SKIP_IDENTICAL_TOKENS | PAIR_NO_MATCH_INTRAWORD,	TOKEN_UL,	TOKEN_PAIR_UL	},
 
-	[TOKEN_SUPERSCRIPT] =	{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT, TOKEN_SUPERSCRIPT, TOKEN_SUPERSCRIPT },
-	[TOKEN_SUBSCRIPT] =		{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT, TOKEN_SUBSCRIPT, TOKEN_SUBSCRIPT },
+	[TOKEN_SUPERSCRIPT] =	{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_NON_CONSECUTIVE, TOKEN_SUPERSCRIPT, TOKEN_PAIR_SUPERSCRIPT },
+	[TOKEN_SUBSCRIPT] =		{ PAIR_OPEN_NO_WS_LE_RIGHT | PAIR_CLOSE_NO_WS_LE_LEFT | PAIR_NON_CONSECUTIVE, TOKEN_SUBSCRIPT, TOKEN_PAIR_SUBSCRIPT },
 };
 
 
@@ -361,11 +361,16 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 		}
 	}
 
+	int non_consecutive = (pairings[n->type].conditions & PAIR_NON_CONSECUTIVE);
+
 	// Find opener and pair off
 	while (s->size > stack_start && (o = stack_pop(s))) {
 		openers[o->type]--;
 
-		if ((o->type == target_type) && (!match_len || o->len == n->len) && (!limit_multiple_3 || delimiter_valid_multiple_3(text, o, n, pairings))) {
+		if ((o->type == target_type) && (!match_len || o->len == n->len) &&
+				(!limit_multiple_3 || delimiter_valid_multiple_3(text, o, n, pairings)) &&
+				(!non_consecutive || o->next != n)
+		   ) {
 			// We have the match
 			if (o->next != n) {
 				o->child = o->next;
@@ -397,6 +402,12 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 								// Citation
 								o->type = TOKEN_PAIR_BRACKET_CITATION;
 								mmd_node_split(p, o->child, 1);
+
+								// This is no longer a TOKEN_TAG
+								if (o->child->next && o->child->next->type == TOKEN_TAG) {
+									o->child->next->type = TOKEN_TEXT;
+								}
+
 								o->child->type = TOKEN_CITATION_MARKER;
 
 								if (prev == o->child && o->child->next != n) {
@@ -457,7 +468,7 @@ static mmd_node * token_closes(mmd_node_pool * p, mmd_node * n, mmd_node * prev,
 
 			o->next = n;
 
-			if (o != prev) {
+			if (prev && o != prev) {
 				prev->next = NULL;
 			}
 
@@ -637,7 +648,7 @@ static void pair_emphasis_tokens(mmd_node * n) {
 
 	if ((n->type == TOKEN_PAIR_STAR) || (n->type == TOKEN_PAIR_UL)) {
 		if (n->child && n->child->type == n->type) {
-			if (n->next->type == n->child->tail->type) {
+			if (n->child->tail && n->next->type == n->child->tail->type) {
 				n->type = TOKEN_PAIR_STRONG;
 
 				if (n->child->child) {
@@ -837,6 +848,7 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 						if (test - &text[n->start] > 1) {
 							offset = test - text;
 							n->child = mmd_node_new(p, TOKEN_TEXT, n->start + 1, test - &text[n->start + 1]);
+							n->type = (n->type == TOKEN_SUPERSCRIPT) ? TOKEN_PAIR_SUPERSCRIPT : TOKEN_PAIR_SUBSCRIPT;
 
 							mmd_node * temp = n->next;
 
@@ -860,9 +872,6 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 				break;
 
 			case TOKEN_QUOTE_SINGLE:
-				if (options & MMD_OPTION_COMPATIBILITY) {
-					break;
-				}
 
 				// Skip if not being handled this pass
 				if (!pairings[n->type].mate_type) {
@@ -892,9 +901,6 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 			// Cascade into standard checks
 			case TOKEN_QUOTE_DOUBLE:
 			case TOKEN_QUOTE_DOUBLE_ALT:
-				if (options & MMD_OPTION_COMPATIBILITY) {
-					break;
-				}
 
 				// Skip if not being handled this pass
 				if (!pairings[n->type].mate_type) {
@@ -1013,6 +1019,16 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_n
 		mmd_node * t = chain;
 
 		while (t) {
+			if (t->type == TOKEN_TAG) {
+				if (
+					(t->start == 0) ||
+					((text[t->start - 1] != '[') &&
+					 (text[t->start - 1] != '('))
+				) {
+					read_ctx_store_tag(c, &text[t->start], t->len);
+				}
+			}
+
 			t->next = mmd_tokenizer_accept_token(z, p, options);
 
 			// TODO: Debugging only
@@ -1033,7 +1049,9 @@ void mmd_parse_tokens_block(mmd_node * b, const char * text, read_ctx * c, mmd_n
 	analyze_token_chain(p, chain, pairings3, text, c, options);
 	analyze_token_chain(p, chain, pairings4, text, c, options);
 
-	b->content = chain;
+	if (b) {
+		b->content = chain;
+	}
 }
 
 
@@ -1043,14 +1061,17 @@ void mmd_parse_meta_block(const char * text, size_t len, read_ctx * c) {
 	const char * start = text;
 	const char * cur = start;
 	const char * stop = text + len;
+	const char * temp;
 
 	meta * m = NULL;
 
 	do {
 		m = NULL;
+		temp = cur;
 		cur += scan_metadata(cur, stop - cur, &m);
 
 		if (m) {
+			m->value_start += temp - start;
 			read_ctx_store_meta(c, m);
 		}
 	} while (m && cur < stop);
@@ -1087,12 +1108,12 @@ static void analyze_table_row_chain(mmd_node * n, mmd_node_pool * p) {
 	// Determine starting token of first cell
 	if (walker) {
 		if (walker->type == TOKEN_TEXT_WHITESPACE) {
-			while (walker->type == TOKEN_TEXT_WHITESPACE) {
+			while (walker && walker->type == TOKEN_TEXT_WHITESPACE) {
 				walker = walker->next;
 			}
 		}
 
-		if (walker->type == TOKEN_PIPE) {
+		if (walker && walker->type == TOKEN_PIPE) {
 			walker->type = TOKEN_TABLE_DIVIDER;
 			first = walker->next;
 		} else {
@@ -1100,7 +1121,9 @@ static void analyze_table_row_chain(mmd_node * n, mmd_node_pool * p) {
 			last = first;
 		}
 
-		walker = walker->next;
+		if (walker) {
+			walker = walker->next;
+		}
 	}
 
 	while (walker) {
@@ -1154,14 +1177,30 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_n
 		text = &text[b->start];
 
 		// Iterate through each line in the table
-		b = b->child;
+		mmd_node * l = b->child;
 
-		while (b) {
-			mmd_tokenizer * z = mmd_tokenizer_new(&text[b->start], b, c, p, options);
+		// Lines will be attached to row blocks, not the parent blocks
+		b->child = NULL;
+
+		mmd_node * rows = NULL;
+
+		while (l) {
+			mmd_tokenizer * z = mmd_tokenizer_new(&text[l->start], l, c, p, options);
 			mmd_node * chain = mmd_tokenizer_accept_token(z, p, options);
 			mmd_node * t = chain;
+			mmd_node * next = l->next;
+			l->next = NULL;
 
 			while (t) {
+				if (t->type == TOKEN_TAG) {
+					if (
+						(text[t->start - 1] != '[') &&
+						(text[t->start - 1] != '(')
+					) {
+						read_ctx_store_tag(c, &text[t->start], t->len);
+					}
+				}
+
 				t->next = mmd_tokenizer_accept_token(z, p, options);
 				t = t->next;
 			}
@@ -1172,15 +1211,33 @@ void mmd_parse_tokens_table(mmd_node * b, const char * text, read_ctx * c, mmd_n
 			analyze_table_row_chain(chain, p);
 
 			// Do standard span
-			analyze_token_chain(p, chain, pairings1, &text[b->start], c, options);
-			// analyze_token_chain(chain, pairings2, &text[b->start], c, options);
-			analyze_token_chain(p, chain, pairings3, &text[b->start], c, options);
-			analyze_token_chain(p, chain, pairings4, &text[b->start], c, options);
+			analyze_token_chain(p, chain, pairings1, &text[l->start], c, options);
+			// analyze_token_chain(chain, pairings2, &text[l->start], c, options);
+			analyze_token_chain(p, chain, pairings3, &text[l->start], c, options);
+			analyze_token_chain(p, chain, pairings4, &text[l->start], c, options);
 
-			b->content = chain;
+			mmd_node * row = mmd_node_new_parent(p, l, (l->type == LINE_TABLE_SEPARATOR) ? BLOCK_TABLE_SEPARATOR : BLOCK_TABLE_ROW);
+			//row->start = l->start;
+			row->content = chain;
 
-			b = b->next;
+			if (rows) {
+				mmd_node_chain_append(rows, row);
+			} else {
+				rows = row;
+			}
+
+			l = next;
+
+			if (l && l->type == LINE_EMPTY) {
+				// NOTE: This empty line node will "disappear".  It won't leak since it is still freed by the line vector
+				// mmd_node_chain_append(rows, l);
+				next = l->next;
+				l->next = NULL;
+				l = next;
+			}
 		}
+
+		b->child = rows;
 
 		return;
 	}
@@ -1226,7 +1283,7 @@ endnote_def * mmd_parse_tokens_endnote(mmd_node * b, const char * text, size_t l
 
 
 /// Used to create HTML compatible id (no spaces)
-char * html_id_from_text(const char * text, size_t len, bool require_odd_count) {
+char * disabled_html_id_from_text(const char * text, size_t len, bool require_odd_count) {
 	text_buffer * label = text_buffer_new(len);
 
 	// If text contains [...] use that
@@ -1311,9 +1368,111 @@ char * html_id_from_text(const char * text, size_t len, bool require_odd_count) 
 }
 
 
+/// Used to create HTML compatible id (no spaces)
+char * html_id_from_text(const char * text, size_t len, bool require_odd_count) {
+	if (0 && require_odd_count) {}
+
+	text_buffer * label = text_buffer_new(len);
+
+	const char * stop = text + len;
+	const char * next = text + 1;
+
+	while (text < stop) {
+
+		if ((next < stop) && ((*next & 0xC0) == 0x80)) {
+			// Allow multibyte characters
+			text_buffer_append_c(label, *text);
+
+			while ((next < stop) && ((*next & 0xC0) == 0x80)) {
+				text++;
+				text_buffer_append_c(label, *text);
+				next++;
+			}
+		} else {
+			switch (*text) {
+				case '.':
+				case '_':
+				case '-':
+				case ':':
+					// Allowed symbols
+					text_buffer_append_c(label, *text);
+					break;
+
+				default:
+					if (char_is_alphanumeric(*text)) {
+						// Allow letters and digits
+						text_buffer_append_c(label, tolower(*text));
+					}
+
+					break;
+			}
+		}
+
+		text++;
+		next++;
+	}
+
+	char * result = label->text;
+	text_buffer_free(label, 0);
+	return result;
+}
+
+
+/// Used to create HTML compatible id (no spaces)
+/// Requires first character to be a letter, no multibyte characters
+char * html_clean_id_from_text(const char * text, size_t len, bool require_odd_count) {
+	if (0 && require_odd_count) {}
+
+	text_buffer * label = text_buffer_new(len);
+
+	const char * stop = text + len;
+	const char * next = text + 1;
+
+	while (text < stop) {
+
+		if ((next < stop) && ((*next & 0xC0) == 0x80)) {
+			// Skip multibyte characters
+
+			while ((next < stop) && ((*next & 0xC0) == 0x80)) {
+				text++;
+				next++;
+			}
+		} else {
+			switch (*text) {
+				case '_':
+				case '-':
+					// Allowed symbols
+					text_buffer_append_c(label, *text);
+					break;
+
+				default:
+					if (char_is_alphanumeric(*text)) {
+						// Allow letters and digits
+						if ((label->len == 0) && char_is_digit(*text)) {
+							text_buffer_append_c(label, 'X');
+						}
+
+						text_buffer_append_c(label, tolower(*text));
+					}
+
+					break;
+			}
+		}
+
+		text++;
+		next++;
+	}
+
+	char * result = label->text;
+	text_buffer_free(label, 0);
+	return result;
+}
+
+
 /// Create a Markdown id (e.g. for reference links, images, etc.)
 /// Spaces are allowed (but collapse multiple spaces into a single space)
 /// Trim leading and trailing whitespace
+/// Lower case (except for abbreviations)
 char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 	text_buffer * label = text_buffer_new(len);
 
@@ -1331,13 +1490,16 @@ char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 				break;
 
 			case ']':
-				if (bracket_close == bracket_open - 1) {
-					count++;
-				} else {
-					count = 1;
+				if (bracket_open != NULL) {
+					if (bracket_close == bracket_open - 1) {
+						count++;
+					} else {
+						count = 1;
+					}
+
+					bracket_close = cur;
 				}
 
-				bracket_close = cur;
 				break;
 		}
 
@@ -1403,10 +1565,12 @@ char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 
 				case ' ':
 				case '\t':
-					// Collapse consecutive spaces
+				case '\n':
+				case '\r':
+					// Collapse consecutive whitespace
 					text_buffer_append_c(label, ' ');
 
-					while ((next < stop) && (cur[1] == ' ' || cur[1] == '\t')) {
+					while ((next < stop) && char_is_whitespace_or_line_ending(cur[1])) {
 						cur++;
 						next++;
 					}
@@ -1416,7 +1580,12 @@ char * md_id_from_text(const char * text, size_t len, bool require_odd_count) {
 				default:
 					if (char_is_alphanumeric(*cur) || char_is_punctuation(*cur)) {
 						// Allow letters and digits as well as punctuation
-						text_buffer_append_c(label, *cur);
+						// but lower case
+						if (*text == '>') {
+							text_buffer_append_c(label, *cur);
+						} else {
+							text_buffer_append_c(label, tolower(*cur));
+						}
 					}
 
 					break;

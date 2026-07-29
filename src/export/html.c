@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -55,6 +55,17 @@
 #include "export_core.h"
 #include "html.h"
 
+#include "base64.h"
+
+// #include <threads.h> // The header <threads.h> defines thread_local as a synonym for _Thread_local
+//thread_local const char * g_search_path = NULL;
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	__declspec(thread) char * g_search_path = NULL;
+#else
+	__thread char * g_search_path = NULL;
+#endif
+
 
 #ifdef TEST
 	#include "CuTest.h"
@@ -62,8 +73,14 @@
 
 #define F(i,n) for(int i= 0;i<n;i++)
 
-static void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
 static void export_html_blocks(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options);
+
+
+static char * media_type_string[] = {
+	[textCSS] = "text/css",
+	[imagePNG] = "image/png",
+	[imageJPEG] = "image/jpeg",
+};
 
 
 static parse_rule rules[256] = {
@@ -82,7 +99,7 @@ static parse_rule rules[256] = {
 
 	[BLOCK_TABLE_HEADER]			= { 1, "<thead>", 0, DESCEND_CHILD, 1, "</thead>", 0, 0, 0, 0 },
 	[BLOCK_TABLE_SECTION]			= { 2, "<tbody>", 0, DESCEND_CHILD, 1, "</tbody>", 0, 0, 0, 0 },
-	[LINE_TABLE]					= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>", 0, 0, 0, 0 },
+	[BLOCK_TABLE_ROW]				= { 1, "<tr>\n", 1, DESCEND_CONTENT, 1, "</tr>", 0, 0, 0, 0 },
 
 	[TOKEN_PAIR_CM_SUB_ADD]			= { 0, "~&gt;", 0, DESCEND_CHILD, 0, NULL, 0, 0, 0, 0 },
 	[TOKEN_PAIR_CM_ADD]				= { 0, "<ins>", 0, DESCEND_CHILD, 0, "</ins>", 0, 1, 0, 0 },
@@ -173,9 +190,13 @@ static void export_html_line(mmd_node * n, const char * text, text_buffer * out)
 		default:
 			if (n->next) {
 				text_buffer_append_text(out, &text[n->start], (int)n->len);
+				text_buffer_fix_trailing_newline(out);
 			} else {
 				// Don't print final trailing newline
 				text_buffer_append_text(out, &text[n->start], (int)n->len - 1);
+
+				// On Windows it might be messier, so clean up anything left over
+				text_buffer_trim_trailing_newline(out);
 			}
 
 			break;
@@ -208,9 +229,13 @@ static void export_html_line_content(mmd_line_node * l, const char * text, text_
 		default:
 			if (l->general.next) {
 				text_buffer_append_text(out, text, (int)l->c_len);
+				text_buffer_fix_trailing_newline(out);
 			} else if (l->c_len > 1) {
 				// Don't print final trailing newline
 				text_buffer_append_text(out, text, (int)l->c_len - 1);
+
+				// On Windows it might be messier, so clean up anything left over
+				text_buffer_trim_trailing_newline(out);
 			}
 
 			break;
@@ -246,6 +271,9 @@ static void export_html_raw_char(char c, text_buffer * out) {
 			mmd_print_const(out, "&quot;");
 			break;
 
+		case '\r':
+			break;
+
 		default:
 			text_buffer_append_c(out, c);
 			break;
@@ -262,6 +290,27 @@ static void export_html_raw_text(const char * text, size_t len, text_buffer * ou
 		text++;
 	}
 }
+
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+/// Write text as-is, except for \r characters
+static void export_text_except_cr(const char * text, size_t len, text_buffer * out) {
+	const char * stop = text + len;
+
+	while (text < stop) {
+		switch (*text) {
+			case '\r':
+				break;
+
+			default:
+				text_buffer_append_c(out, *text);
+				break;
+		}
+
+		text++;
+	}
+}
+#endif
 
 
 static void export_html_tokens_raw(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w);
@@ -442,7 +491,37 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 	}
 
 	mmd_print_const(out, "<img src=\"");
-	url_encode_text(l->url, l->url_len, out);
+
+	if (options & MMD_OPTION_EMBED_ASSETS) {
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path, l->key);
+
+		if (a && a->len > 0) {
+			// Embed image binary data directly (Base64 encoded)
+			text_buffer_append_printf(out, "data:%s;base64,", media_type_string[a->type]);
+			unsigned int b64_len = BASE64_ENCODE_OUT_SIZE(a->len);
+			char * b64 = malloc(b64_len);
+			b64_len = base64_encode(a->data, (int)a->len, b64);
+			text_buffer_append_text(out, b64, b64_len);
+			free(b64);
+		} else {
+			url_encode_text(l->url, l->url_len, out);
+		}
+	} else if (options & MMD_OPTION_STORE_ASSETS) {
+		asset * a = read_ctx_store_asset(r, l->url, l->url_len, options, g_search_path, l->key);
+
+		if (a) {
+			mmd_print_const(out, "assets/");
+			text_buffer_append_text(out, a->uuid, 36);
+
+			if (media_extension(a->type)) {
+				text_buffer_append_printf(out, ".%s", media_extension(a->type));
+			}
+		} else {
+			url_encode_text(l->url, l->url_len, out);
+		}
+	} else {
+		url_encode_text(l->url, l->url_len, out);
+	}
 
 	if (link_text_token) {
 		mmd_print_const(out, "\" alt=\"");
@@ -452,7 +531,14 @@ static int export_link_def_image(link_def * l, const char * link_text, size_t li
 	if (!(options & MMD_OPTION_COMPATIBILITY) && l->key) {
 		mmd_print_const(out, "\" id=\"");
 		// Need html_id instead of md_id
-		char * id = html_id_from_text(l->key, strlen(l->key), false);
+		char * id;
+
+		if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+			id = html_clean_id_from_text(l->key, strlen(l->key), false);
+		} else {
+			id = html_id_from_text(l->key, strlen(l->key), false);
+		}
+
 		export_html_raw_text(id, strlen(id), out);
 		free(id);
 	}
@@ -511,11 +597,16 @@ static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_tex
 				export_html_raw_text(a->expansion, a->expansion_len, out);
 			}
 
-			mmd_print_const(out, " (<abbr title=\"");
+			mmd_print_const(out, " <abbr title=\"");
 		}
 
 		export_html_raw_text(a->expansion, a->expansion_len, out);
-		mmd_print_const(out, "\">");
+
+		if (a->used) {
+			mmd_print_const(out, "\">");
+		} else {
+			mmd_print_const(out, "\">(");
+		}
 
 		if (key_token) {
 			export_html_tokens(key_token, link_text, link_text_len, out, r, w, options);
@@ -526,7 +617,7 @@ static int export_abbr_def(abbr_def * a, const char * link_text, size_t link_tex
 		if (a->used) {
 			mmd_print_const(out, "</abbr>");
 		} else {
-			mmd_print_const(out, "</abbr>)");
+			mmd_print_const(out, ")</abbr>");
 		}
 
 		*first = !a->used;
@@ -544,12 +635,13 @@ static int export_html_abbreviation_word(const char * text, size_t len, text_buf
 	char * id = mmd_strndup(text, &len);
 
 	// Insert '>''
-	char buffer[len + 2];
+	char * buffer = malloc(sizeof(char) * (len + 2));
 	memcpy(&buffer[1], id, len + 1);
 	buffer[0] = '>';
 
 	abbr_def * a = read_ctx_get_abbr(r, buffer);
 	free(id);
+	free(buffer);
 
 	return export_abbr_def(a, text, len, NULL, NULL, out, r, w, options, first);
 }
@@ -674,12 +766,13 @@ static int export_html_glossary_word(const char * text, size_t len, text_buffer 
 	char * id = mmd_strndup(text, &len);
 
 	// Insert '?'
-	char buffer[len + 2];
+	char * buffer = malloc(sizeof(char) * (len + 2));
 	memcpy(&buffer[1], id, len + 1);
 	buffer[0] = '?';
 
 	endnote_def * e = read_ctx_get_glos(r, buffer);
 	free(id);
+	free(buffer);
 
 	return export_endnote_def(TOKEN_PAIR_BRACKET_GLOSSARY, e, text, len, NULL, out, r, w, options);
 }
@@ -805,47 +898,61 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 			break;
 
 		case TOKEN_PAIR_QUOTE_DOUBLE:
-			text_buffer_append_text(out, double_quotes[(int)r->quotes_language].opener, double_quotes[(int)r->quotes_language].opener_len);
-			export_html_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, double_quotes[(int)r->quotes_language].closer, double_quotes[(int)r->quotes_language].closer_len);
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				mmd_print_const(out, "&quot;");
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				mmd_print_const(out, "&quot;");
+			} else {
+				text_buffer_append_text(out, double_quotes[(int)r->quotes_language].opener, double_quotes[(int)r->quotes_language].opener_len);
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				text_buffer_append_text(out, double_quotes[(int)r->quotes_language].closer, double_quotes[(int)r->quotes_language].closer_len);
+			}
+
 			(*t) = (*t)->next;
 			break;
 
 		case TOKEN_PAIR_QUOTE_SINGLE:
-			text_buffer_append_text(out, single_quotes[(int)r->quotes_language].opener, single_quotes[(int)r->quotes_language].opener_len);
-			export_html_tokens((*t)->child, text, len, out, r, w, options);
-			text_buffer_append_text(out, single_quotes[(int)r->quotes_language].closer, single_quotes[(int)r->quotes_language].closer_len);
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				text_buffer_append_c(out, '\'');
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				text_buffer_append_c(out, '\'');
+			} else {
+				text_buffer_append_text(out, single_quotes[(int)r->quotes_language].opener, single_quotes[(int)r->quotes_language].opener_len);
+				export_html_tokens((*t)->child, text, len, out, r, w, options);
+				text_buffer_append_text(out, single_quotes[(int)r->quotes_language].closer, single_quotes[(int)r->quotes_language].closer_len);
+			}
+
 			(*t) = (*t)->next;
 			break;
 
-		case TOKEN_SUPERSCRIPT:
-			if ((*t)->child) {
-				mmd_print_const(out, "<sup>");
-				export_html_tokens((*t)->child, text, len, out, r, w, options);
-				mmd_print_const(out, "</sup>");
+		case TOKEN_PAIR_SUPERSCRIPT:
+			mmd_print_const(out, "<sup>");
+			export_html_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "</sup>");
 
-				if ((*t)->next && (*t)->type == (*t)->next->type) {
-					(*t) = (*t)->next;
-				}
-			} else {
-				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			if ((*t)->next && (*t)->next->type == TOKEN_SUPERSCRIPT) {
+				(*t) = (*t)->next;
+			}
+
+			break;
+
+		case TOKEN_SUPERSCRIPT:
+			text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
+			break;
+
+		case TOKEN_PAIR_SUBSCRIPT:
+			mmd_print_const(out, "<sub>");
+			export_html_tokens((*t)->child, text, len, out, r, w, options);
+			mmd_print_const(out, "</sub>");
+
+			if ((*t)->next && (*t)->next->type == TOKEN_SUBSCRIPT) {
+				(*t) = (*t)->next;
 			}
 
 			break;
 
 		case TOKEN_SUBSCRIPT:
-			if ((*t)->child) {
-				mmd_print_const(out, "<sub>");
-				export_html_tokens((*t)->child, text, len, out, r, w, options);
-				mmd_print_const(out, "</sub>");
-
-				if ((*t)->next && (*t)->type == (*t)->next->type) {
-					(*t) = (*t)->next;
-				}
-			} else {
-				text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
-			}
-
+			text_buffer_append_text(out, &text[(*t)->start], (int)(*t)->len);
 			break;
 
 		case TOKEN_PAIR_BACKTICK:
@@ -950,7 +1057,11 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 				mmd_print_const(out, "</a>");
 				(*t) = (*t)->next;
 			} else if (scan_html(&text[(*t)->start])) {
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+				export_text_except_cr(&text[(*t)->start], (int)((*t)->next->start + (*t)->next->len - (*t)->start), out);
+#else
 				text_buffer_append_text(out, &text[(*t)->start], (int)((*t)->next->start + (*t)->next->len - (*t)->start));
+#endif
 				(*t) = (*t)->next;
 			} else {
 				// This is plain text that happens to be wrapped in <...>
@@ -1049,7 +1160,7 @@ static void export_html_token(mmd_node ** t, const char * text, size_t len, text
 }
 
 
-static void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
+void export_html_tokens(mmd_node * t, const char * text, size_t len, text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	while (t) {
 		export_html_token(&t, text, len, out, r, w, options);
 
@@ -1158,23 +1269,33 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 		case BLOCK_H3:
 		case BLOCK_H4:
 		case BLOCK_H5:
-		case BLOCK_H6:
+		case BLOCK_H6: {
 			pad(out, 2, w);
 
-			if (options & MMD_OPTION_COMPATIBILITY) {
-				text_buffer_append_text(out, headers_compat[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers_compat[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+			int level = b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML);
 
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers_compat[level].opener, headers_compat[level].opener_len);
+				}
 			} else {
-				text_buffer_append_text(out, headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers[level].opener, headers[level].opener_len);
+				}
 
 				header * h = stack_peek_index(r->header_stack, w->header_count++);
 
 				if (h) {
 					export_html_raw_text(h->key, strlen(h->key), out);
 				} else {
-					char * id = html_id_from_text(&text[b->start], b->len, true);
+					char * id;
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+						id = html_clean_id_from_text(&text[b->start], b->len, true);
+					} else {
+						id = html_id_from_text(&text[b->start], b->len, true);
+					}
+
 					export_html_raw_text(id, strlen(id), out);
 					free(id);
 				}
@@ -1186,29 +1307,42 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 
 			text_buffer_trim_trailing_whitespace(out);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer,
-									headers[b->type - BLOCK_H1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[level].closer, headers[level].closer_len);
+			}
+
 			w->padding = 0;
-			break;
+		}
+		break;
 
 		case BLOCK_SETEXT_1:
-		case BLOCK_SETEXT_2:
+		case BLOCK_SETEXT_2: {
 			pad(out, 2, w);
 
-			if (options & MMD_OPTION_COMPATIBILITY) {
-				text_buffer_append_text(out, headers_compat[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers_compat[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+			int level = b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML);
 
+			if (options & MMD_OPTION_COMPATIBILITY) {
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers_compat[level].opener, headers_compat[level].opener_len);
+				}
 			} else {
-				text_buffer_append_text(out, headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener,
-										headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].opener_len);
+				if ((level >= 0) && (level < 6)) {
+					text_buffer_append_text(out, headers[level].opener, headers[level].opener_len);
+				}
 
 				header * h = stack_peek_index(r->header_stack, w->header_count++);
 
 				if (h) {
 					export_html_raw_text(h->key, strlen(h->key), out);
 				} else {
-					char * id = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					char * id;
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+						id = html_clean_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					} else {
+						id = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					}
+
 					export_html_raw_text(id, strlen(id), out);
 					free(id);
 				}
@@ -1220,17 +1354,30 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 
 			text_buffer_trim_trailing_whitespace(out);
 
-			text_buffer_append_text(out, headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer,
-									headers[b->type - BLOCK_SETEXT_1 + read_ctx_get_header_level(r, FORMAT_HTML)].closer_len);
+			if ((level >= 0) && (level < 6)) {
+				text_buffer_append_text(out, headers[level].closer, headers[level].closer_len);
+			}
+
 			w->padding = 0;
-			break;
+		}
+		break;
 
 		case BLOCK_LIST_ITEM_TIGHT:
 			// Custom because we need to handle the first child differently
 			pad(out, 1, w);
 			mmd_print_const(out, "<li>");
 			w->padding = 2;
-			export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+
+			if (MMD_NODE_IS_BLOCK(b->child)) {
+				if (b->child->type == BLOCK_PARA) {
+					export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+				} else {
+					export_html_block(b->child, &text[b->start], out, r, w, options);
+				}
+			} else {
+				export_html_tokens(b->child->content, &text[b->start], b->len, out, r, w, options);
+			}
+
 			w->padding = 0;
 			export_html_blocks(b->child->next, &text[b->start], out, r, w, options);
 			mmd_print_const(out, "</li>");
@@ -1264,14 +1411,17 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 			mmd_print_const(out, "<table");
 
 			// Is there a caption?
-			if (table_has_caption(b)) {
-				char * id = html_id_from_text(&text[b->next->start], b->next->len, false);
-				text_buffer_append_printf(out, " id=\"%s\">\n<caption style=\"caption-side: bottom;\">", id);
-				free(id);
-				export_html_tokens(b->next->content->child, &text[b->next->start], b->next->len, out, r, w, options);
-				mmd_print_const(out, "</caption>\n");
-			} else {
-				mmd_print_const(out, ">\n");
+			{
+				char * id = table_label(b, text);
+
+				if (id) {
+					text_buffer_append_printf(out, " id=\"%s\">\n<caption style=\"caption-side: bottom;\">", id);
+					free(id);
+					export_html_tokens(b->next->content->child, &text[b->next->start], b->next->len, out, r, w, options);
+					mmd_print_const(out, "</caption>\n");
+				} else {
+					mmd_print_const(out, ">\n");
+				}
 			}
 
 			// Handle column setup and alignment
@@ -1326,7 +1476,7 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 
 			break;
 
-		case LINE_TABLE_SEPARATOR:
+		case BLOCK_TABLE_SEPARATOR:
 			if (!w->in_table_header) {
 				pad(out, 1, w);
 				mmd_print_const(out, "<tr>\n");
@@ -1360,7 +1510,7 @@ static void export_html_block(mmd_node * b, const char * text, text_buffer * out
 			}
 
 			switch (b->type) {
-				case LINE_TABLE:
+				case BLOCK_TABLE_ROW:
 					w->table_col_count = 0;
 					break;
 
@@ -1448,7 +1598,7 @@ static void export_html_blocks(mmd_node * b, const char * text, text_buffer * ou
 }
 
 
-static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w) {
+static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	meta * m;
 
 	mmd_print_const(out, "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\"");
@@ -1478,21 +1628,47 @@ static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w) {
 
 			case 'c':
 				if (strcmp(m->key, "css") == 0) {
+					if (options & MMD_OPTION_EMBED_ASSETS) {
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path, "css");
+
+						if (a && a->len) {
+							mmd_print_const(out, "\t<style>\n");
+							text_buffer_append_text(out, a->data, a->len);
+							mmd_print_const(out, "\t</style>\n");
+							continue;
+						}
+					}
+
 					mmd_print_const(out, "\t<link type=\"text/css\" rel=\"stylesheet\" href=\"");
-					url_encode_text(m->value, m->value_len, out);
 
-					// if (scratch->store_assets) {
-					// 	store_asset(scratch, m->value);
-					// 	asset * a = extract_asset(scratch, m->value);
+					if (options & MMD_OPTION_STORE_ASSETS) {
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path, "css");
 
-					// 	mmd_print_string_html(out, "assets/", false, false);
-					// 	mmd_print_string_html(out, a->asset_path, false, false);
-					// } else {
-					// 	mmd_print_string_html(out, m->value, false, false);
-					// }
+						if (a) {
+							mmd_print_const(out, "assets/");
+							text_buffer_append_text(out, a->uuid, 36);
+
+							if (media_extension(a->type)) {
+								text_buffer_append_printf(out, ".%s", media_extension(a->type));
+							}
+						} else {
+							url_encode_text(m->value, m->value_len, out);
+						}
+					} else {
+						url_encode_text(m->value, m->value_len, out);
+					}
 
 					mmd_print_const(out, "\"/>\n");
+
 					continue;
+				} else if (strcmp(m->key, "cover") == 0) {
+					if (options & MMD_OPTION_STORE_ASSETS) {
+						asset * a = read_ctx_store_asset(r, m->value, m->value_len, options, g_search_path, "cover-image");
+
+						if (a && a->len) {
+							continue;
+						}
+					}
 				}
 
 				break;
@@ -1692,7 +1868,10 @@ static void export_html_footer(text_buffer * out, read_ctx * r, write_ctx * w) {
 }
 
 
-void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options) {
+void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * r, uint32_t options, const char * source_path) {
+	// Store thread local copy of search path
+	g_search_path = mmd_dirname(source_path);
+
 	precalculate_rules(rules, sizeof(rules) / sizeof(rules[0]));
 	precalculate_quotes(single_quotes, sizeof(single_quotes) / sizeof((single_quotes[0])));
 	precalculate_quotes(double_quotes, sizeof(double_quotes) / sizeof(double_quotes[0]));
@@ -1702,7 +1881,7 @@ void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 	write_ctx * w = write_ctx_new();
 
 	if (r->write_complete || (r->has_meta && !r->write_snippet)) {
-		export_html_header(out, r, w);
+		export_html_header(out, r, w, options);
 	}
 
 	export_html_blocks(b, text, out, r, w, options);
@@ -1715,4 +1894,7 @@ void export_html(mmd_node * b, const char * text, text_buffer * out, read_ctx * 
 
 	pad(out, 1, w);
 	write_ctx_free(w);
+
+	free(g_search_path);
+	g_search_path = NULL;
 }

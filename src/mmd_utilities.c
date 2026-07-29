@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -39,38 +39,77 @@
 */
 
 
+#include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <time.h>
 
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	#include <windows.h>
+#else
+	#include <libgen.h>
+#endif
 
-#include "libMultiMarkdown.h"
 
+#include "libMultiMarkdown7.h"
+
+#include "mmd_node_pool.h"
+#include "read_ctx.h"
+#include "mmd_span_parser.h"
 #include "mmd_utilities.h"
 
 
 int table_has_caption(mmd_node * t) {
 	if (t && t->next && t->next->type == BLOCK_PARA) {
+		int result = 1;
 		t = t->next->content;
 
 		if (t && t->type == TOKEN_PAIR_BRACKET) {
 			t = t->next->next;
 
 			if (t && t->type == TOKEN_PAIR_BRACKET) {
+				result++;
 				t = t->next->next;
 			}
 
 			if (t == NULL) {
-				return 1;
+				return result;
 			}
 
 			if (t && ((t->type == TOKEN_NL) || (t->type == TOKEN_LINEBREAK))) {
-				return 1;
+				return result;
 			}
 		}
 	}
 
 	return 0;
+}
+
+
+char * table_label(mmd_node * t, const char * text) {
+	if (t) {
+		mmd_node * b = t->next;
+
+		switch (table_has_caption(t)) {
+			case 2:
+
+				// This table has a caption and a label -- use label
+				if (b->content && b->content->next && b->content->next->next) {
+					return html_id_from_text(&text[b->start + b->content->next->next->start], b->len - b->content->next->next->start, false);
+				}
+
+			case 1:
+				// This table has a caption -- use caption
+				return html_id_from_text(&text[t->next->start], t->next->len, false);
+
+			default:
+				break;
+		}
+	}
+
+	return NULL;
 }
 
 
@@ -128,6 +167,22 @@ uint16_t xorshift16(uint16_t x) {
 }
 
 
+/// strdup() not available on all platforms
+char * my_strdup(const char * source) {
+	if (source == NULL) {
+		return NULL;
+	}
+
+	char * result = malloc(strlen(source) + 1);
+
+	if (result) {
+		strcpy(result, source);
+	}
+
+	return result;
+}
+
+
 /// strndup not available on all platforms
 char * my_strndup(const char * source, size_t n) {
 	if (source == NULL) {
@@ -157,3 +212,129 @@ char * my_strndup(const char * source, size_t n) {
 	return result;
 }
 
+
+char * uuid_string_from_bits(unsigned char * raw) {
+	char * result = malloc(37);
+
+	snprintf(result, 37, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+			 raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
+			 raw[8], raw[9], raw[10], raw[11], raw[12], raw[13], raw[14], raw[15] );
+
+	return result;
+}
+
+
+#define SETBIT(a, n) (a[n/CHAR_BIT] |= (1<<(n % CHAR_BIT)))
+#define CLEARBIT(a, n) (a[n/CHAR_BIT] &= ~(1<<(n % CHAR_BIT)))
+
+
+char * uuid_new(void) {
+	unsigned char raw[16];
+
+	// Get 128 bits of random goodness
+	for (int i = 0; i < 16; ++i) {
+		raw[i] = rand() % 256;
+	}
+
+//	Need to set certain bits for v4 compliance
+	CLEARBIT(raw, 52);
+	CLEARBIT(raw, 53);
+	SETBIT(raw, 54);
+	CLEARBIT(raw, 55);
+	CLEARBIT(raw, 70);
+	SETBIT(raw, 71);
+
+	return uuid_string_from_bits(raw);
+}
+
+
+/// Open file for reading regardless of OS
+/// NOTE: Disabled Windows variant as this seemed to break parsing files with non-ASCII characters
+/// (the opposite of what this is supposed to do...)
+FILE * flex_fopen(const char * fname) {
+	FILE * in = NULL;
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	in = fopen(fname, "rb");
+	// int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
+	// wchar_t * wstr = malloc(sizeof(wchar_t) * (wchars_num + 1));
+	// MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
+
+	// in = _wfopen(wstr, L"rb");
+
+	// free(wstr);
+#else
+	in = fopen(fname, "r");
+#endif
+
+	// if (!in) {
+	// 	if (errno == EPERM || errno == EACCES) {
+	// 		fprintf(stderr, "No permission to access %s.\n", fname);
+	// 	} else {
+	// 		fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+	// 	}
+	// }
+
+	return in;
+}
+
+
+/// Cross-platform dirname()
+char * mmd_dirname(const char * path) {
+	if (path == NULL) {
+		return NULL;
+	}
+
+	struct stat status;
+
+	// We already have a directory
+	if (stat(path, &status) == 0 && (status.st_mode & S_IFDIR)) {
+		return my_strdup(path);
+	}
+
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	char * dir = malloc(sizeof(char) * _MAX_DIR);
+
+	_splitpath_s(path, NULL, 0, dir, _MAX_DIR, NULL, 0, NULL, 0);
+
+	return dir;
+#else
+	char * dir = my_strdup(dirname((char *) path));
+	return dir;
+#endif
+}
+
+
+/// Check text for a specified char
+int text_contains_char(const char * text, size_t len, char target) {
+	const char * stop = text + len;
+
+	while (*text != '\0' && text < stop) {
+		if (*text == target) {
+			return 1;
+		}
+
+		text++;
+	}
+
+	return 0;
+}
+
+
+/// Find the length of the longest common prefix for two paths
+size_t longest_common_prefix(const char * path1, size_t len1, const char * path2, size_t len2) {
+	size_t i = 0;
+	size_t len = 0;
+	size_t max = (len1 < len2) ? len1 : len2;
+
+	while (i < max && path1[i] && path1[i] == path2[i]) {
+		if (path1[i] == '/' || path1[i] == '\\') {
+			len = i;
+		}
+
+		i++;
+	}
+
+	return len;
+}

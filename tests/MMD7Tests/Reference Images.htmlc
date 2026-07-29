@@ -3,7 +3,7 @@ latexconfig: article</p>
 
 <p>Test <img src="http://test.1/" alt="foo" />.</p>
 
-<p>Test <img src="http://test.2/" alt="foo" />.</p>
+<p>Test <img src="http://test.1/" alt="foo" />.</p>
 
 <p>Test <img src="http://test.3/" alt="foo" title="title" />.</p>
 

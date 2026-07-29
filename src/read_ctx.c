@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -39,31 +39,48 @@
 */
 
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 #include "read_ctx.h"
 #include "mmd_node.h"
 #include "mmd_span_parser.h"
 #include "mmd_utilities.h"
 #include "stack.h"
 
+#include "assets.h"
 
-read_ctx * read_ctx_new(uint32_t options) {
-	read_ctx * c = calloc(1, sizeof(read_ctx));
 
+void read_ctx_init(read_ctx * c, uint32_t options) {
 	if (c) {
-		c->allow_meta = !(options & MMD_OPTION_COMPATIBILITY);
+		c->allow_meta = !((options & MMD_OPTION_COMPATIBILITY) == MMD_OPTION_COMPATIBILITY);
+
+		c->write_complete = ((options & MMD_OPTION_COMPLETE) == MMD_OPTION_COMPLETE);
+		c->write_snippet = ((options & MMD_OPTION_SNIPPET) == MMD_OPTION_SNIPPET);
+
+		c->base_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->epub_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->html_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->latex_header_level = MMD_HEADER_LEVEL_DISABLED;
+		c->beamer_header_level = MMD_HEADER_LEVEL_DISABLED;
+
+		c->language = MMD_LANGUAGE_FROM_OPTS(options);
+		c->quotes_language = MMD_SMART_QUOTE_FROM_OPTS(options);
 
 		c->token_pair_stack = stack_new(32);
 
 		c->header_stack = stack_new(16);
 		c->random_header_seed = (uint16_t) rand();
-
-		c->language = MMD_LANGUAGE_FROM_OPTS(options);
-		c->quotes_language = MMD_SMART_QUOTE_FROM_OPTS(options);
 	}
+}
+
+
+read_ctx * read_ctx_new(uint32_t options) {
+	read_ctx * c = calloc(1, sizeof(read_ctx));
+
+	read_ctx_init(c, options);
 
 	return c;
 }
@@ -82,6 +99,14 @@ void meta_free(meta * m) {
 		free(m->key);
 		free(m->value);
 		free(m);
+	}
+}
+
+
+void tag_free(tag * t) {
+	if (t) {
+		free(t->key);
+		free(t);
 	}
 }
 
@@ -127,12 +152,28 @@ void endnote_def_free(endnote_def * e) {
 }
 
 
+static void asset_free(asset * a) {
+	if (a) {
+		free(a->url);
+		free(a->uuid);
+		free(a->data);
+
+		free(a);
+	}
+}
+
+
+static void file_path_free(file_path * f) {
+	if (f) {
+		free(f->path);
+
+		free(f);
+	}
+}
+
+
 void read_ctx_reset(read_ctx * c, uint32_t options) {
 	if (c) {
-		c->allow_meta = !(options & MMD_OPTION_COMPATIBILITY);
-
-		c->token_pair_stack->size = 0;
-
 		while (c->header_stack->size) {
 			header_free(stack_pop(c->header_stack));
 		}
@@ -142,6 +183,13 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 		HASH_ITER(hh, c->meta_hash, m, m_tmp) {
 			HASH_DEL(c->meta_hash, m);
 			meta_free(m);
+		}
+
+		tag * t, * t_tmp;
+
+		HASH_ITER(hh, c->tag_hash, t, t_tmp) {
+			HASH_DEL(c->tag_hash, t);
+			tag_free(t);
 		}
 
 		link_def * l, * l_tmp;
@@ -174,16 +222,33 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 			HASH_DEL(c->note_def_hash, e);
 			endnote_def_free(e);
 		}
+
+		asset * s, * s_tmp;
+
+		HASH_ITER(hh, c->asset_hash, s, s_tmp) {
+			HASH_DEL(c->asset_hash, s);
+			asset_free(s);
+		}
+
+		file_path * f, * f_tmp;
+
+		HASH_ITER(hh, c->failed_file_hash, f, f_tmp) {
+			HASH_DEL(c->failed_file_hash, f);
+			file_path_free(f);
+		}
+
+		stack_free(c->header_stack);
+		stack_free(c->token_pair_stack);
+
+		memset(c, 0, sizeof(read_ctx));
+
+		read_ctx_init(c, options);
 	}
 }
 
 void read_ctx_free(read_ctx * c) {
 	if (c) {
 		read_ctx_reset(c, 0);
-
-		while (c->header_stack->size) {
-			header_free(stack_pop(c->header_stack));
-		}
 
 		stack_free(c->header_stack);
 
@@ -215,7 +280,7 @@ void read_ctx_store_abbr(read_ctx * c, abbr_def * a) {
 }
 
 
-void read_ctx_store_link(read_ctx * c, link_def * l) {
+void read_ctx_store_link(read_ctx * c, link_def * l, bool auto_generated) {
 	if (c && l) {
 		link_def * temp;
 
@@ -223,11 +288,18 @@ void read_ctx_store_link(read_ctx * c, link_def * l) {
 		if (l->key && l->key[0] != '\0') {
 			HASH_FIND_STR(c->link_def_hash, l->key, temp);
 
-			// Don't replace existing link with same key
 			if (!temp) {
+				// No prior link with same key
 				HASH_ADD_KEYPTR(hh, c->link_def_hash, l->key, strlen(l->key), l);
 			} else {
-				link_def_free(l);
+				if (temp->auto_generated && !auto_generated) {
+					// Replace auto_generated link with a non-auto_generated link
+					HASH_DEL(c->link_def_hash, temp);
+					link_def_free(temp);
+					HASH_ADD_KEYPTR(hh, c->link_def_hash, l->key, strlen(l->key), l);
+				} else {
+					link_def_free(l);
+				}
 			}
 		} else {
 			link_def_free(l);
@@ -236,7 +308,7 @@ void read_ctx_store_link(read_ctx * c, link_def * l) {
 }
 
 
-void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count) {
+void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count, bool auto_generated) {
 	if (c && text && len) {
 		link_def * l = calloc(1, sizeof(link_def));
 
@@ -247,12 +319,14 @@ void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, b
 		memcpy(&l->url[1], l->key, strlen(l->key) + 1);
 		l->url_len = strlen(l->url);
 
-		read_ctx_store_link(c, l);
+		l->auto_generated = auto_generated;
+
+		read_ctx_store_link(c, l, auto_generated);
 	}
 }
 
 
-void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len) {
+void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len, bool auto_generated) {
 	if (c && key && key_len) {
 		// Only if it doesn't exist already
 		link_def * temp;
@@ -267,13 +341,15 @@ void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key
 			memcpy(&l->url[1], l->key, key_len + 1);
 			l->url_len = key_len + 1;
 
-			read_ctx_store_link(c, l);
+			l->auto_generated = auto_generated;
+
+			read_ctx_store_link(c, l, auto_generated);
 		}
 	}
 }
 
 
-void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len) {
+void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len, size_t c_start, size_t c_len) {
 	if (c && text && n && key && len && key_len) {
 		header * h = calloc(1, sizeof(header));
 
@@ -281,6 +357,8 @@ void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node
 		h->node = n;
 		h->text = text;
 		h->text_len = len;
+		h->c_start = c_start;
+		h->c_len = c_len;
 
 		stack_push(c->header_stack, h);
 	}
@@ -299,21 +377,39 @@ abbr_def * read_ctx_get_abbr(read_ctx * c, char * key) {
 
 
 link_def * read_ctx_get_link(read_ctx * c, char * key) {
+	if (key == NULL) {
+		return NULL;
+	}
+
 	link_def * l = NULL;
 
-	if (c && key && c->link_def_hash) {
+	if (c && c->link_def_hash) {
 		HASH_FIND_STR(c->link_def_hash, key, l);
 	}
 
 	if (!l) {
-		// If `FOO BAR` didn't work, try `foobar` as a backup
-		char * id = html_id_from_text(key, strlen(key), true);
+		// Try case insensitive
+		char * id = key;
 
-		if (c && id && c->link_def_hash) {
-			HASH_FIND_STR(c->link_def_hash, id, l);
+		while (*id != '\0') {
+			*id = tolower(*id);
+			id++;
 		}
 
-		free(id);
+		if (c && key && c->link_def_hash) {
+			HASH_FIND_STR(c->link_def_hash, key, l);
+		}
+
+		if (!l) {
+			// If `FOO BAR` didn't work, try `foo bar` as a backup
+			id = html_id_from_text(key, strlen(key), true);
+
+			if (c && id && c->link_def_hash) {
+				HASH_FIND_STR(c->link_def_hash, id, l);
+			}
+
+			free(id);
+		}
 	}
 
 	return l;
@@ -339,12 +435,10 @@ void read_ctx_store_meta(read_ctx * c, meta * m) {
 					c->epub_header_level = atoi(m->value);
 				} else if (strcmp(m->key, "htmlheaderlevel") == 0) {
 					c->html_header_level = atoi(m->value);
-				} else if (strcmp(m->key, "xhtmlheaderlevel") == 0) {
-					c->xhtml_header_level = atoi(m->value);
+				} else if (strcmp(m->key, "beamerheaderlevel") == 0) {
+					c->beamer_header_level = atoi(m->value);
 				} else if (strcmp(m->key, "latexheaderlevel") == 0) {
 					c->latex_header_level = atoi(m->value);
-				} else if (strcmp(m->key, "odfheaderlevel") == 0) {
-					c->odf_header_level = atoi(m->value);
 				} else if (strcmp(m->key, "language") == 0) {
 					if (strncmp(m->value, "de", 2) == 0) {
 						c->language = LANGUAGE_DE;
@@ -411,6 +505,40 @@ meta * read_ctx_get_meta(read_ctx * c, char * key) {
 	}
 
 	return m;
+}
+
+
+void read_ctx_store_tag(read_ctx * c, const char * key, size_t tag_len) {
+	if (c && key) {
+		if (key[0] == '#') {
+			key++;
+			tag_len--;
+		}
+
+		if (tag_len > 0) {
+			tag * temp;
+
+			HASH_FIND(hh, c->tag_hash, key, tag_len, temp);
+
+			// Don't replace existing tag with same key
+			if (!temp) {
+				tag * tt = malloc(sizeof(tag));
+				tt->key = my_strndup(key, tag_len);
+				HASH_ADD_KEYPTR(hh, c->tag_hash, tt->key, tag_len, tt);
+			}
+		}
+	}
+}
+
+
+tag * read_ctx_get_tag(read_ctx * c, char * key) {
+	tag * t = NULL;
+
+	if (c && key && c->tag_hash) {
+		HASH_FIND_STR(c->tag_hash, key, t);
+	}
+
+	return t;
 }
 
 
@@ -482,9 +610,13 @@ int read_ctx_store_note(read_ctx * c, endnote_def * e) {
 
 
 endnote_def * read_ctx_get_cite(read_ctx * c, char * key) {
+	if (key == NULL) {
+		return NULL;
+	}
+
 	endnote_def * e = NULL;
 
-	if (c && key && c->cite_def_hash) {
+	if (c && c->cite_def_hash) {
 		HASH_FIND_STR(c->cite_def_hash, key, e);
 
 		if (e) {
@@ -540,20 +672,37 @@ endnote_def * read_ctx_get_note(read_ctx * c, char * key) {
 int read_ctx_get_header_level(read_ctx * c, int format) {
 	int r = 0;
 
-	if (c->base_header_level) {
+	if (c->base_header_level != MMD_HEADER_LEVEL_DISABLED) {
 		r = c->base_header_level - 1;
 	}
 
 	switch (format) {
+		case FORMAT_EPUB:
+			if (c->epub_header_level != MMD_HEADER_LEVEL_DISABLED) {
+				r = c->epub_header_level - 1;
+			}
+
+			break;
+
 		case FORMAT_HTML:
-			if (c->html_header_level) {
+			if (c->html_header_level != MMD_HEADER_LEVEL_DISABLED) {
 				r = c->html_header_level - 1;
 			}
 
 			break;
 
+		case FORMAT_BEAMER:
+		case FORMAT_LTX_TALK:
+			if (c->beamer_header_level != MMD_HEADER_LEVEL_DISABLED) {
+				r = c->beamer_header_level - 1;
+			} else if (c->latex_header_level != MMD_HEADER_LEVEL_DISABLED) {
+				r = c->latex_header_level - 1;
+			}
+
+			break;
+
 		case FORMAT_LATEX:
-			if (c->latex_header_level) {
+			if (c->latex_header_level != MMD_HEADER_LEVEL_DISABLED) {
 				r = c->latex_header_level - 1;
 			}
 
@@ -561,4 +710,127 @@ int read_ctx_get_header_level(read_ctx * c, int format) {
 	}
 
 	return r;
+}
+
+
+asset * read_ctx_get_asset(read_ctx * c, char * url) {
+	asset * a = NULL;
+
+	HASH_FIND_STR(c->asset_hash, url, a);
+
+	return a;
+}
+
+
+static asset * asset_new(char * url, size_t url_len, enum media_type type, const char * id) {
+	asset * a = malloc(sizeof(asset));
+
+	if (a) {
+		a->url = my_strndup(url, url_len);
+		a->uuid = uuid_new();
+
+		// EPUB ids require first character to be a letter
+		if (id) {
+			a->id = my_strdup(id);
+		} else {
+			a->id = NULL;
+
+			while (a->uuid[0] >= '0' && a->uuid[0] <= '9') {
+				free(a->uuid);
+				a->uuid = uuid_new();
+			}
+		}
+
+		a->stored = 0;
+		a->type = type;
+		a->data = NULL;
+		a->len = 0;
+	}
+
+	return a;
+}
+
+
+asset * read_ctx_store_asset(read_ctx * c, char * url, size_t url_len, uint32_t options, const char * source_path, const char * id) {
+	if (c && url && url_len) {
+		asset * a = read_ctx_get_asset(c, url);
+
+		if (!a) {
+			// Asset not found - create new one
+			enum media_type type = 0;
+
+			char * extension = &url[url_len - 1];
+
+			while (extension > url && extension[0] != '.') {
+				extension--;
+			}
+
+			if (!strncmp(extension, ".css", 4)) {
+				type = textCSS;
+			} else if (!strncmp(extension, ".png", 4)) {
+				type = imagePNG;
+			} else if (!strncmp(extension, ".jpg", 4)) {
+				type = imageJPEG;
+			} else if (!strncmp(extension, ".jpeg", 4)) {
+				type = imageJPEG;
+			}
+
+			a = asset_new(url, url_len, type, id);
+			HASH_ADD_KEYPTR(hh, c->asset_hash, a->url, url_len, a);
+
+			if (options & (MMD_OPTION_EMBED_ASSETS | MMD_OPTION_STORE_ASSETS | MMD_OPTION_DOWNLOAD_ASSETS)) {
+				asset_store_data(a, options, source_path, c);
+			}
+
+		}
+
+		return a;
+	} else {
+		return NULL;
+	}
+}
+
+
+static char * media_ext[] = {
+	[textCSS] = "css",
+	[imageJPEG] = "jpg",
+	[imagePNG] = "png",
+};
+
+
+char * media_extension(enum media_type type) {
+	return media_ext[type];
+}
+
+
+file_path * read_ctx_get_failed_file(read_ctx * c, const char * path) {
+	file_path * f = NULL;
+
+	HASH_FIND_STR(c->failed_file_hash, path, f);
+
+	return f;
+}
+
+
+static file_path * file_path_new(const char * path) {
+	file_path * f = malloc(sizeof(file_path));
+
+	if (f) {
+		f->path = my_strdup(path);
+	}
+
+	return f;
+}
+
+
+void read_ctx_store_failed_file(read_ctx * c, const char * path) {
+	if (c && path) {
+		file_path * f = read_ctx_get_failed_file(c, path);
+
+		if (!f) {
+			// File path not found, store it
+			f = file_path_new(path);
+			HASH_ADD_KEYPTR(hh, c->failed_file_hash, f->path, strlen(f->path), f);
+		}
+	}
 }

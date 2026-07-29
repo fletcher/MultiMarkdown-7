@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "vector_line_node.h"
 #include "mmd_node_pool.h"
@@ -69,7 +69,7 @@
 static mmd_node * recursive_indent_parse(mmd_line_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
 static mmd_node * recursive_blockquote_parse(mmd_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
 static mmd_node * recursive_endnote_parse(endnote_def ** e, mmd_node * l, mmd_node_pool * p, const char * text, size_t len, read_ctx * c, uint32_t options);
-static mmd_node * mask_manual_label_token(mmd_node * b, const char * text, size_t len);
+static mmd_node * mask_manual_label_token(mmd_node * b);
 
 
 static mmd_line_node * scanner_next_line(Scanner * s, uint32_t options) {
@@ -152,31 +152,15 @@ static int accept_blockquote_line(mmd_node ** l) {
 	}
 
 	switch ((*l)->type) {
-		case LINE_ATX_1:
-		case LINE_ATX_2:
-		case LINE_ATX_3:
-		case LINE_ATX_4:
-		case LINE_ATX_5:
-		case LINE_ATX_6:
-		case LINE_DEF_ABBREVIATION:
-		case LINE_DEF_CITATION:
-		case LINE_DEF_FOOTNOTE:
-		case LINE_DEF_GLOSSARY:
-		case LINE_DEF_LINK:
-		case LINE_DEFINITION:
-		case LINE_EMPTY:
-		case LINE_FENCE_BACKTICK_3:
-		case LINE_FENCE_BACKTICK_4:
-		case LINE_FENCE_BACKTICK_5:
-		case LINE_FENCE_BACKTICK_START_3:
-		case LINE_FENCE_BACKTICK_START_4:
-		case LINE_FENCE_BACKTICK_START_5:
+		case LINE_BLOCKQUOTE:
+		case LINE_PLAIN:
 		case LINE_SETEXT_1:
-		case LINE_SETEXT_2:
-			return 0;
+		case LINE_INDENTED_TAB:
+		case LINE_INDENTED_SPACE:
+			return 1;
 
 		default:
-			return 1;
+			return 0;
 	}
 }
 
@@ -244,7 +228,8 @@ static int accept_chunk_line(mmd_node ** l) {
 		case LINE_HTML_BLOCK:
 		case LINE_LIST_BULLETED:
 		case LINE_LIST_ENUMERATED:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			return 0;
 
@@ -318,7 +303,8 @@ static int accept_html_line(mmd_node ** l) {
 		case LINE_FENCE_BACKTICK_START_5:
 		case LINE_START_COMMENT:
 		case LINE_STOP_COMMENT:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			//return 0;
 			return 1;
@@ -362,7 +348,8 @@ static int accept_html_comment_line(mmd_node ** l) {
 		case LINE_HTML:
 		case LINE_HTML_BLOCK:
 		case LINE_START_COMMENT:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 
 		//return 0;
@@ -421,8 +408,15 @@ static int accept_tail_line(mmd_node ** l) {
 		case LINE_EMPTY:
 		case LINE_LIST_BULLETED:
 		case LINE_LIST_ENUMERATED:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
+		case LINE_ATX_1:
+		case LINE_ATX_2:
+		case LINE_ATX_3:
+		case LINE_ATX_4:
+		case LINE_ATX_5:
+		case LINE_ATX_6:
 			return 0;
 
 		default:
@@ -482,7 +476,12 @@ static int block_append_tail(mmd_node ** l, mmd_node * b, mmd_node_pool * p) {
 
 				if (accept_indented_line(l)) {
 					mmd_node_graft(cache, b);
-					// Not needed with mmd_node_pool -- free(cache);
+
+					if (p == NULL) {
+						// Not needed with mmd_node_pool
+						free(cache);
+					}
+
 					has_blank_lines = 1;
 				} else {
 					b->next = cache;
@@ -497,7 +496,11 @@ static int block_append_tail(mmd_node ** l, mmd_node * b, mmd_node_pool * p) {
 			case LINE_INDENTED_TAB: {
 				mmd_node * cache = block_general(l, p);
 				mmd_node_graft(cache, b);
-				// Not needed with mmd_node_pool -- free(cache);
+
+				if (p == NULL) {
+					// Not needed with mmd_node_pool
+					free(cache);
+				}
 			}
 			break;
 
@@ -597,7 +600,11 @@ static mmd_node * block_code_indented(mmd_node ** l, mmd_node_pool * p, const ch
 
 					if (accept_indented_line(l)) {
 						mmd_node_graft(cache, b);
-						// Not needed with mmd_node_pool -- free(cache);
+
+						if (p == NULL) {
+							// Not needed with mmd_node_pool
+							free(cache);
+						}
 					} else {
 						b->next = cache;
 						return b;
@@ -806,8 +813,10 @@ static mmd_node * block_reference_def_a(mmd_node ** l, mmd_node_pool * p, uint32
 			break;
 	}
 
-	while (accept_chunk_line(l)) {
-		*l = mmd_node_feed_chain(b, *l);
+	if (b) {
+		while (accept_chunk_line(l)) {
+			*l = mmd_node_feed_chain(b, *l);
+		}
 	}
 
 	return b;
@@ -929,6 +938,10 @@ static mmd_node * block_table(mmd_node ** l, mmd_node_pool * p) {
 	} else {
 		b->type = BLOCK_PARA;
 
+		while (accept_para_line(l)) {
+			*l = mmd_node_feed_chain(b, *l);
+		}
+
 		return b;
 	}
 
@@ -950,7 +963,11 @@ static mmd_node * block_table(mmd_node ** l, mmd_node_pool * p) {
 					return b;
 				} else {
 					mmd_node_graft(cache, b);
-					// Not needed with mmd_node_pool -- free(cache);
+
+					if (p == NULL) {
+						// Not needed with mmd_node_pool
+						free(cache);
+					}
 				}
 			}
 		}
@@ -984,19 +1001,58 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 		case LINE_ATX_3:
 		case LINE_ATX_4:
 		case LINE_ATX_5:
-		case LINE_ATX_6:
+		case LINE_ATX_6: {
+			mmd_line_node * line = (mmd_line_node *) *l;
+
 			b = block_atx(l, p);
 
 			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
 
 			if (!(options & MMD_OPTION_COMPATIBILITY)) {
-				if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
-					// Use normal id
-					if (b->content->next) {
-						char * key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
+				size_t c_len = line->c_len;
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
-						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+				while (c_len && char_is_whitespace_or_line_ending(text[b->start + line->c_start + c_len - 1])) {
+					c_len--;
+				}
+
+				// These next two passes are because lines with '#' inside the line catch the first trailing '#' as part of the content
+				while (c_len && text[b->start + line->c_start + c_len - 1] == '#') {
+					c_len--;
+				}
+
+				while (c_len && char_is_whitespace_or_line_ending(text[b->start + line->c_start + c_len - 1])) {
+					c_len--;
+				}
+
+				mmd_node * label = mask_manual_label_token(b);
+
+				if (label) {
+					// Use manually specified label
+					char * key;
+
+					if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+						key = html_clean_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+					} else {
+						key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+					}
+
+					read_ctx_store_internal_link_key(c, key, strlen(key), false);
+					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
+
+					free(key);
+				} else if (!(options & MMD_OPTION_RANDOM_HEADER_ID)) {
+					// Use automatic label
+					if (b->content->next) {
+						char * key;
+
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+							key = html_clean_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
+						} else {
+							key = html_id_from_text(&text[b->start + b->content->next->start], b->child->len - b->content->next->start, true);
+						}
+
+						read_ctx_store_internal_link_key(c, key, strlen(key), true);
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 
 						free(key);
 					}
@@ -1005,12 +1061,13 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 					char key[6] = {0};
 					snprintf(key, 6, "%d", xorshift16(c->random_header_seed + c->header_stack->size));
 
-					read_ctx_store_internal_link_key(c, key, strlen(key));
-					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+					read_ctx_store_internal_link_key(c, key, strlen(key), true);
+					read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), line->c_start, c_len);
 				}
 			}
+		}
 
-			break;
+		break;
 
 		case LINE_BLOCKQUOTE:
 			b = block_blockquote(l, p, text, len, c, options);
@@ -1023,7 +1080,7 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 
 		case LINE_DEF_LINK:
 			b = block_reference_def_a(l, p, options);
-			read_ctx_store_link(c, scan_ref_link(&text[b->start], b->len));
+			read_ctx_store_link(c, scan_ref_link(&text[b->start], b->len), false);
 			break;
 
 		case LINE_DEF_CITATION:
@@ -1065,7 +1122,8 @@ static mmd_node * block(mmd_node ** l, mmd_node_pool * p, const char * text, siz
 			}
 
 		case LINE_HR:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			b = block_hr(l, p);
 			mmd_parse_tokens_block(b, &text[b->start], c, p, options);
@@ -1147,11 +1205,13 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 		switch (b->type) {
 			case BLOCK_PARA: {
 				if (last && last->type == BLOCK_TABLE) {
-					// Check for table caption
-					if (table_has_caption(last)) {
-						// This para is a table caption -- store a link
-						read_ctx_store_internal_link(c, &text[b->start], b->len, false);
+					char * label = table_label(last, text);
+
+					if (label) {
+						read_ctx_store_internal_link(c, label, strlen(label), false, false);
 					}
+
+					free(label);
 				}
 
 				if (!(options & MMD_OPTION_COMPATIBILITY) && (b->content && b->content->type == TOKEN_PAIR_BRACKET_IMAGE)) {
@@ -1174,6 +1234,8 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						if (walker && walker->type == TOKEN_PAREN_RIGHT) {
 							walker = walker->next;
 						}
+					} else if (walker && walker->type == TOKEN_PAIR_BRACKET_EMPTY) {
+						walker = walker->next;
 					}
 
 					if (walker && ((walker->type == TOKEN_NL) || (walker->type == TOKEN_LINEBREAK))) {
@@ -1190,12 +1252,40 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 			case BLOCK_SETEXT_1:
 			case BLOCK_SETEXT_2:
 				if (!(options & MMD_OPTION_COMPATIBILITY)) {
-					if (mask_manual_label_token(b, &text[b->start], b->len) || !(options & MMD_OPTION_RANDOM_HEADER_ID)) {
-						// Use normal id
-						char * key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+					size_t c_len = b->child->tail->start;
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
-						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+					while (c_len && char_is_whitespace_or_line_ending(text[b->start + c_len - 1])) {
+						c_len--;
+					}
+
+					mmd_node * label = mask_manual_label_token(b);
+
+					if (label) {
+						// Use manually specified label
+						char * key;
+
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+							key = html_clean_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+						} else {
+							key = html_id_from_text(&text[b->start + label->start + 1], label->next->start - label->start - 1, true);
+						}
+
+						read_ctx_store_internal_link_key(c, key, strlen(key), false);
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
+
+						free(key);
+					} else if (!(options & MMD_OPTION_RANDOM_HEADER_ID)) {
+						// Use automatic label
+						char * key;
+
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+							key = html_clean_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+						} else {
+							key = html_id_from_text(&text[b->start], b->len - b->child->tail->len, true);
+						}
+
+						read_ctx_store_internal_link_key(c, key, strlen(key), true);
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 
 						free(key);
 					} else {
@@ -1203,8 +1293,8 @@ static void block_check(mmd_node * b, mmd_node * last, const char * text, read_c
 						char key[6] = {0};
 						snprintf(key, 6, "%d", xorshift16(c->random_header_seed + c->header_stack->size));
 
-						read_ctx_store_internal_link_key(c, key, strlen(key));
-						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key));
+						read_ctx_store_internal_link_key(c, key, strlen(key), true);
+						read_ctx_store_header(c, &text[b->start], b->len, b, key, strlen(key), 0, c_len);
 					}
 				}
 
@@ -1307,7 +1397,8 @@ static mmd_node * block_only(mmd_node ** l, mmd_node_pool * p, const char * text
 			}
 
 		case LINE_HR:
-		case LINE_SETEXT_1:
+
+		// case LINE_SETEXT_1:
 		case LINE_SETEXT_2:
 			b = block_hr(l, p);
 			break;
@@ -1477,7 +1568,7 @@ static void recursive_search(mmd_node * n, const char * text, ac * a, read_ctx *
 				break;
 
 			case BLOCK_PARA:
-			case LINE_TABLE:
+			case BLOCK_TABLE_ROW:
 			case BLOCK_FIGURE:
 				// Descend into the content of these block types
 				recursive_search(n->content, &text[n->start], a, c, p);
@@ -1588,6 +1679,14 @@ static mmd_node * recursive_indent_parse(mmd_line_node * l, mmd_node_pool * p, c
 			line->c_len -= 4;
 		} else {
 			// If no adjustment, no change to line type
+			// Except Setext
+			switch (line->general.type) {
+				case LINE_SETEXT_1:
+				case LINE_SETEXT_2:
+					line->general.type = LINE_PLAIN;
+					break;
+			}
+
 			line = (mmd_line_node *) line->general.next;
 			continue;
 		}
@@ -1595,7 +1694,12 @@ static mmd_node * recursive_indent_parse(mmd_line_node * l, mmd_node_pool * p, c
 		s = mmd_scanner(&text[line->general.start + line->c_start], line->c_len);
 		line->general.type = mmd_line_scan(&s, options);
 		line->c_start = (s.c_start - text) - line->general.start;
-		line->c_len = s.cur - s.c_start;
+
+		if (s.c_end) {
+			line->c_len = s.c_end - s.c_start;
+		} else {
+			line->c_len = s.cur - s.c_start;
+		}
 
 		line = (mmd_line_node *) line->general.next;
 	}
@@ -1616,14 +1720,41 @@ static mmd_node * recursive_blockquote_parse(mmd_node * l, mmd_node_pool * p, co
 
 	while (w) {
 		// Skip blockquote marker if present and reassign line type
-		if (w->type == LINE_BLOCKQUOTE) {
-			s = mmd_scanner(&text[w->start + line->c_start], line->c_len);
-			w->type = mmd_line_scan(&s, options);
+		switch (w->type) {
+			case LINE_BLOCKQUOTE: {
+				const char * content = &text[w->start + line->c_start];
 
-			if (w->type) {
-				((mmd_line_node *)w)->c_start = (s.c_start - text) - w->start;
-				((mmd_line_node *)w)->c_len = s.cur - s.c_start;
+				if (!strncmp(content, ">", 1)) {
+					line->c_start += 1;
+					line->c_len -= 1;
+				} else if (!strncmp(content, " >", 2)) {
+					line->c_start += 2;
+					line->c_len -= 2;
+				} else if (!strncmp(content, "  >", 3)) {
+					line->c_start += 3;
+					line->c_len -= 3;
+				} else if (!strncmp(content, "   >", 4)) {
+					line->c_start += 4;
+					line->c_len -= 4 ;
+				} else {
+					s = mmd_scanner(&text[w->start + line->c_start], line->c_len);
+					w->type = mmd_line_scan(&s, options);
+
+					if (w->type) {
+						((mmd_line_node *)w)->c_start = (s.c_start - text) - w->start;
+						((mmd_line_node *)w)->c_len = s.cur - s.c_start;
+					}
+				}
 			}
+			break;
+
+			// Reassign certain line types to "disable" them
+			case LINE_SETEXT_1:
+				w->type = LINE_PLAIN;
+				break;
+
+			default:
+				break;
 		}
 
 		w->tail = w;
@@ -1836,71 +1967,51 @@ mmd_node * mmd_parse_metadata(const char * text, size_t len, vector_line_node * 
 }
 
 
-static mmd_node * mask_manual_label_token(mmd_node * b, const char * text, size_t len) {
+static mmd_node * mask_manual_label_token(mmd_node * b) {
 	mmd_node * walker = b->content;
-	const char * end = text + len;
 	int count = 0;
+	mmd_node * candidate = NULL;
 
 	while (walker) {
-		if (walker->type == TOKEN_PAIR_BRACKET) {
-			count++;
+		switch (walker->type) {
+			case TOKEN_PAIR_BRACKET:
+				count++;
 
-			char * c = (char *) &text[walker->next->start + walker->next->len];
-			int stop = 0;
-
-			while (!stop && (c < end)) {
-				switch (*c) {
-					case '\n':
-					case '\r':
-					case '\0':
-						stop = 1;
-						break;
-
-					case ' ':
-					case '\t':
-					case '#':
-						c++;
-						break;
-
-					default:
-						stop = 1;
-						break;
+				if (count % 2) {
+					candidate = walker;
+				} else {
+					candidate = NULL;
 				}
-			}
 
-			switch (*c) {
-				case '\n':
-				case '\r':
-				case '\0':
-					if (count % 2) {
-						// [...][...] is a link, not a manual label
-						walker->type = TOKEN_MANUAL_LABEL;
-						walker->next->type = TOKEN_MANUAL_LABEL;
+				walker = walker->next;
+				break;
 
-						return walker;
-					}
+			case TOKEN_ATX_MARKER:
+			case TOKEN_NL:
+			case TOKEN_TEXT_WHITESPACE:
+				break;
 
-					return NULL;
-			}
+			case TOKEN_TEXT:
+				if (walker->len) {
+					count = 0;
+					candidate = NULL;
+				}
 
-			// If text doesn't end in '\0', we need to catch that
-			if ((c == end) && (count % 2)) {
-				// [...][...] is a link, not a manual label
-				walker->type = TOKEN_MANUAL_LABEL;
-				walker->next->type = TOKEN_MANUAL_LABEL;
+				break;
 
-				return walker;
-			}
-
-			// Skip closing bracket
-			walker = walker->next;
-		} else {
-			count = 0;
+			default:
+				count = 0;
+				candidate = NULL;
+				break;
 		}
 
 		walker = walker->next;
 	}
 
-	return NULL;
-}
+	if (candidate) {
+		candidate->type = TOKEN_MANUAL_LABEL;
+		candidate->next->type = TOKEN_MANUAL_LABEL;
+	}
 
+	return candidate;
+}

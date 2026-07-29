@@ -65,7 +65,7 @@ windows-64: $(WIN_BUILD_DIR)
 .PHONY : map
 map: 
 	cd $(BUILD_DIR); \
-	../tools/enumsToPerl.pl ../src/libMultiMarkdown.h enumMap.txt;
+	../tools/enumsToPerl.pl ../src/libMultiMarkdown7.h enumMap.txt;
 
 
 # Use astyle to format source code

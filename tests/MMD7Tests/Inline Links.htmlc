@@ -31,8 +31,7 @@ latexconfig: article</p>
 
 <p>[URL and title] (/url/file.txt &quot;<em>title</em>&quot;).</p>
 
-<p>[URL and title]
-(/url/file.txt &quot;<em>title</em>&quot;).</p>
+<p><a href="/url/file.txt" title="*title*">URL and title</a>.</p>
 
 <p><a href="/url/file.txt" title="title">URL and title</a>.</p>
 
@@ -43,5 +42,11 @@ latexconfig: article</p>
 <p><a href="/url/file.txt" title="title">URL and title</a>.</p>
 
 <p><a href="/url/file.txt" title="title">URL and title</a>.</p>
+
+<p><a href="/url/file.txt" title="title">URL and title</a>.</p>
+
+<p><a href="/url/file.txt" title="title">URL and title</a>.</p>
+
+<p>16</p>
 
 <p><a href="/url/file.txt" title="title">URL and title</a>.</p>

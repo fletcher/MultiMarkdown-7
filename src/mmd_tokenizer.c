@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -52,15 +52,6 @@
 
 #ifdef TEST
 	#include "CuTest.h"
-#endif
-
-
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest * tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-
 #endif
 
 
@@ -157,7 +148,7 @@ static mmd_node * mmd_tokenizer_next_token(mmd_tokenizer * z, mmd_node_pool * p,
 
 		mmd_node * t = NULL;
 
-		if (s->c_start == start) {
+		if ((s->c_start == start) && (s->cur > s->start)) {
 			// Single token
 			if (s->curType == TOKEN_EOF) {
 				return NULL;

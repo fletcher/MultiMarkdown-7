@@ -18,7 +18,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@
 
 /// Node used to build Aho-Corasick search trie
 typedef struct {
-	char			c;
+	unsigned char	c;
 	unsigned char	type;
 	int				len;
 
@@ -298,7 +298,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 
 					if (n->ac_fail == s) {
 						// Something went wrong
-						fprintf(stderr, "Recursive trie fallback detected at state %lu('%c') - suffix:'%s'!\n", s, n->c, suffix);
+						fprintf(stderr, "Recursive trie fallback detected at state %zu('%c') - suffix:'%s'!\n", s, n->c, suffix);
 						n->ac_fail = 0;
 					}
 
@@ -321,7 +321,7 @@ static void trie_node_prepare(ac * a, int options, size_t s, char * buffer, int 
 
 				if (n->ac_fail == s) {
 					// Something went wrong
-					fprintf(stderr, "Recursive trie fallback detected at state %lu('%c') - suffix:'%s'!\n", s, n->c, suffix);
+					fprintf(stderr, "Recursive trie fallback detected at state %zu('%c') - suffix:'%s'!\n", s, n->c, suffix);
 					n->ac_fail = 0;
 				}
 
@@ -351,9 +351,11 @@ void ac_prepare(ac * a, int options) {
 		}
 
 		// Create a buffer
-		char buffer[a->capacity + 1];
+		char * buffer = malloc(sizeof(char) * (a->capacity + 1));
 
 		trie_node_prepare(a, options, 0, buffer, 0, buffer);
+
+		free(buffer);
 	}
 }
 
@@ -368,6 +370,8 @@ void Test_ac_prepare(CuTest * tc) {
 	ac_insert(a, "aaaa", 4);
 
 	ac_prepare(a, 0);
+
+	CuAssertIntEquals(tc, 5, a->size);
 
 	ac_free(a);
 }
@@ -467,6 +471,15 @@ match * ac_search(ac * a, int options, const unsigned char * source, size_t star
 
 #ifdef TEST
 
+static void match_set_buffer(match * m, const char * text, text_buffer * buffer) {
+	while (m) {
+		text_buffer_append_printf(buffer, "%.*s\n", (int)m->len, &text[m->start]);
+
+		m = m->next;
+	}
+}
+
+
 int options[] = {
 	0,
 	AC_LEFTMOST,
@@ -477,25 +490,29 @@ int options[] = {
 char * haystack[] = {
 	"footbally",
 	"ufootbally",
-	"footbal"
+	"footbal",
+	"föot"
 };
 
 
-char * results[3][3] = {
+char * results[3][4] = {
 	{
 		"foot\notb\nfootball\nball\nally\n",
 		"ufo\nfoot\notb\nfootball\nball\nally\n",
-		"foot\notb\n"
+		"foot\notb\n",
+		"föot\n"
 	},
 	{
 		"foot\nfootball\n",
 		"ufo\notb\nally\n",
-		"foot\n"
+		"foot\n",
+		"föot\n"
 	},
 	{
 		"football\n",
 		"ufo\notb\nally\n",
-		"foot\n"
+		"foot\n",
+		"föot\n"
 	}
 };
 
@@ -509,7 +526,7 @@ void Test_ac_search(CuTest * tc) {
 
 	ac_prepare(a, 0);
 
-	match * m = ac_search(a, 0, "This is a bar that serves food.", 0, 31);
+	match * m = ac_search(a, 0, (const unsigned char *) "This is a bar that serves food.", 0, 31);
 
 	CuAssertPtrNotNull(tc, m);
 	CuAssertIntEquals(tc, 41, m->type);
@@ -546,17 +563,19 @@ void Test_ac_search(CuTest * tc) {
 	ac_insert(a, "ally", 39);
 	ac_insert(a, "ufo", 38);
 	ac_insert(a, "otb", 37);
+	ac_insert(a, "föot", 69);
 
-	F(i, sizeof(options) / sizeof(options[0])) {
+	F(i, (int) (sizeof(options) / sizeof(options[0]))) {
 		// Prepare AC trie with new options
 		ac_prepare(a, options[i]);
 
 		// ac_to_graphviz(a, stdout);
 
 		// Test with multiple haystacks
-		F(j, sizeof(haystack) / sizeof(haystack[0])) {
-			m = ac_search(a, options[i], haystack[j], 0, strlen(haystack[j]));
+		F(j, (int) (sizeof(haystack) / sizeof(haystack[0]))) {
+			m = ac_search(a, options[i], (const unsigned char *) haystack[j], 0, strlen(haystack[j]));
 			buf = text_buffer_new(0);
+
 			match_set_buffer(m, haystack[j], buf);
 
 			CuAssertStrEquals(tc, results[i][j], buf->text);
@@ -572,22 +591,119 @@ void Test_ac_search(CuTest * tc) {
 #endif
 
 
+/// Monitor one character at a time for matches
+size_t ac_step(size_t s, ac * a, int options, unsigned char c, size_t * len, unsigned char * type) {
+	*len = -1;
+	*type = '\0';
+
+	// Check for path that allows us to match next character
+	while (s && a->node[s].child[c] == 0) {
+		s = a->node[s].ac_fail;
+	}
+
+	// Accept next character
+	s = a->node[s].child[c];
+
+	// Do we have a match
+	size_t temp_s = s;
+
+	while (temp_s) {
+		if (a->node[temp_s].type) {
+			// This is a match
+			if (*len != (size_t) -1) {
+				if (options & AC_LONGEST) {
+					// Is this longer than the current match?
+					if (*len == (size_t) a->node[temp_s].len) {
+						// Update existing match
+						*len = a->node[temp_s].len;
+						*type = a->node[temp_s].type;
+					} else {
+						// Ignore this match
+					}
+				} else {
+					// Ignore this match
+				}
+			} else {
+				*len = a->node[temp_s].len;
+				*type = a->node[temp_s].type;
+			}
+		}
+
+		temp_s = a->node[temp_s].ac_fail;
+	}
+
+	return s;
+}
+
+
+#ifdef TEST
+
+unsigned char step_result[3][6] = {
+	{ 0, 0, 42, 0, 0, 44 },
+	{ 0, 0, 42, 0, 0, 44 },
+	{ 0, 0, 42, 0, 0, 44 }
+};
+
+void Test_ac_step(CuTest * tc) {
+	ac * a = ac_new(0);
+
+	ac_insert(a, "foo", 42);
+	ac_insert(a, "bar", 43);
+	ac_insert(a, "foobar", 44);
+
+	char * haystack = "foobar";
+
+	F(i, (int) (sizeof(options) / sizeof(options[0]))) {
+		ac_prepare(a, options[i]);
+		size_t s = 0;
+		size_t len = 0;
+		unsigned char type = 0;
+
+		F(j, (int) sizeof(haystack)) {
+			s = ac_step(s, a, options[i], (unsigned char) haystack[j], &len, &type);
+			CuAssertIntEquals(tc, step_result[i][j], type);
+
+			switch (type) {
+				case 0:
+					break;
+
+				case 42:
+					CuAssertIntEquals(tc, 3, (int) len);
+					break;
+
+				case 43:
+					CuAssertIntEquals(tc, 3, (int) len);
+					break;
+
+				case 44:
+					CuAssertIntEquals(tc, 6, (int) len);
+					break;
+			}
+		}
+	}
+
+	ac_free(a);
+}
+
+#endif
+
+
 static void trie_node_to_graphviz(ac * a, size_t s, FILE * out) {
 	trie_node * n = &a->node[s];
 
 	if (n->type) {
 		// This is a matching node
-		fprintf(out, "\"%lu\" [shape=doublecircle]\n", s);
+		fprintf(out, "\"%zu\" [shape=doublecircle]\n", s);
 	}
 
 	F(i, 256) {
 		if (n->child[i]) {
-			fprintf(out, "\"%lu\" -> \"%lu\" [label=\"%c\"]\n", s, n->child[i], (char)i);
+			fprintf(out, "\"%zu\" -> \"%zu\" [label=\"%c\"]\n", s, n->child[i], (char)i);
 		}
 	}
 
 	if (n->ac_fail) {
-		fprintf(out, "\"%lu\" -> \"%lu\" [label=\"fail\"]\n", s, n->ac_fail);
+		fprintf(out, "\"%zu\" -> \"%zu\" [label=\"fail\"]\n", s, n->ac_fail);
 	}
 }
 
@@ -602,4 +718,3 @@ void ac_to_graphviz(ac * a, FILE * out) {
 
 	fprintf(out, "}\n");
 }
-

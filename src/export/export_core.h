@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -101,6 +101,8 @@ void precalculate_rules(parse_rule * rules, int n);
 void precalculate_quotes(smart_quote * quotes, int n);
 
 link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uint32_t options);
+
+void export_plain_text(mmd_node * n, const char * text, text_buffer * out);
 
 void url_encode_text(const char * text, size_t len, text_buffer * out);
 

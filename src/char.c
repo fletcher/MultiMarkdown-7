@@ -238,8 +238,6 @@ unsigned char * utf8_check(unsigned char * s) {
 
 #ifdef TEST
 void Test_utf8_check(CuTest * tc) {
-	unsigned char * check;
-
 	CuAssertPtrEquals(tc, NULL, utf8_check((unsigned char *) "This is plain ASCII"));
 	CuAssertPtrEquals(tc, NULL, utf8_check((unsigned char *) "This ü UTF-8"));
 	CuAssertPtrEquals(tc, NULL, utf8_check((unsigned char *) "This 👪"));

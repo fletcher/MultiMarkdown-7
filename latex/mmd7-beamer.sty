@@ -1,0 +1,88 @@
+%
+%	Beamer LaTeX package for MultiMarkdown 7
+%
+
+% Options:
+%	[showtoc] -- Include TOC at the beginning of the document
+
+% Useful "variables"
+
+%	Defined by MultiMarkdown metadata (or by LaTeX code):
+%	\mytitle
+%	\myauthor
+%	\mydate
+%	\mykeywords
+%	\subtitle
+%	\affiliation
+%	\theme			% Use a Beamer theme
+
+\ProvidesPackage{mmd7-beamer}
+
+\PassOptionsToPackage{showtoc}{mmd7-core}
+\RequirePackageWithOptions{mmd7-core}
+
+
+% Builds on the MultiMarkdown 7 core package
+\usepackage{mmd7-core}
+
+
+% Use chosen theme
+\ifx\theme\undefined
+\else
+	\usetheme{\theme}
+\fi
+
+% Ignore other options
+\DeclareOption*{}
+
+\ProcessOptions
+
+
+% Special commands for beamer
+\ifx\mysubtitle\undefined
+\else
+	\subtitle{\mysubtitle}
+\fi
+
+\ifx\affiliation\undefined
+\else
+	\institute{\affiliation}
+\fi
+
+
+% Start with a title
+\AtBeginDocument{
+	\maketitle
+
+	% Include outline slide at the beginning of the deck
+	\ifx\showtoc\undefined
+	\else
+		\begin{frame}
+			\frametitle{Outline}
+			\tableofcontents
+		\end{frame}
+	\fi
+}
+
+% Show an outline for each part
+\AtBeginPart {
+	\begin{frame}
+		\partpage
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Outline}
+		\tableofcontents
+	\end{frame}
+}
+
+% For each section, show an outline highlighting where we are
+\AtBeginSection[] {
+	\begin{frame}
+		\frametitle{Outline}
+		\tableofcontents[currentsection,currentsubsection]
+	\end{frame}
+}
+
+% Include space between paragraphs
+\addtolength{\parskip}{\baselineskip}

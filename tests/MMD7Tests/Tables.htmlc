@@ -53,6 +53,9 @@ latexconfig: article</p>
 
 <p>6</p>
 
+<p>foo <code>a|b</code>
+bar</p>
+
 <p>--- | --- |
 | foo | bar |
 [<em>caption</em>][bar]</p>

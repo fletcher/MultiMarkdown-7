@@ -1,0 +1,23 @@
+Title:				Sample stage-talk MMD presentation  
+Subtitle:			Use MultiMarkdown to quickly generate...  
+Author:				Fletcher T. Penney  
+latex class:		ltx-talk  
+latex package:		[showtoc,showthanks,showreferences]mmd7-ltx-talk  
+latexheaderlevel:	2  
+documentmetadata:	tagging=on,pdfstandard=ua-2,lang=en,tagging-setup={math/setup={mathml-SE,mathml-AF}}
+
+# Introduction #
+
+## First ##
+
+### Why? ###
+
+* Use (Multi)Markdown rather than `\LaTeX`{=latex}
+* Use one source for multiple document types
+
+
+### Math ###
+
+We can typeset math as usual:
+\\[y_t = \alpha + \beta x_t + \varepsilon_t.\\]
+

@@ -1,0 +1,79 @@
+%
+%	stage-talk LaTeX package for MultiMarkdown 7
+%		includes support for stage-talk theme from Beamer Atelier
+%		https://beameratelier.com/ltx-talk.html
+%
+
+% Options:
+%	[showtoc] -- Include TOC at the beginning of the document
+
+% Useful "variables"
+
+%	Defined by MultiMarkdown metadata (or by LaTeX code):
+%	\mytitle
+%	\myauthor
+%	\mydate
+%	\mykeywords
+%	\subtitle
+%	\affiliation
+
+\ProvidesPackage{mmd7-stage-talk}
+
+% This needs to come early so that title page spacing is correct
+% This provides some exta commands as well:
+%	\makeoutline
+%	\makethankyou
+%	\makereferences
+\usepackage{Stage-talk}
+
+\PassOptionsToPackage{showtoc}{mmd7-core}
+\RequirePackageWithOptions{mmd7-core}
+
+
+% Builds on the MultiMarkdown 7 core package
+\usepackage{mmd7-core}
+
+
+% Show thank you slide
+\DeclareOption{showthanks}{
+	\AtEndDocument{
+		\makethankyou
+	}
+}
+
+
+% Show references slide
+\DeclareOption{showreferences}{
+	\AtEndDocument{
+		\makereferences
+	}
+}
+
+
+% Ignore other options
+\DeclareOption*{}
+
+\ProcessOptions
+
+
+% Special commands for ltx-talk
+\ifx\mysubtitle\undefined
+\else
+	\subtitle{\mysubtitle}
+\fi
+
+\ifx\affiliation\undefined
+\else
+	\institute{\affiliation}
+\fi
+
+% Start with a title
+\AtBeginDocument{
+	\maketitle
+
+	% Include outline slide at the beginning of the deck
+	\ifx\showtoc\undefined
+	\else
+		\makeoutline
+	\fi
+}

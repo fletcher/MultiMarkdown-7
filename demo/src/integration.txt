@@ -1,0 +1,319 @@
+title:				Integrated Test  
+subtitle:			MultiMarkdown test suite  
+author:				Fletcher T. Penney  
+base header level:	3
+
+This file is a designed as a single test that incorporates most of
+the *commonly* used MultiMarkdown features. This allows a single test file to
+identify common structures that are not supported yet -- particularly useful
+when developing a new output format.
+
+
+Basic Block Level MD Elements
+=============================
+
+## Paragraphs ##
+
+Normal paragraphs consist of plain text.
+
+They are separated by empty lines.
+
+Long lines of text will wrap naturally as needed to ensure that they fit in the available space.  This will vary by format, of course.
+
+By including two spaces at the end of a line  
+a linebreak is inserted.
+
+MultiMarkdown adds the ability to use\
+an "escaped newline" for this as well.
+
+
+## Headers ##
+
+ATX headers and Setext headers are used in this document
+
+	## ATX Header 2 ##
+
+	Setext Header 1
+	===============
+
+	Setext Header 2
+	---------------
+
+
+## Blockquotes ##
+
+This is a normal paragraph.
+
+> This is a blockquote.
+>
+> With two paragraphs.
+>
+>> And a nested blockquote.
+>> (Which doesn't work well in Beamer.)
+
+
+## Unordered Lists ##
+
+Lists can be "tight" or "loose".
+
+Unordered/tight:
+
+* foo
+* bar
+* bat
+
+Unordered/loose:
+
+* foo
+
+* bar
+
+* bat
+
+
+## Ordered Lists ##
+
+Lists can be "tight" or "loose".
+
+Ordered/tight:
+
+1. foo
+2. bar
+3. bat
+
+Ordered/loose:
+
+1. foo
+
+2. bar
+
+3. bat
+
+
+## Complex Lists ##
+
+Lists can contain other elements
+
+*	A list item.
+
+	With a second paragraph.
+
+*	An item.
+
+	1. With
+	2. a
+	3. sublist
+
+
+## Code Blocks ##
+
+Code blocks are indented with 4 spaces or 1 tab.
+
+    This is a code block.
+
+	As is this.
+
+
+## Horizontal Rules ##
+
+You can include horizontal rules
+
+***
+
+between paragraphs and other elements.
+
+
+## HTML Blocks ##
+
+HTML blocks can be included, but will work differently when not exporting to HTML, of course.
+
+<div>*foo*</div>
+
+<div>
+
+*bar*
+
+</div>
+
+
+Basic Span Level MD Elements
+============================
+
+## Links ##
+
+Links can be [inline](http://example.com/inline "Inline Link"), or [reference].
+
+[reference]: http://example.com/reference
+	"Reference Link"
+
+You can also use automatic links <http://example.com/auto>
+and email <auto@example.com>.
+
+
+## Emphasis ##
+
+Text can be *emphasized*, **strong**, or ***both***.
+
+
+## Code ##
+
+You can include `code()` in the middle of other text.
+
+
+## Images ##
+
+Images are similar to links, but with a leading `!`.
+
+![image]\ 
+
+[image]: test-image.png "Image title"
+
+
+## Backslash Escapes ##
+
+\*This is not emphasized.\*
+
+\[This is not a link\]\[\].
+
+\* This is not a list item
+
+
+## Inline HTML ##
+
+HTML can be included within other blocks.
+
+(Markdown does not parse markup inside these HTML spans, whereas MultiMarkdown tries to.)
+
+This is text with <foo>*bar*</foo> HTML.
+
+
+Extended Block Level MMD Elements
+=================================
+
+## Metadata ##
+
+Metadata can be included at the top of a document.
+
+	Title:		Integrated Test  
+	Subtitle:	MultiMarkdown test suite  
+	Author:		Fletcher T. Penney  
+
+It can be referenced with `[%title]` to insert the meta value - [%title].
+
+## Header Cross-References ##
+
+MultiMarkdown automatically generates anchors for headers, to allow for navigation,
+such as jumping back to the previous [Metadata][] section.
+
+
+## Table of Contents ##
+
+MultiMarkdown can generate a TOC from the header structure.
+
+{{TOC}}
+
+
+## Fenced Code Blocks ##
+
+```
+Fenced code blocks are easier in some circumstances.
+```
+
+
+## Definition Lists ##
+
+Term 1
+Term 2
+:	Definition 1
+:	Definition 2
+
+
+## Tables ##
+
+| foo	| bar	|  
+ -----+ | :--:+	|  
+| *foo*	| *bar*	|  
+| **foo bar**	||  
+
+
+## Figures ##
+
+An image in a paragraph by itself becomes a figure.
+
+![image2]
+
+
+
+Extended Span Level MMD Elements
+================================
+
+## Footnotes ##
+
+Foo.[^This is an inline footnote]
+
+Bar.[^foot]
+
+[^foot]: And a reference footnote.
+
+
+## Citations ##
+
+An inline citation.[#Inline Citation]
+
+A reference citation.[#foo]
+
+[#foo]: bar
+
+
+## Glossaries ##
+
+[?term]
+
+[?term]: A term to be defined.
+
+
+## Abbreviations ##
+
+[>MMD] and [>MMD].
+
+[>MMD]: MultiMarkdown
+
+
+## Image attributes ##
+
+Images can have attributes.
+
+![image2]\ 
+
+[image2]: test-image.png "Image title" width=40px
+
+
+## Math ##
+
+foo \\({e}^{i\pi }+1=0\\) bar
+
+\\[ {x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a} \\]
+
+foo ${e}^{i\pi }+1=0$ bar
+
+foo ${e}^{i\pi }+1=0$, bar
+
+$${x}_{1,2}=\frac{-b\pm \sqrt{{b}^{2}-4ac}}{2a}$$
+
+
+## Smart Quotes ##
+
+"foo" and 'bar' -- with --- dashes...
+
+
+## CriticMarkup ##
+
+{++Insert++}
+
+{--Delete--}
+
+{~~Old~>New~~}
+
+{>>Comment<<}
+
+{==Highlighted==}

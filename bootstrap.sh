@@ -18,6 +18,10 @@ apt-get install -y clang llvm
 # Cross-compilation for Windows
 apt-get install -y mingw-w64 nsis
 
+# libcurl development
+apt-get install -y libcurl4-openssl-dev
+
+
 # Create a git server
 
 # Create account

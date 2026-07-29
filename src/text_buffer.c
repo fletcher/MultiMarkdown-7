@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@
 */
 
 
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +47,7 @@
 
 #include "text_buffer.h"
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	#include <windows.h>
 #endif
 
@@ -56,47 +57,46 @@
 #endif
 
 
-#ifdef TEST
-// Remove static keyword to enable this test
-static void Test_void_function(CuTest * tc) {
-	CuAssertIntEquals(tc, 0, 0);
-}
-
-#endif
-
-
 #define kBUFFERSIZE 4096				// How many bytes to read at a time?
 
 /// Read from file stream into a buffer
 text_buffer * buffer_file(FILE * in, size_t capacity) {
-	if (!capacity) {
-		capacity = kBUFFERSIZE * 8;
+	if (capacity < kBUFFERSIZE + 1) {
+		capacity = kBUFFERSIZE * 4;
 	}
 
 	size_t bytes, size = 0;
 
 	char * text = malloc(sizeof(char) * capacity);
 
-	while ((bytes = fread(&text[size], 1, kBUFFERSIZE, in)) > 0) {
+	while ((bytes = fread(&text[size], sizeof(char), kBUFFERSIZE, in)) > 0) {
 		size += bytes;
 
-		if (size + kBUFFERSIZE + 1 > capacity) {
-			text = realloc(text, capacity * 2);
+		while (size + kBUFFERSIZE + 1 > capacity) {
+			char * new = realloc(text, capacity * 2);
 
-			if (text == NULL) {
+			if (new == NULL) {
+				fprintf(stderr, "Failed to realloc() while buffering file\n");
 				// Reallocation failed
+				free(text);
 				return NULL;
 			}
 
+			text = new;
 			capacity *= 2;
 		}
 	}
 
 	text_buffer * buffer = malloc(sizeof(text_buffer));
-	buffer->text = text;
-	buffer->len = size;
-	buffer->capacity = capacity;
-	buffer->text[size] = '\0';
+
+	if (buffer) {
+		buffer->text = text;
+		buffer->len = size;
+		buffer->capacity = capacity;
+		buffer->text[size] = '\0';
+	} else {
+		free(text);
+	}
 
 	return buffer;
 }
@@ -105,9 +105,9 @@ text_buffer * buffer_file(FILE * in, size_t capacity) {
 text_buffer * buffer_filename(const char * fname, size_t capacity) {
 	text_buffer * r = NULL;
 
-#if defined(__WIN32)
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
 	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, fname, -1, NULL, 0);
-	wchar_t wstr[wchars_num];
+	wchar_t * wstr = malloc(sizeof(wchar_t) * wchars_num);
 	MultiByteToWideChar(CP_UTF8, 0, fname, -1, wstr, wchars_num);
 
 	FILE * in = _wfopen(wstr, L"rb");
@@ -115,14 +115,27 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 	if (in) {
 		r = buffer_file(in, capacity);
 		fclose(in);
+		// } else {
+		// 	if (errno == EPERM || errno == EACCES) {
+		// 		fprintf(stderr, "No permission to access %s.\n", fname);
+		// 	} else {
+		// 		fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+		// 	}
 	}
 
+	free(wstr);
 #else
 	FILE * in = fopen(fname, "r");
 
 	if (in) {
 		r = buffer_file(in, capacity);
 		fclose(in);
+		// } else {
+		// 	if (errno == EPERM || errno == EACCES) {
+		// 		fprintf(stderr, "No permission to access %s.\n", fname);
+		// 	} else {
+		// 		fprintf(stderr, "Failed to access %s (%d).\n", fname, errno);
+		// 	}
 	}
 
 #endif
@@ -146,7 +159,7 @@ text_buffer * buffer_filename(const char * fname, size_t capacity) {
 // Some operating systems do not supply vasprintf() -- standardize on this
 // replacement from:
 //		https://github.com/esp8266/Arduino/issues/1954
-int vasprintf(char ** strp, const char * fmt, va_list ap) {
+static int my_vasprintf(char ** strp, const char * fmt, va_list ap) {
 	va_list ap2;
 	va_copy(ap2, ap);
 
@@ -188,6 +201,7 @@ text_buffer * text_buffer_new(size_t capacity) {
 		b->len = 0;
 		b->capacity = start_capacity;
 		b->text[0] = '\0';
+		b->padding = 0;
 	}
 
 	return b;
@@ -207,7 +221,7 @@ void text_buffer_free(text_buffer * b, int free_text) {
 
 static void text_buffer_ensure_capacity(text_buffer * b, size_t new_capacity) {
 	if (b) {
-		if (b->capacity > new_capacity) {
+		if (b->capacity > new_capacity + 1) {
 			return;
 		}
 
@@ -258,7 +272,7 @@ void text_buffer_append_printf(text_buffer * b, const char * format, ...) {
 		va_start(args, format);
 
 		char * formatted_string = NULL;
-		int valid = vasprintf(&formatted_string, format, args);
+		int valid = my_vasprintf(&formatted_string, format, args);
 
 		if ((valid > 0)) {
 			if (formatted_string) {
@@ -274,7 +288,7 @@ void text_buffer_append_printf(text_buffer * b, const char * format, ...) {
 
 /// Replace a section of existing string with new string
 void text_buffer_replace_range(text_buffer * b, size_t pos, size_t len, const char * replacement, size_t replacement_len) {
-	if (b && replacement && (len || replacement_len)) {
+	if (b && (replacement || !replacement_len) && (len || replacement_len)) {
 		text_buffer_ensure_capacity(b, b->len + replacement_len - len);
 
 		// Shift "tail" portion of existing string after the excised portion
@@ -303,6 +317,10 @@ void text_buffer_prepend_text(text_buffer * b, const char * text, size_t text_le
 void text_buffer_delete_range(text_buffer * b, size_t pos, size_t len) {
 	if (b && len) {
 		// Shift "tail" portion of existing string
+		if (len == (size_t) -1) {
+			len = b->len - pos;
+		}
+
 		memmove((void *)(b->text + pos), b->text + pos + len, b->len - pos - len);
 
 		// Adjust b->len
@@ -333,6 +351,15 @@ void text_buffer_delete_bom(text_buffer * b) {
 }
 
 
+/// Pad text with newlines
+void text_buffer_pad(text_buffer * b, short n) {
+	while (n > b->padding) {
+		text_buffer_append_c(b, '\n');
+		b->padding++;
+	}
+}
+
+
 /// Remove trailing whitespace
 void text_buffer_trim_trailing_whitespace(text_buffer * b) {
 	if (b) {
@@ -350,4 +377,57 @@ void text_buffer_trim_trailing_whitespace(text_buffer * b) {
 		}
 	}
 }
+
+
+/// Convert trailing CRLF to LF
+void text_buffer_fix_trailing_newline(text_buffer * b) {
+	if (b) {
+		if (b->len > 1) {
+			if (b->text[b->len - 2] == '\r' && b->text[b->len - 1] == '\n') {
+				b->len -= 1;
+				b->text[b->len] = '\0';
+				b->text[b->len - 1] = '\n';
+			}
+		}
+	}
+}
+
+
+/// Remove trailing CR or LF
+void text_buffer_trim_trailing_newline(text_buffer * b) {
+	if (b) {
+		while (b->len) {
+			switch (b->text[b->len - 1]) {
+				case '\r':
+				case '\n':
+					b->len--;
+					b->text[b->len] = '\0';
+					break;
+
+				default:
+					return;
+			}
+		}
+	}
+}
+
+
+/// Replace occurences of target with replacement
+void text_buffer_replace_string(text_buffer * b, const char * target, const char * replacement) {
+	if (b && target && replacement) {
+		size_t offset = 0;
+		size_t t_len = strlen(target);
+		size_t r_len = strlen(replacement);
+
+		char * needle = strstr(&b->text[offset], target);
+
+		while (needle) {
+			offset = needle - b->text;
+			text_buffer_replace_range(b, offset, t_len, replacement, r_len);
+			offset += r_len - t_len;
+			needle = strstr(&b->text[offset], target);
+		}
+	}
+}
+
 

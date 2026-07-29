@@ -45,3 +45,11 @@ Just a [URL](http://url/file.txt).
 [URL and title]( </url/file.txt> "title").
 
 [URL and title](  </url/file.txt> "title").
+
+[URL and title](
+/url/file.txt "title").
+
+16
+
+[URL and title](
+</url/file.txt> "title").

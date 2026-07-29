@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opml version="1.0">
+	<head><title>Emphasis Test</title></head>
+	<body>
+		<outline text="&gt;&gt;Preamble&lt;&lt;" _note="&#10;"/>
+		<outline text="1" _note="&#10;*foo*&#10;&#10;*foo**&#10;&#10;*foo***&#10;&#10;**foo*&#10;&#10;**foo**&#10;&#10;**foo***&#10;&#10;***foo*&#10;&#10;***foo**&#10;&#10;***foo***&#10;&#10;_foo_&#10;&#10;_foo__&#10;&#10;_foo___&#10;&#10;__foo_&#10;&#10;__foo__&#10;&#10;__foo___&#10;&#10;___foo_&#10;&#10;___foo__&#10;&#10;___foo___&#10;&#10;"/>
+		<outline text="2" _note="&#10;*foo bar*&#10;&#10;*foo bar**&#10;&#10;*foo bar***&#10;&#10;**foo bar*&#10;&#10;**foo bar**&#10;&#10;**foo bar***&#10;&#10;***foo bar*&#10;&#10;***foo bar**&#10;&#10;***foo bar***&#10;&#10;_foo bar_&#10;&#10;_foo bar__&#10;&#10;_foo bar___&#10;&#10;__foo bar_&#10;&#10;__foo bar__&#10;&#10;__foo bar___&#10;&#10;___foo bar_&#10;&#10;___foo bar__&#10;&#10;___foo bar___&#10;&#10;"/>
+		<outline text="3" _note="&#10;*foo* bar&#10;&#10;*foo** bar&#10;&#10;*foo*** bar&#10;&#10;**foo* bar&#10;&#10;**foo** bar&#10;&#10;**foo*** bar&#10;&#10;***foo* bar&#10;&#10;***foo** bar&#10;&#10;***foo*** bar&#10;&#10;_foo_ bar&#10;&#10;_foo__ bar&#10;&#10;_foo___ bar&#10;&#10;__foo_ bar&#10;&#10;__foo__ bar&#10;&#10;__foo___ bar&#10;&#10;___foo_ bar&#10;&#10;___foo__ bar&#10;&#10;___foo___ bar&#10;&#10;"/>
+		<outline text="4" _note="&#10;foo *bar*&#10;&#10;foo *bar**&#10;&#10;foo *bar***&#10;&#10;foo **bar*&#10;&#10;foo **bar**&#10;&#10;foo **bar***&#10;&#10;foo ***bar*&#10;&#10;foo ***bar**&#10;&#10;foo ***bar***&#10;&#10;foo _bar_&#10;&#10;foo _bar__&#10;&#10;foo _bar___&#10;&#10;foo __bar_&#10;&#10;foo __bar__&#10;&#10;foo __bar___&#10;&#10;foo ___bar_&#10;&#10;foo ___bar__&#10;&#10;foo ___bar___&#10;&#10;"/>
+		<outline text="5" _note="&#10;*foo *bar* foo*&#10;&#10;*foo **bar** foo*&#10;&#10;*foo ***bar*** foo*&#10;&#10;**foo *bar* foo**&#10;&#10;**foo **bar** foo**&#10;&#10;**foo ***bar*** foo**&#10;&#10;***foo *bar* foo***&#10;&#10;***foo **bar** foo***&#10;&#10;***foo ***bar*** foo***&#10;&#10;_foo _bar_ foo_&#10;&#10;_foo __bar__ foo_&#10;&#10;_foo ___bar___ foo_&#10;&#10;__foo _bar_ foo__&#10;&#10;__foo __bar__ foo__&#10;&#10;__foo ___bar___ foo__&#10;&#10;___foo _bar_ foo___&#10;&#10;___foo __bar__ foo___&#10;&#10;___foo ___bar___ foo___&#10;&#10;"/>
+		<outline text="6" _note="&#10;*foo*bar&#10;&#10;*foo**bar&#10;&#10;*foo***bar&#10;&#10;**foo*bar&#10;&#10;**foo**bar&#10;&#10;**foo***bar&#10;&#10;***foo*bar&#10;&#10;***foo**bar&#10;&#10;***foo***bar&#10;&#10;_foo_bar&#10;&#10;_foo__bar&#10;&#10;_foo___bar&#10;&#10;__foo_bar&#10;&#10;__foo__bar&#10;&#10;__foo___bar&#10;&#10;___foo_bar&#10;&#10;___foo__bar&#10;&#10;___foo___bar&#10;&#10;"/>
+		<outline text="7" _note="&#10;foo*bar*&#10;&#10;foo*bar**&#10;&#10;foo*bar***&#10;&#10;foo**bar*&#10;&#10;foo**bar**&#10;&#10;foo**bar***&#10;&#10;foo***bar*&#10;&#10;foo***bar**&#10;&#10;foo***bar***&#10;&#10;foo_bar_&#10;&#10;foo_bar__&#10;&#10;foo_bar___&#10;&#10;foo__bar_&#10;&#10;foo__bar__&#10;&#10;foo__bar___&#10;&#10;foo___bar_&#10;&#10;foo___bar__&#10;&#10;foo___bar___&#10;&#10;"/>
+		<outline text="&gt;&gt;Metadata&lt;&lt;">
+			<outline text="title" _note="Emphasis Test"/>
+			<outline text="latexconfig" _note="article"/>
+		</outline>
+	</body>
+</opml>

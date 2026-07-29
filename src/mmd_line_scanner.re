@@ -16,7 +16,7 @@
 
 	MIT License
 	
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "mmd_node.h"
 
@@ -53,7 +53,7 @@
 
 #define ret if (t1) { s->c_start = t1; } else { s->c_start = s->start; } s->c_end = NULL; return
 #define ret2 if (t1) { s->c_start = t1; } else { s->c_start = s->start; } s->c_end = t2; return
-#define retc if (options & MMD_OPTION_COMPATIBILITY) { s->c_start = s->start; return LINE_PLAIN; }
+#define retc if (options & MMD_OPTION_COMPATIBILITY) { s->c_start = s->start; s->c_end = NULL; return LINE_PLAIN; }
 
 /// Scan text for MultiMarkdown line types
 int mmd_line_scan(Scanner * s, uint32_t options) {
@@ -157,6 +157,13 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 		'#'{5} s+ @t1 w	[^#\r\n]* @t2 end 							{ ret2 LINE_ATX_5; }
 		'#'{6} s+ @t1 w	[^#\r\n]* @t2 end 							{ ret2 LINE_ATX_6; }
 
+		'#'{1} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_1; }
+		'#'{2} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_2; }
+		'#'{3} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_3; }
+		'#'{4} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_4; }
+		'#'{5} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_5; }
+		'#'{6} s+ @t1 w	[^#\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_6; }
+
 		'#'{1} s+ @t1 w	[^\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_1; }
 		'#'{2} s+ @t1 w	[^\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_2; }
 		'#'{3} s+ @t1 w	[^\r\n]* @t2 [#]+ s* end 					{ ret2 LINE_ATX_3; }
@@ -257,7 +264,7 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 
 		// Skip anything else (e.g. invalid UTF-8 bytes)
 		*															{ goto skip; }
-		$															{ ret 0; }
+		//$															{ ret 0; }
 	*/
 }
 
@@ -278,33 +285,35 @@ void make_list_items_loose(mmd_node * n) {
 /// Convert to loose list if appropriate
 void flag_list_loose(mmd_node * n) {
 	if (n) {
-		mmd_node * w = n->child;
+		mmd_node * item = n->child;
 
-		while (w) {
-			mmd_node * ww = w->child;
-
-			while (ww && (w->next || ww->next)) {
-				if (
-					(ww->type == LINE_EMPTY) ||
-					(ww->type == BLOCK_EMPTY)
-				) {
-					if (w->next == NULL) {
-						if (ww->next && ww->next->type != LINE_EMPTY) {
-							n->type++;
-							make_list_items_loose(n);
-							return;
-						}
-					} else {
-						n->type++;
-						make_list_items_loose(n);
-						return;
-					}
+		while (item) {
+			if (item->type == BLOCK_EMPTY) {
+				if (item->next) {
+					n->type++;
+					make_list_items_loose(n);
+					return;
+				} else {
+					return;
 				}
-
-				ww = ww->next;
 			}
 
-			w = w->next;
+			mmd_node * content = item->child;
+
+			while (content && content->next) {
+				if (
+					(content->type == LINE_EMPTY) ||
+					(content->type == BLOCK_EMPTY)
+				) {
+					n->type++;
+					make_list_items_loose(n);
+					return;
+				}
+
+				content = content->next;
+			}
+
+			item = item->next;
 		}
 	}
 }

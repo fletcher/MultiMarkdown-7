@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -42,13 +42,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
 
-#include "libMultiMarkdown.h"
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+	#include <io.h>
+	#include <fcntl.h>
+	#include "getopt.h"
+#else
+	#include <unistd.h>
+#endif
+
+#include "libMultiMarkdown7.h"
 #include "read_ctx.h"
 #include "version.h"
+#include "zip.h"
 
+#ifdef USE_CURL
+	#include <curl/curl.h>
+#endif
 
 #define F(i,n) for(int i= 0;i<n;i++)
 
@@ -85,15 +95,17 @@ static format formats[] = {
 	[FORMAT_EPUB] = { "epub", ".epub" },
 	[FORMAT_LATEX] = { "latex", ".tex" },
 	[FORMAT_BEAMER] = { "beamer", ".tex" },
-	[FORMAT_MEMOIR] = { "memoir", ".tex" },
-	[FORMAT_FODT] = { "fodt", ".fodt" },
-	[FORMAT_ODT] = { "odt", ".odt" },
-	[FORMAT_TEXTBUNDLE] = { "bundle", ".textbundle" },
-	[FORMAT_TEXTBUNDLE_COMPRESSED] = { "bundlezip", ".textpack" },
+	[FORMAT_LTX_TALK] = { "ltx-talk", ".tex" },
+	[FORMAT_TEXTBUNDLE] = { "textbundle", ".textbundle" },
+	[FORMAT_TEXTPACK] = { "textpack", ".textpack" },
 	[FORMAT_OPML] = { "opml", ".opml" },
 	[FORMAT_ITMZ] = { "itmz", ".itmz" },
 	[FORMAT_MMD] = { "mmd", ".mmdtext" },
-	[FORMAT_HTML_WITH_ASSETS] = { "html?", ".html?" },
+	[FORMAT_AST] = { "ast", ".ast" },
+	[FORMAT_HASH] = { "hash", ".hash" },
+	[FORMAT_DOCX] = { "docx", ".docx" },
+	[FORMAT_FODT] = { "fodt", ".fodt" },
+	[FORMAT_ODT] = { "odt", ".odt" },
 };
 
 
@@ -116,10 +128,50 @@ static language languages[] = {
 
 #define kMETAKEYSIZE 1024
 
+FILE * flex_out_open(const char * path, uint32_t options) {
+	FILE * out;
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+
+	// Windows sucks
+	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_EPUB:
+		case FORMAT_ITMZ:
+		case FORMAT_TEXTPACK:
+		case FORMAT_DOCX:
+			out = fopen(path, "wb");
+			break;
+
+		default:
+			out = fopen(path, "w");
+			break;
+	}
+
+#else
+	out = fopen(path, "w");
+#endif
+
+	return out;
+}
+
+
+void print_toc(int level, toc_node * t) {
+	while (t) {
+		fprintf(stdout, "* (%d) (%lu:%lu) '%s' => '%s'\n", level, t->start, t->end, t->label, t->title);
+
+		if (t->child) {
+			print_toc(level + 1, t->child);
+		}
+
+		t = t->next;
+	}
+}
+
+
 int main(int argc, char * const argv[]) {
-	if (OBJECT_REPLACEMENT_CHARACTER > 253) {
+	if (OBJECT_REPLACEMENT_CHARACTER > 250) {
 		// Adding too many token types...
-		fprintf(stderr, "CAUTION: OBJECT_REPLACEMENT_CHARACTER nearing 255!!\n");
+		fprintf(stderr, "CAUTION: OBJECT_REPLACEMENT_CHARACTER nearing 255!! => %d\n", OBJECT_REPLACEMENT_CHARACTER);
 		exit(1);
 	}
 
@@ -132,6 +184,8 @@ int main(int argc, char * const argv[]) {
 	uint32_t options = MMD_OPTION_MMD_HEADER;
 
 	char extension[64] = {0};
+	char source_path[1025] = {0};
+	char out_path[1025] = {0};
 
 	// Set offset to 1 if we want an "action" immediately following the program when called
 	// e.g.  ./foo bar -x -y -z
@@ -144,10 +198,8 @@ int main(int argc, char * const argv[]) {
 		}
 	}
 
-	custom_seed_rand();
-
 	// Read short options
-	while ((option = getopt(argc - offset, &argv[offset], ":chbe:l:rst:vyzARx:")) != -1) {
+	while ((option = getopt(argc - offset, &argv[offset], ":cDEhbe:l:o:p:rst:vyzARCSHIOx:")) != -1) {
 		switch (option) {
 			case 'h':
 				// help -- display usage
@@ -180,6 +232,16 @@ int main(int argc, char * const argv[]) {
 
 				break;
 
+			case 'o':
+				// Specify output path
+				strncpy(out_path, optarg, 1024);
+				break;
+
+			case 'p':
+				// Path for transclusion or embedding when using stdin
+				strncpy(source_path, optarg, 1024);
+				break;
+
 			case 'b':
 				// Blocks only
 				options |= MMD_OPTION_BLOCKS_ONLY;
@@ -190,9 +252,34 @@ int main(int argc, char * const argv[]) {
 				options |= MMD_OPTION_COMPATIBILITY;
 				break;
 
+			case 'D':
+				// Download assets using curl
+				options |= MMD_OPTION_DOWNLOAD_ASSETS;
+				break;
+
+			case 'E':
+				// Embed assets into file itself (e.g. HTML)
+				options |= MMD_OPTION_EMBED_ASSETS;
+				break;
+
 			case 'r':
 				// Enable transclusion
 				options |= MMD_OPTION_TRANSCLUDE;
+				break;
+
+			case 'H':
+				// Convert from HTML
+				options |= MMD_OPTION_PARSE_HTML;
+				break;
+
+			case 'O':
+				// Convert from OPML
+				options |= MMD_OPTION_PARSE_OPML;
+				break;
+
+			case 'I':
+				// Convert from ITMZ
+				options |= MMD_OPTION_PARSE_ITMZ;
 				break;
 
 			case 's':
@@ -222,6 +309,16 @@ int main(int argc, char * const argv[]) {
 				options |= MMD_OPTION_CRITIC_REJECT;
 				break;
 
+			case 'C':
+				// Force complete document
+				options |= MMD_OPTION_COMPLETE;
+				break;
+
+			case 'S':
+				// Force snippet
+				options |= MMD_OPTION_SNIPPET;
+				break;
+
 			case 't':
 				// output format (FORMAT_HTML is the default)
 				// Disable current format
@@ -248,7 +345,7 @@ int main(int argc, char * const argv[]) {
 				break;
 
 			case 'e':
-				// Metadata key to exxtract
+				// Metadata key to extract
 				strncpy(meta_key, optarg, kMETAKEYSIZE - 1);
 				break;
 
@@ -267,10 +364,9 @@ int main(int argc, char * const argv[]) {
 	}
 
 
-	// Is an action required?
+	// If no action is specified, default to parse
 	if (!err && !offset) {
-		fprintf(stderr, "%s: action missing\n", argv[0]);
-		err = 1;
+		action = 'p';
 	}
 
 	if (err == 0 && offset) {
@@ -287,26 +383,71 @@ int main(int argc, char * const argv[]) {
 			fprintf(stdout, "%s\n", LIBMULTIMARKDOWN7_VERSION);
 		} else if (strcmp(argv[1], "parse") == 0) {
 			action = 'p';
-		} else if (strcmp(argv[1], "meta") == 0) {
-			action = 'm';
-		} else if (strcmp(argv[1], "ast") == 0) {
-			action = 'a';
 		} else if (strcmp(argv[1], "batch") == 0) {
 			action = 'b';
+		} else if (strcmp(argv[1], "meta") == 0) {
+			action = 'm';
+		} else if (strcmp(argv[1], "tags") == 0) {
+			action = 't';
+		} else if (strcmp(argv[1], "toc") == 0) {
+			action = 'o';
+		} else if (strcmp(argv[1], "ast") == 0) {
+			action = 'p';
+			options &= (~MMD_OUT_FORMAT_MASK);
+			options |= FORMAT_AST;
 		} else if (strcmp(argv[1], "hash") == 0) {
-			action = 'h';
+			action = 'p';
+			options &= (~MMD_OUT_FORMAT_MASK);
+			options |= FORMAT_HASH;
+		} else if (strcmp(argv[1], "url") == 0) {
+			action = 'u';
 		} else {
-			fprintf(stderr, "%s: action not recognized -- %s\n", argv[0], argv[1]);
-			err = 1;
+			// If no action is specified, default to parse and treat this as argument
+			action = 'p';
+			offset--;
 		}
 	}
 
+
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+
+	// Windows sucks
+	switch (MMD_OUT_FORMAT_FROM_OPTS(options)) {
+		case FORMAT_EPUB:
+		case FORMAT_ITMZ:
+		case FORMAT_TEXTPACK:
+		case FORMAT_DOCX:
+			_setmode(_fileno(stdout), _O_BINARY);
+			break;
+
+		default:
+			break;
+	}
+
+#endif
+
+	// Initialization stuff
+	custom_seed_rand();
+
+#ifdef USE_CURL
+
+	// This has a slight performance hit, so avoid if we can
+	if (action == 'u'
+			|| options & MMD_OPTION_DOWNLOAD_ASSETS
+			|| MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB
+			|| MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTBUNDLE
+			|| MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTPACK
+	   ) {
+		curl_global_init(CURL_GLOBAL_ALL);
+	}
+
+#endif
 
 	if (err) {
 		// Error
 		fprintf(stderr, "\nMultiMarkdown %s -- %s\n\n", LIBMULTIMARKDOWN7_VERSION, LIBMULTIMARKDOWN7_COPYRIGHT);
 
-		fprintf(stderr, "usage: %s [--help] {ast|batch|hash|meta|parse} [-b] [-h] [-r] [-s] [-e META_KEY] [-l LANGUAGE] [-t FORMAT]\n", argv[0]);
+		fprintf(stderr, "usage: %s [--help] {ast|batch|hash|meta|parse} [options] [Input file names]\n", argv[0]);
 
 		fprintf(stderr, "\nActions:\n");
 		fprintf(stderr, "\tast\t\tDisplay abstract syntax tree for the document\n");
@@ -317,46 +458,52 @@ int main(int argc, char * const argv[]) {
 
 		fprintf(stderr, "\nOptions:\n");
 		fprintf(stderr, "\t-h, --help\tShow this help\n");
+
+		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd|latex|docx|epub|itmz|opml|textbundle|textpack|ast|hash]\n");
+		fprintf(stderr, "\t-o OUT_FILE\tSpecify output file (e.g. when parsing from stdin\n");
+		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
+
 		fprintf(stderr, "\t-c\t\tMarkdown compatibility mode\n");
+
+		fprintf(stderr, "\t-C\t\tGenerate complete document\n");
+		fprintf(stderr, "\t-S\t\tGenerate snippet\n");
+
 		fprintf(stderr, "\t-r\t\tEnable file transclusion (\"recursive\")\n");
+		fprintf(stderr, "\t-D\t\tDownload assets from the internet (images, CSS) for inclusion in package formats\n");
+		fprintf(stderr, "\t-E\t\tEmbed assets in non-package formats (e.g. embed images directly in HTML)\n");
+		fprintf(stderr, "\t-p PATH\t\tSpecify a working directory when parsing from stdin (e.g. for transclusion or embedding assets\n");
+
 		fprintf(stderr, "\t-A\t\tAccept all CriticMarkup changes\n");
 		fprintf(stderr, "\t-R\t\tReject all CriticMarkup changes\n");
+
+		fprintf(stderr, "\t-O\t\tConvert OPML source to MMD text before parsing\n");
+		fprintf(stderr, "\t-I\t\tConvert iThoughts source to MMD text before parsing\n");
+
+		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
+
 		fprintf(stderr, "\t-b\t\tLimit parsing to block level only\n");
 		fprintf(stderr, "\t-s\t\tLog some processing time statistics\n");
-		fprintf(stderr, "\t-e META_KEY\tSpecify metadata key to extract\n");
-		fprintf(stderr, "\t-l LANGUAGE\tSpecify language for smart quotes and default markup [en|es|de|fr|nl|sv|he]\n");
-		fprintf(stderr, "\t-t FORMAT\tSpecify output format [html|mmd]\n");
 
-		fprintf(stderr, "\nuthash -- Copyright (c) 2003-2022, Troy D. Hanson  https://troydhanson.github.io/uthash/  All rights reserved.\n\n");
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+		fprintf(stderr, "\ngetopt\t-- Copyright (c) 2002 Todd C. Miller  All rights reserved.");
+#endif
+		fprintf(stderr, "\nminiz\tCopyright 2013-2014 RAD Game Tools and Valve Software\n\tCopyright 2010-2014 Rich Geldreich and Tenacious Software LLC  All rights reserved.\n");
+		fprintf(stderr, "uthash\tCopyright (c) 2003-2022, Troy D. Hanson  All rights reserved.\n");
+		fprintf(stderr, "yxml\tCopyright (c) 2013-2014 Yoran Heling  All rights reserved.\n");
 	} else {
 		// Proceed
 		switch (action) {
 			case 'h': {
+				// Deprecated
 				// Parse the specified document(s) or input on stdin and export the AST with hash values
 				mmd_node * n;
 
 				if (optind + offset < argc) {
-					read_ctx * c = read_ctx_new(options);
-
 					for (optind += offset; optind < argc; optind++) {
-						n = mmd_parse_filename(argv[optind], c, options);
-						uint32_t hash = mmd_hash_node_tree(n);
-						fprintf(stdout, "Tree hash: %u\n", hash);
-						mmd_node_tree_describe_hash(n, stdout);
-						mmd_node_tree_free(n);
-						read_ctx_reset(c, options);
+						mmd_hash_filename(argv[optind], stdout, options);
 					}
-
-					read_ctx_free(c);
 				} else {
-					read_ctx * c = read_ctx_new(options);
-
-					n = mmd_parse_file(stdin, c, options);
-					uint32_t hash = mmd_hash_node_tree(n);
-					fprintf(stdout, "Tree hash: %u\n", hash);
-					mmd_node_tree_describe_hash(n, stdout);
-					mmd_node_tree_free(n);
-					read_ctx_free(c);
+					mmd_hash_file(stdin, stdout, options);
 				}
 			}
 
@@ -375,11 +522,20 @@ int main(int argc, char * const argv[]) {
 							new_file = filename_with_extension(argv[optind], formats[MMD_OUT_FORMAT_FROM_OPTS(options)].file_extension);
 						}
 
-						FILE * out = fopen(new_file, "w");
+						if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_TEXTBUNDLE) {
+							size_t len;
+							char * data = mmd_process_filename_to_str(argv[optind], &len, options, NULL, NULL);
 
-						if (out) {
-							mmd_process_filename(argv[optind], out, options, NULL);
-							fclose(out);
+							zip_binary_extract_to_path(data, len, new_file);
+							free(data);
+						} else {
+							FILE * out = flex_out_open(new_file, options);
+
+							if (out) {
+								mmd_process_filename(argv[optind], out, options, NULL, NULL);
+
+								fclose(out);
+							}
 						}
 
 						free(new_file);
@@ -395,12 +551,45 @@ int main(int argc, char * const argv[]) {
 				// Parse the specified document(s) or input on stdin and export on stdout
 				if (optind + offset < argc) {
 					for (optind += offset; optind < argc; optind++) {
-						mmd_process_filename(argv[optind], stdout, options, NULL);
+						mmd_process_filename(argv[optind], stdout, options, NULL, NULL);
 					}
 				} else {
-					char * wd = getcwd(NULL, 0);
-					mmd_process_file(stdin, stdout, options, wd, NULL);
-					free(wd);
+					char buf[1024] = {0};
+#if (defined(__WIN32) || defined(__WIN32__) || defined(_MSC_VER))
+					char * wd = _getcwd(NULL, 0);
+#else
+					char * wd = getcwd(buf, 1024);
+#endif
+					FILE * out = stdout;
+
+					if (out_path[0] != '\0') {
+						out = flex_out_open(out_path, options);
+
+						if (out == NULL) {
+							out = stdout;
+						}
+					}
+
+					if (source_path[0] == '\0') {
+						mmd_process_file(stdin, out, options, wd, NULL, NULL);
+					} else {
+						mmd_process_file(stdin, out, options, source_path, source_path, NULL);
+					}
+				}
+
+				break;
+
+			case 'u':
+
+				// Parse from the specified URL
+				if (optind + offset < argc) {
+					for (optind += offset; optind < argc; optind++) {
+						if (source_path[0] == '\0') {
+							mmd_process_url(argv[optind], stdout, options, NULL, NULL);
+						} else {
+							mmd_process_url(argv[optind], stdout, options, NULL, NULL);
+						}
+					}
 				}
 
 				break;
@@ -449,8 +638,55 @@ int main(int argc, char * const argv[]) {
 
 				break;
 
+			case 't':
+
+				// Parse the specified document(s) or input in stdin and export the tags on stdout
+				if (optind + offset < argc) {
+					for (optind += offset; optind < argc; optind++) {
+						read_ctx *r = mmd_tags_filename(argv[optind], options);
+						fprintf(stdout, "%s\n", argv[optind]);
+
+						tag * t, * t_tmp;
+
+						HASH_ITER(hh, r->tag_hash, t, t_tmp) {
+							fprintf(stdout, "%s\n", t->key);
+						}
+
+						read_ctx_free(r);
+					}
+				} else {
+					read_ctx * r = mmd_tags_file(stdin, options);
+					tag * t, * t_tmp;
+
+					HASH_ITER(hh, r->tag_hash, t, t_tmp) {
+						fprintf(stdout, "'%s'\n", t->key);
+					}
+
+					read_ctx_free(r);
+				}
+
+				break;
+
+			case 'o':
+
+				// Parse the specified document(s) or input in stdin and export the TOC on stdout
+				if (optind + offset < argc) {
+					for (optind += offset; optind < argc; optind++) {
+						toc_node * t = mmd_toc_filename(argv[optind], options);
+						print_toc(1, t);
+						toc_node_tree_free(t);
+					}
+				} else {
+					toc_node * t = mmd_toc_file(stdin, options);
+					print_toc(1, t);
+					toc_node_tree_free(t);
+				}
+
+				break;
+
 			case 'a':
 
+				// Deprecated
 				// Output the AST for the specified document(s) or input on stdin
 				if (optind + offset < argc) {
 					for (optind += offset; optind < argc; optind++) {

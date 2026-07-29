@@ -16,7 +16,7 @@
 
 	MIT License
 
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@
 #include "mmd_scanner.h"
 #include "mmd_token_scanner.h"
 #include "export_core.h"
+#include "mmd_utilities.h"
 
 
 #ifdef TEST
@@ -119,19 +120,91 @@ void precalculate_quotes(smart_quote * quotes, int n) {
 }
 
 
+static void export_plain(mmd_node ** n, const char * text, text_buffer * out) {
+	if (MMD_NODE_IS_BLOCK((*n))) {
+		text_buffer_pad(out, 2);
+		export_plain_text((*n)->child, &text[(*n)->start], out);
+	} else {
+		switch ((*n)->type) {
+			default:
+				if ((*n)->child) {
+					switch ((*n)->type) {
+						case TOKEN_MANUAL_LABEL:
+							(*n) = (*n)->next;
+							break;
+
+						case TOKEN_PAIR_EMPH:
+						case TOKEN_PAIR_STRONG:
+						case TOKEN_PAIR_STAR:
+						case TOKEN_PAIR_STAR_USED:
+							export_plain_text((*n)->child, text, out);
+							(*n) = (*n)->next;
+							break;
+
+						case TOKEN_PAIR_QUOTE_DOUBLE:
+							text_buffer_append_c(out, '"');
+							export_plain_text((*n)->child, text, out);
+							text_buffer_append_c(out, '"');
+							(*n) = (*n)->next;
+							break;
+
+						case TOKEN_PAIR_QUOTE_SINGLE:
+							text_buffer_append_c(out, '\'');
+							export_plain_text((*n)->child, text, out);
+							text_buffer_append_c(out, '\'');
+							(*n) = (*n)->next;
+							break;
+
+						default:
+							export_plain_text((*n)->child, text, out);
+							break;
+					}
+				} else {
+					switch ((*n)->type) {
+						case TOKEN_ATX_MARKER:
+						case TOKEN_HASH:
+							break;
+
+						default:
+							text_buffer_append_text(out, &text[(*n)->start], (*n)->len);
+							break;
+					}
+				}
+
+				break;
+		}
+	}
+}
+
+
+/// Export mmd_node tree to plain text (without MMD markup)
+void export_plain_text(mmd_node * n, const char * text, text_buffer * out) {
+	while (n) {
+		export_plain(&n, text, out);
+
+		n = n->next;
+	}
+}
+
+
 void url_encode_text(const char * text, size_t len, text_buffer * out) {
 	const char * stop = text + len;
 
 	while (text < stop) {
 		switch (*text) {
-			// case '&':
-			// 	if (strncmp("&amp;", text, 5) == 0) {
-			// 		text += 4;
-			// 	}
+			case '\n':
+			case '\r':
+				// ignore these
+				break;
 
-			// 	mmd_print_const(out, "&amp;");
+			case '&':
+				if (strncmp("&amp;", text, 5) == 0) {
+					text += 4;
+				}
 
-			// 	break;
+				mmd_print_const(out, "&amp;");
+
+				break;
 
 			case '<':
 				mmd_print_const(out, "&lt;");
@@ -170,15 +243,21 @@ void url_encode_text(const char * text, size_t len, text_buffer * out) {
 
 
 link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uint32_t options) {
-	link_def * l = calloc(1, sizeof(link_def));
-
 	mmd_node * link_text = (*t)->child;
-	mmd_node * link_url;
+	mmd_node * link_url = NULL;
 
 	if (link_text) {
 		link_url = (*t)->next->next;
+
+		// Allow a single line break between the [link text] and the ()
+		// Because line wrapping frequently hits us here
+		if (link_url && link_url->type == TOKEN_NL) {
+			if (link_url->next && link_url->next->type == TOKEN_PAIR_PAREN) {
+				link_url = link_url->next;
+			}
+		}
 	} else {
-		// Empty content [](#...)
+		// Empty content [](...)
 		link_url = (*t)->next;
 
 		if (link_url->type == TOKEN_BRACKET_RIGHT) {
@@ -186,26 +265,31 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 		}
 	}
 
-	// Skip '('
+	if ((link_url == NULL) || (link_url->next == NULL)) {
+		return NULL;
+	}
+
+	// Extract link definition
+	link_def * l = calloc(1, sizeof(link_def));
+
 	const char * cur = &text[link_url->start + 1];
 	const char * stop = &text[link_url->next->start];
 
-	// Skip leading whitespace
-	while (cur < stop && char_is_whitespace(*cur)) {
-		cur++;
-	}
-
-	// Is this [...](...) or [...](<...>)
-	char end = ')';
-
-	if (*cur == '<') {
-		end = '>';
-		cur++;
-	}
-
+	// Extract url
 	text_buffer * url = text_buffer_new(128);
 
-	while (cur < stop && !char_is_whitespace(*cur) && *cur != end) {
+	// Skip leading whitespace
+	while (cur < stop && char_is_whitespace_or_line_ending(*cur)) {
+		cur++;
+	}
+
+	// Start url
+	if (*cur == '<') {
+		cur++;
+	}
+
+	// Build sanitized url
+	while (cur < stop && !char_is_whitespace_or_line_ending(*cur) && *cur != '>') {
 		switch (*cur) {
 			case '\\':
 
@@ -237,56 +321,44 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 		cur++;
 	}
 
-	// Skip end marker
-	if (*cur != ')') {
-		cur++;
-	}
-
-	// We grabbed the url itself
 	l->url = url->text;
 	l->url_len = url->len;
-	text_buffer_free(url, false);
+	text_buffer_free(url, 0);
 
-	// Now, grab the title (if any)
-	text_buffer * title = text_buffer_new(128);
-
-	while (cur < stop && char_is_whitespace(*cur)) {
+	if (*cur == '>') {
 		cur++;
 	}
 
-	// Export title
-	end = '\0';
 
-	switch (*cur) {
-		case '"':
-		case '\'':
-			end = *cur;
-			break;
+	// Extract title
 
-		case '(':
-			end = ')';
-			break;
+	// Skip leading whitespace
+	while (cur < stop && char_is_whitespace_or_line_ending(*cur)) {
+		cur++;
 	}
 
-	if (end) {
-		cur++;
+	// Find the corresponding node
+	mmd_node * title = link_url->child;
 
-		if (*cur != end) {
-			while (cur < stop && *cur != end) {
-				text_buffer_append_c(title, *cur);
-				cur++;
-			}
+	while (title && title->next && (title->next->start <= (size_t)(cur - text))) {
+		title = title->next;
+	}
+
+	if (title && title->next && title->start == (size_t)(cur - text)) {
+		switch (title->type) {
+			case TOKEN_PAIR_QUOTE_DOUBLE:
+			case TOKEN_PAIR_QUOTE_SINGLE:
+			case TOKEN_PAIR_PAREN:
+				l->title_len = title->next->start - title->start - 1;
+				l->title = my_strndup(&text[title->start + 1], l->title_len);
+				cur = &text[title->next->start + 1];
+				break;
 		}
-
-		cur++;
 	}
 
-	l->title = title->text;
-	l->title_len = title->len;
 
-	text_buffer_free(title, false);
-
-	if (!(options  & MMD_OPTION_COMPATIBILITY)) {
+	// Extract attributes
+	if (!(options & MMD_OPTION_COMPATIBILITY)) {
 		size_t scanned = 0;
 		l->attributes = scan_link_attributes(cur, text + len - cur, &scanned);
 
@@ -311,7 +383,7 @@ link_def * extract_inline_link(const char * text, size_t len, mmd_node ** t, uin
 static int export_implicit_link(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [...] text and id are the same
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		// size_t id_len = (*t)->next->start - (*t)->child->start;
 		// char * id = mmd_strndup(&text[(*t)->child->start], &id_len);
@@ -351,6 +423,11 @@ static int export_inline_link(const char * text, size_t len, mmd_node ** t, text
 				default:
 					(*t) = (*t)->next;
 					(*t) = (*t)->next;
+
+					if ((*t)->type == TOKEN_NL) {
+						(*t) = (*t)->next;
+					}
+
 					(*t) = (*t)->next;
 					break;
 			}
@@ -373,7 +450,7 @@ static int export_split_link(const char * text, size_t len, mmd_node ** t, text_
 		id_node = (*t)->next->next;
 	}
 
-	if (id_node->child) {
+	if (id_node->child && id_node->next) {
 		char * id = md_id_from_text(&text[id_node->child->start], id_node->next->start - id_node->child->start, true);
 		link_def * l = read_ctx_get_link(r, id);
 		free(id);
@@ -396,7 +473,7 @@ static int export_split_link(const char * text, size_t len, mmd_node ** t, text_
 static int export_implicit_image(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// ![...] text and id are the same
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		//char * def_name = definition_name_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start);
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		link_def * l = read_ctx_get_link(r, id);
@@ -468,7 +545,7 @@ static int export_split_image(const char * text, size_t len, mmd_node ** t, text
 static int export_implicit_abbreviation(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [>...] or [>(...) ...]
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		abbr_def * a = read_ctx_get_abbr(r, id);
 
@@ -529,7 +606,7 @@ static int export_implicit_abbreviation(const char * text, size_t len, mmd_node 
 				temp = temp->next->next;
 
 				// Trim leading whitespace
-				while (char_is_whitespace(text[temp->start]) && temp->len) {
+				while (temp && char_is_whitespace(text[temp->start]) && temp->len) {
 					temp->start++;
 					temp->len--;
 				}
@@ -569,7 +646,7 @@ static int export_implicit_abbreviation(const char * text, size_t len, mmd_node 
 static int export_implicit_citation(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, bool not_cited, format_export * fe, uint32_t options) {
 	// [#...] - No locator
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		endnote_def * e = read_ctx_get_cite(r, id);
 
@@ -698,7 +775,7 @@ static int export_split_citation(const char * text, size_t len, mmd_node ** t, t
 static int export_implicit_footnote(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [^...]
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		endnote_def * e = read_ctx_get_note(r, id);
 
@@ -739,7 +816,7 @@ static int export_implicit_footnote(const char * text, size_t len, mmd_node ** t
 static int export_implicit_glossary(const char * text, size_t len, mmd_node ** t, text_buffer * out, read_ctx * r, write_ctx * w, format_export * fe, uint32_t options) {
 	// [?...]
 
-	if ((*t)->child) {
+	if ((*t)->child && (*t)->next) {
 		char * id = md_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
 		endnote_def * e = read_ctx_get_glos(r, id);
 
@@ -806,16 +883,18 @@ static int export_implicit_glossary(const char * text, size_t len, mmd_node ** t
 }
 
 static int export_implicit_variable(const char * text, mmd_node ** t, text_buffer * out, read_ctx * r, format_export * fe) {
-	char * label = html_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
-	meta * m = read_ctx_get_meta(r, label);
-	free(label);
+	if ((*t)->child && (*t)->next) {
+		char * label = html_id_from_text(&text[(*t)->child->start], (*t)->next->start - (*t)->child->start, true);
+		meta * m = read_ctx_get_meta(r, label);
+		free(label);
 
-	if (m) {
-		// Metadata
-		fe->export_raw_text(m->value, m->value_len, out);
-		(*t) = (*t)->next;
+		if (m) {
+			// Metadata
+			fe->export_raw_text(m->value, m->value_len, out);
+			(*t) = (*t)->next;
 
-		return 0;
+			return 0;
+		}
 	}
 
 	return 1;
@@ -830,6 +909,14 @@ int export_token_pair(const char * text, size_t len, mmd_node ** t, text_buffer 
 	// Is this [...], [...][...], or [...](...)
 	if (next_node && next_node->next) {
 		next_type = next_node->next->type;
+
+		// Allow a single line break between the [link text] and the ()
+		// Because line wrapping frequently hits us here
+		if (next_type == TOKEN_NL) {
+			if (next_node->next->next && next_node->next->next->type == TOKEN_PAIR_PAREN) {
+				next_type = TOKEN_PAIR_PAREN;
+			}
+		}
 	}
 
 	int result = 1;
@@ -1154,7 +1241,6 @@ int raw_filter_matches_format(const char * pattern, int format) {
 	} else {
 		switch (format) {
 			case FORMAT_HTML:
-			case FORMAT_HTML_WITH_ASSETS:
 				if (strncmp("{=html}", pattern, 6) == 0) {
 					return 1;
 				}
@@ -1176,8 +1262,8 @@ int raw_filter_matches_format(const char * pattern, int format) {
 
 				break;
 
-			case FORMAT_MEMOIR:
 			case FORMAT_BEAMER:
+			case FORMAT_LTX_TALK:
 			case FORMAT_LATEX:
 				if (strncmp("{=latex}", pattern, 7) == 0) {
 					return 1;

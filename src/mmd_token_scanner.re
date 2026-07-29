@@ -16,7 +16,7 @@
 
 	MIT License
 	
-	Copyright (c) 2024-2025 Fletcher T. Penney
+	Copyright (c) 2024-2026 Fletcher T. Penney
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libMultiMarkdown.h"
+#include "libMultiMarkdown7.h"
 
 #include "char.h"
 #include "read_ctx.h"
@@ -57,9 +57,15 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#if !defined(__has_warning) || __has_warning("-Wmaybe-uninitialized")
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
+#ifndef __has_warning
+#define __has_warning(x) 0
 #endif
+
+#if !__has_warning("-Wmaybe-uninitialized")
+	#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #define ret s->c_start = t1; return
@@ -97,10 +103,10 @@ int mmd_token_scan(Scanner * s, uint32_t options) {
 		bool_attr						= 'autoplay' | 'controls' | 'loop' | 'muted' | 'allowfullscreen';
 		value							= (quoted_d | quoted_s | unquoted);
 		attr							= s* name '=' s* value;
-		attributes						= ((s* bool_attr) | attr)+;
+		attributes						= ((s | eol)* (bool_attr | attr))+;
 		tag_name						= [A-Za-z] [A-Za-z0-9\-]*;
-		tag_start						= '<' tag_name attributes? s* '>';
-		tag_empty						= '<' tag_name attributes? s* '/>';
+		tag_start						= '<' tag_name attributes? (s | eol)* '>';
+		tag_empty						= '<' tag_name attributes? (s | eol)* '/>';
 		tag_end							= '</' tag_name s* '>';
 		// We limit comments to exclude '>' character to minimize backtracking
 		comment_old						= [^>\-\x00] [^>\x00]*;
@@ -122,6 +128,7 @@ int mmd_token_scan(Scanner * s, uint32_t options) {
 		@t1 "&" [A-Za-z0-9]+ [;]		{ ret TOKEN_HTML_ENTITY; }
 		@t1 [&]							{ ret TOKEN_AMPERSAND; }
 
+		@t1 [#][A-Za-z0-9][A-Za-z0-9_\-]+	{ ret TOKEN_TAG; }
 		@t1 [#]+						{ ret TOKEN_HASH; }
 
 		@t1 [*]							{ ret TOKEN_STAR; }
@@ -542,7 +549,7 @@ size_t scan_metadata(const char * text, size_t len, meta ** m) {
 	meta_key		= [A-Za-z0-9] [A-Za-z0-9_ \240\t\-.]*;
 
 	first_line		= [^\x00\n\r]*;
-	continuation	= eol s [^ \t\n\r\x00] (([^:\n\r\x00]* url [^\x00\n\r]*) | ([^:\n\r\x00]* email [^\x00\n\r]*) | [^:\x00\n\r]+);
+	continuation	= eol (([ \t\240] s [^\n\r\x00]*) | ([^:\n\r\x00]* url [^\x00\n\r]*) | ([^:\n\r\x00]* email [^\x00\n\r]*) | [^:\x00\n\r]+);
 	meta_value		= first_line (continuation)*; 
 
 	s @t1 meta_key @t2 ':' s @t3 meta_value @t4 nl_eof {
@@ -556,6 +563,7 @@ size_t scan_metadata(const char * text, size_t len, meta ** m) {
 
 		(*m)->value = my_strndup(t3, t4 - t3);
 		(*m)->value_len = t4 - t3;
+		(*m)->value_start = t3 - start;
 
 		clean_meta_value(*m);
 

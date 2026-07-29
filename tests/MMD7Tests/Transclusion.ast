@@ -1,0 +1,392 @@
+* (91) 0:60	'title:	Transclusion
+latexconfig:	article
+transclude base: .
+'
+	* (32) 0:20	'title:	Transclusion
+'
+	* (32) 20:21	'latexconfig:	article
+'
+	* (32) 41:19	'transclude base: .
+'
+* (74) 60:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 62:36	'This text is included in `foo.txt`.
+'
+	* (33) 0:36	'This text is included in `foo.txt`.
+'
+	- (131) 0:25	'This text is included in '
+	- (172) 25:1	'`'
+		+ (131) 26:7	'foo.txt'
+	- (154) 33:1	'`'
+	- (131) 34:1	'.'
+	- (129) 35:1	'
+'
+* (74) 98:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 99:72	'This should not be transcluded to avoid an infinite loop -- {{foo.txt}}
+'
+	* (33) 0:72	'This should not be transcluded to avoid an infinite loop -- {{foo.txt}}
+'
+	- (131) 0:57	'This should not be transcluded to avoid an infinite loop '
+	- (161) 57:2	'--'
+	- (131) 59:1	' '
+	- (173) 60:1	'{'
+		+ (173) 61:1	'{'
+			+ (131) 62:7	'foo.txt'
+		+ (170) 69:1	'}'
+	- (170) 70:1	'}'
+	- (129) 71:1	'
+'
+* (74) 171:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (92) 174:36	'This text is included in `bar.txt`.
+'
+	* (33) 0:36	'This text is included in `bar.txt`.
+'
+	- (131) 0:25	'This text is included in '
+	- (172) 25:1	'`'
+		+ (131) 26:7	'bar.txt'
+	- (154) 33:1	'`'
+	- (131) 34:1	'.'
+	- (129) 35:1	'
+'
+* (74) 210:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 211:97	'This can be transcluded without causing an infinite loop -- 
+This text is included in `foo.txt`.
+'
+	* (33) 0:61	'This can be transcluded without causing an infinite loop -- 
+'
+	* (33) 61:36	'This text is included in `foo.txt`.
+'
+	- (131) 0:57	'This can be transcluded without causing an infinite loop '
+	- (161) 57:2	'--'
+	- (129) 59:2	' 
+'
+	- (131) 61:25	'This text is included in '
+	- (172) 86:1	'`'
+		+ (131) 87:7	'foo.txt'
+	- (154) 94:1	'`'
+	- (131) 95:1	'.'
+	- (129) 96:1	'
+'
+* (74) 308:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 309:72	'This should not be transcluded to avoid an infinite loop -- {{foo.txt}}
+'
+	* (33) 0:72	'This should not be transcluded to avoid an infinite loop -- {{foo.txt}}
+'
+	- (131) 0:57	'This should not be transcluded to avoid an infinite loop '
+	- (161) 57:2	'--'
+	- (131) 59:1	' '
+	- (173) 60:1	'{'
+		+ (173) 61:1	'{'
+			+ (131) 62:7	'foo.txt'
+		+ (170) 69:1	'}'
+	- (170) 70:1	'}'
+	- (129) 71:1	'
+'
+* (74) 381:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (65) 383:41	'```
+This is a file with no metadata.
+```
+'
+	* (63) 0:4	'```
+'
+	* (33) 4:33	'This is a file with no metadata.
+'
+	* (63) 37:4	'```
+'
+* (74) 424:1	'
+'
+	* (16) 0:1	'
+'
+* (65) 425:41	'```
+This is a file with no metadata.
+```
+'
+	* (63) 0:4	'```
+'
+	* (33) 4:33	'This is a file with no metadata.
+'
+	* (63) 37:4	'```
+'
+* (74) 466:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 468:23	'{{transclusion/bat.*}}
+'
+	* (33) 0:23	'{{transclusion/bat.*}}
+'
+	- (173) 0:1	'{'
+		+ (173) 1:1	'{'
+			+ (131) 2:17	'transclusion/bat.'
+			+ (139) 19:1	'*'
+		+ (170) 20:1	'}'
+	- (170) 21:1	'}'
+	- (129) 22:1	'
+'
+* (74) 491:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 493:49	'This text is included in `transclusion/baz.txt`.
+'
+	* (33) 0:49	'This text is included in `transclusion/baz.txt`.
+'
+	- (131) 0:25	'This text is included in '
+	- (172) 25:1	'`'
+		+ (131) 26:20	'transclusion/baz.txt'
+	- (154) 46:1	'`'
+	- (131) 47:1	'.'
+	- (129) 48:1	'
+'
+* (74) 542:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 543:128	'This should pull in `bar.txt`, *if* run from the parent directory, since it
+does *not* override the `transclude base` metadata.
+'
+	* (33) 0:76	'This should pull in `bar.txt`, *if* run from the parent directory, since it
+'
+	* (33) 76:52	'does *not* override the `transclude base` metadata.
+'
+	- (131) 0:20	'This should pull in '
+	- (172) 20:1	'`'
+		+ (131) 21:7	'bar.txt'
+	- (154) 28:1	'`'
+	- (131) 29:2	', '
+	- (192) 31:1	'*'
+		+ (131) 32:2	'if'
+	- (139) 34:1	'*'
+	- (131) 35:40	' run from the parent directory, since it'
+	- (129) 75:1	'
+'
+	- (131) 76:5	'does '
+	- (192) 81:1	'*'
+		+ (131) 82:3	'not'
+	- (139) 85:1	'*'
+	- (131) 86:14	' override the '
+	- (172) 100:1	'`'
+		+ (131) 101:15	'transclude base'
+	- (154) 116:1	'`'
+	- (131) 117:10	' metadata.'
+	- (129) 127:1	'
+'
+* (74) 671:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 673:36	'This text is included in `bar.txt`.
+'
+	* (33) 0:36	'This text is included in `bar.txt`.
+'
+	- (131) 0:25	'This text is included in '
+	- (172) 25:1	'`'
+		+ (131) 26:7	'bar.txt'
+	- (154) 33:1	'`'
+	- (131) 34:1	'.'
+	- (129) 35:1	'
+'
+* (74) 709:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 710:97	'This can be transcluded without causing an infinite loop -- 
+This text is included in `foo.txt`.
+'
+	* (33) 0:61	'This can be transcluded without causing an infinite loop -- 
+'
+	* (33) 61:36	'This text is included in `foo.txt`.
+'
+	- (131) 0:57	'This can be transcluded without causing an infinite loop '
+	- (161) 57:2	'--'
+	- (129) 59:2	' 
+'
+	- (131) 61:25	'This text is included in '
+	- (172) 86:1	'`'
+		+ (131) 87:7	'foo.txt'
+	- (154) 94:1	'`'
+	- (131) 95:1	'.'
+	- (129) 96:1	'
+'
+* (74) 807:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 808:72	'This should not be transcluded to avoid an infinite loop -- {{foo.txt}}
+'
+	* (33) 0:72	'This should not be transcluded to avoid an infinite loop -- {{foo.txt}}
+'
+	- (131) 0:57	'This should not be transcluded to avoid an infinite loop '
+	- (161) 57:2	'--'
+	- (131) 59:1	' '
+	- (173) 60:1	'{'
+		+ (173) 61:1	'{'
+			+ (131) 62:7	'foo.txt'
+		+ (170) 69:1	'}'
+	- (170) 70:1	'}'
+	- (129) 71:1	'
+'
+* (74) 880:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (65) 882:41	'```
+This is a file with no metadata.
+```
+'
+	* (63) 0:4	'```
+'
+	* (33) 4:33	'This is a file with no metadata.
+'
+	* (63) 37:4	'```
+'
+* (74) 923:1	'
+'
+	* (16) 0:1	'
+'
+* (65) 924:41	'```
+This is a file with no metadata.
+```
+'
+	* (63) 0:4	'```
+'
+	* (33) 4:33	'This is a file with no metadata.
+'
+	* (63) 37:4	'```
+'
+* (74) 965:4	'
+
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+	* (16) 3:1	'
+'
+* (92) 969:50	'This text is included in `transclusion/baz2.txt`.
+'
+	* (33) 0:50	'This text is included in `transclusion/baz2.txt`.
+'
+	- (131) 0:25	'This text is included in '
+	- (172) 25:1	'`'
+		+ (131) 26:21	'transclusion/baz2.txt'
+	- (154) 47:1	'`'
+	- (131) 48:1	'.'
+	- (129) 49:1	'
+'
+* (74) 1019:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1020:136	'This should pull in `transclusion/bar.txt`, *even if* run from the parent
+directory, since it overrides the `transclude base` metadata.
+'
+	* (33) 0:74	'This should pull in `transclusion/bar.txt`, *even if* run from the parent
+'
+	* (33) 74:62	'directory, since it overrides the `transclude base` metadata.
+'
+	- (131) 0:20	'This should pull in '
+	- (172) 20:1	'`'
+		+ (131) 21:20	'transclusion/bar.txt'
+	- (154) 41:1	'`'
+	- (131) 42:2	', '
+	- (192) 44:1	'*'
+		+ (131) 45:7	'even if'
+	- (139) 52:1	'*'
+	- (131) 53:20	' run from the parent'
+	- (129) 73:1	'
+'
+	- (131) 74:34	'directory, since it overrides the '
+	- (172) 108:1	'`'
+		+ (131) 109:15	'transclude base'
+	- (154) 124:1	'`'
+	- (131) 125:10	' metadata.'
+	- (129) 135:1	'
+'
+* (74) 1156:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 1158:49	'This text is included in `transclusion\bar.txt`.
+'
+	* (33) 0:49	'This text is included in `transclusion\bar.txt`.
+'
+	- (131) 0:25	'This text is included in '
+	- (172) 25:1	'`'
+		+ (131) 26:12	'transclusion'
+		+ (191) 38:1	'\'
+		+ (131) 39:7	'bar.txt'
+	- (154) 46:1	'`'
+	- (131) 47:1	'.'
+	- (129) 48:1	'
+'
+* (74) 1207:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1208:42	'foo can no longer be found -- {{foo.txt}}
+'
+	* (33) 0:42	'foo can no longer be found -- {{foo.txt}}
+'
+	- (131) 0:27	'foo can no longer be found '
+	- (161) 27:2	'--'
+	- (131) 29:1	' '
+	- (173) 30:1	'{'
+		+ (173) 31:1	'{'
+			+ (131) 32:7	'foo.txt'
+		+ (170) 39:1	'}'
+	- (170) 40:1	'}'
+	- (129) 41:1	'
+'
+* (74) 1250:1	'
+'
+	* (16) 0:1	'
+'

@@ -1,0 +1,5341 @@
+* (76) 0:21	'# Markdown: Syntax #
+'
+	* (1) 0:21	'# Markdown: Syntax #
+'
+	- (145) 0:1	'#'
+	- (131) 2:8	'Markdown'
+	- (144) 10:1	':'
+	- (131) 11:7	' Syntax'
+	- (145) 19:1	'#'
+	- (129) 20:1	'
+'
+* (74) 21:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 22:474	'<ul id="ProjectSubmenu">
+    <li><a href="/projects/markdown/" title="Markdown Project Page">Main</a></li>
+    <li><a href="/projects/markdown/basics" title="Markdown Basics">Basics</a></li>
+    <li><a class="selected" title="Markdown Syntax Documentation">Syntax</a></li>
+    <li><a href="/projects/markdown/license" title="Pricing and License Information">License</a></li>
+    <li><a href="/projects/markdown/dingus" title="Online Markdown Web Form">Dingus</a></li>
+</ul>
+'
+	* (26) 0:25	'<ul id="ProjectSubmenu">
+'
+	* (28) 25:82	'    <li><a href="/projects/markdown/" title="Markdown Project Page">Main</a></li>
+'
+	* (28) 107:84	'    <li><a href="/projects/markdown/basics" title="Markdown Basics">Basics</a></li>
+'
+	* (28) 191:82	'    <li><a class="selected" title="Markdown Syntax Documentation">Syntax</a></li>
+'
+	* (28) 273:102	'    <li><a href="/projects/markdown/license" title="Pricing and License Information">License</a></li>
+'
+	* (28) 375:93	'    <li><a href="/projects/markdown/dingus" title="Online Markdown Web Form">Dingus</a></li>
+'
+	* (26) 468:6	'</ul>
+'
+* (74) 496:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (85) 498:598	'*   [Overview](#overview)
+    *   [Philosophy](#philosophy)
+    *   [Inline HTML](#html)
+    *   [Automatic Escaping for Special Characters](#autoescape)
+*   [Block Elements](#block)
+    *   [Paragraphs and Line Breaks](#p)
+    *   [Headers](#header)
+    *   [Blockquotes](#blockquote)
+    *   [Lists](#list)
+    *   [Code Blocks](#precode)
+    *   [Horizontal Rules](#hr)
+*   [Span Elements](#span)
+    *   [Links](#link)
+    *   [Emphasis](#em)
+    *   [Code](#code)
+    *   [Images](#img)
+*   [Miscellaneous](#misc)
+    *   [Backslash Escapes](#backslash)
+    *   [Automatic Links](#autolink)
+
+
+'
+	* (90) 0:154	'*   [Overview](#overview)
+    *   [Philosophy](#philosophy)
+    *   [Inline HTML](#html)
+    *   [Automatic Escaping for Special Characters](#autoescape)
+'
+		* (92) 0:26	'*   [Overview](#overview)
+'
+			* (33) 0:26	'*   [Overview](#overview)
+'
+			- (148) 0:1	'*'
+			- (174) 4:1	'['
+				+ (131) 5:8	'Overview'
+			- (166) 13:1	']'
+			- (184) 14:1	'('
+				+ (231) 15:9	'#overview'
+			- (164) 24:1	')'
+			- (129) 25:1	'
+'
+		* (85) 26:128	'    *   [Philosophy](#philosophy)
+    *   [Inline HTML](#html)
+    *   [Automatic Escaping for Special Characters](#autoescape)
+'
+			* (90) 0:34	'    *   [Philosophy](#philosophy)
+'
+				* (92) 0:34	'    *   [Philosophy](#philosophy)
+'
+					* (33) 0:34	'    *   [Philosophy](#philosophy)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:10	'Philosophy'
+					- (166) 19:1	']'
+					- (184) 20:1	'('
+						+ (231) 21:11	'#philosophy'
+					- (164) 32:1	')'
+					- (129) 33:1	'
+'
+			* (90) 34:29	'    *   [Inline HTML](#html)
+'
+				* (92) 0:29	'    *   [Inline HTML](#html)
+'
+					* (33) 0:29	'    *   [Inline HTML](#html)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:11	'Inline HTML'
+					- (166) 20:1	']'
+					- (184) 21:1	'('
+						+ (231) 22:5	'#html'
+					- (164) 27:1	')'
+					- (129) 28:1	'
+'
+			* (90) 63:65	'    *   [Automatic Escaping for Special Characters](#autoescape)
+'
+				* (92) 0:65	'    *   [Automatic Escaping for Special Characters](#autoescape)
+'
+					* (33) 0:65	'    *   [Automatic Escaping for Special Characters](#autoescape)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:41	'Automatic Escaping for Special Characters'
+					- (166) 50:1	']'
+					- (184) 51:1	'('
+						+ (231) 52:11	'#autoescape'
+					- (164) 63:1	')'
+					- (129) 64:1	'
+'
+	* (90) 154:219	'*   [Block Elements](#block)
+    *   [Paragraphs and Line Breaks](#p)
+    *   [Headers](#header)
+    *   [Blockquotes](#blockquote)
+    *   [Lists](#list)
+    *   [Code Blocks](#precode)
+    *   [Horizontal Rules](#hr)
+'
+		* (92) 0:29	'*   [Block Elements](#block)
+'
+			* (33) 0:29	'*   [Block Elements](#block)
+'
+			- (148) 0:1	'*'
+			- (174) 4:1	'['
+				+ (131) 5:14	'Block Elements'
+			- (166) 19:1	']'
+			- (184) 20:1	'('
+				+ (231) 21:6	'#block'
+			- (164) 27:1	')'
+			- (129) 28:1	'
+'
+		* (85) 29:190	'    *   [Paragraphs and Line Breaks](#p)
+    *   [Headers](#header)
+    *   [Blockquotes](#blockquote)
+    *   [Lists](#list)
+    *   [Code Blocks](#precode)
+    *   [Horizontal Rules](#hr)
+'
+			* (90) 0:41	'    *   [Paragraphs and Line Breaks](#p)
+'
+				* (92) 0:41	'    *   [Paragraphs and Line Breaks](#p)
+'
+					* (33) 0:41	'    *   [Paragraphs and Line Breaks](#p)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:26	'Paragraphs and Line Breaks'
+					- (166) 35:1	']'
+					- (184) 36:1	'('
+						+ (138) 37:1	'#'
+						+ (131) 38:1	'p'
+					- (164) 39:1	')'
+					- (129) 40:1	'
+'
+			* (90) 41:27	'    *   [Headers](#header)
+'
+				* (92) 0:27	'    *   [Headers](#header)
+'
+					* (33) 0:27	'    *   [Headers](#header)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:7	'Headers'
+					- (166) 16:1	']'
+					- (184) 17:1	'('
+						+ (231) 18:7	'#header'
+					- (164) 25:1	')'
+					- (129) 26:1	'
+'
+			* (90) 68:35	'    *   [Blockquotes](#blockquote)
+'
+				* (92) 0:35	'    *   [Blockquotes](#blockquote)
+'
+					* (33) 0:35	'    *   [Blockquotes](#blockquote)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:11	'Blockquotes'
+					- (166) 20:1	']'
+					- (184) 21:1	'('
+						+ (231) 22:11	'#blockquote'
+					- (164) 33:1	')'
+					- (129) 34:1	'
+'
+			* (90) 103:23	'    *   [Lists](#list)
+'
+				* (92) 0:23	'    *   [Lists](#list)
+'
+					* (33) 0:23	'    *   [Lists](#list)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:5	'Lists'
+					- (166) 14:1	']'
+					- (184) 15:1	'('
+						+ (231) 16:5	'#list'
+					- (164) 21:1	')'
+					- (129) 22:1	'
+'
+			* (90) 126:32	'    *   [Code Blocks](#precode)
+'
+				* (92) 0:32	'    *   [Code Blocks](#precode)
+'
+					* (33) 0:32	'    *   [Code Blocks](#precode)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:11	'Code Blocks'
+					- (166) 20:1	']'
+					- (184) 21:1	'('
+						+ (231) 22:8	'#precode'
+					- (164) 30:1	')'
+					- (129) 31:1	'
+'
+			* (90) 158:32	'    *   [Horizontal Rules](#hr)
+'
+				* (92) 0:32	'    *   [Horizontal Rules](#hr)
+'
+					* (33) 0:32	'    *   [Horizontal Rules](#hr)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:16	'Horizontal Rules'
+					- (166) 25:1	']'
+					- (184) 26:1	'('
+						+ (231) 27:3	'#hr'
+					- (164) 30:1	')'
+					- (129) 31:1	'
+'
+	* (90) 373:119	'*   [Span Elements](#span)
+    *   [Links](#link)
+    *   [Emphasis](#em)
+    *   [Code](#code)
+    *   [Images](#img)
+'
+		* (92) 0:27	'*   [Span Elements](#span)
+'
+			* (33) 0:27	'*   [Span Elements](#span)
+'
+			- (148) 0:1	'*'
+			- (174) 4:1	'['
+				+ (131) 5:13	'Span Elements'
+			- (166) 18:1	']'
+			- (184) 19:1	'('
+				+ (231) 20:5	'#span'
+			- (164) 25:1	')'
+			- (129) 26:1	'
+'
+		* (85) 27:92	'    *   [Links](#link)
+    *   [Emphasis](#em)
+    *   [Code](#code)
+    *   [Images](#img)
+'
+			* (90) 0:23	'    *   [Links](#link)
+'
+				* (92) 0:23	'    *   [Links](#link)
+'
+					* (33) 0:23	'    *   [Links](#link)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:5	'Links'
+					- (166) 14:1	']'
+					- (184) 15:1	'('
+						+ (231) 16:5	'#link'
+					- (164) 21:1	')'
+					- (129) 22:1	'
+'
+			* (90) 23:24	'    *   [Emphasis](#em)
+'
+				* (92) 0:24	'    *   [Emphasis](#em)
+'
+					* (33) 0:24	'    *   [Emphasis](#em)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:8	'Emphasis'
+					- (166) 17:1	']'
+					- (184) 18:1	'('
+						+ (231) 19:3	'#em'
+					- (164) 22:1	')'
+					- (129) 23:1	'
+'
+			* (90) 47:22	'    *   [Code](#code)
+'
+				* (92) 0:22	'    *   [Code](#code)
+'
+					* (33) 0:22	'    *   [Code](#code)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:4	'Code'
+					- (166) 13:1	']'
+					- (184) 14:1	'('
+						+ (231) 15:5	'#code'
+					- (164) 20:1	')'
+					- (129) 21:1	'
+'
+			* (90) 69:23	'    *   [Images](#img)
+'
+				* (92) 0:23	'    *   [Images](#img)
+'
+					* (33) 0:23	'    *   [Images](#img)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:6	'Images'
+					- (166) 15:1	']'
+					- (184) 16:1	'('
+						+ (231) 17:4	'#img'
+					- (164) 21:1	')'
+					- (129) 22:1	'
+'
+	* (90) 492:104	'*   [Miscellaneous](#misc)
+    *   [Backslash Escapes](#backslash)
+    *   [Automatic Links](#autolink)
+'
+		* (92) 0:27	'*   [Miscellaneous](#misc)
+'
+			* (33) 0:27	'*   [Miscellaneous](#misc)
+'
+			- (148) 0:1	'*'
+			- (174) 4:1	'['
+				+ (131) 5:13	'Miscellaneous'
+			- (166) 18:1	']'
+			- (184) 19:1	'('
+				+ (231) 20:5	'#misc'
+			- (164) 25:1	')'
+			- (129) 26:1	'
+'
+		* (85) 27:77	'    *   [Backslash Escapes](#backslash)
+    *   [Automatic Links](#autolink)
+'
+			* (90) 0:40	'    *   [Backslash Escapes](#backslash)
+'
+				* (92) 0:40	'    *   [Backslash Escapes](#backslash)
+'
+					* (33) 0:40	'    *   [Backslash Escapes](#backslash)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:17	'Backslash Escapes'
+					- (166) 26:1	']'
+					- (184) 27:1	'('
+						+ (231) 28:10	'#backslash'
+					- (164) 38:1	')'
+					- (129) 39:1	'
+'
+			* (90) 40:37	'    *   [Automatic Links](#autolink)
+'
+				* (92) 0:37	'    *   [Automatic Links](#autolink)
+'
+					* (33) 0:37	'    *   [Automatic Links](#autolink)
+'
+					- (148) 4:1	'*'
+					- (174) 8:1	'['
+						+ (131) 9:15	'Automatic Links'
+					- (166) 24:1	']'
+					- (184) 25:1	'('
+						+ (231) 26:9	'#autolink'
+					- (164) 35:1	')'
+					- (129) 36:1	'
+'
+	* (74) 596:2	'
+
+'
+		* (16) 0:1	'
+'
+		* (16) 1:1	'
+'
+* (92) 1096:125	'**Note:** This document is itself written using Markdown; you
+can [see the source for it by adding '.text' to the URL][src].
+'
+	* (33) 0:62	'**Note:** This document is itself written using Markdown; you
+'
+	* (33) 62:63	'can [see the source for it by adding '.text' to the URL][src].
+'
+	- (193) 0:1	'*'
+		+ (188) 1:1	'*'
+			+ (131) 2:4	'Note'
+			+ (144) 6:1	':'
+		+ (139) 7:1	'*'
+	- (139) 8:1	'*'
+	- (131) 9:52	' This document is itself written using Markdown; you'
+	- (129) 61:1	'
+'
+	- (131) 62:4	'can '
+	- (174) 66:1	'['
+		+ (131) 67:32	'see the source for it by adding '
+		+ (186) 99:1	'''
+			+ (131) 100:5	'.text'
+		+ (156) 105:1	'''
+		+ (131) 106:11	' to the URL'
+	- (166) 117:1	']'
+	- (174) 118:1	'['
+		+ (131) 119:3	'src'
+	- (166) 122:1	']'
+	- (131) 123:1	'.'
+	- (129) 124:1	'
+'
+* (74) 1221:1	'
+'
+	* (16) 0:1	'
+'
+* (71) 1222:40	'  [src]: /projects/markdown/syntax.text
+'
+	* (14) 0:40	'  [src]: /projects/markdown/syntax.text
+'
+* (74) 1262:1	'
+'
+	* (16) 0:1	'
+'
+* (83) 1263:6	'* * *
+'
+	* (24) 0:6	'* * *
+'
+	- (139) 0:1	'*'
+	- (131) 1:1	' '
+	- (139) 2:1	'*'
+	- (131) 3:1	' '
+	- (139) 4:1	'*'
+	- (129) 5:1	'
+'
+* (74) 1269:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 1270:32	'<h2 id="overview">Overview</h2>
+'
+	* (26) 0:32	'<h2 id="overview">Overview</h2>
+'
+* (74) 1302:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 1303:36	'<h3 id="philosophy">Philosophy</h3>
+'
+	* (26) 0:36	'<h3 id="philosophy">Philosophy</h3>
+'
+* (74) 1339:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1340:77	'Markdown is intended to be as easy-to-read and easy-to-write as is feasible.
+'
+	* (33) 0:77	'Markdown is intended to be as easy-to-read and easy-to-write as is feasible.
+'
+	- (131) 0:34	'Markdown is intended to be as easy'
+	- (141) 34:1	'-'
+	- (131) 35:2	'to'
+	- (141) 37:1	'-'
+	- (131) 38:13	'read and easy'
+	- (141) 51:1	'-'
+	- (131) 52:2	'to'
+	- (141) 54:1	'-'
+	- (131) 55:21	'write as is feasible.'
+	- (129) 76:1	'
+'
+* (74) 1417:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 1418:496	'Readability, however, is emphasized above all else. A Markdown-formatted
+document should be publishable as-is, as plain text, without looking
+like it's been marked up with tags or formatting instructions. While
+Markdown's syntax has been influenced by several existing text-to-HTML
+filters -- including [Setext][1], [atx][2], [Textile][3], [reStructuredText][4],
+[Grutatext][5], and [EtText][6] -- the single biggest source of
+inspiration for Markdown's syntax is the format of plain text email.
+'
+	* (33) 0:73	'Readability, however, is emphasized above all else. A Markdown-formatted
+'
+	* (33) 73:69	'document should be publishable as-is, as plain text, without looking
+'
+	* (33) 142:69	'like it's been marked up with tags or formatting instructions. While
+'
+	* (33) 211:71	'Markdown's syntax has been influenced by several existing text-to-HTML
+'
+	* (33) 282:81	'filters -- including [Setext][1], [atx][2], [Textile][3], [reStructuredText][4],
+'
+	* (33) 363:64	'[Grutatext][5], and [EtText][6] -- the single biggest source of
+'
+	* (33) 427:69	'inspiration for Markdown's syntax is the format of plain text email.
+'
+	- (131) 0:62	'Readability, however, is emphasized above all else. A Markdown'
+	- (141) 62:1	'-'
+	- (131) 63:9	'formatted'
+	- (129) 72:1	'
+'
+	- (131) 73:33	'document should be publishable as'
+	- (141) 106:1	'-'
+	- (131) 107:34	'is, as plain text, without looking'
+	- (129) 141:1	'
+'
+	- (131) 142:7	'like it'
+	- (155) 149:1	'''
+	- (131) 150:60	's been marked up with tags or formatting instructions. While'
+	- (129) 210:1	'
+'
+	- (131) 211:8	'Markdown'
+	- (155) 219:1	'''
+	- (131) 220:53	's syntax has been influenced by several existing text'
+	- (141) 273:1	'-'
+	- (131) 274:2	'to'
+	- (141) 276:1	'-'
+	- (131) 277:4	'HTML'
+	- (129) 281:1	'
+'
+	- (131) 282:8	'filters '
+	- (161) 290:2	'--'
+	- (131) 292:11	' including '
+	- (174) 303:1	'['
+		+ (131) 304:6	'Setext'
+	- (166) 310:1	']'
+	- (174) 311:1	'['
+		+ (131) 312:1	'1'
+	- (166) 313:1	']'
+	- (131) 314:2	', '
+	- (174) 316:1	'['
+		+ (131) 317:3	'atx'
+	- (166) 320:1	']'
+	- (174) 321:1	'['
+		+ (131) 322:1	'2'
+	- (166) 323:1	']'
+	- (131) 324:2	', '
+	- (174) 326:1	'['
+		+ (131) 327:7	'Textile'
+	- (166) 334:1	']'
+	- (174) 335:1	'['
+		+ (131) 336:1	'3'
+	- (166) 337:1	']'
+	- (131) 338:2	', '
+	- (174) 340:1	'['
+		+ (131) 341:16	'reStructuredText'
+	- (166) 357:1	']'
+	- (174) 358:1	'['
+		+ (131) 359:1	'4'
+	- (166) 360:1	']'
+	- (131) 361:1	','
+	- (129) 362:1	'
+'
+	- (174) 363:1	'['
+		+ (131) 364:9	'Grutatext'
+	- (166) 373:1	']'
+	- (174) 374:1	'['
+		+ (131) 375:1	'5'
+	- (166) 376:1	']'
+	- (131) 377:6	', and '
+	- (174) 383:1	'['
+		+ (131) 384:6	'EtText'
+	- (166) 390:1	']'
+	- (174) 391:1	'['
+		+ (131) 392:1	'6'
+	- (166) 393:1	']'
+	- (131) 394:1	' '
+	- (161) 395:2	'--'
+	- (131) 397:29	' the single biggest source of'
+	- (129) 426:1	'
+'
+	- (131) 427:24	'inspiration for Markdown'
+	- (155) 451:1	'''
+	- (131) 452:43	's syntax is the format of plain text email.'
+	- (129) 495:1	'
+'
+* (74) 1914:1	'
+'
+	* (16) 0:1	'
+'
+* (71) 1915:58	'  [1]: http://docutils.sourceforge.net/mirror/setext.html
+'
+	* (14) 0:58	'  [1]: http://docutils.sourceforge.net/mirror/setext.html
+'
+* (71) 1973:40	'  [2]: http://www.aaronsw.com/2002/atx/
+'
+	* (14) 0:40	'  [2]: http://www.aaronsw.com/2002/atx/
+'
+* (71) 2013:41	'  [3]: http://textism.com/tools/textile/
+'
+	* (14) 0:41	'  [3]: http://textism.com/tools/textile/
+'
+* (71) 2054:48	'  [4]: http://docutils.sourceforge.net/rst.html
+'
+	* (14) 0:48	'  [4]: http://docutils.sourceforge.net/rst.html
+'
+* (71) 2102:54	'  [5]: http://www.triptico.com/software/grutatxt.html
+'
+	* (14) 0:54	'  [5]: http://www.triptico.com/software/grutatxt.html
+'
+* (71) 2156:36	'  [6]: http://ettext.taint.org/doc/
+'
+	* (14) 0:36	'  [6]: http://ettext.taint.org/doc/
+'
+* (74) 2192:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2193:358	'To this end, Markdown's syntax is comprised entirely of punctuation
+characters, which punctuation characters have been carefully chosen so
+as to look like what they mean. E.g., asterisks around a word actually
+look like \*emphasis\*. Markdown lists look like, well, lists. Even
+blockquotes look like quoted passages of text, assuming you've ever
+used email.
+'
+	* (33) 0:68	'To this end, Markdown's syntax is comprised entirely of punctuation
+'
+	* (33) 68:71	'characters, which punctuation characters have been carefully chosen so
+'
+	* (33) 139:71	'as to look like what they mean. E.g., asterisks around a word actually
+'
+	* (33) 210:68	'look like \*emphasis\*. Markdown lists look like, well, lists. Even
+'
+	* (33) 278:68	'blockquotes look like quoted passages of text, assuming you've ever
+'
+	* (33) 346:12	'used email.
+'
+	- (131) 0:21	'To this end, Markdown'
+	- (155) 21:1	'''
+	- (131) 22:45	's syntax is comprised entirely of punctuation'
+	- (129) 67:1	'
+'
+	- (131) 68:70	'characters, which punctuation characters have been carefully chosen so'
+	- (129) 138:1	'
+'
+	- (131) 139:70	'as to look like what they mean. E.g., asterisks around a word actually'
+	- (129) 209:1	'
+'
+	- (131) 210:10	'look like '
+	- (194) 220:2	'\*'
+	- (131) 222:8	'emphasis'
+	- (194) 230:2	'\*'
+	- (131) 232:45	'. Markdown lists look like, well, lists. Even'
+	- (129) 277:1	'
+'
+	- (131) 278:59	'blockquotes look like quoted passages of text, assuming you'
+	- (155) 337:1	'''
+	- (131) 338:7	've ever'
+	- (129) 345:1	'
+'
+	- (131) 346:11	'used email.'
+	- (129) 357:1	'
+'
+* (74) 2551:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 2554:31	'<h3 id="html">Inline HTML</h3>
+'
+	* (26) 0:31	'<h3 id="html">Inline HTML</h3>
+'
+* (74) 2585:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2586:97	'Markdown's syntax is intended for one purpose: to be used as a
+format for *writing* for the web.
+'
+	* (33) 0:63	'Markdown's syntax is intended for one purpose: to be used as a
+'
+	* (33) 63:34	'format for *writing* for the web.
+'
+	- (131) 0:8	'Markdown'
+	- (155) 8:1	'''
+	- (131) 9:36	's syntax is intended for one purpose'
+	- (144) 45:1	':'
+	- (131) 46:16	' to be used as a'
+	- (129) 62:1	'
+'
+	- (131) 63:11	'format for '
+	- (192) 74:1	'*'
+		+ (131) 75:7	'writing'
+	- (139) 82:1	'*'
+	- (131) 83:13	' for the web.'
+	- (129) 96:1	'
+'
+* (74) 2683:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 2684:504	'Markdown is not a replacement for HTML, or even close to it. Its
+syntax is very small, corresponding only to a very small subset of
+HTML tags. The idea is *not* to create a syntax that makes it easier
+to insert HTML tags. In my opinion, HTML tags are already easy to
+insert. The idea for Markdown is to make it easy to read, write, and
+edit prose. HTML is a *publishing* format; Markdown is a *writing*
+format. Thus, Markdown's formatting syntax only addresses issues that
+can be conveyed in plain text.
+'
+	* (33) 0:65	'Markdown is not a replacement for HTML, or even close to it. Its
+'
+	* (33) 65:67	'syntax is very small, corresponding only to a very small subset of
+'
+	* (33) 132:69	'HTML tags. The idea is *not* to create a syntax that makes it easier
+'
+	* (33) 201:66	'to insert HTML tags. In my opinion, HTML tags are already easy to
+'
+	* (33) 267:69	'insert. The idea for Markdown is to make it easy to read, write, and
+'
+	* (33) 336:67	'edit prose. HTML is a *publishing* format; Markdown is a *writing*
+'
+	* (33) 403:70	'format. Thus, Markdown's formatting syntax only addresses issues that
+'
+	* (33) 473:31	'can be conveyed in plain text.
+'
+	- (131) 0:64	'Markdown is not a replacement for HTML, or even close to it. Its'
+	- (129) 64:1	'
+'
+	- (131) 65:66	'syntax is very small, corresponding only to a very small subset of'
+	- (129) 131:1	'
+'
+	- (131) 132:23	'HTML tags. The idea is '
+	- (192) 155:1	'*'
+		+ (131) 156:3	'not'
+	- (139) 159:1	'*'
+	- (131) 160:40	' to create a syntax that makes it easier'
+	- (129) 200:1	'
+'
+	- (131) 201:65	'to insert HTML tags. In my opinion, HTML tags are already easy to'
+	- (129) 266:1	'
+'
+	- (131) 267:68	'insert. The idea for Markdown is to make it easy to read, write, and'
+	- (129) 335:1	'
+'
+	- (131) 336:22	'edit prose. HTML is a '
+	- (192) 358:1	'*'
+		+ (131) 359:10	'publishing'
+	- (139) 369:1	'*'
+	- (131) 370:23	' format; Markdown is a '
+	- (192) 393:1	'*'
+		+ (131) 394:7	'writing'
+	- (139) 401:1	'*'
+	- (129) 402:1	'
+'
+	- (131) 403:22	'format. Thus, Markdown'
+	- (155) 425:1	'''
+	- (131) 426:46	's formatting syntax only addresses issues that'
+	- (129) 472:1	'
+'
+	- (131) 473:30	'can be conveyed in plain text.'
+	- (129) 503:1	'
+'
+* (74) 3188:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3189:209	'For any markup that is not covered by Markdown's syntax, you simply
+use HTML itself. There's no need to preface it or delimit it to
+indicate that you're switching from Markdown to HTML; you just use
+the tags.
+'
+	* (33) 0:68	'For any markup that is not covered by Markdown's syntax, you simply
+'
+	* (33) 68:64	'use HTML itself. There's no need to preface it or delimit it to
+'
+	* (33) 132:67	'indicate that you're switching from Markdown to HTML; you just use
+'
+	* (33) 199:10	'the tags.
+'
+	- (131) 0:46	'For any markup that is not covered by Markdown'
+	- (155) 46:1	'''
+	- (131) 47:20	's syntax, you simply'
+	- (129) 67:1	'
+'
+	- (131) 68:22	'use HTML itself. There'
+	- (155) 90:1	'''
+	- (131) 91:40	's no need to preface it or delimit it to'
+	- (129) 131:1	'
+'
+	- (131) 132:17	'indicate that you'
+	- (155) 149:1	'''
+	- (131) 150:48	're switching from Markdown to HTML; you just use'
+	- (129) 198:1	'
+'
+	- (131) 199:9	'the tags.'
+	- (129) 208:1	'
+'
+* (74) 3398:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3399:346	'The only restrictions are that block-level HTML elements -- e.g. `<div>`,
+`<table>`, `<pre>`, `<p>`, etc. -- must be separated from surrounding
+content by blank lines, and the start and end tags of the block should
+not be indented with tabs or spaces. Markdown is smart enough not
+to add extra (unwanted) `<p>` tags around HTML block-level tags.
+'
+	* (33) 0:74	'The only restrictions are that block-level HTML elements -- e.g. `<div>`,
+'
+	* (33) 74:70	'`<table>`, `<pre>`, `<p>`, etc. -- must be separated from surrounding
+'
+	* (33) 144:71	'content by blank lines, and the start and end tags of the block should
+'
+	* (33) 215:66	'not be indented with tabs or spaces. Markdown is smart enough not
+'
+	* (33) 281:65	'to add extra (unwanted) `<p>` tags around HTML block-level tags.
+'
+	- (131) 0:36	'The only restrictions are that block'
+	- (141) 36:1	'-'
+	- (131) 37:20	'level HTML elements '
+	- (161) 57:2	'--'
+	- (131) 59:6	' e.g. '
+	- (172) 65:1	'`'
+		+ (171) 66:1	'<'
+			+ (131) 67:3	'div'
+		+ (168) 70:1	'>'
+	- (154) 71:1	'`'
+	- (131) 72:1	','
+	- (129) 73:1	'
+'
+	- (172) 74:1	'`'
+		+ (171) 75:1	'<'
+			+ (131) 76:5	'table'
+		+ (168) 81:1	'>'
+	- (154) 82:1	'`'
+	- (131) 83:2	', '
+	- (172) 85:1	'`'
+		+ (171) 86:1	'<'
+			+ (131) 87:3	'pre'
+		+ (168) 90:1	'>'
+	- (154) 91:1	'`'
+	- (131) 92:2	', '
+	- (172) 94:1	'`'
+		+ (171) 95:1	'<'
+			+ (131) 96:1	'p'
+		+ (168) 97:1	'>'
+	- (154) 98:1	'`'
+	- (131) 99:7	', etc. '
+	- (161) 106:2	'--'
+	- (131) 108:35	' must be separated from surrounding'
+	- (129) 143:1	'
+'
+	- (131) 144:70	'content by blank lines, and the start and end tags of the block should'
+	- (129) 214:1	'
+'
+	- (131) 215:65	'not be indented with tabs or spaces. Markdown is smart enough not'
+	- (129) 280:1	'
+'
+	- (131) 281:13	'to add extra '
+	- (184) 294:1	'('
+		+ (131) 295:8	'unwanted'
+	- (164) 303:1	')'
+	- (131) 304:1	' '
+	- (172) 305:1	'`'
+		+ (171) 306:1	'<'
+			+ (131) 307:1	'p'
+		+ (168) 308:1	'>'
+	- (154) 309:1	'`'
+	- (131) 310:23	' tags around HTML block'
+	- (141) 333:1	'-'
+	- (131) 334:11	'level tags.'
+	- (129) 345:1	'
+'
+* (74) 3745:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3746:57	'For example, to add an HTML table to a Markdown article:
+'
+	* (33) 0:57	'For example, to add an HTML table to a Markdown article:
+'
+	- (131) 0:55	'For example, to add an HTML table to a Markdown article'
+	- (144) 55:1	':'
+	- (129) 56:1	'
+'
+* (74) 3803:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 3804:151	'    This is a regular paragraph.
+
+    <table>
+        <tr>
+            <td>Foo</td>
+        </tr>
+    </table>
+
+    This is another regular paragraph.
+'
+	* (28) 0:33	'    This is a regular paragraph.
+'
+	* (16) 33:1	'
+'
+	* (28) 34:12	'    <table>
+'
+	* (28) 46:13	'        <tr>
+'
+	* (28) 59:25	'            <td>Foo</td>
+'
+	* (28) 84:14	'        </tr>
+'
+	* (28) 98:13	'    </table>
+'
+	* (16) 111:1	'
+'
+	* (28) 112:39	'    This is another regular paragraph.
+'
+* (74) 3955:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 3956:154	'Note that Markdown formatting syntax is not processed within block-level
+HTML tags. E.g., you can't use Markdown-style `*emphasis*` inside an
+HTML block.
+'
+	* (33) 0:73	'Note that Markdown formatting syntax is not processed within block-level
+'
+	* (33) 73:69	'HTML tags. E.g., you can't use Markdown-style `*emphasis*` inside an
+'
+	* (33) 142:12	'HTML block.
+'
+	- (131) 0:66	'Note that Markdown formatting syntax is not processed within block'
+	- (141) 66:1	'-'
+	- (131) 67:5	'level'
+	- (129) 72:1	'
+'
+	- (131) 73:24	'HTML tags. E.g., you can'
+	- (155) 97:1	'''
+	- (131) 98:14	't use Markdown'
+	- (141) 112:1	'-'
+	- (131) 113:6	'style '
+	- (172) 119:1	'`'
+		+ (139) 120:1	'*'
+		+ (131) 121:8	'emphasis'
+		+ (139) 129:1	'*'
+	- (154) 130:1	'`'
+	- (131) 131:10	' inside an'
+	- (129) 141:1	'
+'
+	- (131) 142:11	'HTML block.'
+	- (129) 153:1	'
+'
+* (74) 4110:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4111:318	'Span-level HTML tags -- e.g. `<span>`, `<cite>`, or `<del>` -- can be
+used anywhere in a Markdown paragraph, list item, or header. If you
+want, you can even use HTML tags instead of Markdown formatting; e.g. if
+you'd prefer to use HTML `<a>` or `<img>` tags instead of Markdown's
+link or image syntax, go right ahead.
+'
+	* (33) 0:70	'Span-level HTML tags -- e.g. `<span>`, `<cite>`, or `<del>` -- can be
+'
+	* (33) 70:68	'used anywhere in a Markdown paragraph, list item, or header. If you
+'
+	* (33) 138:73	'want, you can even use HTML tags instead of Markdown formatting; e.g. if
+'
+	* (33) 211:69	'you'd prefer to use HTML `<a>` or `<img>` tags instead of Markdown's
+'
+	* (33) 280:38	'link or image syntax, go right ahead.
+'
+	- (131) 0:4	'Span'
+	- (141) 4:1	'-'
+	- (131) 5:16	'level HTML tags '
+	- (161) 21:2	'--'
+	- (131) 23:6	' e.g. '
+	- (172) 29:1	'`'
+		+ (171) 30:1	'<'
+			+ (131) 31:4	'span'
+		+ (168) 35:1	'>'
+	- (154) 36:1	'`'
+	- (131) 37:2	', '
+	- (172) 39:1	'`'
+		+ (171) 40:1	'<'
+			+ (131) 41:4	'cite'
+		+ (168) 45:1	'>'
+	- (154) 46:1	'`'
+	- (131) 47:5	', or '
+	- (172) 52:1	'`'
+		+ (171) 53:1	'<'
+			+ (131) 54:3	'del'
+		+ (168) 57:1	'>'
+	- (154) 58:1	'`'
+	- (131) 59:1	' '
+	- (161) 60:2	'--'
+	- (131) 62:7	' can be'
+	- (129) 69:1	'
+'
+	- (131) 70:67	'used anywhere in a Markdown paragraph, list item, or header. If you'
+	- (129) 137:1	'
+'
+	- (131) 138:72	'want, you can even use HTML tags instead of Markdown formatting; e.g. if'
+	- (129) 210:1	'
+'
+	- (131) 211:3	'you'
+	- (155) 214:1	'''
+	- (131) 215:21	'd prefer to use HTML '
+	- (172) 236:1	'`'
+		+ (171) 237:1	'<'
+			+ (131) 238:1	'a'
+		+ (168) 239:1	'>'
+	- (154) 240:1	'`'
+	- (131) 241:4	' or '
+	- (172) 245:1	'`'
+		+ (171) 246:1	'<'
+			+ (131) 247:3	'img'
+		+ (168) 250:1	'>'
+	- (154) 251:1	'`'
+	- (131) 252:25	' tags instead of Markdown'
+	- (155) 277:1	'''
+	- (131) 278:1	's'
+	- (129) 279:1	'
+'
+	- (131) 280:37	'link or image syntax, go right ahead.'
+	- (129) 317:1	'
+'
+* (74) 4429:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4430:85	'Unlike block-level HTML tags, Markdown syntax *is* processed within
+span-level tags.
+'
+	* (33) 0:68	'Unlike block-level HTML tags, Markdown syntax *is* processed within
+'
+	* (33) 68:17	'span-level tags.
+'
+	- (131) 0:12	'Unlike block'
+	- (141) 12:1	'-'
+	- (131) 13:33	'level HTML tags, Markdown syntax '
+	- (192) 46:1	'*'
+		+ (131) 47:2	'is'
+	- (139) 49:1	'*'
+	- (131) 50:17	' processed within'
+	- (129) 67:1	'
+'
+	- (131) 68:4	'span'
+	- (141) 72:1	'-'
+	- (131) 73:11	'level tags.'
+	- (129) 84:1	'
+'
+* (74) 4515:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 4517:67	'<h3 id="autoescape">Automatic Escaping for Special Characters</h3>
+'
+	* (26) 0:67	'<h3 id="autoescape">Automatic Escaping for Special Characters</h3>
+'
+* (74) 4584:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4585:274	'In HTML, there are two characters that demand special treatment: `<`
+and `&`. Left angle brackets are used to start tags; ampersands are
+used to denote HTML entities. If you want to use them as literal
+characters, you must escape them as entities, e.g. `&lt;`, and
+`&amp;`.
+'
+	* (33) 0:69	'In HTML, there are two characters that demand special treatment: `<`
+'
+	* (33) 69:68	'and `&`. Left angle brackets are used to start tags; ampersands are
+'
+	* (33) 137:65	'used to denote HTML entities. If you want to use them as literal
+'
+	* (33) 202:63	'characters, you must escape them as entities, e.g. `&lt;`, and
+'
+	* (33) 265:9	'`&amp;`.
+'
+	- (131) 0:63	'In HTML, there are two characters that demand special treatment'
+	- (144) 63:1	':'
+	- (131) 64:1	' '
+	- (172) 65:1	'`'
+		+ (167) 66:1	'<'
+	- (154) 67:1	'`'
+	- (129) 68:1	'
+'
+	- (131) 69:4	'and '
+	- (172) 73:1	'`'
+		+ (135) 74:1	'&'
+	- (154) 75:1	'`'
+	- (131) 76:60	'. Left angle brackets are used to start tags; ampersands are'
+	- (129) 136:1	'
+'
+	- (131) 137:64	'used to denote HTML entities. If you want to use them as literal'
+	- (129) 201:1	'
+'
+	- (131) 202:51	'characters, you must escape them as entities, e.g. '
+	- (172) 253:1	'`'
+		+ (137) 254:4	'&lt;'
+	- (154) 258:1	'`'
+	- (131) 259:5	', and'
+	- (129) 264:1	'
+'
+	- (172) 265:1	'`'
+		+ (136) 266:5	'&amp;'
+	- (154) 271:1	'`'
+	- (131) 272:1	'.'
+	- (129) 273:1	'
+'
+* (74) 4859:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 4860:202	'Ampersands in particular are bedeviling for web writers. If you want to
+write about 'AT&T', you need to write '`AT&amp;T`'. You even need to
+escape ampersands within URLs. Thus, if you want to link to:
+'
+	* (33) 0:72	'Ampersands in particular are bedeviling for web writers. If you want to
+'
+	* (33) 72:69	'write about 'AT&T', you need to write '`AT&amp;T`'. You even need to
+'
+	* (33) 141:61	'escape ampersands within URLs. Thus, if you want to link to:
+'
+	- (131) 0:71	'Ampersands in particular are bedeviling for web writers. If you want to'
+	- (129) 71:1	'
+'
+	- (131) 72:12	'write about '
+	- (186) 84:1	'''
+		+ (131) 85:2	'AT'
+		+ (135) 87:1	'&'
+		+ (131) 88:1	'T'
+	- (156) 89:1	'''
+	- (131) 90:20	', you need to write '
+	- (186) 110:1	'''
+		+ (172) 111:1	'`'
+			+ (131) 112:2	'AT'
+			+ (136) 114:5	'&amp;'
+			+ (131) 119:1	'T'
+		+ (154) 120:1	'`'
+	- (156) 121:1	'''
+	- (131) 122:18	'. You even need to'
+	- (129) 140:1	'
+'
+	- (131) 141:59	'escape ampersands within URLs. Thus, if you want to link to'
+	- (144) 200:1	':'
+	- (129) 201:1	'
+'
+* (74) 5062:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 5063:56	'    http://images.google.com/images?num=30&q=larry+bird
+'
+	* (28) 0:56	'    http://images.google.com/images?num=30&q=larry+bird
+'
+* (74) 5119:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5120:31	'you need to encode the URL as:
+'
+	* (33) 0:31	'you need to encode the URL as:
+'
+	- (131) 0:29	'you need to encode the URL as'
+	- (144) 29:1	':'
+	- (129) 30:1	'
+'
+* (74) 5151:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 5152:60	'    http://images.google.com/images?num=30&amp;q=larry+bird
+'
+	* (28) 0:60	'    http://images.google.com/images?num=30&amp;q=larry+bird
+'
+* (74) 5212:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5213:189	'in your anchor tag `href` attribute. Needless to say, this is easy to
+forget, and is probably the single most common source of HTML validation
+errors in otherwise well-marked-up web sites.
+'
+	* (33) 0:70	'in your anchor tag `href` attribute. Needless to say, this is easy to
+'
+	* (33) 70:73	'forget, and is probably the single most common source of HTML validation
+'
+	* (33) 143:46	'errors in otherwise well-marked-up web sites.
+'
+	- (131) 0:19	'in your anchor tag '
+	- (172) 19:1	'`'
+		+ (131) 20:4	'href'
+	- (154) 24:1	'`'
+	- (131) 25:44	' attribute. Needless to say, this is easy to'
+	- (129) 69:1	'
+'
+	- (131) 70:72	'forget, and is probably the single most common source of HTML validation'
+	- (129) 142:1	'
+'
+	- (131) 143:24	'errors in otherwise well'
+	- (141) 167:1	'-'
+	- (131) 168:6	'marked'
+	- (141) 174:1	'-'
+	- (131) 175:13	'up web sites.'
+	- (129) 188:1	'
+'
+* (74) 5402:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5403:225	'Markdown allows you to use these characters naturally, taking care of
+all the necessary escaping for you. If you use an ampersand as part of
+an HTML entity, it remains unchanged; otherwise it will be translated
+into `&amp;`.
+'
+	* (33) 0:70	'Markdown allows you to use these characters naturally, taking care of
+'
+	* (33) 70:71	'all the necessary escaping for you. If you use an ampersand as part of
+'
+	* (33) 141:70	'an HTML entity, it remains unchanged; otherwise it will be translated
+'
+	* (33) 211:14	'into `&amp;`.
+'
+	- (131) 0:69	'Markdown allows you to use these characters naturally, taking care of'
+	- (129) 69:1	'
+'
+	- (131) 70:70	'all the necessary escaping for you. If you use an ampersand as part of'
+	- (129) 140:1	'
+'
+	- (131) 141:69	'an HTML entity, it remains unchanged; otherwise it will be translated'
+	- (129) 210:1	'
+'
+	- (131) 211:5	'into '
+	- (172) 216:1	'`'
+		+ (136) 217:5	'&amp;'
+	- (154) 222:1	'`'
+	- (131) 223:1	'.'
+	- (129) 224:1	'
+'
+* (74) 5628:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5629:78	'So, if you want to include a copyright symbol in your article, you can write:
+'
+	* (33) 0:78	'So, if you want to include a copyright symbol in your article, you can write:
+'
+	- (131) 0:76	'So, if you want to include a copyright symbol in your article, you can write'
+	- (144) 76:1	':'
+	- (129) 77:1	'
+'
+* (74) 5707:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 5708:11	'    &copy;
+'
+	* (28) 0:11	'    &copy;
+'
+* (74) 5719:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5720:52	'and Markdown will leave it alone. But if you write:
+'
+	* (33) 0:52	'and Markdown will leave it alone. But if you write:
+'
+	- (131) 0:50	'and Markdown will leave it alone. But if you write'
+	- (144) 50:1	':'
+	- (129) 51:1	'
+'
+* (74) 5772:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 5773:9	'    AT&T
+'
+	* (28) 0:9	'    AT&T
+'
+* (74) 5782:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5783:31	'Markdown will translate it to:
+'
+	* (33) 0:31	'Markdown will translate it to:
+'
+	- (131) 0:29	'Markdown will translate it to'
+	- (144) 29:1	':'
+	- (129) 30:1	'
+'
+* (74) 5814:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 5815:13	'    AT&amp;T
+'
+	* (28) 0:13	'    AT&amp;T
+'
+* (74) 5828:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 5829:166	'Similarly, because Markdown supports [inline HTML](#html), if you use
+angle brackets as delimiters for HTML tags, Markdown will treat them as
+such. But if you write:
+'
+	* (33) 0:70	'Similarly, because Markdown supports [inline HTML](#html), if you use
+'
+	* (33) 70:72	'angle brackets as delimiters for HTML tags, Markdown will treat them as
+'
+	* (33) 142:24	'such. But if you write:
+'
+	- (131) 0:37	'Similarly, because Markdown supports '
+	- (174) 37:1	'['
+		+ (131) 38:11	'inline HTML'
+	- (166) 49:1	']'
+	- (184) 50:1	'('
+		+ (231) 51:5	'#html'
+	- (164) 56:1	')'
+	- (131) 57:12	', if you use'
+	- (129) 69:1	'
+'
+	- (131) 70:71	'angle brackets as delimiters for HTML tags, Markdown will treat them as'
+	- (129) 141:1	'
+'
+	- (131) 142:22	'such. But if you write'
+	- (144) 164:1	':'
+	- (129) 165:1	'
+'
+* (74) 5995:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 5996:10	'    4 < 5
+'
+	* (28) 0:10	'    4 < 5
+'
+* (74) 6006:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 6007:31	'Markdown will translate it to:
+'
+	* (33) 0:31	'Markdown will translate it to:
+'
+	- (131) 0:29	'Markdown will translate it to'
+	- (144) 29:1	':'
+	- (129) 30:1	'
+'
+* (74) 6038:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 6039:13	'    4 &lt; 5
+'
+	* (28) 0:13	'    4 &lt; 5
+'
+* (74) 6052:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 6053:334	'However, inside Markdown code spans and blocks, angle brackets and
+ampersands are *always* encoded automatically. This makes it easy to use
+Markdown to write about HTML code. (As opposed to raw HTML, which is a
+terrible format for writing about HTML syntax, because every single `<`
+and `&` in your example code needs to be escaped.)
+'
+	* (33) 0:67	'However, inside Markdown code spans and blocks, angle brackets and
+'
+	* (33) 67:73	'ampersands are *always* encoded automatically. This makes it easy to use
+'
+	* (33) 140:71	'Markdown to write about HTML code. (As opposed to raw HTML, which is a
+'
+	* (33) 211:72	'terrible format for writing about HTML syntax, because every single `<`
+'
+	* (33) 283:51	'and `&` in your example code needs to be escaped.)
+'
+	- (131) 0:66	'However, inside Markdown code spans and blocks, angle brackets and'
+	- (129) 66:1	'
+'
+	- (131) 67:15	'ampersands are '
+	- (192) 82:1	'*'
+		+ (131) 83:6	'always'
+	- (139) 89:1	'*'
+	- (131) 90:49	' encoded automatically. This makes it easy to use'
+	- (129) 139:1	'
+'
+	- (131) 140:35	'Markdown to write about HTML code. '
+	- (184) 175:1	'('
+		+ (131) 176:34	'As opposed to raw HTML, which is a'
+		+ (129) 210:1	'
+'
+		+ (131) 211:68	'terrible format for writing about HTML syntax, because every single '
+		+ (172) 279:1	'`'
+			+ (167) 280:1	'<'
+		+ (154) 281:1	'`'
+		+ (129) 282:1	'
+'
+		+ (131) 283:4	'and '
+		+ (172) 287:1	'`'
+			+ (135) 288:1	'&'
+		+ (154) 289:1	'`'
+		+ (131) 290:42	' in your example code needs to be escaped.'
+	- (164) 332:1	')'
+	- (129) 333:1	'
+'
+* (74) 6387:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (83) 6389:6	'* * *
+'
+	* (24) 0:6	'* * *
+'
+	- (139) 0:1	'*'
+	- (131) 1:1	' '
+	- (139) 2:1	'*'
+	- (131) 3:1	' '
+	- (139) 4:1	'*'
+	- (129) 5:1	'
+'
+* (74) 6395:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 6397:35	'<h2 id="block">Block Elements</h2>
+'
+	* (26) 0:35	'<h2 id="block">Block Elements</h2>
+'
+* (74) 6432:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 6434:43	'<h3 id="p">Paragraphs and Line Breaks</h3>
+'
+	* (26) 0:43	'<h3 id="p">Paragraphs and Line Breaks</h3>
+'
+* (74) 6477:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 6478:286	'A paragraph is simply one or more consecutive lines of text, separated
+by one or more blank lines. (A blank line is any line that looks like a
+blank line -- a line containing nothing but spaces or tabs is considered
+blank.) Normal paragraphs should not be indented with spaces or tabs.
+'
+	* (33) 0:71	'A paragraph is simply one or more consecutive lines of text, separated
+'
+	* (33) 71:72	'by one or more blank lines. (A blank line is any line that looks like a
+'
+	* (33) 143:73	'blank line -- a line containing nothing but spaces or tabs is considered
+'
+	* (33) 216:70	'blank.) Normal paragraphs should not be indented with spaces or tabs.
+'
+	- (131) 0:70	'A paragraph is simply one or more consecutive lines of text, separated'
+	- (129) 70:1	'
+'
+	- (131) 71:28	'by one or more blank lines. '
+	- (184) 99:1	'('
+		+ (131) 100:42	'A blank line is any line that looks like a'
+		+ (129) 142:1	'
+'
+		+ (131) 143:11	'blank line '
+		+ (161) 154:2	'--'
+		+ (131) 156:59	' a line containing nothing but spaces or tabs is considered'
+		+ (129) 215:1	'
+'
+		+ (131) 216:6	'blank.'
+	- (164) 222:1	')'
+	- (131) 223:62	' Normal paragraphs should not be indented with spaces or tabs.'
+	- (129) 285:1	'
+'
+* (74) 6764:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 6765:328	'The implication of the "one or more consecutive lines of text" rule is
+that Markdown supports "hard-wrapped" text paragraphs. This differs
+significantly from most other text-to-HTML formatters (including Movable
+Type's "Convert Line Breaks" option) which translate every line break
+character in a paragraph into a `<br />` tag.
+'
+	* (33) 0:71	'The implication of the "one or more consecutive lines of text" rule is
+'
+	* (33) 71:68	'that Markdown supports "hard-wrapped" text paragraphs. This differs
+'
+	* (33) 139:73	'significantly from most other text-to-HTML formatters (including Movable
+'
+	* (33) 212:70	'Type's "Convert Line Breaks" option) which translate every line break
+'
+	* (33) 282:46	'character in a paragraph into a `<br />` tag.
+'
+	- (131) 0:23	'The implication of the '
+	- (185) 23:1	'"'
+		+ (131) 24:37	'one or more consecutive lines of text'
+	- (157) 61:1	'"'
+	- (131) 62:8	' rule is'
+	- (129) 70:1	'
+'
+	- (131) 71:23	'that Markdown supports '
+	- (185) 94:1	'"'
+		+ (131) 95:4	'hard'
+		+ (141) 99:1	'-'
+		+ (131) 100:7	'wrapped'
+	- (157) 107:1	'"'
+	- (131) 108:30	' text paragraphs. This differs'
+	- (129) 138:1	'
+'
+	- (131) 139:34	'significantly from most other text'
+	- (141) 173:1	'-'
+	- (131) 174:2	'to'
+	- (141) 176:1	'-'
+	- (131) 177:16	'HTML formatters '
+	- (184) 193:1	'('
+		+ (131) 194:17	'including Movable'
+		+ (129) 211:1	'
+'
+		+ (131) 212:4	'Type'
+		+ (155) 216:1	'''
+		+ (131) 217:2	's '
+		+ (185) 219:1	'"'
+			+ (131) 220:19	'Convert Line Breaks'
+		+ (157) 239:1	'"'
+		+ (131) 240:7	' option'
+	- (164) 247:1	')'
+	- (131) 248:33	' which translate every line break'
+	- (129) 281:1	'
+'
+	- (131) 282:32	'character in a paragraph into a '
+	- (172) 314:1	'`'
+		+ (171) 315:1	'<'
+			+ (131) 316:4	'br /'
+		+ (168) 320:1	'>'
+	- (154) 321:1	'`'
+	- (131) 322:5	' tag.'
+	- (129) 327:1	'
+'
+* (74) 7093:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 7094:124	'When you *do* want to insert a `<br />` break tag using Markdown, you
+end a line with two or more spaces, then type return.
+'
+	* (33) 0:70	'When you *do* want to insert a `<br />` break tag using Markdown, you
+'
+	* (33) 70:54	'end a line with two or more spaces, then type return.
+'
+	- (131) 0:9	'When you '
+	- (192) 9:1	'*'
+		+ (131) 10:2	'do'
+	- (139) 12:1	'*'
+	- (131) 13:18	' want to insert a '
+	- (172) 31:1	'`'
+		+ (171) 32:1	'<'
+			+ (131) 33:4	'br /'
+		+ (168) 37:1	'>'
+	- (154) 38:1	'`'
+	- (131) 39:30	' break tag using Markdown, you'
+	- (129) 69:1	'
+'
+	- (131) 70:53	'end a line with two or more spaces, then type return.'
+	- (129) 123:1	'
+'
+* (74) 7218:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 7219:288	'Yes, this takes a tad more effort to create a `<br />`, but a simplistic
+"every line break is a `<br />`" rule wouldn't work for Markdown.
+Markdown's email-style [blockquoting][bq] and multi-paragraph [list items][l]
+work best -- and look better -- when you format them with hard breaks.
+'
+	* (33) 0:73	'Yes, this takes a tad more effort to create a `<br />`, but a simplistic
+'
+	* (33) 73:66	'"every line break is a `<br />`" rule wouldn't work for Markdown.
+'
+	* (33) 139:78	'Markdown's email-style [blockquoting][bq] and multi-paragraph [list items][l]
+'
+	* (33) 217:71	'work best -- and look better -- when you format them with hard breaks.
+'
+	- (131) 0:46	'Yes, this takes a tad more effort to create a '
+	- (172) 46:1	'`'
+		+ (171) 47:1	'<'
+			+ (131) 48:4	'br /'
+		+ (168) 52:1	'>'
+	- (154) 53:1	'`'
+	- (131) 54:18	', but a simplistic'
+	- (129) 72:1	'
+'
+	- (185) 73:1	'"'
+		+ (131) 74:22	'every line break is a '
+		+ (172) 96:1	'`'
+			+ (171) 97:1	'<'
+				+ (131) 98:4	'br /'
+			+ (168) 102:1	'>'
+		+ (154) 103:1	'`'
+	- (157) 104:1	'"'
+	- (131) 105:12	' rule wouldn'
+	- (155) 117:1	'''
+	- (131) 118:20	't work for Markdown.'
+	- (129) 138:1	'
+'
+	- (131) 139:8	'Markdown'
+	- (155) 147:1	'''
+	- (131) 148:7	's email'
+	- (141) 155:1	'-'
+	- (131) 156:6	'style '
+	- (174) 162:1	'['
+		+ (131) 163:12	'blockquoting'
+	- (166) 175:1	']'
+	- (174) 176:1	'['
+		+ (131) 177:2	'bq'
+	- (166) 179:1	']'
+	- (131) 180:10	' and multi'
+	- (141) 190:1	'-'
+	- (131) 191:10	'paragraph '
+	- (174) 201:1	'['
+		+ (131) 202:10	'list items'
+	- (166) 212:1	']'
+	- (174) 213:1	'['
+		+ (131) 214:1	'l'
+	- (166) 215:1	']'
+	- (129) 216:1	'
+'
+	- (131) 217:10	'work best '
+	- (161) 227:2	'--'
+	- (131) 229:17	' and look better '
+	- (161) 246:2	'--'
+	- (131) 248:39	' when you format them with hard breaks.'
+	- (129) 287:1	'
+'
+* (74) 7507:1	'
+'
+	* (16) 0:1	'
+'
+* (71) 7508:20	'  [bq]: #blockquote
+'
+	* (14) 0:20	'  [bq]: #blockquote
+'
+* (71) 7528:14	'  [l]:  #list
+'
+	* (14) 0:14	'  [l]:  #list
+'
+* (74) 7542:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 7545:29	'<h3 id="header">Headers</h3>
+'
+	* (26) 0:29	'<h3 id="header">Headers</h3>
+'
+* (74) 7574:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 7575:67	'Markdown supports two styles of headers, [Setext][1] and [atx][2].
+'
+	* (33) 0:67	'Markdown supports two styles of headers, [Setext][1] and [atx][2].
+'
+	- (131) 0:41	'Markdown supports two styles of headers, '
+	- (174) 41:1	'['
+		+ (131) 42:6	'Setext'
+	- (166) 48:1	']'
+	- (174) 49:1	'['
+		+ (131) 50:1	'1'
+	- (166) 51:1	']'
+	- (131) 52:5	' and '
+	- (174) 57:1	'['
+		+ (131) 58:3	'atx'
+	- (166) 61:1	']'
+	- (174) 62:1	'['
+		+ (131) 63:1	'2'
+	- (166) 64:1	']'
+	- (131) 65:1	'.'
+	- (129) 66:1	'
+'
+* (74) 7642:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 7643:134	'Setext-style headers are "underlined" using equal signs (for first-level
+headers) and dashes (for second-level headers). For example:
+'
+	* (33) 0:73	'Setext-style headers are "underlined" using equal signs (for first-level
+'
+	* (33) 73:61	'headers) and dashes (for second-level headers). For example:
+'
+	- (131) 0:6	'Setext'
+	- (141) 6:1	'-'
+	- (131) 7:18	'style headers are '
+	- (185) 25:1	'"'
+		+ (131) 26:10	'underlined'
+	- (157) 36:1	'"'
+	- (131) 37:19	' using equal signs '
+	- (184) 56:1	'('
+		+ (131) 57:9	'for first'
+		+ (141) 66:1	'-'
+		+ (131) 67:5	'level'
+		+ (129) 72:1	'
+'
+		+ (131) 73:7	'headers'
+	- (164) 80:1	')'
+	- (131) 81:12	' and dashes '
+	- (184) 93:1	'('
+		+ (131) 94:10	'for second'
+		+ (141) 104:1	'-'
+		+ (131) 105:13	'level headers'
+	- (164) 118:1	')'
+	- (131) 119:13	'. For example'
+	- (144) 132:1	':'
+	- (129) 133:1	'
+'
+* (74) 7777:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 7778:73	'    This is an H1
+    =============
+
+    This is an H2
+    -------------
+'
+	* (28) 0:18	'    This is an H1
+'
+	* (28) 18:18	'    =============
+'
+	* (16) 36:1	'
+'
+	* (28) 37:18	'    This is an H2
+'
+	* (28) 55:18	'    -------------
+'
+* (74) 7851:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 7852:52	'Any number of underlining `=`'s or `-`'s will work.
+'
+	* (33) 0:52	'Any number of underlining `=`'s or `-`'s will work.
+'
+	- (131) 0:26	'Any number of underlining '
+	- (172) 26:1	'`'
+		+ (131) 27:1	'='
+	- (154) 28:1	'`'
+	- (155) 29:1	'''
+	- (131) 30:5	's or '
+	- (172) 35:1	'`'
+		+ (141) 36:1	'-'
+	- (154) 37:1	'`'
+	- (155) 38:1	'''
+	- (131) 39:12	's will work.'
+	- (129) 51:1	'
+'
+* (74) 7904:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 7905:117	'Atx-style headers use 1-6 hash characters at the start of the line,
+corresponding to header levels 1-6. For example:
+'
+	* (33) 0:68	'Atx-style headers use 1-6 hash characters at the start of the line,
+'
+	* (33) 68:49	'corresponding to header levels 1-6. For example:
+'
+	- (131) 0:3	'Atx'
+	- (141) 3:1	'-'
+	- (131) 4:18	'style headers use '
+	- (162) 22:2	'1-'
+	- (131) 24:43	'6 hash characters at the start of the line,'
+	- (129) 67:1	'
+'
+	- (131) 68:31	'corresponding to header levels '
+	- (162) 99:2	'1-'
+	- (142) 101:2	'6.'
+	- (131) 103:12	' For example'
+	- (144) 115:1	':'
+	- (129) 116:1	'
+'
+* (74) 8022:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 8023:68	'    # This is an H1
+
+    ## This is an H2
+
+    ###### This is an H6
+'
+	* (28) 0:20	'    # This is an H1
+'
+	* (16) 20:1	'
+'
+	* (28) 21:21	'    ## This is an H2
+'
+	* (16) 42:1	'
+'
+	* (28) 43:25	'    ###### This is an H6
+'
+* (74) 8091:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 8092:273	'Optionally, you may "close" atx-style headers. This is purely
+cosmetic -- you can use this if you think it looks better. The
+closing hashes don't even need to match the number of hashes
+used to open the header. (The number of opening hashes
+determines the header level.) :
+'
+	* (33) 0:62	'Optionally, you may "close" atx-style headers. This is purely
+'
+	* (33) 62:63	'cosmetic -- you can use this if you think it looks better. The
+'
+	* (33) 125:61	'closing hashes don't even need to match the number of hashes
+'
+	* (33) 186:55	'used to open the header. (The number of opening hashes
+'
+	* (33) 241:32	'determines the header level.) :
+'
+	- (131) 0:20	'Optionally, you may '
+	- (185) 20:1	'"'
+		+ (131) 21:5	'close'
+	- (157) 26:1	'"'
+	- (131) 27:4	' atx'
+	- (141) 31:1	'-'
+	- (131) 32:29	'style headers. This is purely'
+	- (129) 61:1	'
+'
+	- (131) 62:9	'cosmetic '
+	- (161) 71:2	'--'
+	- (131) 73:51	' you can use this if you think it looks better. The'
+	- (129) 124:1	'
+'
+	- (131) 125:18	'closing hashes don'
+	- (155) 143:1	'''
+	- (131) 144:41	't even need to match the number of hashes'
+	- (129) 185:1	'
+'
+	- (131) 186:25	'used to open the header. '
+	- (184) 211:1	'('
+		+ (131) 212:28	'The number of opening hashes'
+		+ (129) 240:1	'
+'
+		+ (131) 241:28	'determines the header level.'
+	- (164) 269:1	')'
+	- (131) 270:1	' '
+	- (144) 271:1	':'
+	- (129) 272:1	'
+'
+* (74) 8365:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 8366:77	'    # This is an H1 #
+
+    ## This is an H2 ##
+
+    ### This is an H3 ######
+'
+	* (28) 0:22	'    # This is an H1 #
+'
+	* (16) 22:1	'
+'
+	* (28) 23:24	'    ## This is an H2 ##
+'
+	* (16) 47:1	'
+'
+	* (28) 48:29	'    ### This is an H3 ######
+'
+* (74) 8443:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 8445:37	'<h3 id="blockquote">Blockquotes</h3>
+'
+	* (26) 0:37	'<h3 id="blockquote">Blockquotes</h3>
+'
+* (74) 8482:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 8483:256	'Markdown uses email-style `>` characters for blockquoting. If you're
+familiar with quoting passages of text in an email message, then you
+know how to create a blockquote in Markdown. It looks best if you hard
+wrap the text and put a `>` before every line:
+'
+	* (33) 0:69	'Markdown uses email-style `>` characters for blockquoting. If you're
+'
+	* (33) 69:69	'familiar with quoting passages of text in an email message, then you
+'
+	* (33) 138:71	'know how to create a blockquote in Markdown. It looks best if you hard
+'
+	* (33) 209:47	'wrap the text and put a `>` before every line:
+'
+	- (131) 0:19	'Markdown uses email'
+	- (141) 19:1	'-'
+	- (131) 20:6	'style '
+	- (172) 26:1	'`'
+		+ (168) 27:1	'>'
+	- (154) 28:1	'`'
+	- (131) 29:36	' characters for blockquoting. If you'
+	- (155) 65:1	'''
+	- (131) 66:2	're'
+	- (129) 68:1	'
+'
+	- (131) 69:68	'familiar with quoting passages of text in an email message, then you'
+	- (129) 137:1	'
+'
+	- (131) 138:70	'know how to create a blockquote in Markdown. It looks best if you hard'
+	- (129) 208:1	'
+'
+	- (131) 209:24	'wrap the text and put a '
+	- (172) 233:1	'`'
+		+ (168) 234:1	'>'
+	- (154) 235:1	'`'
+	- (131) 236:18	' before every line'
+	- (144) 254:1	':'
+	- (129) 255:1	'
+'
+* (74) 8739:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 8740:361	'    > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+    > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+    > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+    > 
+    > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+    > id sem consectetuer libero luctus adipiscing.
+'
+	* (28) 0:76	'    > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+'
+	* (28) 76:73	'    > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+'
+	* (28) 149:77	'    > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+'
+	* (28) 226:7	'    > 
+'
+	* (28) 233:76	'    > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+'
+	* (28) 309:52	'    > id sem consectetuer libero luctus adipiscing.
+'
+* (74) 9101:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 9102:103	'Markdown allows you to be lazy and only put the `>` before the first
+line of a hard-wrapped paragraph:
+'
+	* (33) 0:69	'Markdown allows you to be lazy and only put the `>` before the first
+'
+	* (33) 69:34	'line of a hard-wrapped paragraph:
+'
+	- (131) 0:48	'Markdown allows you to be lazy and only put the '
+	- (172) 48:1	'`'
+		+ (168) 49:1	'>'
+	- (154) 50:1	'`'
+	- (131) 51:17	' before the first'
+	- (129) 68:1	'
+'
+	- (131) 69:14	'line of a hard'
+	- (141) 83:1	'-'
+	- (131) 84:17	'wrapped paragraph'
+	- (144) 101:1	':'
+	- (129) 102:1	'
+'
+* (74) 9205:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 9206:349	'    > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+    consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+    Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+
+    > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+    id sem consectetuer libero luctus adipiscing.
+'
+	* (28) 0:76	'    > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+'
+	* (28) 76:71	'    consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+'
+	* (28) 147:75	'    Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+'
+	* (16) 222:1	'
+'
+	* (28) 223:76	'    > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+'
+	* (28) 299:50	'    id sem consectetuer libero luctus adipiscing.
+'
+* (74) 9555:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 9556:98	'Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by
+adding additional levels of `>`:
+'
+	* (33) 0:65	'Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by
+'
+	* (33) 65:33	'adding additional levels of `>`:
+'
+	- (131) 0:26	'Blockquotes can be nested '
+	- (184) 26:1	'('
+		+ (131) 27:17	'i.e. a blockquote'
+		+ (141) 44:1	'-'
+		+ (131) 45:2	'in'
+		+ (141) 47:1	'-'
+		+ (131) 48:1	'a'
+		+ (141) 49:1	'-'
+		+ (131) 50:10	'blockquote'
+	- (164) 60:1	')'
+	- (131) 61:3	' by'
+	- (129) 64:1	'
+'
+	- (131) 65:28	'adding additional levels of '
+	- (172) 93:1	'`'
+		+ (168) 94:1	'>'
+	- (154) 95:1	'`'
+	- (144) 96:1	':'
+	- (129) 97:1	'
+'
+* (74) 9654:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 9655:120	'    > This is the first level of quoting.
+    >
+    > > This is nested blockquote.
+    >
+    > Back to the first level.
+'
+	* (28) 0:42	'    > This is the first level of quoting.
+'
+	* (28) 42:6	'    >
+'
+	* (28) 48:35	'    > > This is nested blockquote.
+'
+	* (28) 83:6	'    >
+'
+	* (28) 89:31	'    > Back to the first level.
+'
+* (74) 9775:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 9776:92	'Blockquotes can contain other Markdown elements, including headers, lists,
+and code blocks:
+'
+	* (33) 0:75	'Blockquotes can contain other Markdown elements, including headers, lists,
+'
+	* (33) 75:17	'and code blocks:
+'
+	- (131) 0:74	'Blockquotes can contain other Markdown elements, including headers, lists,'
+	- (129) 74:1	'
+'
+	- (131) 75:15	'and code blocks'
+	- (144) 90:1	':'
+	- (129) 91:1	'
+'
+* (74) 9868:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 9869:200	'	> ## This is a header.
+	> 
+	> 1.   This is the first list item.
+	> 2.   This is the second list item.
+	> 
+	> Here's some example code:
+	> 
+	>     return shell_exec("echo $input | $markdown_script");
+'
+	* (29) 0:24	'	> ## This is a header.
+'
+	* (29) 24:4	'	> 
+'
+	* (29) 28:37	'	> 1.   This is the first list item.
+'
+	* (29) 65:38	'	> 2.   This is the second list item.
+'
+	* (29) 103:4	'	> 
+'
+	* (29) 107:29	'	> Here's some example code:
+'
+	* (29) 136:4	'	> 
+'
+	* (29) 140:60	'	>     return shell_exec("echo $input | $markdown_script");
+'
+* (74) 10069:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10070:164	'Any decent text editor should make email-style quoting easy. For
+example, with BBEdit, you can make a selection and choose Increase
+Quote Level from the Text menu.
+'
+	* (33) 0:65	'Any decent text editor should make email-style quoting easy. For
+'
+	* (33) 65:67	'example, with BBEdit, you can make a selection and choose Increase
+'
+	* (33) 132:32	'Quote Level from the Text menu.
+'
+	- (131) 0:40	'Any decent text editor should make email'
+	- (141) 40:1	'-'
+	- (131) 41:23	'style quoting easy. For'
+	- (129) 64:1	'
+'
+	- (131) 65:66	'example, with BBEdit, you can make a selection and choose Increase'
+	- (129) 131:1	'
+'
+	- (131) 132:31	'Quote Level from the Text menu.'
+	- (129) 163:1	'
+'
+* (74) 10234:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 10236:25	'<h3 id="list">Lists</h3>
+'
+	* (26) 0:25	'<h3 id="list">Lists</h3>
+'
+* (74) 10261:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10262:69	'Markdown supports ordered (numbered) and unordered (bulleted) lists.
+'
+	* (33) 0:69	'Markdown supports ordered (numbered) and unordered (bulleted) lists.
+'
+	- (131) 0:26	'Markdown supports ordered '
+	- (184) 26:1	'('
+		+ (131) 27:8	'numbered'
+	- (164) 35:1	')'
+	- (131) 36:15	' and unordered '
+	- (184) 51:1	'('
+		+ (131) 52:8	'bulleted'
+	- (164) 60:1	')'
+	- (131) 61:7	' lists.'
+	- (129) 68:1	'
+'
+* (74) 10331:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10332:89	'Unordered lists use asterisks, pluses, and hyphens -- interchangably
+-- as list markers:
+'
+	* (33) 0:69	'Unordered lists use asterisks, pluses, and hyphens -- interchangably
+'
+	* (33) 69:20	'-- as list markers:
+'
+	- (131) 0:51	'Unordered lists use asterisks, pluses, and hyphens '
+	- (161) 51:2	'--'
+	- (131) 53:15	' interchangably'
+	- (129) 68:1	'
+'
+	- (161) 69:2	'--'
+	- (131) 71:16	' as list markers'
+	- (144) 87:1	':'
+	- (129) 88:1	'
+'
+* (74) 10421:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 10422:39	'    *   Red
+    *   Green
+    *   Blue
+'
+	* (28) 0:12	'    *   Red
+'
+	* (28) 12:14	'    *   Green
+'
+	* (28) 26:13	'    *   Blue
+'
+* (74) 10461:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10462:18	'is equivalent to:
+'
+	* (33) 0:18	'is equivalent to:
+'
+	- (131) 0:16	'is equivalent to'
+	- (144) 16:1	':'
+	- (129) 17:1	'
+'
+* (74) 10480:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 10481:39	'    +   Red
+    +   Green
+    +   Blue
+'
+	* (28) 0:12	'    +   Red
+'
+	* (28) 12:14	'    +   Green
+'
+	* (28) 26:13	'    +   Blue
+'
+* (74) 10520:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10521:5	'and:
+'
+	* (33) 0:5	'and:
+'
+	- (131) 0:3	'and'
+	- (144) 3:1	':'
+	- (129) 4:1	'
+'
+* (74) 10526:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 10527:39	'    -   Red
+    -   Green
+    -   Blue
+'
+	* (28) 0:12	'    -   Red
+'
+	* (28) 12:14	'    -   Green
+'
+	* (28) 26:13	'    -   Blue
+'
+* (74) 10566:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10567:47	'Ordered lists use numbers followed by periods:
+'
+	* (33) 0:47	'Ordered lists use numbers followed by periods:
+'
+	- (131) 0:45	'Ordered lists use numbers followed by periods'
+	- (144) 45:1	':'
+	- (129) 46:1	'
+'
+* (74) 10614:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 10615:43	'    1.  Bird
+    2.  McHale
+    3.  Parish
+'
+	* (28) 0:13	'    1.  Bird
+'
+	* (28) 13:15	'    2.  McHale
+'
+	* (28) 28:15	'    3.  Parish
+'
+* (74) 10658:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10659:176	'It's important to note that the actual numbers you use to mark the
+list have no effect on the HTML output Markdown produces. The HTML
+Markdown produces from the above list is:
+'
+	* (33) 0:67	'It's important to note that the actual numbers you use to mark the
+'
+	* (33) 67:67	'list have no effect on the HTML output Markdown produces. The HTML
+'
+	* (33) 134:42	'Markdown produces from the above list is:
+'
+	- (131) 0:2	'It'
+	- (155) 2:1	'''
+	- (131) 3:63	's important to note that the actual numbers you use to mark the'
+	- (129) 66:1	'
+'
+	- (131) 67:66	'list have no effect on the HTML output Markdown produces. The HTML'
+	- (129) 133:1	'
+'
+	- (131) 134:40	'Markdown produces from the above list is'
+	- (144) 174:1	':'
+	- (129) 175:1	'
+'
+* (74) 10835:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 10836:77	'    <ol>
+    <li>Bird</li>
+    <li>McHale</li>
+    <li>Parish</li>
+    </ol>
+'
+	* (28) 0:9	'    <ol>
+'
+	* (28) 9:18	'    <li>Bird</li>
+'
+	* (28) 27:20	'    <li>McHale</li>
+'
+	* (28) 47:20	'    <li>Parish</li>
+'
+	* (28) 67:10	'    </ol>
+'
+* (74) 10913:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 10914:53	'If you instead wrote the list in Markdown like this:
+'
+	* (33) 0:53	'If you instead wrote the list in Markdown like this:
+'
+	- (131) 0:51	'If you instead wrote the list in Markdown like this'
+	- (144) 51:1	':'
+	- (129) 52:1	'
+'
+* (74) 10967:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 10968:43	'    1.  Bird
+    1.  McHale
+    1.  Parish
+'
+	* (28) 0:13	'    1.  Bird
+'
+	* (28) 13:15	'    1.  McHale
+'
+	* (28) 28:15	'    1.  Parish
+'
+* (74) 11011:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 11012:9	'or even:
+'
+	* (33) 0:9	'or even:
+'
+	- (131) 0:7	'or even'
+	- (144) 7:1	':'
+	- (129) 8:1	'
+'
+* (74) 11021:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 11022:40	'    3. Bird
+    1. McHale
+    8. Parish
+'
+	* (28) 0:12	'    3. Bird
+'
+	* (28) 12:14	'    1. McHale
+'
+	* (28) 26:14	'    8. Parish
+'
+* (74) 11062:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 11063:252	'you'd get the exact same HTML output. The point is, if you want to,
+you can use ordinal numbers in your ordered Markdown lists, so that
+the numbers in your source match the numbers in your published HTML.
+But if you want to be lazy, you don't have to.
+'
+	* (33) 0:68	'you'd get the exact same HTML output. The point is, if you want to,
+'
+	* (33) 68:68	'you can use ordinal numbers in your ordered Markdown lists, so that
+'
+	* (33) 136:69	'the numbers in your source match the numbers in your published HTML.
+'
+	* (33) 205:47	'But if you want to be lazy, you don't have to.
+'
+	- (131) 0:3	'you'
+	- (155) 3:1	'''
+	- (131) 4:63	'd get the exact same HTML output. The point is, if you want to,'
+	- (129) 67:1	'
+'
+	- (131) 68:67	'you can use ordinal numbers in your ordered Markdown lists, so that'
+	- (129) 135:1	'
+'
+	- (131) 136:68	'the numbers in your source match the numbers in your published HTML.'
+	- (129) 204:1	'
+'
+	- (131) 205:35	'But if you want to be lazy, you don'
+	- (155) 240:1	'''
+	- (131) 241:10	't have to.'
+	- (129) 251:1	'
+'
+* (74) 11315:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 11316:192	'If you do use lazy list numbering, however, you should still start the
+list with the number 1. At some point in the future, Markdown may support
+starting ordered lists at an arbitrary number.
+'
+	* (33) 0:71	'If you do use lazy list numbering, however, you should still start the
+'
+	* (33) 71:74	'list with the number 1. At some point in the future, Markdown may support
+'
+	* (33) 145:47	'starting ordered lists at an arbitrary number.
+'
+	- (131) 0:70	'If you do use lazy list numbering, however, you should still start the'
+	- (129) 70:1	'
+'
+	- (131) 71:21	'list with the number '
+	- (142) 92:2	'1.'
+	- (131) 94:50	' At some point in the future, Markdown may support'
+	- (129) 144:1	'
+'
+	- (131) 145:46	'starting ordered lists at an arbitrary number.'
+	- (129) 191:1	'
+'
+* (74) 11508:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 11509:154	'List markers typically start at the left margin, but may be indented by
+up to three spaces. List markers must be followed by one or more spaces
+or a tab.
+'
+	* (33) 0:72	'List markers typically start at the left margin, but may be indented by
+'
+	* (33) 72:72	'up to three spaces. List markers must be followed by one or more spaces
+'
+	* (33) 144:10	'or a tab.
+'
+	- (131) 0:71	'List markers typically start at the left margin, but may be indented by'
+	- (129) 71:1	'
+'
+	- (131) 72:71	'up to three spaces. List markers must be followed by one or more spaces'
+	- (129) 143:1	'
+'
+	- (131) 144:9	'or a tab.'
+	- (129) 153:1	'
+'
+* (74) 11663:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 11664:66	'To make lists look nice, you can wrap items with hanging indents:
+'
+	* (33) 0:66	'To make lists look nice, you can wrap items with hanging indents:
+'
+	- (131) 0:64	'To make lists look nice, you can wrap items with hanging indents'
+	- (144) 64:1	':'
+	- (129) 65:1	'
+'
+* (74) 11730:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 11731:322	'    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+        Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+        viverra nec, fringilla in, laoreet vitae, risus.
+    *   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+        Suspendisse id sem consectetuer libero luctus adipiscing.
+'
+	* (28) 0:66	'    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+'
+	* (28) 66:67	'        Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+'
+	* (28) 133:57	'        viverra nec, fringilla in, laoreet vitae, risus.
+'
+	* (28) 190:66	'    *   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+'
+	* (28) 256:66	'        Suspendisse id sem consectetuer libero luctus adipiscing.
+'
+* (74) 12053:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 12054:47	'But if you want to be lazy, you don't have to:
+'
+	* (33) 0:47	'But if you want to be lazy, you don't have to:
+'
+	- (131) 0:35	'But if you want to be lazy, you don'
+	- (155) 35:1	'''
+	- (131) 36:9	't have to'
+	- (144) 45:1	':'
+	- (129) 46:1	'
+'
+* (74) 12101:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 12102:310	'    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+    viverra nec, fringilla in, laoreet vitae, risus.
+    *   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+    Suspendisse id sem consectetuer libero luctus adipiscing.
+'
+	* (28) 0:66	'    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+'
+	* (28) 66:63	'    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+'
+	* (28) 129:53	'    viverra nec, fringilla in, laoreet vitae, risus.
+'
+	* (28) 182:66	'    *   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+'
+	* (28) 248:62	'    Suspendisse id sem consectetuer libero luctus adipiscing.
+'
+* (74) 12412:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 12413:132	'If list items are separated by blank lines, Markdown will wrap the
+items in `<p>` tags in the HTML output. For example, this input:
+'
+	* (33) 0:67	'If list items are separated by blank lines, Markdown will wrap the
+'
+	* (33) 67:65	'items in `<p>` tags in the HTML output. For example, this input:
+'
+	- (131) 0:66	'If list items are separated by blank lines, Markdown will wrap the'
+	- (129) 66:1	'
+'
+	- (131) 67:9	'items in '
+	- (172) 76:1	'`'
+		+ (171) 77:1	'<'
+			+ (131) 78:1	'p'
+		+ (168) 79:1	'>'
+	- (154) 80:1	'`'
+	- (131) 81:49	' tags in the HTML output. For example, this input'
+	- (144) 130:1	':'
+	- (129) 131:1	'
+'
+* (74) 12545:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 12546:27	'    *   Bird
+    *   Magic
+'
+	* (28) 0:13	'    *   Bird
+'
+	* (28) 13:14	'    *   Magic
+'
+* (74) 12573:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 12574:16	'will turn into:
+'
+	* (33) 0:16	'will turn into:
+'
+	- (131) 0:14	'will turn into'
+	- (144) 14:1	':'
+	- (129) 15:1	'
+'
+* (74) 12590:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 12591:56	'    <ul>
+    <li>Bird</li>
+    <li>Magic</li>
+    </ul>
+'
+	* (28) 0:9	'    <ul>
+'
+	* (28) 9:18	'    <li>Bird</li>
+'
+	* (28) 27:19	'    <li>Magic</li>
+'
+	* (28) 46:10	'    </ul>
+'
+* (74) 12647:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 12648:10	'But this:
+'
+	* (33) 0:10	'But this:
+'
+	- (131) 0:8	'But this'
+	- (144) 8:1	':'
+	- (129) 9:1	'
+'
+* (74) 12658:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 12659:28	'    *   Bird
+
+    *   Magic
+'
+	* (28) 0:13	'    *   Bird
+'
+	* (16) 13:1	'
+'
+	* (28) 14:14	'    *   Magic
+'
+* (74) 12687:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 12688:16	'will turn into:
+'
+	* (33) 0:16	'will turn into:
+'
+	- (131) 0:14	'will turn into'
+	- (144) 14:1	':'
+	- (129) 15:1	'
+'
+* (74) 12704:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 12705:70	'    <ul>
+    <li><p>Bird</p></li>
+    <li><p>Magic</p></li>
+    </ul>
+'
+	* (28) 0:9	'    <ul>
+'
+	* (28) 9:25	'    <li><p>Bird</p></li>
+'
+	* (28) 34:26	'    <li><p>Magic</p></li>
+'
+	* (28) 60:10	'    </ul>
+'
+* (74) 12775:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 12776:136	'List items may consist of multiple paragraphs. Each subsequent
+paragraph in a list item must be indented by either 4 spaces
+or one tab:
+'
+	* (33) 0:63	'List items may consist of multiple paragraphs. Each subsequent
+'
+	* (33) 63:61	'paragraph in a list item must be indented by either 4 spaces
+'
+	* (33) 124:12	'or one tab:
+'
+	- (131) 0:62	'List items may consist of multiple paragraphs. Each subsequent'
+	- (129) 62:1	'
+'
+	- (131) 63:60	'paragraph in a list item must be indented by either 4 spaces'
+	- (129) 123:1	'
+'
+	- (131) 124:10	'or one tab'
+	- (144) 134:1	':'
+	- (129) 135:1	'
+'
+* (74) 12912:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 12913:381	'    1.  This is a list item with two paragraphs. Lorem ipsum dolor
+        sit amet, consectetuer adipiscing elit. Aliquam hendrerit
+        mi posuere lectus.
+
+        Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+        vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
+        sit amet velit.
+
+    2.  Suspendisse id sem consectetuer libero luctus adipiscing.
+'
+	* (28) 0:67	'    1.  This is a list item with two paragraphs. Lorem ipsum dolor
+'
+	* (28) 67:66	'        sit amet, consectetuer adipiscing elit. Aliquam hendrerit
+'
+	* (28) 133:27	'        mi posuere lectus.
+'
+	* (16) 160:1	'
+'
+	* (28) 161:65	'        Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+'
+	* (28) 226:64	'        vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
+'
+	* (28) 290:24	'        sit amet velit.
+'
+	* (16) 314:1	'
+'
+	* (28) 315:66	'    2.  Suspendisse id sem consectetuer libero luctus adipiscing.
+'
+* (74) 13294:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 13295:121	'It looks nice if you indent every line of the subsequent
+paragraphs, but here again, Markdown will allow you to be
+lazy:
+'
+	* (33) 0:57	'It looks nice if you indent every line of the subsequent
+'
+	* (33) 57:58	'paragraphs, but here again, Markdown will allow you to be
+'
+	* (33) 115:6	'lazy:
+'
+	- (131) 0:56	'It looks nice if you indent every line of the subsequent'
+	- (129) 56:1	'
+'
+	- (131) 57:57	'paragraphs, but here again, Markdown will allow you to be'
+	- (129) 114:1	'
+'
+	- (131) 115:4	'lazy'
+	- (144) 119:1	':'
+	- (129) 120:1	'
+'
+* (74) 13416:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 13417:258	'    *   This is a list item with two paragraphs.
+
+        This is the second paragraph in the list item. You're
+    only required to indent the first line. Lorem ipsum dolor
+    sit amet, consectetuer adipiscing elit.
+
+    *   Another item in the same list.
+'
+	* (28) 0:49	'    *   This is a list item with two paragraphs.
+'
+	* (16) 49:1	'
+'
+	* (28) 50:62	'        This is the second paragraph in the list item. You're
+'
+	* (28) 112:62	'    only required to indent the first line. Lorem ipsum dolor
+'
+	* (28) 174:44	'    sit amet, consectetuer adipiscing elit.
+'
+	* (16) 218:1	'
+'
+	* (28) 219:39	'    *   Another item in the same list.
+'
+* (74) 13675:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 13676:93	'To put a blockquote within a list item, the blockquote's `>`
+delimiters need to be indented:
+'
+	* (33) 0:61	'To put a blockquote within a list item, the blockquote's `>`
+'
+	* (33) 61:32	'delimiters need to be indented:
+'
+	- (131) 0:54	'To put a blockquote within a list item, the blockquote'
+	- (155) 54:1	'''
+	- (131) 55:2	's '
+	- (172) 57:1	'`'
+		+ (168) 58:1	'>'
+	- (154) 59:1	'`'
+	- (129) 60:1	'
+'
+	- (131) 61:30	'delimiters need to be indented'
+	- (144) 91:1	':'
+	- (129) 92:1	'
+'
+* (74) 13769:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 13770:101	'    *   A list item with a blockquote:
+
+        > This is a blockquote
+        > inside a list item.
+'
+	* (28) 0:39	'    *   A list item with a blockquote:
+'
+	* (16) 39:1	'
+'
+	* (28) 40:31	'        > This is a blockquote
+'
+	* (28) 71:30	'        > inside a list item.
+'
+* (74) 13871:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 13872:109	'To put a code block within a list item, the code block needs
+to be indented *twice* -- 8 spaces or two tabs:
+'
+	* (33) 0:61	'To put a code block within a list item, the code block needs
+'
+	* (33) 61:48	'to be indented *twice* -- 8 spaces or two tabs:
+'
+	- (131) 0:60	'To put a code block within a list item, the code block needs'
+	- (129) 60:1	'
+'
+	- (131) 61:15	'to be indented '
+	- (192) 76:1	'*'
+		+ (131) 77:5	'twice'
+	- (139) 82:1	'*'
+	- (131) 83:1	' '
+	- (161) 84:2	'--'
+	- (131) 86:21	' 8 spaces or two tabs'
+	- (144) 107:1	':'
+	- (129) 108:1	'
+'
+* (74) 13981:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 13982:69	'    *   A list item with a code block:
+
+            <code goes here>
+'
+	* (28) 0:39	'    *   A list item with a code block:
+'
+	* (16) 39:1	'
+'
+	* (28) 40:29	'            <code goes here>
+'
+* (74) 14051:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (92) 14053:109	'It's worth noting that it's possible to trigger an ordered list by
+accident, by writing something like this:
+'
+	* (33) 0:67	'It's worth noting that it's possible to trigger an ordered list by
+'
+	* (33) 67:42	'accident, by writing something like this:
+'
+	- (131) 0:2	'It'
+	- (155) 2:1	'''
+	- (131) 3:22	's worth noting that it'
+	- (155) 25:1	'''
+	- (131) 26:40	's possible to trigger an ordered list by'
+	- (129) 66:1	'
+'
+	- (131) 67:40	'accident, by writing something like this'
+	- (144) 107:1	':'
+	- (129) 108:1	'
+'
+* (74) 14162:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 14163:31	'    1986. What a great season.
+'
+	* (28) 0:31	'    1986. What a great season.
+'
+* (74) 14194:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 14195:129	'In other words, a *number-period-space* sequence at the beginning of a
+line. To avoid this, you can backslash-escape the period:
+'
+	* (33) 0:71	'In other words, a *number-period-space* sequence at the beginning of a
+'
+	* (33) 71:58	'line. To avoid this, you can backslash-escape the period:
+'
+	- (131) 0:18	'In other words, a '
+	- (192) 18:1	'*'
+		+ (131) 19:6	'number'
+		+ (141) 25:1	'-'
+		+ (131) 26:6	'period'
+		+ (141) 32:1	'-'
+		+ (131) 33:5	'space'
+	- (139) 38:1	'*'
+	- (131) 39:31	' sequence at the beginning of a'
+	- (129) 70:1	'
+'
+	- (131) 71:38	'line. To avoid this, you can backslash'
+	- (141) 109:1	'-'
+	- (131) 110:17	'escape the period'
+	- (144) 127:1	':'
+	- (129) 128:1	'
+'
+* (74) 14324:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 14325:32	'    1986\. What a great season.
+'
+	* (28) 0:32	'    1986\. What a great season.
+'
+* (74) 14357:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 14360:34	'<h3 id="precode">Code Blocks</h3>
+'
+	* (26) 0:34	'<h3 id="precode">Code Blocks</h3>
+'
+* (74) 14394:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 14395:243	'Pre-formatted code blocks are used for writing about programming or
+markup source code. Rather than forming normal paragraphs, the lines
+of a code block are interpreted literally. Markdown wraps a code block
+in both `<pre>` and `<code>` tags.
+'
+	* (33) 0:68	'Pre-formatted code blocks are used for writing about programming or
+'
+	* (33) 68:69	'markup source code. Rather than forming normal paragraphs, the lines
+'
+	* (33) 137:71	'of a code block are interpreted literally. Markdown wraps a code block
+'
+	* (33) 208:35	'in both `<pre>` and `<code>` tags.
+'
+	- (131) 0:3	'Pre'
+	- (141) 3:1	'-'
+	- (131) 4:63	'formatted code blocks are used for writing about programming or'
+	- (129) 67:1	'
+'
+	- (131) 68:68	'markup source code. Rather than forming normal paragraphs, the lines'
+	- (129) 136:1	'
+'
+	- (131) 137:70	'of a code block are interpreted literally. Markdown wraps a code block'
+	- (129) 207:1	'
+'
+	- (131) 208:8	'in both '
+	- (172) 216:1	'`'
+		+ (171) 217:1	'<'
+			+ (131) 218:3	'pre'
+		+ (168) 221:1	'>'
+	- (154) 222:1	'`'
+	- (131) 223:5	' and '
+	- (172) 228:1	'`'
+		+ (171) 229:1	'<'
+			+ (131) 230:4	'code'
+		+ (168) 234:1	'>'
+	- (154) 235:1	'`'
+	- (131) 236:6	' tags.'
+	- (129) 242:1	'
+'
+* (74) 14638:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 14639:137	'To produce a code block in Markdown, simply indent every line of the
+block by at least 4 spaces or 1 tab. For example, given this input:
+'
+	* (33) 0:69	'To produce a code block in Markdown, simply indent every line of the
+'
+	* (33) 69:68	'block by at least 4 spaces or 1 tab. For example, given this input:
+'
+	- (131) 0:68	'To produce a code block in Markdown, simply indent every line of the'
+	- (129) 68:1	'
+'
+	- (131) 69:66	'block by at least 4 spaces or 1 tab. For example, given this input'
+	- (144) 135:1	':'
+	- (129) 136:1	'
+'
+* (74) 14776:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 14777:63	'    This is a normal paragraph:
+
+        This is a code block.
+'
+	* (28) 0:32	'    This is a normal paragraph:
+'
+	* (16) 32:1	'
+'
+	* (28) 33:30	'        This is a code block.
+'
+* (74) 14840:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 14841:24	'Markdown will generate:
+'
+	* (33) 0:24	'Markdown will generate:
+'
+	- (131) 0:22	'Markdown will generate'
+	- (144) 22:1	':'
+	- (129) 23:1	'
+'
+* (74) 14865:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 14866:95	'    <p>This is a normal paragraph:</p>
+
+    <pre><code>This is a code block.
+    </code></pre>
+'
+	* (28) 0:39	'    <p>This is a normal paragraph:</p>
+'
+	* (16) 39:1	'
+'
+	* (28) 40:37	'    <pre><code>This is a code block.
+'
+	* (28) 77:18	'    </code></pre>
+'
+* (74) 14961:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 14962:113	'One level of indentation -- 4 spaces or 1 tab -- is removed from each
+line of the code block. For example, this:
+'
+	* (33) 0:70	'One level of indentation -- 4 spaces or 1 tab -- is removed from each
+'
+	* (33) 70:43	'line of the code block. For example, this:
+'
+	- (131) 0:25	'One level of indentation '
+	- (161) 25:2	'--'
+	- (131) 27:19	' 4 spaces or 1 tab '
+	- (161) 46:2	'--'
+	- (131) 48:21	' is removed from each'
+	- (129) 69:1	'
+'
+	- (131) 70:41	'line of the code block. For example, this'
+	- (144) 111:1	':'
+	- (129) 112:1	'
+'
+* (74) 15075:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 15076:105	'    Here is an example of AppleScript:
+
+        tell application "Foo"
+            beep
+        end tell
+'
+	* (28) 0:39	'    Here is an example of AppleScript:
+'
+	* (16) 39:1	'
+'
+	* (28) 40:31	'        tell application "Foo"
+'
+	* (28) 71:17	'            beep
+'
+	* (28) 88:17	'        end tell
+'
+* (74) 15181:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 15182:16	'will turn into:
+'
+	* (33) 0:16	'will turn into:
+'
+	- (131) 0:14	'will turn into'
+	- (144) 14:1	':'
+	- (129) 15:1	'
+'
+* (74) 15198:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 15199:129	'    <p>Here is an example of AppleScript:</p>
+
+    <pre><code>tell application "Foo"
+        beep
+    end tell
+    </code></pre>
+'
+	* (28) 0:46	'    <p>Here is an example of AppleScript:</p>
+'
+	* (16) 46:1	'
+'
+	* (28) 47:38	'    <pre><code>tell application "Foo"
+'
+	* (28) 85:13	'        beep
+'
+	* (28) 98:13	'    end tell
+'
+	* (28) 111:18	'    </code></pre>
+'
+* (74) 15328:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 15329:97	'A code block continues until it reaches a line that is not indented
+(or the end of the article).
+'
+	* (33) 0:68	'A code block continues until it reaches a line that is not indented
+'
+	* (33) 68:29	'(or the end of the article).
+'
+	- (131) 0:67	'A code block continues until it reaches a line that is not indented'
+	- (129) 67:1	'
+'
+	- (184) 68:1	'('
+		+ (131) 69:25	'or the end of the article'
+	- (164) 94:1	')'
+	- (131) 95:1	'.'
+	- (129) 96:1	'
+'
+* (74) 15426:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 15427:328	'Within a code block, ampersands (`&`) and angle brackets (`<` and `>`)
+are automatically converted into HTML entities. This makes it very
+easy to include example HTML source code using Markdown -- just paste
+it and indent it, and Markdown will handle the hassle of encoding the
+ampersands and angle brackets. For example, this:
+'
+	* (33) 0:71	'Within a code block, ampersands (`&`) and angle brackets (`<` and `>`)
+'
+	* (33) 71:67	'are automatically converted into HTML entities. This makes it very
+'
+	* (33) 138:70	'easy to include example HTML source code using Markdown -- just paste
+'
+	* (33) 208:70	'it and indent it, and Markdown will handle the hassle of encoding the
+'
+	* (33) 278:50	'ampersands and angle brackets. For example, this:
+'
+	- (131) 0:32	'Within a code block, ampersands '
+	- (184) 32:1	'('
+		+ (172) 33:1	'`'
+			+ (135) 34:1	'&'
+		+ (154) 35:1	'`'
+	- (164) 36:1	')'
+	- (131) 37:20	' and angle brackets '
+	- (184) 57:1	'('
+		+ (172) 58:1	'`'
+			+ (167) 59:1	'<'
+		+ (154) 60:1	'`'
+		+ (131) 61:5	' and '
+		+ (172) 66:1	'`'
+			+ (168) 67:1	'>'
+		+ (154) 68:1	'`'
+	- (164) 69:1	')'
+	- (129) 70:1	'
+'
+	- (131) 71:66	'are automatically converted into HTML entities. This makes it very'
+	- (129) 137:1	'
+'
+	- (131) 138:56	'easy to include example HTML source code using Markdown '
+	- (161) 194:2	'--'
+	- (131) 196:11	' just paste'
+	- (129) 207:1	'
+'
+	- (131) 208:69	'it and indent it, and Markdown will handle the hassle of encoding the'
+	- (129) 277:1	'
+'
+	- (131) 278:48	'ampersands and angle brackets. For example, this'
+	- (144) 326:1	':'
+	- (129) 327:1	'
+'
+* (74) 15755:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 15756:84	'        <div class="footer">
+            &copy; 2004 Foo Corporation
+        </div>
+'
+	* (28) 0:29	'        <div class="footer">
+'
+	* (28) 29:40	'            &copy; 2004 Foo Corporation
+'
+	* (28) 69:15	'        </div>
+'
+* (74) 15840:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 15841:16	'will turn into:
+'
+	* (33) 0:16	'will turn into:
+'
+	- (131) 0:14	'will turn into'
+	- (144) 14:1	':'
+	- (129) 15:1	'
+'
+* (74) 15857:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 15858:117	'    <pre><code>&lt;div class="footer"&gt;
+        &amp;copy; 2004 Foo Corporation
+    &lt;/div&gt;
+    </code></pre>
+'
+	* (28) 0:42	'    <pre><code>&lt;div class="footer"&gt;
+'
+	* (28) 42:40	'        &amp;copy; 2004 Foo Corporation
+'
+	* (28) 82:17	'    &lt;/div&gt;
+'
+	* (28) 99:18	'    </code></pre>
+'
+* (74) 15975:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 15976:205	'Regular Markdown syntax is not processed within code blocks. E.g.,
+asterisks are just literal asterisks within a code block. This means
+it's also easy to use Markdown to write about Markdown's own syntax.
+'
+	* (33) 0:67	'Regular Markdown syntax is not processed within code blocks. E.g.,
+'
+	* (33) 67:69	'asterisks are just literal asterisks within a code block. This means
+'
+	* (33) 136:69	'it's also easy to use Markdown to write about Markdown's own syntax.
+'
+	- (131) 0:66	'Regular Markdown syntax is not processed within code blocks. E.g.,'
+	- (129) 66:1	'
+'
+	- (131) 67:68	'asterisks are just literal asterisks within a code block. This means'
+	- (129) 135:1	'
+'
+	- (131) 136:2	'it'
+	- (155) 138:1	'''
+	- (131) 139:51	's also easy to use Markdown to write about Markdown'
+	- (155) 190:1	'''
+	- (131) 191:13	's own syntax.'
+	- (129) 204:1	'
+'
+* (74) 16181:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 16184:34	'<h3 id="hr">Horizontal Rules</h3>
+'
+	* (26) 0:34	'<h3 id="hr">Horizontal Rules</h3>
+'
+* (74) 16218:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 16219:260	'You can produce a horizontal rule tag (`<hr />`) by placing three or
+more hyphens, asterisks, or underscores on a line by themselves. If you
+wish, you may use spaces between the hyphens or asterisks. Each of the
+following lines will produce a horizontal rule:
+'
+	* (33) 0:69	'You can produce a horizontal rule tag (`<hr />`) by placing three or
+'
+	* (33) 69:72	'more hyphens, asterisks, or underscores on a line by themselves. If you
+'
+	* (33) 141:71	'wish, you may use spaces between the hyphens or asterisks. Each of the
+'
+	* (33) 212:48	'following lines will produce a horizontal rule:
+'
+	- (131) 0:38	'You can produce a horizontal rule tag '
+	- (184) 38:1	'('
+		+ (172) 39:1	'`'
+			+ (171) 40:1	'<'
+				+ (131) 41:4	'hr /'
+			+ (168) 45:1	'>'
+		+ (154) 46:1	'`'
+	- (164) 47:1	')'
+	- (131) 48:20	' by placing three or'
+	- (129) 68:1	'
+'
+	- (131) 69:71	'more hyphens, asterisks, or underscores on a line by themselves. If you'
+	- (129) 140:1	'
+'
+	- (131) 141:70	'wish, you may use spaces between the hyphens or asterisks. Each of the'
+	- (129) 211:1	'
+'
+	- (131) 212:46	'following lines will produce a horizontal rule'
+	- (144) 258:1	':'
+	- (129) 259:1	'
+'
+* (74) 16479:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 16480:86	'    * * *
+
+    ***
+
+    *****
+
+    - - -
+
+    ---------------------------------------
+'
+	* (28) 0:10	'    * * *
+'
+	* (16) 10:1	'
+'
+	* (28) 11:8	'    ***
+'
+	* (16) 19:1	'
+'
+	* (28) 20:10	'    *****
+'
+	* (16) 30:1	'
+'
+	* (28) 31:10	'    - - -
+'
+	* (16) 41:1	'
+'
+	* (28) 42:44	'    ---------------------------------------
+'
+* (74) 16566:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (83) 16568:6	'* * *
+'
+	* (24) 0:6	'* * *
+'
+	- (139) 0:1	'*'
+	- (131) 1:1	' '
+	- (139) 2:1	'*'
+	- (131) 3:1	' '
+	- (139) 4:1	'*'
+	- (129) 5:1	'
+'
+* (74) 16574:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 16575:33	'<h2 id="span">Span Elements</h2>
+'
+	* (26) 0:33	'<h2 id="span">Span Elements</h2>
+'
+* (74) 16608:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 16609:25	'<h3 id="link">Links</h3>
+'
+	* (26) 0:25	'<h3 id="link">Links</h3>
+'
+* (74) 16634:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 16635:64	'Markdown supports two style of links: *inline* and *reference*.
+'
+	* (32) 0:64	'Markdown supports two style of links: *inline* and *reference*.
+'
+	- (131) 0:36	'Markdown supports two style of links'
+	- (144) 36:1	':'
+	- (131) 37:1	' '
+	- (192) 38:1	'*'
+		+ (131) 39:6	'inline'
+	- (139) 45:1	'*'
+	- (131) 46:5	' and '
+	- (192) 51:1	'*'
+		+ (131) 52:9	'reference'
+	- (139) 61:1	'*'
+	- (131) 62:1	'.'
+	- (129) 63:1	'
+'
+* (74) 16699:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 16700:65	'In both styles, the link text is delimited by [square brackets].
+'
+	* (33) 0:65	'In both styles, the link text is delimited by [square brackets].
+'
+	- (131) 0:46	'In both styles, the link text is delimited by '
+	- (174) 46:1	'['
+		+ (131) 47:15	'square brackets'
+	- (166) 62:1	']'
+	- (131) 63:1	'.'
+	- (129) 64:1	'
+'
+* (74) 16765:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 16766:267	'To create an inline link, use a set of regular parentheses immediately
+after the link text's closing square bracket. Inside the parentheses,
+put the URL where you want the link to point, along with an *optional*
+title for the link, surrounded in quotes. For example:
+'
+	* (33) 0:71	'To create an inline link, use a set of regular parentheses immediately
+'
+	* (33) 71:70	'after the link text's closing square bracket. Inside the parentheses,
+'
+	* (33) 141:71	'put the URL where you want the link to point, along with an *optional*
+'
+	* (33) 212:55	'title for the link, surrounded in quotes. For example:
+'
+	- (131) 0:70	'To create an inline link, use a set of regular parentheses immediately'
+	- (129) 70:1	'
+'
+	- (131) 71:19	'after the link text'
+	- (155) 90:1	'''
+	- (131) 91:49	's closing square bracket. Inside the parentheses,'
+	- (129) 140:1	'
+'
+	- (131) 141:60	'put the URL where you want the link to point, along with an '
+	- (192) 201:1	'*'
+		+ (131) 202:8	'optional'
+	- (139) 210:1	'*'
+	- (129) 211:1	'
+'
+	- (131) 212:53	'title for the link, surrounded in quotes. For example'
+	- (144) 265:1	':'
+	- (129) 266:1	'
+'
+* (74) 17033:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 17034:129	'    This is [an example](http://example.com/ "Title") inline link.
+
+    [This link](http://example.net/) has no title attribute.
+'
+	* (28) 0:67	'    This is [an example](http://example.com/ "Title") inline link.
+'
+	* (16) 67:1	'
+'
+	* (28) 68:61	'    [This link](http://example.net/) has no title attribute.
+'
+* (74) 17163:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 17164:14	'Will produce:
+'
+	* (33) 0:14	'Will produce:
+'
+	- (131) 0:12	'Will produce'
+	- (144) 12:1	':'
+	- (129) 13:1	'
+'
+* (74) 17178:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 17179:180	'    <p>This is <a href="http://example.com/" title="Title">
+    an example</a> inline link.</p>
+
+    <p><a href="http://example.net/">This link</a> has no
+    title attribute.</p>
+'
+	* (28) 0:60	'    <p>This is <a href="http://example.com/" title="Title">
+'
+	* (28) 60:36	'    an example</a> inline link.</p>
+'
+	* (16) 96:1	'
+'
+	* (28) 97:58	'    <p><a href="http://example.net/">This link</a> has no
+'
+	* (28) 155:25	'    title attribute.</p>
+'
+* (74) 17359:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 17360:88	'If you're referring to a local resource on the same server, you can
+use relative paths:
+'
+	* (33) 0:68	'If you're referring to a local resource on the same server, you can
+'
+	* (33) 68:20	'use relative paths:
+'
+	- (131) 0:6	'If you'
+	- (155) 6:1	'''
+	- (131) 7:60	're referring to a local resource on the same server, you can'
+	- (129) 67:1	'
+'
+	- (131) 68:18	'use relative paths'
+	- (144) 86:1	':'
+	- (129) 87:1	'
+'
+* (74) 17448:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 17449:49	'    See my [About](/about/) page for details.   
+'
+	* (28) 0:49	'    See my [About](/about/) page for details.   
+'
+* (74) 17498:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 17499:129	'Reference-style links use a second set of square brackets, inside
+which you place a label of your choosing to identify the link:
+'
+	* (33) 0:66	'Reference-style links use a second set of square brackets, inside
+'
+	* (33) 66:63	'which you place a label of your choosing to identify the link:
+'
+	- (131) 0:9	'Reference'
+	- (141) 9:1	'-'
+	- (131) 10:55	'style links use a second set of square brackets, inside'
+	- (129) 65:1	'
+'
+	- (131) 66:61	'which you place a label of your choosing to identify the link'
+	- (144) 127:1	':'
+	- (129) 128:1	'
+'
+* (74) 17628:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 17629:51	'    This is [an example][id] reference-style link.
+'
+	* (28) 0:51	'    This is [an example][id] reference-style link.
+'
+* (74) 17680:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 17681:65	'You can optionally use a space to separate the sets of brackets:
+'
+	* (33) 0:65	'You can optionally use a space to separate the sets of brackets:
+'
+	- (131) 0:63	'You can optionally use a space to separate the sets of brackets'
+	- (144) 63:1	':'
+	- (129) 64:1	'
+'
+* (74) 17746:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 17747:52	'    This is [an example] [id] reference-style link.
+'
+	* (28) 0:52	'    This is [an example] [id] reference-style link.
+'
+* (74) 17799:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 17800:91	'Then, anywhere in the document, you define your link label like this,
+on a line by itself:
+'
+	* (33) 0:70	'Then, anywhere in the document, you define your link label like this,
+'
+	* (33) 70:21	'on a line by itself:
+'
+	- (131) 0:69	'Then, anywhere in the document, you define your link label like this,'
+	- (129) 69:1	'
+'
+	- (131) 70:19	'on a line by itself'
+	- (144) 89:1	':'
+	- (129) 90:1	'
+'
+* (74) 17891:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 17892:53	'    [id]: http://example.com/  "Optional Title Here"
+'
+	* (28) 0:53	'    [id]: http://example.com/  "Optional Title Here"
+'
+* (74) 17945:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 17946:9	'That is:
+'
+	* (33) 0:9	'That is:
+'
+	- (131) 0:7	'That is'
+	- (144) 7:1	':'
+	- (129) 8:1	'
+'
+* (74) 17955:1	'
+'
+	* (16) 0:1	'
+'
+* (85) 17956:362	'*   Square brackets containing the link identifier (optionally
+    indented from the left margin using up to three spaces);
+*   followed by a colon;
+*   followed by one or more spaces (or tabs);
+*   followed by the URL for the link;
+*   optionally followed by a title attribute for the link, enclosed
+    in double or single quotes, or enclosed in parentheses.
+
+'
+	* (90) 0:124	'*   Square brackets containing the link identifier (optionally
+    indented from the left margin using up to three spaces);
+'
+		* (92) 0:124	'*   Square brackets containing the link identifier (optionally
+    indented from the left margin using up to three spaces);
+'
+			* (33) 0:63	'*   Square brackets containing the link identifier (optionally
+'
+			* (33) 63:61	'    indented from the left margin using up to three spaces);
+'
+			- (148) 0:1	'*'
+			- (131) 4:47	'Square brackets containing the link identifier '
+			- (184) 51:1	'('
+				+ (131) 52:10	'optionally'
+				+ (129) 62:1	'
+'
+				+ (131) 67:54	'indented from the left margin using up to three spaces'
+			- (164) 121:1	')'
+			- (131) 122:1	';'
+			- (129) 123:1	'
+'
+	* (90) 124:25	'*   followed by a colon;
+'
+		* (92) 0:25	'*   followed by a colon;
+'
+			* (33) 0:25	'*   followed by a colon;
+'
+			- (148) 0:1	'*'
+			- (131) 4:20	'followed by a colon;'
+			- (129) 24:1	'
+'
+	* (90) 149:46	'*   followed by one or more spaces (or tabs);
+'
+		* (92) 0:46	'*   followed by one or more spaces (or tabs);
+'
+			* (33) 0:46	'*   followed by one or more spaces (or tabs);
+'
+			- (148) 0:1	'*'
+			- (131) 4:31	'followed by one or more spaces '
+			- (184) 35:1	'('
+				+ (131) 36:7	'or tabs'
+			- (164) 43:1	')'
+			- (131) 44:1	';'
+			- (129) 45:1	'
+'
+	* (90) 195:38	'*   followed by the URL for the link;
+'
+		* (92) 0:38	'*   followed by the URL for the link;
+'
+			* (33) 0:38	'*   followed by the URL for the link;
+'
+			- (148) 0:1	'*'
+			- (131) 4:33	'followed by the URL for the link;'
+			- (129) 37:1	'
+'
+	* (90) 233:128	'*   optionally followed by a title attribute for the link, enclosed
+    in double or single quotes, or enclosed in parentheses.
+'
+		* (92) 0:128	'*   optionally followed by a title attribute for the link, enclosed
+    in double or single quotes, or enclosed in parentheses.
+'
+			* (33) 0:68	'*   optionally followed by a title attribute for the link, enclosed
+'
+			* (33) 68:60	'    in double or single quotes, or enclosed in parentheses.
+'
+			- (148) 0:1	'*'
+			- (131) 4:63	'optionally followed by a title attribute for the link, enclosed'
+			- (129) 67:1	'
+'
+			- (131) 72:55	'in double or single quotes, or enclosed in parentheses.'
+			- (129) 127:1	'
+'
+	* (74) 361:1	'
+'
+		* (16) 0:1	'
+'
+* (92) 18318:53	'The following three link definitions are equivalent:
+'
+	* (33) 0:53	'The following three link definitions are equivalent:
+'
+	- (131) 0:51	'The following three link definitions are equivalent'
+	- (144) 51:1	':'
+	- (129) 52:1	'
+'
+* (74) 18371:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 18372:153	'	[foo]: http://example.com/  "Optional Title Here"
+	[foo]: http://example.com/  'Optional Title Here'
+	[foo]: http://example.com/  (Optional Title Here)
+'
+	* (29) 0:51	'	[foo]: http://example.com/  "Optional Title Here"
+'
+	* (29) 51:51	'	[foo]: http://example.com/  'Optional Title Here'
+'
+	* (29) 102:51	'	[foo]: http://example.com/  (Optional Title Here)
+'
+* (74) 18525:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 18526:121	'**Note:** There is a known bug in Markdown.pl 1.0.1 which prevents
+single quotes from being used to delimit link titles.
+'
+	* (33) 0:67	'**Note:** There is a known bug in Markdown.pl 1.0.1 which prevents
+'
+	* (33) 67:54	'single quotes from being used to delimit link titles.
+'
+	- (193) 0:1	'*'
+		+ (188) 1:1	'*'
+			+ (131) 2:4	'Note'
+			+ (144) 6:1	':'
+		+ (139) 7:1	'*'
+	- (139) 8:1	'*'
+	- (131) 9:57	' There is a known bug in Markdown.pl 1.0.1 which prevents'
+	- (129) 66:1	'
+'
+	- (131) 67:53	'single quotes from being used to delimit link titles.'
+	- (129) 120:1	'
+'
+* (74) 18647:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 18648:63	'The link URL may, optionally, be surrounded by angle brackets:
+'
+	* (33) 0:63	'The link URL may, optionally, be surrounded by angle brackets:
+'
+	- (131) 0:61	'The link URL may, optionally, be surrounded by angle brackets'
+	- (144) 61:1	':'
+	- (129) 62:1	'
+'
+* (74) 18711:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 18712:55	'    [id]: <http://example.com/>  "Optional Title Here"
+'
+	* (28) 0:55	'    [id]: <http://example.com/>  "Optional Title Here"
+'
+* (74) 18767:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 18768:136	'You can put the title attribute on the next line and use extra spaces
+or tabs for padding, which tends to look better with longer URLs:
+'
+	* (33) 0:70	'You can put the title attribute on the next line and use extra spaces
+'
+	* (33) 70:66	'or tabs for padding, which tends to look better with longer URLs:
+'
+	- (131) 0:69	'You can put the title attribute on the next line and use extra spaces'
+	- (129) 69:1	'
+'
+	- (131) 70:64	'or tabs for padding, which tends to look better with longer URLs'
+	- (144) 134:1	':'
+	- (129) 135:1	'
+'
+* (74) 18904:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 18905:89	'    [id]: http://example.com/longish/path/to/resource/here
+        "Optional Title Here"
+'
+	* (28) 0:59	'    [id]: http://example.com/longish/path/to/resource/here
+'
+	* (28) 59:30	'        "Optional Title Here"
+'
+* (74) 18994:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 18995:134	'Link definitions are only used for creating links during Markdown
+processing, and are stripped from your document in the HTML output.
+'
+	* (33) 0:66	'Link definitions are only used for creating links during Markdown
+'
+	* (33) 66:68	'processing, and are stripped from your document in the HTML output.
+'
+	- (131) 0:65	'Link definitions are only used for creating links during Markdown'
+	- (129) 65:1	'
+'
+	- (131) 66:67	'processing, and are stripped from your document in the HTML output.'
+	- (129) 133:1	'
+'
+* (74) 19129:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19130:139	'Link definition names may consist of letters, numbers, spaces, and
+punctuation -- but they are *not* case sensitive. E.g. these two
+links:
+'
+	* (33) 0:67	'Link definition names may consist of letters, numbers, spaces, and
+'
+	* (33) 67:65	'punctuation -- but they are *not* case sensitive. E.g. these two
+'
+	* (33) 132:7	'links:
+'
+	- (131) 0:66	'Link definition names may consist of letters, numbers, spaces, and'
+	- (129) 66:1	'
+'
+	- (131) 67:12	'punctuation '
+	- (161) 79:2	'--'
+	- (131) 81:14	' but they are '
+	- (192) 95:1	'*'
+		+ (131) 96:3	'not'
+	- (139) 99:1	'*'
+	- (131) 100:31	' case sensitive. E.g. these two'
+	- (129) 131:1	'
+'
+	- (131) 132:5	'links'
+	- (144) 137:1	':'
+	- (129) 138:1	'
+'
+* (74) 19269:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 19270:32	'	[link text][a]
+	[link text][A]
+'
+	* (29) 0:16	'	[link text][a]
+'
+	* (29) 16:16	'	[link text][A]
+'
+* (74) 19302:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19303:16	'are equivalent.
+'
+	* (33) 0:16	'are equivalent.
+'
+	- (131) 0:15	'are equivalent.'
+	- (129) 15:1	'
+'
+* (74) 19319:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19320:259	'The *implicit link name* shortcut allows you to omit the name of the
+link, in which case the link text itself is used as the name.
+Just use an empty set of square brackets -- e.g., to link the word
+"Google" to the google.com web site, you could simply write:
+'
+	* (33) 0:69	'The *implicit link name* shortcut allows you to omit the name of the
+'
+	* (33) 69:62	'link, in which case the link text itself is used as the name.
+'
+	* (33) 131:67	'Just use an empty set of square brackets -- e.g., to link the word
+'
+	* (33) 198:61	'"Google" to the google.com web site, you could simply write:
+'
+	- (131) 0:4	'The '
+	- (192) 4:1	'*'
+		+ (131) 5:18	'implicit link name'
+	- (139) 23:1	'*'
+	- (131) 24:44	' shortcut allows you to omit the name of the'
+	- (129) 68:1	'
+'
+	- (131) 69:61	'link, in which case the link text itself is used as the name.'
+	- (129) 130:1	'
+'
+	- (131) 131:41	'Just use an empty set of square brackets '
+	- (161) 172:2	'--'
+	- (131) 174:23	' e.g., to link the word'
+	- (129) 197:1	'
+'
+	- (185) 198:1	'"'
+		+ (131) 199:6	'Google'
+	- (157) 205:1	'"'
+	- (131) 206:51	' to the google.com web site, you could simply write'
+	- (144) 257:1	':'
+	- (129) 258:1	'
+'
+* (74) 19579:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 19580:12	'	[Google][]
+'
+	* (29) 0:12	'	[Google][]
+'
+* (74) 19592:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19593:26	'And then define the link:
+'
+	* (33) 0:26	'And then define the link:
+'
+	- (131) 0:24	'And then define the link'
+	- (144) 24:1	':'
+	- (129) 25:1	'
+'
+* (74) 19619:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 19620:30	'	[Google]: http://google.com/
+'
+	* (29) 0:30	'	[Google]: http://google.com/
+'
+* (74) 19650:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19651:101	'Because link names may contain spaces, this shortcut even works for
+multiple words in the link text:
+'
+	* (33) 0:68	'Because link names may contain spaces, this shortcut even works for
+'
+	* (33) 68:33	'multiple words in the link text:
+'
+	- (131) 0:67	'Because link names may contain spaces, this shortcut even works for'
+	- (129) 67:1	'
+'
+	- (131) 68:31	'multiple words in the link text'
+	- (144) 99:1	':'
+	- (129) 100:1	'
+'
+* (74) 19752:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 19753:49	'	Visit [Daring Fireball][] for more information.
+'
+	* (29) 0:49	'	Visit [Daring Fireball][] for more information.
+'
+* (74) 19802:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19803:26	'And then define the link:
+'
+	* (33) 0:26	'And then define the link:
+'
+	- (131) 0:24	'And then define the link'
+	- (144) 24:1	':'
+	- (129) 25:1	'
+'
+* (74) 19829:2	'	
+'
+	* (16) 0:2	'	
+'
+* (66) 19831:47	'	[Daring Fireball]: http://daringfireball.net/
+'
+	* (29) 0:47	'	[Daring Fireball]: http://daringfireball.net/
+'
+* (74) 19878:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 19879:233	'Link definitions can be placed anywhere in your Markdown document. I
+tend to put them immediately after each paragraph in which they're
+used, but if you want, you can put them all at the end of your
+document, sort of like footnotes.
+'
+	* (33) 0:69	'Link definitions can be placed anywhere in your Markdown document. I
+'
+	* (33) 69:67	'tend to put them immediately after each paragraph in which they're
+'
+	* (33) 136:63	'used, but if you want, you can put them all at the end of your
+'
+	* (33) 199:34	'document, sort of like footnotes.
+'
+	- (131) 0:68	'Link definitions can be placed anywhere in your Markdown document. I'
+	- (129) 68:1	'
+'
+	- (131) 69:63	'tend to put them immediately after each paragraph in which they'
+	- (155) 132:1	'''
+	- (131) 133:2	're'
+	- (129) 135:1	'
+'
+	- (131) 136:62	'used, but if you want, you can put them all at the end of your'
+	- (129) 198:1	'
+'
+	- (131) 199:33	'document, sort of like footnotes.'
+	- (129) 232:1	'
+'
+* (74) 20112:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 20113:48	'Here's an example of reference links in action:
+'
+	* (33) 0:48	'Here's an example of reference links in action:
+'
+	- (131) 0:4	'Here'
+	- (155) 4:1	'''
+	- (131) 5:41	's an example of reference links in action'
+	- (144) 46:1	':'
+	- (129) 47:1	'
+'
+* (74) 20161:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 20162:239	'    I get 10 times more traffic from [Google] [1] than from
+    [Yahoo] [2] or [MSN] [3].
+
+      [1]: http://google.com/        "Google"
+      [2]: http://search.yahoo.com/  "Yahoo Search"
+      [3]: http://search.msn.com/    "MSN Search"
+'
+	* (28) 0:60	'    I get 10 times more traffic from [Google] [1] than from
+'
+	* (28) 60:30	'    [Yahoo] [2] or [MSN] [3].
+'
+	* (16) 90:1	'
+'
+	* (28) 91:46	'      [1]: http://google.com/        "Google"
+'
+	* (28) 137:52	'      [2]: http://search.yahoo.com/  "Yahoo Search"
+'
+	* (28) 189:50	'      [3]: http://search.msn.com/    "MSN Search"
+'
+* (74) 20401:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 20402:64	'Using the implicit link name shortcut, you could instead write:
+'
+	* (33) 0:64	'Using the implicit link name shortcut, you could instead write:
+'
+	- (131) 0:62	'Using the implicit link name shortcut, you could instead write'
+	- (144) 62:1	':'
+	- (129) 63:1	'
+'
+* (74) 20466:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 20467:248	'    I get 10 times more traffic from [Google][] than from
+    [Yahoo][] or [MSN][].
+
+      [google]: http://google.com/        "Google"
+      [yahoo]:  http://search.yahoo.com/  "Yahoo Search"
+      [msn]:    http://search.msn.com/    "MSN Search"
+'
+	* (28) 0:58	'    I get 10 times more traffic from [Google][] than from
+'
+	* (28) 58:26	'    [Yahoo][] or [MSN][].
+'
+	* (16) 84:1	'
+'
+	* (28) 85:51	'      [google]: http://google.com/        "Google"
+'
+	* (28) 136:57	'      [yahoo]:  http://search.yahoo.com/  "Yahoo Search"
+'
+	* (28) 193:55	'      [msn]:    http://search.msn.com/    "MSN Search"
+'
+* (74) 20715:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 20716:67	'Both of the above examples will produce the following HTML output:
+'
+	* (33) 0:67	'Both of the above examples will produce the following HTML output:
+'
+	- (131) 0:65	'Both of the above examples will produce the following HTML output'
+	- (144) 65:1	':'
+	- (129) 66:1	'
+'
+* (74) 20783:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 20784:251	'    <p>I get 10 times more traffic from <a href="http://google.com/"
+    title="Google">Google</a> than from
+    <a href="http://search.yahoo.com/" title="Yahoo Search">Yahoo</a>
+    or <a href="http://search.msn.com/" title="MSN Search">MSN</a>.</p>
+'
+	* (28) 0:69	'    <p>I get 10 times more traffic from <a href="http://google.com/"
+'
+	* (28) 69:40	'    title="Google">Google</a> than from
+'
+	* (28) 109:70	'    <a href="http://search.yahoo.com/" title="Yahoo Search">Yahoo</a>
+'
+	* (28) 179:72	'    or <a href="http://search.msn.com/" title="MSN Search">MSN</a>.</p>
+'
+* (74) 21035:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 21036:87	'For comparison, here is the same paragraph written using
+Markdown's inline link style:
+'
+	* (33) 0:57	'For comparison, here is the same paragraph written using
+'
+	* (33) 57:30	'Markdown's inline link style:
+'
+	- (131) 0:56	'For comparison, here is the same paragraph written using'
+	- (129) 56:1	'
+'
+	- (131) 57:8	'Markdown'
+	- (155) 65:1	'''
+	- (131) 66:19	's inline link style'
+	- (144) 85:1	':'
+	- (129) 86:1	'
+'
+* (74) 21123:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 21124:189	'    I get 10 times more traffic from [Google](http://google.com/ "Google")
+    than from [Yahoo](http://search.yahoo.com/ "Yahoo Search") or
+    [MSN](http://search.msn.com/ "MSN Search").
+'
+	* (28) 0:75	'    I get 10 times more traffic from [Google](http://google.com/ "Google")
+'
+	* (28) 75:66	'    than from [Yahoo](http://search.yahoo.com/ "Yahoo Search") or
+'
+	* (28) 141:48	'    [MSN](http://search.msn.com/ "MSN Search").
+'
+* (74) 21313:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 21314:411	'The point of reference-style links is not that they're easier to
+write. The point is that with reference-style links, your document
+source is vastly more readable. Compare the above examples: using
+reference-style links, the paragraph itself is only 81 characters
+long; with inline-style links, it's 176 characters; and as raw HTML,
+it's 234 characters. In the raw HTML, there's more markup than there
+is text.
+'
+	* (33) 0:65	'The point of reference-style links is not that they're easier to
+'
+	* (33) 65:67	'write. The point is that with reference-style links, your document
+'
+	* (32) 132:66	'source is vastly more readable. Compare the above examples: using
+'
+	* (33) 198:66	'reference-style links, the paragraph itself is only 81 characters
+'
+	* (33) 264:69	'long; with inline-style links, it's 176 characters; and as raw HTML,
+'
+	* (33) 333:69	'it's 234 characters. In the raw HTML, there's more markup than there
+'
+	* (33) 402:9	'is text.
+'
+	- (131) 0:22	'The point of reference'
+	- (141) 22:1	'-'
+	- (131) 23:28	'style links is not that they'
+	- (155) 51:1	'''
+	- (131) 52:12	're easier to'
+	- (129) 64:1	'
+'
+	- (131) 65:39	'write. The point is that with reference'
+	- (141) 104:1	'-'
+	- (131) 105:26	'style links, your document'
+	- (129) 131:1	'
+'
+	- (131) 132:58	'source is vastly more readable. Compare the above examples'
+	- (144) 190:1	':'
+	- (131) 191:6	' using'
+	- (129) 197:1	'
+'
+	- (131) 198:9	'reference'
+	- (141) 207:1	'-'
+	- (131) 208:55	'style links, the paragraph itself is only 81 characters'
+	- (129) 263:1	'
+'
+	- (131) 264:17	'long; with inline'
+	- (141) 281:1	'-'
+	- (131) 282:15	'style links, it'
+	- (155) 297:1	'''
+	- (131) 298:34	's 176 characters; and as raw HTML,'
+	- (129) 332:1	'
+'
+	- (131) 333:2	'it'
+	- (155) 335:1	'''
+	- (131) 336:40	's 234 characters. In the raw HTML, there'
+	- (155) 376:1	'''
+	- (131) 377:24	's more markup than there'
+	- (129) 401:1	'
+'
+	- (131) 402:8	'is text.'
+	- (129) 410:1	'
+'
+* (74) 21725:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 21726:276	'With Markdown's reference-style links, a source document much more
+closely resembles the final output, as rendered in a browser. By
+allowing you to move the markup-related metadata out of the paragraph,
+you can add links without interrupting the narrative flow of your
+prose.
+'
+	* (33) 0:67	'With Markdown's reference-style links, a source document much more
+'
+	* (33) 67:65	'closely resembles the final output, as rendered in a browser. By
+'
+	* (33) 132:71	'allowing you to move the markup-related metadata out of the paragraph,
+'
+	* (33) 203:66	'you can add links without interrupting the narrative flow of your
+'
+	* (33) 269:7	'prose.
+'
+	- (131) 0:13	'With Markdown'
+	- (155) 13:1	'''
+	- (131) 14:11	's reference'
+	- (141) 25:1	'-'
+	- (131) 26:40	'style links, a source document much more'
+	- (129) 66:1	'
+'
+	- (131) 67:64	'closely resembles the final output, as rendered in a browser. By'
+	- (129) 131:1	'
+'
+	- (131) 132:31	'allowing you to move the markup'
+	- (141) 163:1	'-'
+	- (131) 164:38	'related metadata out of the paragraph,'
+	- (129) 202:1	'
+'
+	- (131) 203:65	'you can add links without interrupting the narrative flow of your'
+	- (129) 268:1	'
+'
+	- (131) 269:6	'prose.'
+	- (129) 275:1	'
+'
+* (74) 22002:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 22004:26	'<h3 id="em">Emphasis</h3>
+'
+	* (26) 0:26	'<h3 id="em">Emphasis</h3>
+'
+* (74) 22030:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 22031:240	'Markdown treats asterisks (`*`) and underscores (`_`) as indicators of
+emphasis. Text wrapped with one `*` or `_` will be wrapped with an
+HTML `<em>` tag; double `*`'s or `_`'s will be wrapped with an HTML
+`<strong>` tag. E.g., this input:
+'
+	* (33) 0:71	'Markdown treats asterisks (`*`) and underscores (`_`) as indicators of
+'
+	* (33) 71:67	'emphasis. Text wrapped with one `*` or `_` will be wrapped with an
+'
+	* (33) 138:68	'HTML `<em>` tag; double `*`'s or `_`'s will be wrapped with an HTML
+'
+	* (33) 206:34	'`<strong>` tag. E.g., this input:
+'
+	- (131) 0:26	'Markdown treats asterisks '
+	- (184) 26:1	'('
+		+ (172) 27:1	'`'
+			+ (139) 28:1	'*'
+		+ (154) 29:1	'`'
+	- (164) 30:1	')'
+	- (131) 31:17	' and underscores '
+	- (184) 48:1	'('
+		+ (172) 49:1	'`'
+			+ (143) 50:1	'_'
+		+ (154) 51:1	'`'
+	- (164) 52:1	')'
+	- (131) 53:17	' as indicators of'
+	- (129) 70:1	'
+'
+	- (131) 71:32	'emphasis. Text wrapped with one '
+	- (172) 103:1	'`'
+		+ (139) 104:1	'*'
+	- (154) 105:1	'`'
+	- (131) 106:4	' or '
+	- (172) 110:1	'`'
+		+ (143) 111:1	'_'
+	- (154) 112:1	'`'
+	- (131) 113:24	' will be wrapped with an'
+	- (129) 137:1	'
+'
+	- (131) 138:5	'HTML '
+	- (172) 143:1	'`'
+		+ (171) 144:1	'<'
+			+ (131) 145:2	'em'
+		+ (168) 147:1	'>'
+	- (154) 148:1	'`'
+	- (131) 149:13	' tag; double '
+	- (172) 162:1	'`'
+		+ (139) 163:1	'*'
+	- (154) 164:1	'`'
+	- (155) 165:1	'''
+	- (131) 166:5	's or '
+	- (172) 171:1	'`'
+		+ (143) 172:1	'_'
+	- (154) 173:1	'`'
+	- (155) 174:1	'''
+	- (131) 175:30	's will be wrapped with an HTML'
+	- (129) 205:1	'
+'
+	- (172) 206:1	'`'
+		+ (171) 207:1	'<'
+			+ (131) 208:6	'strong'
+		+ (168) 214:1	'>'
+	- (154) 215:1	'`'
+	- (131) 216:22	' tag. E.g., this input'
+	- (144) 238:1	':'
+	- (129) 239:1	'
+'
+* (74) 22271:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 22272:103	'    *single asterisks*
+
+    _single underscores_
+
+    **double asterisks**
+
+    __double underscores__
+'
+	* (28) 0:23	'    *single asterisks*
+'
+	* (16) 23:1	'
+'
+	* (28) 24:25	'    _single underscores_
+'
+	* (16) 49:1	'
+'
+	* (28) 50:25	'    **double asterisks**
+'
+	* (16) 75:1	'
+'
+	* (28) 76:27	'    __double underscores__
+'
+* (74) 22375:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 22376:14	'will produce:
+'
+	* (33) 0:14	'will produce:
+'
+	- (131) 0:12	'will produce'
+	- (144) 12:1	':'
+	- (129) 13:1	'
+'
+* (74) 22390:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 22391:143	'    <em>single asterisks</em>
+
+    <em>single underscores</em>
+
+    <strong>double asterisks</strong>
+
+    <strong>double underscores</strong>
+'
+	* (28) 0:30	'    <em>single asterisks</em>
+'
+	* (16) 30:1	'
+'
+	* (28) 31:32	'    <em>single underscores</em>
+'
+	* (16) 63:1	'
+'
+	* (28) 64:38	'    <strong>double asterisks</strong>
+'
+	* (16) 102:1	'
+'
+	* (28) 103:40	'    <strong>double underscores</strong>
+'
+* (74) 22534:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 22535:137	'You can use whichever style you prefer; the lone restriction is that
+the same character must be used to open and close an emphasis span.
+'
+	* (33) 0:69	'You can use whichever style you prefer; the lone restriction is that
+'
+	* (33) 69:68	'the same character must be used to open and close an emphasis span.
+'
+	- (131) 0:68	'You can use whichever style you prefer; the lone restriction is that'
+	- (129) 68:1	'
+'
+	- (131) 69:67	'the same character must be used to open and close an emphasis span.'
+	- (129) 136:1	'
+'
+* (74) 22672:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 22673:46	'Emphasis can be used in the middle of a word:
+'
+	* (33) 0:46	'Emphasis can be used in the middle of a word:
+'
+	- (131) 0:44	'Emphasis can be used in the middle of a word'
+	- (144) 44:1	':'
+	- (129) 45:1	'
+'
+* (74) 22719:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 22720:27	'    un*frigging*believable
+'
+	* (28) 0:27	'    un*frigging*believable
+'
+* (74) 22747:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 22748:101	'But if you surround an `*` or `_` with spaces, it'll be treated as a
+literal asterisk or underscore.
+'
+	* (33) 0:69	'But if you surround an `*` or `_` with spaces, it'll be treated as a
+'
+	* (33) 69:32	'literal asterisk or underscore.
+'
+	- (131) 0:23	'But if you surround an '
+	- (172) 23:1	'`'
+		+ (139) 24:1	'*'
+	- (154) 25:1	'`'
+	- (131) 26:4	' or '
+	- (172) 30:1	'`'
+		+ (143) 31:1	'_'
+	- (154) 32:1	'`'
+	- (131) 33:16	' with spaces, it'
+	- (155) 49:1	'''
+	- (131) 50:18	'll be treated as a'
+	- (129) 68:1	'
+'
+	- (131) 69:31	'literal asterisk or underscore.'
+	- (129) 100:1	'
+'
+* (74) 22849:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 22850:146	'To produce a literal asterisk or underscore at a position where it
+would otherwise be used as an emphasis delimiter, you can backslash
+escape it:
+'
+	* (33) 0:67	'To produce a literal asterisk or underscore at a position where it
+'
+	* (33) 67:68	'would otherwise be used as an emphasis delimiter, you can backslash
+'
+	* (33) 135:11	'escape it:
+'
+	- (131) 0:66	'To produce a literal asterisk or underscore at a position where it'
+	- (129) 66:1	'
+'
+	- (131) 67:67	'would otherwise be used as an emphasis delimiter, you can backslash'
+	- (129) 134:1	'
+'
+	- (131) 135:9	'escape it'
+	- (144) 144:1	':'
+	- (129) 145:1	'
+'
+* (74) 22996:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 22997:53	'    \*this text is surrounded by literal asterisks\*
+'
+	* (28) 0:53	'    \*this text is surrounded by literal asterisks\*
+'
+* (74) 23050:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 23053:24	'<h3 id="code">Code</h3>
+'
+	* (26) 0:24	'<h3 id="code">Code</h3>
+'
+* (74) 23077:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 23078:170	'To indicate a span of code, wrap it with backtick quotes (`` ` ``).
+Unlike a pre-formatted code block, a code span indicates code within a
+normal paragraph. For example:
+'
+	* (33) 0:68	'To indicate a span of code, wrap it with backtick quotes (`` ` ``).
+'
+	* (33) 68:71	'Unlike a pre-formatted code block, a code span indicates code within a
+'
+	* (33) 139:31	'normal paragraph. For example:
+'
+	- (131) 0:57	'To indicate a span of code, wrap it with backtick quotes '
+	- (184) 57:1	'('
+		+ (172) 58:2	'``'
+			+ (131) 61:0	''
+			+ (154) 61:1	'`'
+			+ (131) 62:0	''
+		+ (154) 63:2	'``'
+	- (164) 65:1	')'
+	- (131) 66:1	'.'
+	- (129) 67:1	'
+'
+	- (131) 68:12	'Unlike a pre'
+	- (141) 80:1	'-'
+	- (131) 81:57	'formatted code block, a code span indicates code within a'
+	- (129) 138:1	'
+'
+	- (131) 139:29	'normal paragraph. For example'
+	- (144) 168:1	':'
+	- (129) 169:1	'
+'
+* (74) 23248:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 23249:33	'    Use the `printf()` function.
+'
+	* (28) 0:33	'    Use the `printf()` function.
+'
+* (74) 23282:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 23283:14	'will produce:
+'
+	* (33) 0:14	'will produce:
+'
+	- (131) 0:12	'will produce'
+	- (144) 12:1	':'
+	- (129) 13:1	'
+'
+* (74) 23297:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 23298:51	'    <p>Use the <code>printf()</code> function.</p>
+'
+	* (28) 0:51	'    <p>Use the <code>printf()</code> function.</p>
+'
+* (74) 23349:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 23350:130	'To include a literal backtick character within a code span, you can use
+multiple backticks as the opening and closing delimiters:
+'
+	* (33) 0:72	'To include a literal backtick character within a code span, you can use
+'
+	* (33) 72:58	'multiple backticks as the opening and closing delimiters:
+'
+	- (131) 0:71	'To include a literal backtick character within a code span, you can use'
+	- (129) 71:1	'
+'
+	- (131) 72:56	'multiple backticks as the opening and closing delimiters'
+	- (144) 128:1	':'
+	- (129) 129:1	'
+'
+* (74) 23480:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 23481:46	'    ``There is a literal backtick (`) here.``
+'
+	* (28) 0:46	'    ``There is a literal backtick (`) here.``
+'
+* (74) 23527:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 23528:25	'which will produce this:
+'
+	* (33) 0:25	'which will produce this:
+'
+	- (131) 0:23	'which will produce this'
+	- (144) 23:1	':'
+	- (129) 24:1	'
+'
+* (74) 23553:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 23554:62	'    <p><code>There is a literal backtick (`) here.</code></p>
+'
+	* (28) 0:62	'    <p><code>There is a literal backtick (`) here.</code></p>
+'
+* (74) 23616:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 23617:210	'The backtick delimiters surrounding a code span may include spaces --
+one after the opening, one before the closing. This allows you to place
+literal backtick characters at the beginning or end of a code span:
+'
+	* (33) 0:70	'The backtick delimiters surrounding a code span may include spaces --
+'
+	* (33) 70:72	'one after the opening, one before the closing. This allows you to place
+'
+	* (33) 142:68	'literal backtick characters at the beginning or end of a code span:
+'
+	- (131) 0:67	'The backtick delimiters surrounding a code span may include spaces '
+	- (161) 67:2	'--'
+	- (129) 69:1	'
+'
+	- (131) 70:71	'one after the opening, one before the closing. This allows you to place'
+	- (129) 141:1	'
+'
+	- (131) 142:66	'literal backtick characters at the beginning or end of a code span'
+	- (144) 208:1	':'
+	- (129) 209:1	'
+'
+* (74) 23827:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 23828:102	'	A single backtick in a code span: `` ` ``
+	
+	A backtick-delimited string in a code span: `` `foo` ``
+'
+	* (29) 0:43	'	A single backtick in a code span: `` ` ``
+'
+	* (16) 43:2	'	
+'
+	* (29) 45:57	'	A backtick-delimited string in a code span: `` `foo` ``
+'
+* (74) 23930:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 23931:14	'will produce:
+'
+	* (33) 0:14	'will produce:
+'
+	- (131) 0:12	'will produce'
+	- (144) 12:1	':'
+	- (129) 13:1	'
+'
+* (74) 23945:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 23946:130	'	<p>A single backtick in a code span: <code>`</code></p>
+	
+	<p>A backtick-delimited string in a code span: <code>`foo`</code></p>
+'
+	* (29) 0:57	'	<p>A single backtick in a code span: <code>`</code></p>
+'
+	* (16) 57:2	'	
+'
+	* (29) 59:71	'	<p>A backtick-delimited string in a code span: <code>`foo`</code></p>
+'
+* (74) 24076:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24077:167	'With a code span, ampersands and angle brackets are encoded as HTML
+entities automatically, which makes it easy to include example HTML
+tags. Markdown will turn this:
+'
+	* (33) 0:68	'With a code span, ampersands and angle brackets are encoded as HTML
+'
+	* (33) 68:68	'entities automatically, which makes it easy to include example HTML
+'
+	* (33) 136:31	'tags. Markdown will turn this:
+'
+	- (131) 0:67	'With a code span, ampersands and angle brackets are encoded as HTML'
+	- (129) 67:1	'
+'
+	- (131) 68:67	'entities automatically, which makes it easy to include example HTML'
+	- (129) 135:1	'
+'
+	- (131) 136:29	'tags. Markdown will turn this'
+	- (144) 165:1	':'
+	- (129) 166:1	'
+'
+* (74) 24244:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 24245:41	'    Please don't use any `<blink>` tags.
+'
+	* (28) 0:41	'    Please don't use any `<blink>` tags.
+'
+* (74) 24286:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24287:6	'into:
+'
+	* (33) 0:6	'into:
+'
+	- (131) 0:4	'into'
+	- (144) 4:1	':'
+	- (129) 5:1	'
+'
+* (74) 24293:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 24294:65	'    <p>Please don't use any <code>&lt;blink&gt;</code> tags.</p>
+'
+	* (28) 0:65	'    <p>Please don't use any <code>&lt;blink&gt;</code> tags.</p>
+'
+* (74) 24359:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24360:20	'You can write this:
+'
+	* (33) 0:20	'You can write this:
+'
+	- (131) 0:18	'You can write this'
+	- (144) 18:1	':'
+	- (129) 19:1	'
+'
+* (74) 24380:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 24381:62	'    `&#8212;` is the decimal-encoded equivalent of `&mdash;`.
+'
+	* (28) 0:62	'    `&#8212;` is the decimal-encoded equivalent of `&mdash;`.
+'
+* (74) 24443:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24444:12	'to produce:
+'
+	* (33) 0:12	'to produce:
+'
+	- (131) 0:10	'to produce'
+	- (144) 10:1	':'
+	- (129) 11:1	'
+'
+* (74) 24456:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 24457:103	'    <p><code>&amp;#8212;</code> is the decimal-encoded
+    equivalent of <code>&amp;mdash;</code>.</p>
+'
+	* (28) 0:55	'    <p><code>&amp;#8212;</code> is the decimal-encoded
+'
+	* (28) 55:48	'    equivalent of <code>&amp;mdash;</code>.</p>
+'
+* (74) 24560:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 24563:25	'<h3 id="img">Images</h3>
+'
+	* (26) 0:25	'<h3 id="img">Images</h3>
+'
+* (74) 24588:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24589:117	'Admittedly, it's fairly difficult to devise a "natural" syntax for
+placing images into a plain text document format.
+'
+	* (33) 0:67	'Admittedly, it's fairly difficult to devise a "natural" syntax for
+'
+	* (33) 67:50	'placing images into a plain text document format.
+'
+	- (131) 0:14	'Admittedly, it'
+	- (155) 14:1	'''
+	- (131) 15:31	's fairly difficult to devise a '
+	- (185) 46:1	'"'
+		+ (131) 47:7	'natural'
+	- (157) 54:1	'"'
+	- (131) 55:11	' syntax for'
+	- (129) 66:1	'
+'
+	- (131) 67:49	'placing images into a plain text document format.'
+	- (129) 116:1	'
+'
+* (74) 24706:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24707:132	'Markdown uses an image syntax that is intended to resemble the syntax
+for links, allowing for two styles: *inline* and *reference*.
+'
+	* (33) 0:70	'Markdown uses an image syntax that is intended to resemble the syntax
+'
+	* (33) 70:62	'for links, allowing for two styles: *inline* and *reference*.
+'
+	- (131) 0:69	'Markdown uses an image syntax that is intended to resemble the syntax'
+	- (129) 69:1	'
+'
+	- (131) 70:34	'for links, allowing for two styles'
+	- (144) 104:1	':'
+	- (131) 105:1	' '
+	- (192) 106:1	'*'
+		+ (131) 107:6	'inline'
+	- (139) 113:1	'*'
+	- (131) 114:5	' and '
+	- (192) 119:1	'*'
+		+ (131) 120:9	'reference'
+	- (139) 129:1	'*'
+	- (131) 130:1	'.'
+	- (129) 131:1	'
+'
+* (74) 24839:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24840:37	'Inline image syntax looks like this:
+'
+	* (33) 0:37	'Inline image syntax looks like this:
+'
+	- (131) 0:35	'Inline image syntax looks like this'
+	- (144) 35:1	':'
+	- (129) 36:1	'
+'
+* (74) 24877:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 24878:86	'    ![Alt text](/path/to/img.jpg)
+
+    ![Alt text](/path/to/img.jpg "Optional title")
+'
+	* (28) 0:34	'    ![Alt text](/path/to/img.jpg)
+'
+	* (16) 34:1	'
+'
+	* (28) 35:51	'    ![Alt text](/path/to/img.jpg "Optional title")
+'
+* (74) 24964:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 24965:9	'That is:
+'
+	* (33) 0:9	'That is:
+'
+	- (131) 0:7	'That is'
+	- (144) 7:1	':'
+	- (129) 8:1	'
+'
+* (74) 24974:1	'
+'
+	* (16) 0:1	'
+'
+* (85) 24975:286	'*   An exclamation mark: `!`;
+*   followed by a set of square brackets, containing the `alt`
+    attribute text for the image;
+*   followed by a set of parentheses, containing the URL or path to
+    the image, and an optional `title` attribute enclosed in double
+    or single quotes.
+
+'
+	* (90) 0:30	'*   An exclamation mark: `!`;
+'
+		* (92) 0:30	'*   An exclamation mark: `!`;
+'
+			* (32) 0:30	'*   An exclamation mark: `!`;
+'
+			- (148) 0:1	'*'
+			- (131) 4:19	'An exclamation mark'
+			- (144) 23:1	':'
+			- (131) 24:1	' '
+			- (172) 25:1	'`'
+				+ (131) 26:1	'!'
+			- (154) 27:1	'`'
+			- (131) 28:1	';'
+			- (129) 29:1	'
+'
+	* (90) 30:97	'*   followed by a set of square brackets, containing the `alt`
+    attribute text for the image;
+'
+		* (92) 0:97	'*   followed by a set of square brackets, containing the `alt`
+    attribute text for the image;
+'
+			* (33) 0:63	'*   followed by a set of square brackets, containing the `alt`
+'
+			* (33) 63:34	'    attribute text for the image;
+'
+			- (148) 0:1	'*'
+			- (131) 4:53	'followed by a set of square brackets, containing the '
+			- (172) 57:1	'`'
+				+ (131) 58:3	'alt'
+			- (154) 61:1	'`'
+			- (129) 62:1	'
+'
+			- (131) 67:29	'attribute text for the image;'
+			- (129) 96:1	'
+'
+	* (90) 127:158	'*   followed by a set of parentheses, containing the URL or path to
+    the image, and an optional `title` attribute enclosed in double
+    or single quotes.
+'
+		* (92) 0:158	'*   followed by a set of parentheses, containing the URL or path to
+    the image, and an optional `title` attribute enclosed in double
+    or single quotes.
+'
+			* (33) 0:68	'*   followed by a set of parentheses, containing the URL or path to
+'
+			* (33) 68:68	'    the image, and an optional `title` attribute enclosed in double
+'
+			* (33) 136:22	'    or single quotes.
+'
+			- (148) 0:1	'*'
+			- (131) 4:63	'followed by a set of parentheses, containing the URL or path to'
+			- (129) 67:1	'
+'
+			- (131) 72:27	'the image, and an optional '
+			- (172) 99:1	'`'
+				+ (131) 100:5	'title'
+			- (154) 105:1	'`'
+			- (131) 106:29	' attribute enclosed in double'
+			- (129) 135:1	'
+'
+			- (131) 140:17	'or single quotes.'
+			- (129) 157:1	'
+'
+	* (74) 285:1	'
+'
+		* (16) 0:1	'
+'
+* (92) 25261:46	'Reference-style image syntax looks like this:
+'
+	* (33) 0:46	'Reference-style image syntax looks like this:
+'
+	- (131) 0:9	'Reference'
+	- (141) 9:1	'-'
+	- (131) 10:34	'style image syntax looks like this'
+	- (144) 44:1	':'
+	- (129) 45:1	'
+'
+* (74) 25307:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 25308:20	'    ![Alt text][id]
+'
+	* (28) 0:20	'    ![Alt text][id]
+'
+* (74) 25328:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 25329:125	'Where "id" is the name of a defined image reference. Image references
+are defined using syntax identical to link references:
+'
+	* (33) 0:70	'Where "id" is the name of a defined image reference. Image references
+'
+	* (33) 70:55	'are defined using syntax identical to link references:
+'
+	- (131) 0:6	'Where '
+	- (185) 6:1	'"'
+		+ (131) 7:2	'id'
+	- (157) 9:1	'"'
+	- (131) 10:59	' is the name of a defined image reference. Image references'
+	- (129) 69:1	'
+'
+	- (131) 70:53	'are defined using syntax identical to link references'
+	- (144) 123:1	':'
+	- (129) 124:1	'
+'
+* (74) 25454:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 25455:51	'    [id]: url/to/image  "Optional title attribute"
+'
+	* (28) 0:51	'    [id]: url/to/image  "Optional title attribute"
+'
+* (74) 25506:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 25507:161	'As of this writing, Markdown has no syntax for specifying the
+dimensions of an image; if this is important to you, you can simply
+use regular HTML `<img>` tags.
+'
+	* (33) 0:62	'As of this writing, Markdown has no syntax for specifying the
+'
+	* (33) 62:68	'dimensions of an image; if this is important to you, you can simply
+'
+	* (33) 130:31	'use regular HTML `<img>` tags.
+'
+	- (131) 0:61	'As of this writing, Markdown has no syntax for specifying the'
+	- (129) 61:1	'
+'
+	- (131) 62:67	'dimensions of an image; if this is important to you, you can simply'
+	- (129) 129:1	'
+'
+	- (131) 130:17	'use regular HTML '
+	- (172) 147:1	'`'
+		+ (171) 148:1	'<'
+			+ (131) 149:3	'img'
+		+ (168) 152:1	'>'
+	- (154) 153:1	'`'
+	- (131) 154:6	' tags.'
+	- (129) 160:1	'
+'
+* (74) 25668:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (83) 25670:6	'* * *
+'
+	* (24) 0:6	'* * *
+'
+	- (139) 0:1	'*'
+	- (131) 1:1	' '
+	- (139) 2:1	'*'
+	- (131) 3:1	' '
+	- (139) 4:1	'*'
+	- (129) 5:1	'
+'
+* (74) 25676:2	'
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+* (84) 25678:33	'<h2 id="misc">Miscellaneous</h2>
+'
+	* (26) 0:33	'<h2 id="misc">Miscellaneous</h2>
+'
+* (74) 25711:1	'
+'
+	* (16) 0:1	'
+'
+* (84) 25712:39	'<h3 id="autolink">Automatic Links</h3>
+'
+	* (26) 0:39	'<h3 id="autolink">Automatic Links</h3>
+'
+* (74) 25751:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 25752:300	'Markdown supports a shortcut style for creating "automatic" links for URLs and email addresses: simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this:
+'
+	* (33) 0:300	'Markdown supports a shortcut style for creating "automatic" links for URLs and email addresses: simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this:
+'
+	- (131) 0:48	'Markdown supports a shortcut style for creating '
+	- (185) 48:1	'"'
+		+ (131) 49:9	'automatic'
+	- (157) 58:1	'"'
+	- (131) 59:35	' links for URLs and email addresses'
+	- (144) 94:1	':'
+	- (131) 95:203	' simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this'
+	- (144) 298:1	':'
+	- (129) 299:1	'
+'
+* (74) 26052:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 26053:26	'    <http://example.com/>
+'
+	* (28) 0:26	'    <http://example.com/>
+'
+* (74) 26079:5	'    
+'
+	* (16) 0:5	'    
+'
+* (92) 26084:30	'Markdown will turn this into:
+'
+	* (33) 0:30	'Markdown will turn this into:
+'
+	- (131) 0:28	'Markdown will turn this into'
+	- (144) 28:1	':'
+	- (129) 29:1	'
+'
+* (74) 26114:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 26115:58	'    <a href="http://example.com/">http://example.com/</a>
+'
+	* (28) 0:58	'    <a href="http://example.com/">http://example.com/</a>
+'
+* (74) 26173:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 26174:244	'Automatic links for email addresses work similarly, except that
+Markdown will also perform a bit of randomized decimal and hex
+entity-encoding to help obscure your address from address-harvesting
+spambots. For example, Markdown will turn this:
+'
+	* (33) 0:64	'Automatic links for email addresses work similarly, except that
+'
+	* (33) 64:63	'Markdown will also perform a bit of randomized decimal and hex
+'
+	* (33) 127:69	'entity-encoding to help obscure your address from address-harvesting
+'
+	* (33) 196:48	'spambots. For example, Markdown will turn this:
+'
+	- (131) 0:63	'Automatic links for email addresses work similarly, except that'
+	- (129) 63:1	'
+'
+	- (131) 64:62	'Markdown will also perform a bit of randomized decimal and hex'
+	- (129) 126:1	'
+'
+	- (131) 127:6	'entity'
+	- (141) 133:1	'-'
+	- (131) 134:50	'encoding to help obscure your address from address'
+	- (141) 184:1	'-'
+	- (131) 185:10	'harvesting'
+	- (129) 195:1	'
+'
+	- (131) 196:46	'spambots. For example, Markdown will turn this'
+	- (144) 242:1	':'
+	- (129) 243:1	'
+'
+* (74) 26418:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 26419:26	'    <address@example.com>
+'
+	* (28) 0:26	'    <address@example.com>
+'
+* (74) 26445:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 26446:26	'into something like this:
+'
+	* (33) 0:26	'into something like this:
+'
+	- (131) 0:24	'into something like this'
+	- (144) 24:1	':'
+	- (129) 25:1	'
+'
+* (74) 26472:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 26473:281	'    <a href="&#x6D;&#x61;i&#x6C;&#x74;&#x6F;:&#x61;&#x64;&#x64;&#x72;&#x65;
+    &#115;&#115;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6C;e&#x2E;&#99;&#111;
+    &#109;">&#x61;&#x64;&#x64;&#x72;&#x65;&#115;&#115;&#64;&#101;&#120;&#x61;
+    &#109;&#x70;&#x6C;e&#x2E;&#99;&#111;&#109;</a>
+'
+	* (28) 0:76	'    <a href="&#x6D;&#x61;i&#x6C;&#x74;&#x6F;:&#x61;&#x64;&#x64;&#x72;&#x65;
+'
+	* (28) 76:76	'    &#115;&#115;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6C;e&#x2E;&#99;&#111;
+'
+	* (28) 152:78	'    &#109;">&#x61;&#x64;&#x64;&#x72;&#x65;&#115;&#115;&#64;&#101;&#120;&#x61;
+'
+	* (28) 230:51	'    &#109;&#x70;&#x6C;e&#x2E;&#99;&#111;&#109;</a>
+'
+* (74) 26754:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 26755:77	'which will render in a browser as a clickable link to "address@example.com".
+'
+	* (33) 0:77	'which will render in a browser as a clickable link to "address@example.com".
+'
+	- (131) 0:54	'which will render in a browser as a clickable link to '
+	- (185) 54:1	'"'
+		+ (131) 55:19	'address@example.com'
+	- (157) 74:1	'"'
+	- (131) 75:1	'.'
+	- (129) 76:1	'
+'
+* (74) 26832:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 26833:250	'(This sort of entity-encoding trick will indeed fool many, if not
+most, address-harvesting bots, but it definitely won't fool all of
+them. It's better than nothing, but an address published in this way
+will probably eventually start receiving spam.)
+'
+	* (33) 0:66	'(This sort of entity-encoding trick will indeed fool many, if not
+'
+	* (33) 66:67	'most, address-harvesting bots, but it definitely won't fool all of
+'
+	* (33) 133:69	'them. It's better than nothing, but an address published in this way
+'
+	* (33) 202:48	'will probably eventually start receiving spam.)
+'
+	- (184) 0:1	'('
+		+ (131) 1:19	'This sort of entity'
+		+ (141) 20:1	'-'
+		+ (131) 21:44	'encoding trick will indeed fool many, if not'
+		+ (129) 65:1	'
+'
+		+ (131) 66:13	'most, address'
+		+ (141) 79:1	'-'
+		+ (131) 80:38	'harvesting bots, but it definitely won'
+		+ (155) 118:1	'''
+		+ (131) 119:13	't fool all of'
+		+ (129) 132:1	'
+'
+		+ (131) 133:8	'them. It'
+		+ (155) 141:1	'''
+		+ (131) 142:59	's better than nothing, but an address published in this way'
+		+ (129) 201:1	'
+'
+		+ (131) 202:46	'will probably eventually start receiving spam.'
+	- (164) 248:1	')'
+	- (129) 249:1	'
+'
+* (74) 27083:3	'
+
+
+'
+	* (16) 0:1	'
+'
+	* (16) 1:1	'
+'
+	* (16) 2:1	'
+'
+* (84) 27086:42	'<h3 id="backslash">Backslash Escapes</h3>
+'
+	* (26) 0:42	'<h3 id="backslash">Backslash Escapes</h3>
+'
+* (74) 27128:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 27129:311	'Markdown allows you to use backslash escapes to generate literal
+characters which would otherwise have special meaning in Markdown's
+formatting syntax. For example, if you wanted to surround a word
+with literal asterisks (instead of an HTML `<em>` tag), you can use
+backslashes before the asterisks, like this:
+'
+	* (33) 0:65	'Markdown allows you to use backslash escapes to generate literal
+'
+	* (33) 65:68	'characters which would otherwise have special meaning in Markdown's
+'
+	* (33) 133:65	'formatting syntax. For example, if you wanted to surround a word
+'
+	* (33) 198:68	'with literal asterisks (instead of an HTML `<em>` tag), you can use
+'
+	* (33) 266:45	'backslashes before the asterisks, like this:
+'
+	- (131) 0:64	'Markdown allows you to use backslash escapes to generate literal'
+	- (129) 64:1	'
+'
+	- (131) 65:65	'characters which would otherwise have special meaning in Markdown'
+	- (155) 130:1	'''
+	- (131) 131:1	's'
+	- (129) 132:1	'
+'
+	- (131) 133:64	'formatting syntax. For example, if you wanted to surround a word'
+	- (129) 197:1	'
+'
+	- (131) 198:23	'with literal asterisks '
+	- (184) 221:1	'('
+		+ (131) 222:19	'instead of an HTML '
+		+ (172) 241:1	'`'
+			+ (171) 242:1	'<'
+				+ (131) 243:2	'em'
+			+ (168) 245:1	'>'
+		+ (154) 246:1	'`'
+		+ (131) 247:4	' tag'
+	- (164) 251:1	')'
+	- (131) 252:13	', you can use'
+	- (129) 265:1	'
+'
+	- (131) 266:43	'backslashes before the asterisks, like this'
+	- (144) 309:1	':'
+	- (129) 310:1	'
+'
+* (74) 27440:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 27441:26	'    \*literal asterisks\*
+'
+	* (28) 0:26	'    \*literal asterisks\*
+'
+* (74) 27467:1	'
+'
+	* (16) 0:1	'
+'
+* (92) 27468:66	'Markdown provides backslash escapes for the following characters:
+'
+	* (33) 0:66	'Markdown provides backslash escapes for the following characters:
+'
+	- (131) 0:64	'Markdown provides backslash escapes for the following characters'
+	- (144) 64:1	':'
+	- (129) 65:1	'
+'
+* (74) 27534:1	'
+'
+	* (16) 0:1	'
+'
+* (66) 27535:231	'    \   backslash
+    `   backtick
+    *   asterisk
+    _   underscore
+    {}  curly braces
+    []  square brackets
+    ()  parentheses
+    #   hash mark
+	+   plus sign
+	-   minus sign (hyphen)
+    .   dot
+    !   exclamation mark
+'
+	* (28) 0:18	'    \   backslash
+'
+	* (28) 18:17	'    `   backtick
+'
+	* (28) 35:17	'    *   asterisk
+'
+	* (28) 52:19	'    _   underscore
+'
+	* (28) 71:21	'    {}  curly braces
+'
+	* (28) 92:24	'    []  square brackets
+'
+	* (28) 116:20	'    ()  parentheses
+'
+	* (28) 136:18	'    #   hash mark
+'
+	* (29) 154:15	'	+   plus sign
+'
+	* (29) 169:25	'	-   minus sign (hyphen)
+'
+	* (28) 194:12	'    .   dot
+'
+	* (28) 206:25	'    !   exclamation mark
+'
