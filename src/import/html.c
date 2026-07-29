@@ -1403,6 +1403,11 @@ void html_cleanup(text_buffer * source) {
 
 				// Lowercase start tags to ensure consistency
 				while (char_is_alphanumeric(source->text[offset])) {
+					if (offset - tag_start == 125) {
+						// This is too long and not a valid HTML tag. Ignore to avoid overflowing buffer[].
+						break;
+					}
+
 					source->text[offset] = tolower(source->text[offset]);
 					strncat(buffer, &source->text[offset], 1);
 					offset++;
@@ -1410,7 +1415,7 @@ void html_cleanup(text_buffer * source) {
 
 				if ((offset - tag_start)) {
 					// Append
-					strncat(buffer, ",", 1);	// End with comma
+					strcat(buffer, ",");	// End with comma
 
 					if (strstr(voids, buffer)) {
 						// This is a void element -- ensure it is self-closing
@@ -1436,6 +1441,11 @@ void html_cleanup(text_buffer * source) {
 
 							// Lowercase end tags to ensure consistency
 							while (char_is_alphanumeric(source->text[offset])) {
+								if (offset - tag_start == 127) {
+									// This is too long and not a valid HTML tag. Ignore to avoid overflowing buffer[].
+									break;
+								}
+
 								source->text[offset] = tolower(source->text[offset]);
 								strncat(buffer, &source->text[offset], 1);
 								offset++;
