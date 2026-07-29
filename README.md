@@ -2,12 +2,12 @@
 | ---------- | ------------------------- |  
 | Title:     | MultiMarkdown v7          |  
 | Author:    | Fletcher T. Penney       |  
-| Date:      | 2026-03-13 |  
+| Date:      | 2026-07-29 |  
 | Copyright: | Copyright © 2024-2026 Fletcher T. Penney.    |  
-| Version:   | 7.0.0 |  
+| Version:   | 7.0.0-beta.1 |  
 
 
-# MultiMarkdown 7.0.0 #
+# MultiMarkdown 7.0.0-beta.1 #
 
 *C parser for Markdown with additional features and multiple output formats.*
 
