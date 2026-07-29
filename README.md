@@ -4,10 +4,10 @@
 | Author:    | Fletcher T. Penney       |  
 | Date:      | 2026-07-29 |  
 | Copyright: | Copyright © 2024-2026 Fletcher T. Penney.    |  
-| Version:   | 7.0.0-beta.1 |  
+| Version:   | 7.0.0-beta.2 |  
 
 
-# MultiMarkdown 7.0.0-beta.1 #
+# MultiMarkdown 7.0.0-beta.2 #
 
 *C parser for Markdown with additional features and multiple output formats.*
 
