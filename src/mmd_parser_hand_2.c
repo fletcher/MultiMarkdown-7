@@ -1875,6 +1875,8 @@ void mmd_scan_lines_vector(const char * text, size_t len, vector_line_node * v, 
 
 /// Given source text, parse it into AST
 mmd_node * mmd_parse_text(const char * text, size_t len, vector_line_node * vl, mmd_node_pool * p, read_ctx * r, uint32_t options) {
+	r->source_text = text;
+
 	mmd_scan_lines_vector(text, len, vl, options);
 
 	F(i, (int)vl->size) {

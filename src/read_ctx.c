@@ -73,6 +73,8 @@ void read_ctx_init(read_ctx * c, uint32_t options) {
 
 		c->header_stack = stack_new(16);
 		c->random_header_seed = (uint16_t) rand();
+
+		c->critic_stack = stack_new(8);
 	}
 }
 
@@ -91,6 +93,11 @@ void header_free(header * h) {
 		free(h->key);
 		free(h);
 	}
+}
+
+
+void critic_free(critic_markup * cm) {
+	free(cm);
 }
 
 
@@ -178,6 +185,10 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 			header_free(stack_pop(c->header_stack));
 		}
 
+		while (c->critic_stack->size) {
+			critic_free(stack_pop(c->critic_stack));
+		}
+
 		meta * m, * m_tmp;
 
 		HASH_ITER(hh, c->meta_hash, m, m_tmp) {
@@ -238,6 +249,7 @@ void read_ctx_reset(read_ctx * c, uint32_t options) {
 		}
 
 		stack_free(c->header_stack);
+		stack_free(c->critic_stack);
 		stack_free(c->token_pair_stack);
 
 		memset(c, 0, sizeof(read_ctx));
@@ -361,6 +373,37 @@ void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node
 		h->c_len = c_len;
 
 		stack_push(c->header_stack, h);
+	}
+}
+
+
+void read_ctx_store_critic_markup(read_ctx * c, unsigned char type, size_t start, size_t len) {
+	if (c && len) {
+		if (type == TOKEN_PAIR_CM_SUB_ADD) {
+			critic_markup * last = stack_peek(c->critic_stack);
+
+			if (last && last->type == TOKEN_PAIR_CM_SUB_DEL && last->start + last->len - 2 == start) {
+				last->len += len - 2;
+
+				return;
+			}
+		} else if (type == TOKEN_PAIR_CM_COM) {
+			critic_markup * last = stack_peek(c->critic_stack);
+
+			if (last && last->type != TOKEN_PAIR_CM_COM && last->start + last->len == start) {
+				last->len += len;
+
+				return;
+			}
+		}
+
+		critic_markup * cm = calloc(1, sizeof(critic_markup));
+
+		cm->type = type;
+		cm->start = start;
+		cm->len = len;
+
+		stack_push(c->critic_stack, cm);
 	}
 }
 

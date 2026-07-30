@@ -176,8 +176,20 @@ struct file_path {
 typedef struct file_path file_path;
 
 
+/// CriticMarkup spans
+struct critic_markup {
+	unsigned char			type;
+	size_t					start;
+	size_t					len;
+};
+
+typedef struct critic_markup critic_markup;
+
+
 /// Structured information from parsing process
 struct read_ctx {
+	const char *		source_text;
+
 	char				allow_meta;
 	char				has_meta;
 	size_t				meta_end;
@@ -203,6 +215,8 @@ struct read_ctx {
 
 	stack	*			header_stack;
 	uint16_t			random_header_seed;
+
+	stack *				critic_stack;
 
 	meta 	*			meta_hash;
 	tag		*			tag_hash;
@@ -232,6 +246,7 @@ void read_ctx_free(read_ctx * c);
 void read_ctx_store_internal_link(read_ctx * c, const char * text, size_t len, bool require_odd_count, bool auto_generated);
 void read_ctx_store_internal_link_key(read_ctx * c, const char * key, size_t key_len, bool auto_generated);
 void read_ctx_store_header(read_ctx * c, const char * text, size_t len, mmd_node * n, const char * key, size_t key_len, size_t c_start, size_t c_len);
+void read_ctx_store_critic_markup(read_ctx * c, unsigned char type, size_t start, size_t len);
 
 void read_ctx_store_abbr(read_ctx * c, abbr_def * l);
 void read_ctx_store_link(read_ctx * c, link_def * l, bool auto_generated);
@@ -255,6 +270,8 @@ endnote_def * read_ctx_get_note(read_ctx * c, char * key);
 int read_ctx_get_header_level(read_ctx * c, int format);
 
 void header_free(header * h);
+void critic_free(critic_markup * cm);
+
 void meta_free(meta * m);
 void link_def_free(link_def * l);
 void abbr_def_free(abbr_def * a);

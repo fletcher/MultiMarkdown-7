@@ -705,7 +705,10 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 
 			case TOKEN_CM_SUB_DIV:
 				if (!(options & MMD_OPTION_COMPATIBILITY)) {
-					token_closes(p, n, prev, pairings, text, s, stack_start, openers, options);
+					if ((opener = token_closes(p, n, prev, pairings, text, s, stack_start, openers, options))) {
+						read_ctx_store_critic_markup(c, opener->type, opener->start + text - c->source_text, n->start + n->len - opener->start);
+					}
+
 					stack_push(s, n);
 					openers[n->type]++;
 				}
@@ -714,7 +717,9 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 
 			case TOKEN_CM_SUB_CLOSE:
 				if (!(options & MMD_OPTION_COMPATIBILITY)) {
-					token_closes(p, n, prev, pairings, text, s, stack_start, openers, options);
+					if ((opener = token_closes(p, n, prev, pairings, text, s, stack_start, openers, options))) {
+						read_ctx_store_critic_markup(c, opener->type, opener->start + text - c->source_text, n->start + n->len - opener->start);
+					}
 				}
 
 				break;
@@ -724,7 +729,9 @@ void analyze_token_chain(mmd_node_pool * p, mmd_node * n, PairRule pairings[], c
 			case TOKEN_CM_COM_CLOSE:
 			case TOKEN_CM_HI_CLOSE:
 				if (!(options & MMD_OPTION_COMPATIBILITY)) {
-					token_closes(p, n, prev, pairings, text, s, stack_start, openers, options);
+					if ((opener = token_closes(p, n, prev, pairings, text, s, stack_start, openers, options))) {
+						read_ctx_store_critic_markup(c, opener->type, opener->start + text - c->source_text, n->start + n->len - opener->start);
+					}
 				}
 
 				break;
