@@ -166,6 +166,10 @@ void mmd_node_tree_free(mmd_node * n);
 void toc_node_free(toc_node * n);
 void toc_node_tree_free(toc_node * t);
 
+/// These functions return a string that must be freed
+char * criticmarkup_accepted(const char * text);
+char * criticmarkup_rejected(const char * text);
+
 
 /// Calculate hash values for AST (and return overall hash value)
 uint32_t mmd_hash_node_tree(mmd_node * n);

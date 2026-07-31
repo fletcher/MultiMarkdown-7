@@ -241,6 +241,7 @@ void criticmarkup_accept(text_buffer * buffer) {
 	mmd_node_pool_free(p);
 }
 
+
 void criticmarkup_reject(text_buffer * buffer) {
 	mmd_node_pool * p = mmd_node_pool_new(0);
 
@@ -252,3 +253,30 @@ void criticmarkup_reject(text_buffer * buffer) {
 	mmd_node_pool_free(p);
 }
 
+
+char * criticmarkup_accepted(const char * text) {
+	size_t len = strlen(text);
+	text_buffer * buffer = text_buffer_new(len + 2);
+	text_buffer_append_text(buffer, text, len);
+
+	criticmarkup_accept(buffer);
+
+	char * result = buffer->text;
+	text_buffer_free(buffer, 0);
+
+	return result;
+}
+
+
+char * criticmarkup_rejected(const char * text) {
+	size_t len = strlen(text);
+	text_buffer * buffer = text_buffer_new(len + 2);
+	text_buffer_append_text(buffer, text, len);
+
+	criticmarkup_reject(buffer);
+
+	char * result = buffer->text;
+	text_buffer_free(buffer, 0);
+
+	return result;
+}
