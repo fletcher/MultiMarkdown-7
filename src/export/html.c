@@ -1601,7 +1601,24 @@ static void export_html_blocks(mmd_node * b, const char * text, text_buffer * ou
 static void export_html_header(text_buffer * out, read_ctx * r, write_ctx * w, uint32_t options) {
 	meta * m;
 
-	mmd_print_const(out, "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\"");
+	if (MMD_OUT_FORMAT_FROM_OPTS(options) == FORMAT_EPUB) {
+		mmd_print_const(out, "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\"");
+
+		m = read_ctx_get_meta(r, "xmlprefixepub");
+
+		if (m) {
+			text_buffer_append_printf(out, " epub:prefix=\"%s\"", m->value);
+		}
+	} else {
+		mmd_print_const(out, "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\"");
+
+		m = read_ctx_get_meta(r, "xmlprefixhtml");
+
+		if (m) {
+			text_buffer_append_printf(out, " epub:prefix=\"%s\"", m->value);
+		}
+	}
+
 	m = read_ctx_get_meta(r, "language");
 
 	if (m) {
