@@ -180,7 +180,7 @@ static html_element elements[] = {
 	{ "ins",		0,	"{++",		0,			"++}",		0,	NULL,		NULL,		NULL },
 	{ "del",		0,	"{--",		0,			"--}",		0,	NULL,		NULL,		NULL },
 	{ "mark",		0,	"{==",		0,			"==}",		0,	NULL,		NULL,		NULL },
-	{ "br",			0,	NULL,		0,			"\\",		0,	NULL,		NULL,		NULL },
+	{ "br",			0,	NULL,		0,			"\\",		1,	NULL,		NULL,		NULL },
 	{ "table",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "tbody",		2,	NULL,		OPT_IGNORE,	NULL,		0,	NULL,		NULL,		NULL },
 	{ "thead",		0,	NULL,		OPT_IGNORE | OPT_IGNORE_CHILDREN,	NULL,	0,	NULL,	NULL,	&custom_thead },
