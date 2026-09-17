@@ -80,7 +80,7 @@ int mmd_line_scan(Scanner * s, uint32_t options) {
 		non_indent_space				= [ ]{1,3};
 
 		indent_space					= [ ]{4};
-		indent_tab						= '\t';
+		indent_tab						= [ ]{0,3} '\t';
 
 		w								= [^ \t\n\r];
 		num								= [0-9]+;

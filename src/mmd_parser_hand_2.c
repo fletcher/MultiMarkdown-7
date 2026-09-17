@@ -589,6 +589,15 @@ static mmd_node * block_code_indented(mmd_node ** l, mmd_node_pool * p, const ch
 		} else if (strncmp("    ", &text[(*l)->start + ((mmd_line_node *)(*l))->c_start], 4) == 0) {
 			((mmd_line_node *)(*l))->c_start += 4;
 			((mmd_line_node *)(*l))->c_len -= 4;
+		} else if (strncmp(" \t", &text[(*l)->start + ((mmd_line_node *)(*l))->c_start], 2) == 0) {
+			((mmd_line_node *)(*l))->c_start += 2;
+			((mmd_line_node *)(*l))->c_len -= 2;
+		} else if (strncmp("  \t", &text[(*l)->start + ((mmd_line_node *)(*l))->c_start], 3) == 0) {
+			((mmd_line_node *)(*l))->c_start += 3;
+			((mmd_line_node *)(*l))->c_len -= 3;
+		} else if (strncmp("   \t", &text[(*l)->start + ((mmd_line_node *)(*l))->c_start], 4) == 0) {
+			((mmd_line_node *)(*l))->c_start += 4;
+			((mmd_line_node *)(*l))->c_len -= 4;
 		}
 
 		*l = mmd_node_feed_chain(b, *l);
