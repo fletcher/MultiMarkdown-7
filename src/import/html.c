@@ -1223,7 +1223,11 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 				} else {
 					if (i >= 0 && (elements[i].handle_content & OPT_IGNORE)) {
 						// Store for possible use
-						append_content(content, NULL, x);
+						if (!strcmp("span", self) && (attr->text[0] == '\0')) {
+							append_content(content, NULL, x);
+						} else {
+							text_buffer_append_printf(content, "%s", x->data);
+						}
 					} else if (i >= 0 && (elements[i].handle_content & OPT_LEAD)) {
 						text_buffer_append_printf(out, "%s", x->data);
 
