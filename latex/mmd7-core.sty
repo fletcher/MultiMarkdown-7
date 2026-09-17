@@ -21,7 +21,9 @@
 
 
 % Base packages to use
-\@ifclassloaded{sffms}{}{
+\@ifclassloaded{sffms}{
+	\newcommand{\href}[2]{<#1>}			% Show only the URL in the manuscript
+}{
 	\usepackage{hyperref}				% Must preceed glossaries
 }
 
