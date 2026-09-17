@@ -484,6 +484,11 @@ static void custom_span(text_buffer * out, text_buffer * lead, text_buffer * att
 			text_buffer_append_printf(out, "%.*s", content->len, content->text);
 			out->padding = 0;
 		}
+	} else {
+		// No class specified
+		// TODO: I might need to process this text further for special characters
+		text_buffer_append_printf(out, "%.*s", content->len, content->text);
+		out->padding = 0;
 	}
 }
 
