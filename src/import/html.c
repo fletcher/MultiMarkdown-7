@@ -283,7 +283,12 @@ static void append_content(text_buffer * out, text_buffer * lead, yxml_t * x) {
 				break;
 
 			case '\n':
-				lead_pad(out, lead, 1);
+				if (lead) {
+					lead_pad(out, lead, 1);
+				} else {
+					text_buffer_append_c(out, '\n');
+				}
+
 				break;
 
 			default:
@@ -1218,7 +1223,7 @@ static yxml_ret_t xml_parse_elem(text_buffer * out, text_buffer * lead, char ** 
 				} else {
 					if (i >= 0 && (elements[i].handle_content & OPT_IGNORE)) {
 						// Store for possible use
-						text_buffer_append_printf(content, "%s", x->data);
+						append_content(content, NULL, x);
 					} else if (i >= 0 && (elements[i].handle_content & OPT_LEAD)) {
 						text_buffer_append_printf(out, "%s", x->data);
 
