@@ -104,8 +104,9 @@ static format formats[] = {
 	[FORMAT_AST] = { "ast", ".ast" },
 	[FORMAT_HASH] = { "hash", ".hash" },
 	[FORMAT_DOCX] = { "docx", ".docx" },
-	[FORMAT_FODT] = { "fodt", ".fodt" },
-	[FORMAT_ODT] = { "odt", ".odt" },
+	[FORMAT_DOCX_FLAT] = { "docx_f", ".txt" },
+	// [FORMAT_FODT] = { "fodt", ".fodt" },
+	// [FORMAT_ODT] = { "odt", ".odt" },
 };
 
 

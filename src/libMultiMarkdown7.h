@@ -201,9 +201,10 @@ enum output_format {
 	FORMAT_TEXTBUNDLE,							//!< TextBundle is a package file format for macOS/iOS
 	FORMAT_TEXTPACK,							//!< Compressed variant of the TextBundle file format
 
-	FORMAT_DOCX,
-	FORMAT_FODT,
-	FORMAT_ODT,
+	FORMAT_DOCX,								//!< Office Open XML (not fully implemented)
+	FORMAT_DOCX_FLAT,							//!< For testing purposes
+	FORMAT_FODT,								//!< OpenDocument Flat XML - may not be implemented in MMD-7
+	FORMAT_ODT,									//!< Opendocument XML - may not be implemented in MMD-7
 };
 
 

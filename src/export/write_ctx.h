@@ -45,10 +45,19 @@
 #include <stdbool.h>
 
 
+enum run_attr {
+	ATTR_EMPH		= 1 << 0,
+	ATTR_STRONG		= 1 << 1,
+};
+
+
 /// Context information for parsing process
 struct write_ctx {
 	short			padding;
 	short			skip_blocks;
+
+	bool			in_run;
+	enum run_attr	run_attributes;
 
 	bool			in_recursive;
 	bool			in_definition_list;

@@ -353,6 +353,7 @@ static void mmd_process_buffer_core(vector_line_node * vl, mmd_node_pool * vn, r
 			break;
 
 		case FORMAT_DOCX:
+		case FORMAT_DOCX_FLAT:
 			export_docx(n, source_buffer->text, out_buffer, c, options, source_path);
 			break;
 
