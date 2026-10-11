@@ -177,6 +177,13 @@
 	\def\enablecoverpage{true}
 }
 
+
+% No signature, for hand written notes
+\DeclareOption{nosignature}{
+	\def\nosignature{true}
+}
+
+
 % Ignore other options
 \DeclareOption*{}
 
@@ -216,11 +223,14 @@
 
 % Handle letter finalization
 \AtEndDocument{
-	\ifx\mysignature\undefined
-		\signature{\myauthor}
-	\else
-		\signature{\mysignature}
+	\ifx\nosignature\undefined
+		\ifx\mysignature\undefined
+			\signature{\myauthor}
+		\else
+			\signature{\mysignature}
+		\fi
+		\closing{Sincerely,}
 	\fi
-	\closing{Sincerely,}
+
 	\end{letter}
 }
