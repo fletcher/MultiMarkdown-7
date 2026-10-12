@@ -3,7 +3,7 @@
 This folder contains some sample documents for demonstrating and testing
 several features.
 
-These files contain basically the same minimal contact, but have different
+These files contain basically the same minimal content, but have different
 ranges of headers.  Some make use of the `base header level` metadata to
 control how things work :
 
@@ -40,4 +40,4 @@ There are multiple scripts:
 * report.sh			-- Build a report using LaTeX and standard report class
 * sffms.sh			-- Build manuscript using LaTeX and sffms class
 * tufte-book.sh		-- Build book using LaTeX and tufte-book class
-* tufte-handout.sh		-- Build handout using LaTeX and tufte-handout class
+* tufte-handout.sh	-- Build handout using LaTeX and tufte-handout class
